@@ -20,7 +20,7 @@ const LoadingCircular = styled(Skeleton)({
 const LoadingRectangular = styled(Skeleton)({
   height: '12rem',
   width: '19rem',
-  margin: '1.5rem 0 1rem 0',
+  margin: '1.5rem 0 0 0',
   borderRadius: '3px'
 })
 const LoadingLongerRectangular = styled(Skeleton)({

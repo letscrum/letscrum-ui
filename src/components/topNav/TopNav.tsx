@@ -93,8 +93,12 @@ const SearchInput = styled(TextField)({
   }
 })
 const TopNavContainer = styled(Stack)({
-  justifyContent: 'space-between',
+  position: 'sticky',
+  top: '0',
+  zIndex: '1',
   height: '3rem',
+  backgroundColor: 'white',
+  justifyContent: 'space-between',
   borderBottomWidth: '1px',
   borderBottomStyle: 'solid',
   borderBottomColor: grey[300]
