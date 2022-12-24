@@ -5,6 +5,7 @@ import { FiberManualRecord, FactCheck, AccountTree, RocketLaunch, Science, Widge
 import { grey, red, teal, deepOrange, blue, deepPurple, pink, amber, cyan, green } from '@mui/material/colors'
 import Grid from '@mui/material/Unstable_Grid2/Grid2'
 import axios from 'axios'
+import { useNavigate } from 'react-router'
 
 interface ProjectProps {
   id: string
@@ -91,6 +92,7 @@ const PickAvatarColor = (id: string, colorSet: string[]): string => {
   return pickedColor
 }
 export const ProjectListTable = (): any => {
+  const navigate = useNavigate()
   const [hoverId, setHoverId] = useState<string | null>(null)
   const handleMouseIn = (e: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
     setHoverId(e.currentTarget.id)
@@ -120,6 +122,11 @@ export const ProjectListTable = (): any => {
   if (items.length > 3) {
     itemsHead = items.slice(0, 3)
     itemsTail = items.slice(3)
+  }
+  const handleToProject = (itemId: string): void => {
+    console.log('itemId: ', itemId)
+    const projectId = itemId
+    navigate(`/${projectId}`, { replace: true })
   }
   return (
     <>
@@ -159,7 +166,7 @@ export const ProjectListTable = (): any => {
                 {
                   itemsHead.map((item) => {
                     return (
-                      <Grid xs={4} key={item.id}>
+                      <Grid xs={4} key={item.id} onClick={() => handleToProject(item.id)}>
                         <HeadProjectCard>
                           <HeadCardContent>
                             <Stack direction='row'>
@@ -237,7 +244,7 @@ export const ProjectListTable = (): any => {
           itemsTail.map((item) => {
             return (
               <>
-                <Stack key={item.id} direction='row'>
+                <Stack key={item.id} direction='row' onClick={() => handleToProject(item.id)}>
                   <TailItemCardContent>
                     <Stack direction='row'>
                       <TailAvatarWrapper>
