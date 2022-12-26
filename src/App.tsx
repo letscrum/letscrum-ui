@@ -1,7 +1,7 @@
 import React from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { PrivateRoute, SideNav, SideNavInProject, TopNav } from './components'
-import { ProjectListPage, ProjectPage, SignInPage, RouteErrorPage } from './pages'
+import { ProjectListPage, ProjectSummaryPage, ProjectDashboardPage, SignInPage, RouteErrorPage } from './pages'
 import axios from 'axios'
 import { useAppSelector } from './redux/hooks'
 import { selectUserAccessToken } from './redux/reducers/userSlice'
@@ -39,7 +39,11 @@ const router = createBrowserRouter([
         children: [
           {
             path: '/:projectId/',
-            element: <ProjectPage />
+            element: <ProjectSummaryPage />
+          },
+          {
+            path: '/:projectId/dashboard',
+            element: <ProjectDashboardPage />
           }
         ]
       }
