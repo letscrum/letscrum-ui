@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState, ReactElement } from 'react'
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { Box, MenuList, MenuItem, ListItemText, Avatar, Typography, Button, Drawer, Divider } from '@mui/material'
 import { grey, blue, red } from '@mui/material/colors'
@@ -9,8 +9,8 @@ const SideMenuDivider = styled(Divider)({
   margin: '0 .5rem'
 })
 const SideMenuTitle = styled(MenuItem)({
-  padding: '.5rem .5rem .5rem .75rem',
-  backgroundColor: grey[100]
+  padding: '.75rem .5rem .25rem .75rem',
+  backgroundColor: grey[200]
 })
 const SideMenuTitleText = styled(ListItemText)({
   '& .MuiTypography-root': {
@@ -21,11 +21,24 @@ const SideMenuTitleText = styled(ListItemText)({
   }
 })
 const SideMenuItem = styled(MenuItem)({
-  padding: '.875rem .5rem',
-  backgroundColor: grey[300],
+  padding: '.75rem .5rem',
+  backgroundColor: grey[200],
   borderLeftStyle: 'solid',
   borderLeftWidth: '.25rem',
-  borderLeftColor: grey[400]
+  borderLeftColor: grey[500],
+  '& .Mui-selected': {
+    backgroundColor: red[300]
+  }
+})
+const SideSubMenuItem = styled(MenuItem)({
+  padding: '.6125rem .5rem',
+  backgroundColor: grey[200],
+  borderLeftStyle: 'solid',
+  borderLeftWidth: '.25rem',
+  borderLeftColor: grey[500],
+  '& .Mui-selected': {
+    backgroundColor: red[300]
+  }
 })
 const SideMenuItemText = styled(ListItemText)({
   '& .MuiTypography-root': {
@@ -50,7 +63,6 @@ const SetOrgButton = styled(Button)({
 export const SideNavInProject: React.FunctionComponent = () => {
   const [selectedSubIndex, setSelectedSubIndex] = useState(0)
   const [selectedIndex, setSelectedIndex] = useState(0)
-  // const [subMenuShow, setSubMenuShow] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
   let { projectId } = useParams()
@@ -77,26 +89,13 @@ export const SideNavInProject: React.FunctionComponent = () => {
     key: 'boards'
   }
   ]
-  const overviewItems = [{
-    name: 'Summary',
-    path: `/${projectId}`,
-    key: 'summary'
-  },
-  {
-    name: 'Dashboard',
-    path: `/${projectId}/dashboard`,
-    key: 'dashboard'
-  }]
-  // const handleSideMenu = (): void => {
-  //   setSubMenuShow(true)
-  // }
   const handleMenuItem = (index: number): void => {
     setSelectedIndex(index)
     navigate(sideMenuItems[index].path, { replace: true })
   }
-  const handleSubMenuItem = (index: number): void => {
+  const handleSubMenuItem = (path: string, index: number): void => {
     setSelectedSubIndex(index)
-    navigate(overviewItems[index].path, { replace: true })
+    navigate(path, { replace: true })
   }
   return (
     <Box display='flex'>
@@ -107,7 +106,7 @@ export const SideNavInProject: React.FunctionComponent = () => {
           '& .MuiDrawer-paper': {
             top: 'calc(3rem + 1px)',
             height: 'calc(100% - 3rem - 1px)',
-            backgroundColor: grey[100],
+            backgroundColor: grey[200],
             boxSizing: 'border-box',
             overflowX: 'visible'
           }
@@ -127,7 +126,7 @@ export const SideNavInProject: React.FunctionComponent = () => {
         </SideMenuTitle>
         <SideMenuDivider />
         {/* menu list */}
-        <MenuList>
+        <MenuList sx={{ padding: 0 }}>
           {sideMenuItems.map((item, index) => {
             return (
               <Fragment key={item.key}>
@@ -142,24 +141,24 @@ export const SideNavInProject: React.FunctionComponent = () => {
                     {item.name}
                   </SideMenuItemText>
                 </SideMenuItem>
-                <MenuList>
-                  { index === selectedIndex &&
-                    overviewItems.map((item, index): any => {
-                      return (
-                        <SideMenuItem
-                          key={item.key}
-                          selected={index === selectedSubIndex}
-                          onClick={() => handleSubMenuItem(index)}
-                        >
-                          <Avatar sx={{ width: '1rem', height: '1rem', marginLeft: '.25rem', bgcolor: grey[900] }} variant="rounded">
-                            <CardGiftcard sx={{ width: '1rem', height: '1rem' }} />
-                          </Avatar>
-                          <SideMenuItemText sx={{ marginLeft: '.25rem' }}>
-                            {item.name}
-                          </SideMenuItemText>
-                        </SideMenuItem>
-                      )
-                    })
+                <MenuList sx={{ padding: 0 }}>
+                  {index === selectedIndex && (((item?.children) != null) && item.children.map((item, index): ReactElement => {
+                    return (
+                      <SideSubMenuItem
+                        key={item.key}
+                        selected={index === selectedSubIndex}
+                        onClick={() => handleSubMenuItem(item.path, index)}
+                      >
+                        <Avatar sx={{ width: '1rem', height: '1rem', marginLeft: '.25rem', bgcolor: grey[900] }} variant="rounded">
+                          <CardGiftcard sx={{ width: '1rem', height: '1rem' }} />
+                        </Avatar>
+                        <SideMenuItemText sx={{ marginLeft: '.25rem' }}>
+                          {item.name}
+                        </SideMenuItemText>
+                      </SideSubMenuItem>
+                    )
+                  })
+                  )
                   }
                 </MenuList>
               </Fragment>
