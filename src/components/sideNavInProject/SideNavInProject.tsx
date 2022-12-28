@@ -3,7 +3,7 @@ import React, { useState, ReactElement, useEffect } from 'react'
 import { Outlet, useNavigate, useParams } from 'react-router-dom'
 import { Box, Stack, MenuList, MenuItem, ListItemIcon, ListItemText, Avatar, Typography, Button, Drawer, Divider } from '@mui/material'
 import { grey, blue, red } from '@mui/material/colors'
-import { Assessment, Settings, CardGiftcard, Add } from '@mui/icons-material'
+import { Assessment, Dashboard, FactCheck, Settings, CardGiftcard, Add } from '@mui/icons-material'
 import { styled } from '@mui/system'
 import axios from 'axios'
 
@@ -96,55 +96,63 @@ const SetOrgButton = styled(Button)({
 export const SideNavInProject: React.FunctionComponent = () => {
   const [selectedSubIndex, setSelectedSubIndex] = useState(0)
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string>('')
   const [displayName, setDisplayName] = useState<string>('')
   const displayLetter = displayName?.toString().toUpperCase().charAt(0)
   const navigate = useNavigate()
   const { projectId } = useParams()
   const id = projectId ?? ''
-  useEffect(() => {
-    async function FetchData (params: { id: string }): Promise<string> {
-      try {
-        const projectData: any = await axios.get(`/v1/projects/${params.id}`)
-        setDisplayName(projectData.data.item.displayName)
-        return displayName
-      } catch (e: any) {
-        return e.message
-      }
+  const FetchData = async (params: { id: string }): Promise<string> => {
+    try {
+      const projectData: any = await axios.get(`/v1/projects/${params.id}`)
+      setDisplayName(projectData.data.item.displayName)
+      setLoading(false)
+      return displayName
+    } catch (e: any) {
+      setError(e.message)
+      setLoading(false)
+      return error
     }
+  }
+  useEffect(() => {
     void FetchData({ id })
   }, [])
   const sideMenuItems = [{
     name: 'Overview',
     path: `/${id}`,
     key: 'overview',
+    icon: <Assessment sx={{ fontSize: '1.75rem', color: blue[700] }} />,
     children: [{
       name: 'Summary',
       path: `/${id}`,
-      key: 'summary'
+      key: 'summary',
+      icon: <CardGiftcard sx={{ fontSize: '1rem' }} />
     },
     {
       name: 'Dashboard',
       path: `/${id}/dashboard`,
-      key: 'dashboard'
+      key: 'dashboard',
+      icon: <Dashboard sx={{ fontSize: '1rem' }} />
     }]
   },
   {
     name: 'Boards',
     path: `/${id}`,
-    key: 'boards'
+    key: 'boards',
+    icon: <FactCheck sx={{ fontSize: '1.75rem', color: blue[700] }} />
   }
   ]
   const handleMenuItem = (index: number): void => {
     setSelectedIndex(index)
-    navigate(sideMenuItems[index].path, { replace: true })
+    navigate(sideMenuItems[index].path)
   }
   const handleSubMenuItem = (path: string, index: number): void => {
     setSelectedSubIndex(index)
-    navigate(path, { replace: true })
+    navigate(path)
   }
   return (
     <Box display='flex'>
-      { displayName === '' ? <>loading</> : <>OK</>}
       <Drawer
         sx={{
           width: '16rem',
@@ -169,7 +177,11 @@ export const SideNavInProject: React.FunctionComponent = () => {
             </Avatar>
           </SideMenuIconWrapper>
           <SideMenuTitleText>
-            {displayName}
+            {
+              loading
+                ? 'loading data'
+                : displayName
+            }
           </SideMenuTitleText>
           <SideMemuCreateBtn>
             <Add sx={{ color: grey[700] }} />
@@ -186,7 +198,7 @@ export const SideNavInProject: React.FunctionComponent = () => {
                   onClick={() => handleMenuItem(index)}
                 >
                   <SideMenuIconWrapper sx={{ maxWidth: '3rem' }}>
-                    <Assessment sx={{ fontSize: '1.75rem', color: blue[700] }} />
+                    {item.icon}
                   </SideMenuIconWrapper>
                   <SideMenuItemText>
                     {item.name}
@@ -201,7 +213,7 @@ export const SideNavInProject: React.FunctionComponent = () => {
                         onClick={() => handleSubMenuItem(item.path, index)}
                       >
                         <SideSubMenuIconWrapper sx={{}}>
-                          <CardGiftcard sx={{ fontSize: '1rem' }} />
+                          {item.icon}
                         </SideSubMenuIconWrapper>
                         <SideMenuItemText>
                           {item.name}

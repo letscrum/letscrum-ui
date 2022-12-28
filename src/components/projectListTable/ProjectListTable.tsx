@@ -125,9 +125,8 @@ export const ProjectListTable = (): any => {
     itemsTail = items.slice(3)
   }
   const handleToProject = (itemId: string): void => {
-    console.log('itemId: ', itemId)
     const projectId = itemId
-    navigate(`/${projectId}`, { replace: true })
+    navigate(`/${projectId}`)
   }
   return (
     <>
@@ -173,7 +172,7 @@ export const ProjectListTable = (): any => {
                             <Stack direction='row'>
                               <ProjectAvatarWrapper>
                                 <ProjectAvatar variant="rounded" sx={{ backgroundColor: PickAvatarColor(item.id, AvatarPalette) }}>
-                                  I
+                                  {item.displayName?.toString().toUpperCase().charAt(0)}
                                 </ProjectAvatar>
                               </ProjectAvatarWrapper>
                               <ProjectNameWrapper>

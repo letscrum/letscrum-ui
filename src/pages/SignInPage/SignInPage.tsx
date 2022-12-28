@@ -5,9 +5,7 @@ import { SignInLayout } from '../../layout'
 export const SignInPage: React.FunctionComponent = () => {
   return (
     <SignInLayout>
-      <>
-        <SignInForm />
-      </>
+      <SignInForm />
     </SignInLayout>
   )
 }
