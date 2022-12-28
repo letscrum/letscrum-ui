@@ -36,7 +36,8 @@ const HeadProjectsWrapper = styled(Stack)({
 })
 const HeadProjectCard = styled(Card)({
   minWidth: '18rem',
-  height: '12rem'
+  height: '12rem',
+  cursor: 'pointer'
 })
 const HeadCardContent = styled(CardContent)({
   height: '7rem'
@@ -244,7 +245,7 @@ export const ProjectListTable = (): any => {
           itemsTail.map((item) => {
             return (
               <>
-                <Stack key={item.id} direction='row' onClick={() => handleToProject(item.id)}>
+                <Stack key={item.id} direction='row' onClick={() => handleToProject(item.id)} sx={{ cursor: 'pointer' }}>
                   <TailItemCardContent>
                     <Stack direction='row'>
                       <TailAvatarWrapper>

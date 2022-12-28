@@ -1,51 +1,84 @@
-import React, { Fragment, useState, ReactElement } from 'react'
-import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { Box, MenuList, MenuItem, ListItemText, Avatar, Typography, Button, Drawer, Divider } from '@mui/material'
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+import React, { useState, ReactElement, useEffect } from 'react'
+import { Outlet, useNavigate, useParams } from 'react-router-dom'
+import { Box, Stack, MenuList, MenuItem, ListItemIcon, ListItemText, Avatar, Typography, Button, Drawer, Divider } from '@mui/material'
 import { grey, blue, red } from '@mui/material/colors'
-import { Assessment, Settings, CardGiftcard } from '@mui/icons-material'
+import { Assessment, Settings, CardGiftcard, Add } from '@mui/icons-material'
 import { styled } from '@mui/system'
+import axios from 'axios'
 
 const SideMenuDivider = styled(Divider)({
   margin: '0 .5rem'
 })
-const SideMenuTitle = styled(MenuItem)({
-  padding: '.75rem .5rem .25rem .75rem',
+const SideMenuTitle = styled(Stack)({
+  padding: '0',
   backgroundColor: grey[200]
 })
 const SideMenuTitleText = styled(ListItemText)({
+  margin: '0',
   '& .MuiTypography-root': {
-    paddingLeft: '.75rem',
+    height: '3rem',
+    lineHeight: '3rem',
     fontSize: '.875rem',
     fontWeight: 'bold',
     color: grey[800]
   }
 })
+const SideMemuCreateBtn = styled(Button)({
+  color: grey[500]
+})
 const SideMenuItem = styled(MenuItem)({
-  padding: '.75rem .5rem',
+  padding: '0',
   backgroundColor: grey[200],
-  borderLeftStyle: 'solid',
-  borderLeftWidth: '.25rem',
-  borderLeftColor: grey[500],
-  '& .Mui-selected': {
+  borderRadius: '2px',
+  ':before': {
+    bottom: 0,
+    content: '""',
+    left: 0,
+    position: 'absolute',
+    top: 0,
+    width: '.25rem',
+    backgroundColor: grey[500]
+  },
+  '.Mui-selected': {
     backgroundColor: red[300]
   }
 })
-const SideSubMenuItem = styled(MenuItem)({
-  padding: '.6125rem .5rem',
-  backgroundColor: grey[200],
-  borderLeftStyle: 'solid',
-  borderLeftWidth: '.25rem',
-  borderLeftColor: grey[500],
-  '& .Mui-selected': {
-    backgroundColor: red[300]
-  }
+const SideMenuIconWrapper = styled(ListItemIcon)({
+  display: 'flex',
+  width: '3rem',
+  height: '3rem',
+  justifyContent: 'center',
+  alignItems: 'center'
+})
+const SideSubMenuIconWrapper = styled(ListItemIcon)({
+  display: 'flex',
+  width: '2.875rem',
+  height: '2.875rem',
+  justifyContent: 'center',
+  alignItems: 'center'
 })
 const SideMenuItemText = styled(ListItemText)({
   '& .MuiTypography-root': {
-    paddingLeft: '.75rem',
     fontSize: '.875rem',
-    fontWeight: 'medium',
+    fontWeight: 500,
     color: grey[800]
+  }
+})
+const SideSubMenuItem = styled(MenuItem)({
+  padding: '0',
+  backgroundColor: grey[200],
+  ':before': {
+    bottom: 0,
+    content: '""',
+    left: 0,
+    position: 'absolute',
+    top: 0,
+    width: '.25rem',
+    backgroundColor: blue[700]
+  },
+  '.Mui-selected': {
+    backgroundColor: red[300]
   }
 })
 const SetOrgButton = styled(Button)({
@@ -63,29 +96,41 @@ const SetOrgButton = styled(Button)({
 export const SideNavInProject: React.FunctionComponent = () => {
   const [selectedSubIndex, setSelectedSubIndex] = useState(0)
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [displayName, setDisplayName] = useState<string>('')
+  const displayLetter = displayName?.toString().toUpperCase().charAt(0)
   const navigate = useNavigate()
-  const location = useLocation()
-  let { projectId } = useParams()
-  projectId = projectId ?? ''
-  console.log('location: ', location, 'projectID: ', projectId)
+  const { projectId } = useParams()
+  const id = projectId ?? ''
+  useEffect(() => {
+    async function FetchData (params: { id: string }): Promise<string> {
+      try {
+        const projectData: any = await axios.get(`/v1/projects/${params.id}`)
+        setDisplayName(projectData.data.item.displayName)
+        return displayName
+      } catch (e: any) {
+        return e.message
+      }
+    }
+    void FetchData({ id })
+  }, [])
   const sideMenuItems = [{
     name: 'Overview',
-    path: `/${projectId}`,
+    path: `/${id}`,
     key: 'overview',
     children: [{
       name: 'Summary',
-      path: `/${projectId}`,
+      path: `/${id}`,
       key: 'summary'
     },
     {
       name: 'Dashboard',
-      path: `/${projectId}/dashboard`,
+      path: `/${id}/dashboard`,
       key: 'dashboard'
     }]
   },
   {
     name: 'Boards',
-    path: `/${projectId}`,
+    path: `/${id}`,
     key: 'boards'
   }
   ]
@@ -99,6 +144,7 @@ export const SideNavInProject: React.FunctionComponent = () => {
   }
   return (
     <Box display='flex'>
+      { displayName === '' ? <>loading</> : <>OK</>}
       <Drawer
         sx={{
           width: '16rem',
@@ -114,29 +160,34 @@ export const SideNavInProject: React.FunctionComponent = () => {
         variant="permanent"
         anchor="left"
       >
-        <SideMenuTitle>
-          <Avatar sx={{ width: '1.5rem', height: '1.5rem', bgcolor: red[900] }} variant="rounded">
-            <Typography sx={{ fontSize: '.875rem', fontWeight: 300 }}>
-              i
-            </Typography>
-          </Avatar>
+        <SideMenuTitle direction='row'>
+          <SideMenuIconWrapper sx={{ minWidth: '3rem' }}>
+            <Avatar sx={{ width: '1.5rem', height: '1.5rem', bgcolor: red[900] }} variant="rounded">
+              <Typography sx={{ fontSize: '.875rem', fontWeight: 300 }}>
+                {displayLetter}
+              </Typography>
+            </Avatar>
+          </SideMenuIconWrapper>
           <SideMenuTitleText>
-            iMoogoo
+            {displayName}
           </SideMenuTitleText>
+          <SideMemuCreateBtn>
+            <Add sx={{ color: grey[700] }} />
+          </SideMemuCreateBtn>
         </SideMenuTitle>
         <SideMenuDivider />
         {/* menu list */}
-        <MenuList sx={{ padding: 0 }}>
+        <MenuList sx={{ padding: '.25rem 0' }}>
           {sideMenuItems.map((item, index) => {
             return (
-              <Fragment key={item.key}>
+              <div key={item.key}>
                 <SideMenuItem
                   selected={index === selectedIndex}
                   onClick={() => handleMenuItem(index)}
                 >
-                  <Avatar sx={{ width: '1.5rem', height: '1.5rem', bgcolor: blue[600] }} variant="rounded">
-                    <Assessment />
-                  </Avatar>
+                  <SideMenuIconWrapper sx={{ maxWidth: '3rem' }}>
+                    <Assessment sx={{ fontSize: '1.75rem', color: blue[700] }} />
+                  </SideMenuIconWrapper>
                   <SideMenuItemText>
                     {item.name}
                   </SideMenuItemText>
@@ -149,10 +200,10 @@ export const SideNavInProject: React.FunctionComponent = () => {
                         selected={index === selectedSubIndex}
                         onClick={() => handleSubMenuItem(item.path, index)}
                       >
-                        <Avatar sx={{ width: '1rem', height: '1rem', marginLeft: '.25rem', bgcolor: grey[900] }} variant="rounded">
-                          <CardGiftcard sx={{ width: '1rem', height: '1rem' }} />
-                        </Avatar>
-                        <SideMenuItemText sx={{ marginLeft: '.25rem' }}>
+                        <SideSubMenuIconWrapper sx={{}}>
+                          <CardGiftcard sx={{ fontSize: '1rem' }} />
+                        </SideSubMenuIconWrapper>
+                        <SideMenuItemText>
                           {item.name}
                         </SideMenuItemText>
                       </SideSubMenuItem>
@@ -161,7 +212,7 @@ export const SideNavInProject: React.FunctionComponent = () => {
                   )
                   }
                 </MenuList>
-              </Fragment>
+              </div>
             )
           })}
         </MenuList>
