@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { Box, Stack, Breadcrumbs, Link, Typography, TextField, InputAdornment, Avatar } from '@mui/material'
+import { LinkProps } from '@mui/material/Link'
 import { SearchOutlined, PlaylistAddCheckOutlined, HelpOutlineOutlined, ManageAccountsOutlined } from '@mui/icons-material'
 import { deepPurple, grey, blue } from '@mui/material/colors'
 import { useAppSelector } from '../../redux/hooks'
 import { selectUserName } from '../../redux/reducers/userSlice'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Outlet, useNavigate, Link as RouterLink, useLocation, useParams } from 'react-router-dom'
 
 const BreadcrumbItems = styled(Breadcrumbs)({
   '& .MuiBreadcrumbs-li': {
@@ -20,6 +21,7 @@ const BreadcrumbItems = styled(Breadcrumbs)({
     color: grey[500]
   },
   '& .MuiTypography-root': {
+    lineHeight: '2rem',
     fontSize: '.875rem',
     padding: 8,
     borderRadius: 2,
@@ -135,8 +137,22 @@ const TopNavItem = styled('div')({
     cursor: 'pointer'
   }
 })
-
+interface LinkRouterProps extends LinkProps {
+  to: string
+  replace?: boolean
+}
+const LinkRouter = (props: LinkRouterProps): React.ReactElement => {
+  return <Link {...props} component={RouterLink as any } sx={{ color: grey[500], fontWeight: 'medium' }} />
+}
 export const TopNav: React.FunctionComponent = () => {
+  const { projectId } = useParams()
+  const id = projectId ?? ''
+  const breadcrumbNameMap: { [key: string]: string } = {
+    [`/${id}`]: 'ProjectName',
+    [`/${id}/dashboard`]: 'Dashboard'
+  }
+  const location = useLocation()
+  const pathnames = location.pathname.split('/').filter((x) => x)
   const [isFoucs, setIsFocus] = useState<boolean>(false)
   const name = useAppSelector(selectUserName)
   const displayLetter = name?.toString().toUpperCase().charAt(0)
@@ -152,7 +168,26 @@ export const TopNav: React.FunctionComponent = () => {
         {
           isFoucs ||
           <BreadcrumbItems aria-label="breadcrumb">
-            <Link underline="hover" color="inherit" href="/">
+            {pathnames.map((value, index) => {
+              const last: boolean = index === pathnames.length - 1
+              const to = `/${pathnames.slice(0, index + 1).join('/')}`
+              return (
+                last
+                  ? (
+                    <Typography key={to}>
+                      {breadcrumbNameMap[to]}
+                    </Typography>
+                    )
+                  : (
+                    <LinkRouter underline="hover" to={to} key={to}>
+                      {breadcrumbNameMap[to]}
+                    </LinkRouter>
+                    )
+              )
+            })}
+            {/* to HomePage */}
+            {/* <LinkRouter underline='hover' color='inherit' to='/'>Home</LinkRouter> */}
+            {/* <Link underline="hover" color="inherit" href="/">
               MUI
             </Link>
             <Link
@@ -168,7 +203,7 @@ export const TopNav: React.FunctionComponent = () => {
               href="/material-ui/getting-started/installation/"
             >
               Breadcrumbs
-            </Link>
+            </Link> */}
           </BreadcrumbItems>
         }
         <SearchBarContainer sx={{ marginLeft: 'auto' }}>

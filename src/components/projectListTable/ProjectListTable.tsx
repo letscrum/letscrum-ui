@@ -35,7 +35,7 @@ const HeadProjectsWrapper = styled(Stack)({
   padding: '1rem 0'
 })
 const HeadProjectCard = styled(Card)({
-  minWidth: '18rem',
+  minWidth: '12rem',
   height: '12rem',
   cursor: 'pointer'
 })
@@ -166,7 +166,7 @@ export const ProjectListTable = (): any => {
                 {
                   itemsHead.map((item) => {
                     return (
-                      <Grid xs={4} key={item.id} onClick={() => handleToProject(item.id)}>
+                      <Grid xs={12} md={4} key={item.id} onClick={() => handleToProject(item.id)}>
                         <HeadProjectCard>
                           <HeadCardContent>
                             <Stack direction='row'>
@@ -243,18 +243,18 @@ export const ProjectListTable = (): any => {
         {
           itemsTail.map((item) => {
             return (
-              <>
-                <Stack key={item.id} direction='row' onClick={() => handleToProject(item.id)} sx={{ cursor: 'pointer' }}>
+              <div key={item.id}>
+                <Stack direction='row' onClick={() => handleToProject(item.id)} sx={{ cursor: 'pointer' }}>
                   <TailItemCardContent>
                     <Stack direction='row'>
                       <TailAvatarWrapper>
                         <ProjectAvatar variant="rounded" sx={{ backgroundColor: PickAvatarColor(item.id, AvatarPalette) }}>
-                          I
+                          {item.displayName?.toString().toUpperCase().charAt(0)}
                         </ProjectAvatar>
                       </TailAvatarWrapper>
                       <TailNameWrapper>
                         <Typography sx={{ fontSize: '1.125rem' }}>
-                          {item.name} {item.id}
+                          {item.name}
                         </Typography>
                         <Typography sx={{ color: grey[400] }}>
                           {item.displayName}
@@ -309,7 +309,7 @@ export const ProjectListTable = (): any => {
                   </CardActionsWrapper>
                 </Stack>
                 <Divider sx={{ borderColor: grey[100] }} />
-              </>
+              </div>
             )
           })
         }
