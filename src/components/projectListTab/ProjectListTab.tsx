@@ -1,11 +1,11 @@
-import React, { ReactElement, useState } from 'react'
+import React, { useState } from 'react'
 import { Box, Typography, Tab, Tabs, TextField, InputAdornment, Stack, Button } from '@mui/material'
 import { grey } from '@mui/material/colors'
 import styled from '@emotion/styled'
 import { FilterAlt } from '@mui/icons-material'
 import { useAppSelector } from '../../redux/hooks'
 import { selectUserName } from '../../redux/reducers/userSlice'
-import { ProjectListTable } from '../projectListTable'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const HeaderWrapper = styled(Stack)({
   width: '100%',
@@ -72,38 +72,59 @@ const FilterInput = styled(TextField)({
     color: grey[900]
   }
 })
-interface TabPanelProps {
-  children?: React.ReactNode
-  index: number
-  value: number
-}
-const TabPanel = (props: TabPanelProps): ReactElement => {
-  const { children, value, index, ...other } = props
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`${index}`}
-      aria-labelledby={`tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Typography>{children}</Typography>
-      )}
-    </div>
-  )
-}
+// interface TabPanelProps {
+//   children?: React.ReactNode
+//   index: number
+//   value: number
+// }
+// const TabPanel = (props: TabPanelProps): ReactElement => {
+//   const { children, value, index, ...other } = props
+//   return (
+//     <div
+//       role="tabpanel"
+//       hidden={value !== index}
+//       id={`${index}`}
+//       aria-labelledby={`tab-${index}`}
+//       {...other}
+//     >
+//       {value === index && (
+//         <Typography component={'span'}>{children}</Typography>
+//       )}
+//     </div>
+//   )
+// }
 const a11yProps = (index: number): { id: string, 'aria-controls': string } => {
   return {
     id: `${index}`,
     'aria-controls': `tabpanel-${index}`
   }
 }
+const tabPathMap: { [key: string]: number } = {
+  '/': 0,
+  '/_work': 1,
+  '/_pulls': 2
+}
 export const ProjectListTab: React.FunctionComponent = () => {
   const name = useAppSelector(selectUserName)
-  const [value, setValue] = useState(0)
-  const handleChange = (event: React.SyntheticEvent, newValue: number): void => {
-    setValue(newValue)
+  const path = useLocation().pathname
+  const [currentValue, setCurrentValue] = useState(tabPathMap[path])
+  const navigate = useNavigate()
+  const handleChange = (event: React.SyntheticEvent, newValue: number): any => {
+    setCurrentValue(newValue)
+    switch (newValue) {
+      case 0: {
+        navigate('/')
+        break
+      }
+      case 1: {
+        navigate('/_work')
+        break
+      }
+      case 2: {
+        navigate('/_pulls')
+        break
+      }
+    }
   }
   return (
     <Box width='calc(100wh - 16rem - 1px)'>
@@ -111,18 +132,18 @@ export const ProjectListTab: React.FunctionComponent = () => {
         <HeaderTitle>
           {name}
         </HeaderTitle>
-        {(value === 0) && <CreateProjectBtn variant="contained">
+        {(currentValue === 0) && <CreateProjectBtn variant="contained">
           + New project
         </CreateProjectBtn>
         }
       </HeaderWrapper>
       <Stack direction='row' sx={{ display: 'flex', alignItems: 'center' }}>
-        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+        <Tabs value={currentValue} onChange={handleChange}>
           <ProjectTab label="Projects" {...a11yProps(0)} />
           <ProjectTab label="My work items" {...a11yProps(1)} />
           <ProjectTab label="My pull requests" {...a11yProps(2)} />
         </Tabs>
-        {(value === 0) && <FilterInput
+        {(currentValue === 0) && <FilterInput
           placeholder="Filter projects"
           size='small'
           InputProps={{
@@ -135,15 +156,15 @@ export const ProjectListTab: React.FunctionComponent = () => {
         />
         }
       </Stack>
-      <TabPanel value={value} index={0}>
-        <ProjectListTable />
+      {/* <TabPanel value={currentValue} index={0}>
+        {currentValue}
       </TabPanel>
-      <TabPanel value={value} index={1}>
-        My work item List no data
+      <TabPanel value={currentValue} index={1}>
+        {currentValue}
       </TabPanel>
-      <TabPanel value={value} index={2}>
-        My pull request List no data
-      </TabPanel>
+      <TabPanel value={currentValue} index={2}>
+        {currentValue}
+      </TabPanel> */}
     </Box>
   )
 }

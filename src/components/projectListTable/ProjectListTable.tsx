@@ -179,9 +179,6 @@ export const ProjectListTable = (): any => {
                                 <Typography sx={{ fontSize: '1.125rem' }}>
                                   {item.name}
                                 </Typography>
-                                <Typography sx={{ color: grey[400] }}>
-                                  {item.displayName}
-                                </Typography>
                               </ProjectNameWrapper>
                             </Stack>
                           </HeadCardContent>
@@ -253,10 +250,10 @@ export const ProjectListTable = (): any => {
                         </ProjectAvatar>
                       </TailAvatarWrapper>
                       <TailNameWrapper>
-                        <Typography sx={{ fontSize: '1.125rem' }}>
+                        <Typography component={'span'} sx={{ fontSize: '1.125rem' }}>
                           {item.name}
                         </Typography>
-                        <Typography sx={{ color: grey[400] }}>
+                        <Typography component={'span'} sx={{ color: grey[400] }}>
                           {item.displayName}
                         </Typography>
                       </TailNameWrapper>

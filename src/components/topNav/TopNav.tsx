@@ -185,25 +185,6 @@ export const TopNav: React.FunctionComponent = () => {
                     )
               )
             })}
-            {/* to HomePage */}
-            {/* <LinkRouter underline='hover' color='inherit' to='/'>Home</LinkRouter> */}
-            {/* <Link underline="hover" color="inherit" href="/">
-              MUI
-            </Link>
-            <Link
-              underline="hover"
-              color="inherit"
-              href="/material-ui/getting-started/installation/"
-            >
-              Core
-            </Link>
-            <Link
-              underline="hover"
-              color="inherit"
-              href="/material-ui/getting-started/installation/"
-            >
-              Breadcrumbs
-            </Link> */}
           </BreadcrumbItems>
         }
         <SearchBarContainer sx={{ marginLeft: 'auto' }}>
