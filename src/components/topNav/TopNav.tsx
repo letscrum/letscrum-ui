@@ -142,16 +142,43 @@ interface LinkRouterProps extends LinkProps {
   replace?: boolean
 }
 const LinkRouter = (props: LinkRouterProps): React.ReactElement => {
-  return <Link {...props} component={RouterLink as any } sx={{ color: grey[500], fontWeight: 'medium' }} />
+  return <Link {...props} component={RouterLink as any} sx={{ color: grey[500], fontWeight: 'medium' }} />
 }
 export const TopNav: React.FunctionComponent = () => {
   const { projectId } = useParams()
   const id = projectId ?? ''
+  const sideMenuItems = [{
+    name: 'Overview',
+    path: '',
+    key: 'overview',
+    children: [{
+      name: 'Summary',
+      path: '',
+      key: 'summary'
+    },
+    {
+      name: 'Dashboard',
+      path: 'dashboard',
+      key: 'dashboard'
+    }]
+  },
+  {
+    name: 'Boards',
+    path: '',
+    key: 'boards',
+    children: []
+  }]
+  const location = useLocation()
+  const menuAnchor = location.state?.menuIndex.selectedIndex ?? 0
+  const menuName = sideMenuItems[menuAnchor].name
+  console.log('------menuName: ', menuName)
+  const subMenuAnchor = location.state?.subMenuIndex.selectedSubIndex ?? 0
+  const subMenuName = sideMenuItems[menuAnchor]?.children[subMenuAnchor].name
+  console.log('======subMenuName: ', subMenuName)
   const breadcrumbNameMap: { [key: string]: string } = {
     [`/${id}`]: 'ProjectName',
     [`/${id}/dashboard`]: 'Dashboard'
   }
-  const location = useLocation()
   const pathnames = location.pathname.split('/').filter((x) => x)
   const [isFoucs, setIsFocus] = useState<boolean>(false)
   const name = useAppSelector(selectUserName)
@@ -168,6 +195,9 @@ export const TopNav: React.FunctionComponent = () => {
         {
           isFoucs ||
           <BreadcrumbItems aria-label="breadcrumb">
+            <LinkRouter underline="hover" to='/'>
+              userName
+            </LinkRouter>
             {pathnames.map((value, index) => {
               const last: boolean = index === pathnames.length - 1
               const to = `/${pathnames.slice(0, index + 1).join('/')}`

@@ -1,11 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unused-expressions */
 import React, { useState, ReactElement, useEffect } from 'react'
 import { Outlet, useNavigate, useParams } from 'react-router-dom'
 import { Box, Stack, MenuList, MenuItem, ListItemIcon, ListItemText, Avatar, Typography, Button, Drawer, Divider } from '@mui/material'
 import { grey, blue, red } from '@mui/material/colors'
 import { Assessment, Dashboard, FactCheck, Settings, CardGiftcard, Add } from '@mui/icons-material'
 import { styled } from '@mui/system'
-import axios from 'axios'
+import { useAppDispatch, useAppSelector } from '../../redux/hooks'
+import { fecthProject, selectProjcetLoading, selectProjectDisplayName, selectProjectError } from '../../redux/reducers/projectSlice'
 
 const SideMenuDivider = styled(Divider)({
   margin: '0 .5rem'
@@ -96,60 +96,57 @@ const SetOrgButton = styled(Button)({
 export const SideNavInProject: React.FunctionComponent = () => {
   const [selectedSubIndex, setSelectedSubIndex] = useState(0)
   const [selectedIndex, setSelectedIndex] = useState(0)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string>('')
-  const [displayName, setDisplayName] = useState<string>('')
-  const displayLetter = displayName?.toString().toUpperCase().charAt(0)
-  const navigate = useNavigate()
   const { projectId } = useParams()
   const id = projectId ?? ''
-  const FetchData = async (params: { id: string }): Promise<string> => {
-    try {
-      const projectData: any = await axios.get(`/v1/projects/${params.id}`)
-      setDisplayName(projectData.data.item.displayName)
-      setLoading(false)
-      return displayName
-    } catch (e: any) {
-      setError(e.message)
-      setLoading(false)
-      return error
-    }
-  }
+  const loading = useAppSelector(selectProjcetLoading)
+  const error = useAppSelector(selectProjectError)
+  const displayName = useAppSelector(selectProjectDisplayName)
+  const displayLetter = displayName?.toString().toUpperCase().charAt(0)
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
   useEffect(() => {
-    void FetchData({ id })
+    dispatch(fecthProject({ id }))
+      .catch(() => alert(error))
   }, [])
   const sideMenuItems = [{
     name: 'Overview',
-    path: `/${id}`,
+    path: '',
     key: 'overview',
     icon: <Assessment sx={{ fontSize: '1.75rem', color: blue[700] }} />,
     children: [{
       name: 'Summary',
-      path: `/${id}`,
+      path: '',
       key: 'summary',
       icon: <CardGiftcard sx={{ fontSize: '1rem' }} />
     },
     {
       name: 'Dashboard',
-      path: `/${id}/dashboard`,
+      path: 'dashboard',
       key: 'dashboard',
       icon: <Dashboard sx={{ fontSize: '1rem' }} />
     }]
   },
   {
     name: 'Boards',
-    path: `/${id}`,
+    path: '',
     key: 'boards',
     icon: <FactCheck sx={{ fontSize: '1.75rem', color: blue[700] }} />
-  }
-  ]
-  const handleMenuItem = (index: number): void => {
+  }]
+  const handleMenuItem = (path: string, index: number): void => {
     setSelectedIndex(index)
-    navigate(sideMenuItems[index].path)
+    console.log('when click side menu item: ', selectedIndex)
+    navigate(path)
   }
   const handleSubMenuItem = (path: string, index: number): void => {
     setSelectedSubIndex(index)
-    navigate(path)
+    console.log('when click sub item: ', selectedSubIndex)
+    console.log('when click sub item parent: ', selectedIndex)
+    navigate(path, {
+      state: {
+        menuIndex: { selectedIndex },
+        subMenuIndex: { selectedSubIndex }
+      }
+    })
   }
   return (
     <Box display='flex'>
@@ -195,7 +192,8 @@ export const SideNavInProject: React.FunctionComponent = () => {
               <div key={item.key}>
                 <SideMenuItem
                   selected={index === selectedIndex}
-                  onClick={() => handleMenuItem(index)}
+                  id={`menu-${index}`}
+                  onClick={() => handleMenuItem(item.path, index)}
                 >
                   <SideMenuIconWrapper sx={{ maxWidth: '3rem' }}>
                     {item.icon}
