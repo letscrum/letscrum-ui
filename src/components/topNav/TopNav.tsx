@@ -6,7 +6,7 @@ import { SearchOutlined, PlaylistAddCheckOutlined, HelpOutlineOutlined, ManageAc
 import { deepPurple, grey, blue } from '@mui/material/colors'
 import { useAppSelector } from '../../redux/hooks'
 import { selectUserName } from '../../redux/reducers/userSlice'
-import { Outlet, useNavigate, Link as RouterLink, useLocation } from 'react-router-dom'
+import { Outlet, useNavigate, Link as RouterLink, useLocation, useParams } from 'react-router-dom'
 import { selectProjectDisplayName } from '../../redux/reducers/projectSlice'
 
 const BreadcrumbItems = styled(Breadcrumbs)({
@@ -158,6 +158,7 @@ export const TopNav: React.FunctionComponent = () => {
   const displayLetter = userName?.toString().toUpperCase().charAt(0)
   const navigate = useNavigate()
   const projectName = useAppSelector(selectProjectDisplayName)
+  const { projectId } = useParams()
   const location = useLocation()
   const menuName = location.state?.menuIndex.name ?? 'Overview'
   const menuPath = location.state?.menuIndex.path ?? ''
@@ -189,7 +190,7 @@ export const TopNav: React.FunctionComponent = () => {
           </Typography>
         </LogoContainer>
         {
-          isFoucs ||
+          (isFoucs || (projectId === undefined)) ||
           <BreadcrumbItems aria-label="breadcrumb">
             {breadcrumbMap.map((item, index) => {
               return (
