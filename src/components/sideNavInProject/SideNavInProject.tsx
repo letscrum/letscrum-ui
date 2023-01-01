@@ -130,21 +130,33 @@ export const SideNavInProject: React.FunctionComponent = () => {
     name: 'Boards',
     path: '',
     key: 'boards',
-    icon: <FactCheck sx={{ fontSize: '1.75rem', color: blue[700] }} />
+    icon: <FactCheck sx={{ fontSize: '1.75rem', color: blue[700] }} />,
+    children: []
   }]
   const handleMenuItem = (path: string, index: number): void => {
     setSelectedIndex(index)
-    console.log('when click side menu item: ', selectedIndex)
-    navigate(path)
+    navigate(path, {
+      state: {
+        menuIndex: {
+          name: sideMenuItems[selectedIndex].name,
+          path: sideMenuItems[selectedIndex].path
+        }
+      }
+    })
   }
   const handleSubMenuItem = (path: string, index: number): void => {
     setSelectedSubIndex(index)
-    console.log('when click sub item: ', selectedSubIndex)
-    console.log('when click sub item parent: ', selectedIndex)
+    console.log(index, ': ', sideMenuItems[selectedIndex].children[index].name)
     navigate(path, {
       state: {
-        menuIndex: { selectedIndex },
-        subMenuIndex: { selectedSubIndex }
+        menuIndex: {
+          name: sideMenuItems[selectedIndex].name,
+          path: sideMenuItems[selectedIndex].path
+        },
+        subMenuIndex: {
+          name: sideMenuItems[selectedIndex].children[index].name,
+          path: sideMenuItems[selectedIndex].children[index].path
+        }
       }
     })
   }
