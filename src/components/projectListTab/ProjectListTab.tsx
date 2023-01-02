@@ -6,6 +6,8 @@ import { FilterAlt } from '@mui/icons-material'
 import { useAppSelector } from '../../redux/hooks'
 import { selectUserName } from '../../redux/reducers/userSlice'
 import { useLocation, useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import { ProjectProps } from '../projectListTable'
 
 const HeaderWrapper = styled(Stack)({
   width: '100%',
@@ -72,27 +74,6 @@ const FilterInput = styled(TextField)({
     color: grey[900]
   }
 })
-// interface TabPanelProps {
-//   children?: React.ReactNode
-//   index: number
-//   value: number
-// }
-// const TabPanel = (props: TabPanelProps): ReactElement => {
-//   const { children, value, index, ...other } = props
-//   return (
-//     <div
-//       role="tabpanel"
-//       hidden={value !== index}
-//       id={`${index}`}
-//       aria-labelledby={`tab-${index}`}
-//       {...other}
-//     >
-//       {value === index && (
-//         <Typography component={'span'}>{children}</Typography>
-//       )}
-//     </div>
-//   )
-// }
 const a11yProps = (index: number): { id: string, 'aria-controls': string } => {
   return {
     id: `${index}`,
@@ -108,6 +89,10 @@ export const ProjectListTab: React.FunctionComponent = () => {
   const name = useAppSelector(selectUserName)
   const path = useLocation().pathname
   const [currentValue, setCurrentValue] = useState(tabPathMap[path])
+  const [keyword, setKeyword] = useState<string>('')
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [items, setItems] = useState<ProjectProps[]>([])
   const navigate = useNavigate()
   const handleChange = (event: React.SyntheticEvent, newValue: number): any => {
     setCurrentValue(newValue)
@@ -125,6 +110,27 @@ export const ProjectListTab: React.FunctionComponent = () => {
         break
       }
     }
+  }
+  const handleSearch = (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+    setKeyword(e.currentTarget.value)
+  }
+  const searchProjectItems = async (params: { keyword: string }): Promise<ProjectProps[] | string> => {
+    try {
+      const response = await axios.get(`/v1/projects?keyword=${keyword}&page=1&size=10`)
+      setLoading(false)
+      setItems(response.data.items)
+      console.log('search results: ', response.data.items)
+      return items
+    } catch (e: any) {
+      setLoading(false)
+      setError(e.message)
+      return error
+    }
+  }
+  const handleSubmitSearch = (e: React.KeyboardEvent, keyword: string): void => {
+    const value = e.key;
+    (value === 'Enter' && keyword !== '') && searchProjectItems({ keyword })
+    console.log('loading: ', loading)
   }
   return (
     <Box width='calc(100wh - 16rem - 1px)'>
@@ -153,18 +159,11 @@ export const ProjectListTab: React.FunctionComponent = () => {
               </InputAdornment>
             )
           }}
+          onChange={handleSearch}
+          onKeyDown={(e) => handleSubmitSearch(e, keyword)}
         />
         }
       </Stack>
-      {/* <TabPanel value={currentValue} index={0}>
-        {currentValue}
-      </TabPanel>
-      <TabPanel value={currentValue} index={1}>
-        {currentValue}
-      </TabPanel>
-      <TabPanel value={currentValue} index={2}>
-        {currentValue}
-      </TabPanel> */}
     </Box>
   )
 }

@@ -7,7 +7,7 @@ import Grid from '@mui/material/Unstable_Grid2/Grid2'
 import axios from 'axios'
 import { useNavigate } from 'react-router'
 
-interface ProjectProps {
+export interface ProjectProps {
   id: string
   name: string
   displayName: string
@@ -76,7 +76,7 @@ const TailAvatarWrapper = styled(Grid)({
   width: '4rem',
   padding: '.5rem'
 })
-const TailNameWrapper = styled(Grid)({
+const TailNameWrapper = styled(Stack)({
   width: 'auto',
   padding: '.5rem'
 })
@@ -139,27 +139,27 @@ export const ProjectListTable = (): any => {
                   <Grid xs={4}>
                     <Stack direction='row'>
                       <LoadingCircular variant="circular" />
-                      <LoadingRectangular variant="rectangular" animation="wave"/>
+                      <LoadingRectangular variant="rectangular" animation="wave" />
                     </Stack>
                   </Grid>
                   <Grid xs={4}>
                     <Stack direction='row'>
                       <LoadingCircular variant="circular" />
-                      <LoadingRectangular variant="rectangular" animation="wave"/>
+                      <LoadingRectangular variant="rectangular" animation="wave" />
                     </Stack>
                   </Grid>
                   <Grid xs={4}>
                     <Stack direction='row'>
                       <LoadingCircular variant="circular" />
-                      <LoadingRectangular variant="rectangular" animation="wave"/>
+                      <LoadingRectangular variant="rectangular" animation="wave" />
                     </Stack>
                   </Grid>
                 </Stack>
                 <Grid xs={12}>
-                <Stack direction='row'>
-                  <LoadingCircular variant="circular" />
-                  <LoadingLongerRectangular variant="rectangular" animation="wave"/>
-                </Stack>
+                  <Stack direction='row'>
+                    <LoadingCircular variant="circular" />
+                    <LoadingLongerRectangular variant="rectangular" animation="wave" />
+                  </Stack>
                 </Grid>
               </>
               : <>
@@ -178,6 +178,9 @@ export const ProjectListTable = (): any => {
                               <ProjectNameWrapper>
                                 <Typography sx={{ fontSize: '1.125rem' }}>
                                   {item.name}
+                                </Typography>
+                                <Typography component={'span'} sx={{ color: grey[400] }}>
+                                  {item.displayName}
                                 </Typography>
                               </ProjectNameWrapper>
                             </Stack>

@@ -146,13 +146,6 @@ const LinkRouter = (props: LinkRouterProps): React.ReactElement => {
   return <Link {...props} component={RouterLink as any} sx={{ color: grey[500], fontWeight: 'medium' }} />
 }
 export const TopNav: React.FunctionComponent = () => {
-  // const { projectId } = useParams()
-  // const id = projectId ?? ''
-  // const breadcrumbNameMap: { [key: string]: string } = {
-  //   [`/${id}`]: 'ProjectName',
-  //   [`/${id}/dashboard`]: 'Dashboard'
-  // }
-  // const pathnames = location.pathname.split('/').filter((x) => x)
   const [isFoucs, setIsFocus] = useState<boolean>(false)
   const userName = useAppSelector(selectUserName)
   const displayLetter = userName?.toString().toUpperCase().charAt(0)
@@ -160,6 +153,8 @@ export const TopNav: React.FunctionComponent = () => {
   const projectName = useAppSelector(selectProjectDisplayName)
   const { projectId } = useParams()
   const location = useLocation()
+  // const pathnames = location.pathname.split('/').forEach((x) => x)
+  // console.log('...........', pathnames)
   const menuName = location.state?.menuIndex.name ?? 'Overview'
   const menuPath = location.state?.menuIndex.path ?? ''
   const subMenuName = location.state?.subMenuIndex?.name ?? 'Summary'
@@ -193,8 +188,9 @@ export const TopNav: React.FunctionComponent = () => {
           (isFoucs || (projectId === undefined)) ||
           <BreadcrumbItems aria-label="breadcrumb">
             {breadcrumbMap.map((item, index) => {
+              const last: boolean = index === breadcrumbMap.length - 1
               return (
-                index === 3
+                last
                   ? (
                   <Typography key={index}>
                     {item.name}
@@ -207,23 +203,6 @@ export const TopNav: React.FunctionComponent = () => {
                     )
               )
             })}
-            {/* {pathnames.map((value, index) => {
-              const last: boolean = index === pathnames.length - 1
-              const to = `/${pathnames.slice(0, index + 1).join('/')}`
-              return (
-                last
-                  ? (
-                    <Typography key={to}>
-                      {breadcrumbNameMap[to]}
-                    </Typography>
-                    )
-                  : (
-                    <LinkRouter underline="hover" to={to} key={to}>
-                      {breadcrumbNameMap[to]}
-                    </LinkRouter>
-                    )
-              )
-            })} */}
           </BreadcrumbItems>
         }
         <SearchBarContainer sx={{ marginLeft: 'auto' }}>

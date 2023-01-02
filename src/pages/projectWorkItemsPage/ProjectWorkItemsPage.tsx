@@ -1,5 +1,4 @@
 import React from 'react'
-import { ProjectListTab } from '../../components'
 import { Box } from '@mui/system'
 import { grey } from '@mui/material/colors'
 import styled from '@emotion/styled'
@@ -13,7 +12,6 @@ const Wrapper = styled(Box)({
 export const ProjectWorkItemsPage: React.FunctionComponent = () => {
   return (
     <Wrapper>
-      <ProjectListTab />
       <Typography>
         My work items
       </Typography>

@@ -146,7 +146,6 @@ export const SideNavInProject: React.FunctionComponent = () => {
   }
   const handleSubMenuItem = (path: string, index: number): void => {
     setSelectedSubIndex(index)
-    console.log(index, ': ', sideMenuItems[selectedIndex].children[index].name)
     navigate(path, {
       state: {
         menuIndex: {
