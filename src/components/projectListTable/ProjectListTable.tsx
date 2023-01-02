@@ -92,7 +92,7 @@ const PickAvatarColor = (id: string, colorSet: string[]): string => {
   const pickedColor = colorSet[codeNumber]
   return pickedColor
 }
-export const ProjectListTable = (): any => {
+export const ProjectListTable = (props: { keyword: string, isEnter: boolean, isDone: boolean }): React.ReactElement => {
   const navigate = useNavigate()
   const [hoverId, setHoverId] = useState<string | null>(null)
   const handleMouseIn = (e: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
@@ -102,12 +102,27 @@ export const ProjectListTable = (): any => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [items, setItems] = useState<ProjectProps[]>([])
+  const keyword = props.keyword
+  const isEnter = props.isEnter
+  const isDone = props.isDone
   let itemsHead: ProjectProps[] = []
   let itemsTail: ProjectProps[] = []
-  const fetchProjectItems = async (): Promise<ProjectProps[] | string> => {
+  const fetchProjectItems = async (
+    params: {
+      keyword: string
+      isEnter: boolean
+      isDone: boolean
+    }
+  ): Promise<ProjectProps[] | string> => {
     try {
-      const response = await axios.get('/v1/projects?page=1&size=10')
+      let response
+      setLoading(true)
+      console.log('loading: ', loading, 'isDone', params.isDone, 'isEnter', params.isEnter);
+      (params.isDone || params.isEnter)
+        ? response = await axios.get(`/v1/projects?keyword=${params.keyword}&page=1&size=10`)
+        : response = await axios.get('/v1/projects?page=1&size=10')
       setLoading(false)
+      console.log('list: ', response.data.items)
       setItems(response.data.items)
       return items
     } catch (e: any) {
@@ -117,9 +132,9 @@ export const ProjectListTable = (): any => {
     }
   }
   useEffect(() => {
-    fetchProjectItems()
+    fetchProjectItems({ keyword, isEnter, isDone })
       .catch(() => alert(error))
-  }, [])
+  }, [isDone, isEnter])
   if (items.length > 3) {
     itemsHead = items.slice(0, 3)
     itemsTail = items.slice(3)
