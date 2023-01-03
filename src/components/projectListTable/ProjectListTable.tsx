@@ -100,6 +100,7 @@ export const ProjectListTable = (props: { keyword: string, isEnter: boolean, isD
   }
   const handleMouseOut = (): void => setHoverId(null)
   const [loading, setLoading] = useState(true)
+  console.log('the begining declare: ', loading)
   const [error, setError] = useState('')
   const [items, setItems] = useState<ProjectProps[]>([])
   const keyword = props.keyword
@@ -117,7 +118,7 @@ export const ProjectListTable = (props: { keyword: string, isEnter: boolean, isD
     try {
       let response
       setLoading(true)
-      console.log('loading: ', loading, 'isDone', params.isDone, 'isEnter', params.isEnter);
+      console.log('requesting API: loading: ', loading, 'isDone', params.isDone, 'isEnter', params.isEnter);
       (params.isDone || params.isEnter)
         ? response = await axios.get(`/v1/projects?keyword=${params.keyword}&page=1&size=10`)
         : response = await axios.get('/v1/projects?page=1&size=10')
@@ -132,6 +133,7 @@ export const ProjectListTable = (props: { keyword: string, isEnter: boolean, isD
     }
   }
   useEffect(() => {
+    console.log('in the useEffect: ', loading)
     fetchProjectItems({ keyword, isEnter, isDone })
       .catch(() => alert(error))
   }, [isDone, isEnter])

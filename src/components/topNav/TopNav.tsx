@@ -146,12 +146,13 @@ const LinkRouter = (props: LinkRouterProps): React.ReactElement => {
   return <Link {...props} component={RouterLink as any} sx={{ color: grey[500], fontWeight: 'medium' }} />
 }
 export const TopNav: React.FunctionComponent = () => {
-  const [isFoucs, setIsFocus] = useState<boolean>(false)
+  const [isFoucs, setIsFocus] = useState(false)
   const userName = useAppSelector(selectUserName)
   const displayLetter = userName?.toString().toUpperCase().charAt(0)
   const navigate = useNavigate()
   const projectName = useAppSelector(selectProjectDisplayName)
   const { projectId } = useParams()
+  const isShowBreadcrumb = (projectId !== undefined) && (!isFoucs)
   const location = useLocation()
   // const pathnames = location.pathname.split('/').forEach((x) => x)
   // console.log('...........', pathnames)
@@ -185,7 +186,7 @@ export const TopNav: React.FunctionComponent = () => {
           </Typography>
         </LogoContainer>
         {
-          (isFoucs || (projectId === undefined)) ||
+          isShowBreadcrumb &&
           <BreadcrumbItems aria-label="breadcrumb">
             {breadcrumbMap.map((item, index) => {
               const last: boolean = index === breadcrumbMap.length - 1
