@@ -247,7 +247,9 @@ export const ProjectListPage: React.FunctionComponent = () => {
     }
   }
   // get search keyword
-  const handleSearch = (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>): void => setKeyword(e.currentTarget.value)
+  const handleSearch = (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+    setKeyword(e.currentTarget.value)
+  }
   // submit search by pressing Enter
   const handleSubmitSearch = (e: React.KeyboardEvent): void => {
     const value = e.key
