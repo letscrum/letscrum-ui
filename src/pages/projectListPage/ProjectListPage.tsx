@@ -184,8 +184,7 @@ export const ProjectListPage: React.FunctionComponent = () => {
   const [keyword, setKeyword] = useState<string>('')
   const [isEnter, setIsEnter] = useState(false)
   const [isDone, setIsDone] = useState(false)
-  const [loading, setLoading] = useState(false)
-  console.log('1---declare: ', loading)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [items, setItems] = useState<ProjectProps[]>([])
   const [hoverId, setHoverId] = useState<string | null>(null)
@@ -201,14 +200,11 @@ export const ProjectListPage: React.FunctionComponent = () => {
     }
   ): Promise<ProjectProps[] | string> => {
     try {
-      let response
-      setLoading(true)
-      console.log('3---requesting API: ', loading);
+      let response;
       (params.isDone || params.isEnter)
         ? response = await axios.get(`/v1/projects?keyword=${params.keyword}&page=1&size=10`)
         : response = await axios.get('/v1/projects?page=1&size=10')
       setLoading(false)
-      console.log('4---list: ', response.data.items)
       setItems(response.data.items)
       setIsEnter(false)
       return items
@@ -219,7 +215,6 @@ export const ProjectListPage: React.FunctionComponent = () => {
     }
   }
   useEffect(() => {
-    console.log('2---in useEffect: ', loading)
     fetchProjectItems({ keyword, isEnter, isDone })
       .catch(() => alert(error))
   }, [isDone, isEnter])
