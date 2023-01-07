@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-// import { ProjectListTable } from '../../components'
+import { CreateProject } from '../../components'
 import { Box, Typography, Tab, Tabs, TextField, InputAdornment, Stack, Button, Card, CardContent, CardActions, Avatar, Paper, Divider, Skeleton } from '@mui/material'
 import { FiberManualRecord, FactCheck, AccountTree, RocketLaunch, Science, Widgets, FilterAlt } from '@mui/icons-material'
 import { grey, red, teal, deepOrange, blue, deepPurple, pink, amber, cyan, green } from '@mui/material/colors'
@@ -181,6 +181,7 @@ export const ProjectListPage: React.FunctionComponent = () => {
   const navigate = useNavigate()
   const path = useLocation().pathname
   const [currentValue, setCurrentValue] = useState(tabPathMap[path])
+  const [show, setShow] = useState(false)
   const [keyword, setKeyword] = useState<string>('')
   const [isEnter, setIsEnter] = useState(false)
   const [isDone, setIsDone] = useState(false)
@@ -190,6 +191,7 @@ export const ProjectListPage: React.FunctionComponent = () => {
   const [hoverId, setHoverId] = useState<string | null>(null)
   const handleMouseIn = (e: React.MouseEvent<HTMLDivElement, MouseEvent>): void => setHoverId(e.currentTarget.id)
   const handleMouseOut = (): void => setHoverId(null)
+  const handleClose = (): void => setShow(false)
   let itemsHead: ProjectProps[] = []
   let itemsTail: ProjectProps[] = []
   const fetchProjectItems = async (
@@ -264,12 +266,14 @@ export const ProjectListPage: React.FunctionComponent = () => {
   }, [keyword])
   return (
     <Wrapper>
+      {/* tabs switch */}
       <Box width='calc(100wh - 16rem - 1px)'>
         <HeaderWrapper direction='row'>
           <HeaderTitle>
             {name}
           </HeaderTitle>
-          {(currentValue === 0) && <CreateProjectBtn variant="contained">
+          {(currentValue === 0) &&
+          <CreateProjectBtn variant="contained" onClick={() => setShow(true)} >
             + New project
           </CreateProjectBtn>
           }
@@ -297,7 +301,7 @@ export const ProjectListPage: React.FunctionComponent = () => {
           }
         </Stack>
       </Box>
-      {/* <ProjectListTable keyword={keyword} isEnter={isEnter} isDone={isDone} /> */}
+      {/* projects list */}
       <HeadProjectsWrapper direction='row'>
         <Grid container spacing={2} sx={{ flexGrow: 1, width: '100%' }}>
           {
@@ -482,6 +486,8 @@ export const ProjectListPage: React.FunctionComponent = () => {
           })
         }
       </Paper>
+      {/* create dialog */}
+      <CreateProject show={show} handleClose={handleClose} />
     </Wrapper>
   )
 }
