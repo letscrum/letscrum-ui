@@ -1,11 +1,13 @@
-import React, { ReactElement, useState } from 'react'
+import React, { useState } from 'react'
 import { Box, Typography, Tab, Tabs, TextField, InputAdornment, Stack, Button } from '@mui/material'
 import { grey } from '@mui/material/colors'
 import styled from '@emotion/styled'
 import { FilterAlt } from '@mui/icons-material'
 import { useAppSelector } from '../../redux/hooks'
 import { selectUserName } from '../../redux/reducers/userSlice'
-import { ProjectListTable } from '../projectListTable'
+import { useLocation, useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import { ProjectProps } from '../projectListTable'
 
 const HeaderWrapper = styled(Stack)({
   width: '100%',
@@ -72,38 +74,63 @@ const FilterInput = styled(TextField)({
     color: grey[900]
   }
 })
-interface TabPanelProps {
-  children?: React.ReactNode
-  index: number
-  value: number
-}
-const TabPanel = (props: TabPanelProps): ReactElement => {
-  const { children, value, index, ...other } = props
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`${index}`}
-      aria-labelledby={`tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Typography>{children}</Typography>
-      )}
-    </div>
-  )
-}
 const a11yProps = (index: number): { id: string, 'aria-controls': string } => {
   return {
     id: `${index}`,
     'aria-controls': `tabpanel-${index}`
   }
 }
+const tabPathMap: { [key: string]: number } = {
+  '/': 0,
+  '/_work': 1,
+  '/_pulls': 2
+}
 export const ProjectListTab: React.FunctionComponent = () => {
   const name = useAppSelector(selectUserName)
-  const [value, setValue] = useState(0)
-  const handleChange = (event: React.SyntheticEvent, newValue: number): void => {
-    setValue(newValue)
+  const path = useLocation().pathname
+  const [currentValue, setCurrentValue] = useState(tabPathMap[path])
+  const [keyword, setKeyword] = useState<string>('')
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [items, setItems] = useState<ProjectProps[]>([])
+  const navigate = useNavigate()
+  const handleChange = (event: React.SyntheticEvent, newValue: number): any => {
+    setCurrentValue(newValue)
+    switch (newValue) {
+      case 0: {
+        navigate('/')
+        break
+      }
+      case 1: {
+        navigate('/_work')
+        break
+      }
+      case 2: {
+        navigate('/_pulls')
+        break
+      }
+    }
+  }
+  const handleSearch = (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+    setKeyword(e.currentTarget.value)
+  }
+  const searchProjectItems = async (params: { keyword: string }): Promise<ProjectProps[] | string> => {
+    try {
+      const response = await axios.get(`/v1/projects?keyword=${keyword}&page=1&size=10`)
+      setLoading(false)
+      setItems(response.data.items)
+      console.log('search results: ', response.data.items)
+      return items
+    } catch (e: any) {
+      setLoading(false)
+      setError(e.message)
+      return error
+    }
+  }
+  const handleSubmitSearch = (e: React.KeyboardEvent, keyword: string): void => {
+    const value = e.key;
+    (value === 'Enter' && keyword !== '') && searchProjectItems({ keyword })
+    console.log('loading: ', loading)
   }
   return (
     <Box width='calc(100wh - 16rem - 1px)'>
@@ -111,18 +138,18 @@ export const ProjectListTab: React.FunctionComponent = () => {
         <HeaderTitle>
           {name}
         </HeaderTitle>
-        {(value === 0) && <CreateProjectBtn variant="contained">
+        {(currentValue === 0) && <CreateProjectBtn variant="contained">
           + New project
         </CreateProjectBtn>
         }
       </HeaderWrapper>
       <Stack direction='row' sx={{ display: 'flex', alignItems: 'center' }}>
-        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+        <Tabs value={currentValue} onChange={handleChange}>
           <ProjectTab label="Projects" {...a11yProps(0)} />
           <ProjectTab label="My work items" {...a11yProps(1)} />
           <ProjectTab label="My pull requests" {...a11yProps(2)} />
         </Tabs>
-        {(value === 0) && <FilterInput
+        {(currentValue === 0) && <FilterInput
           placeholder="Filter projects"
           size='small'
           InputProps={{
@@ -132,18 +159,11 @@ export const ProjectListTab: React.FunctionComponent = () => {
               </InputAdornment>
             )
           }}
+          onChange={handleSearch}
+          onKeyDown={(e) => handleSubmitSearch(e, keyword)}
         />
         }
       </Stack>
-      <TabPanel value={value} index={0}>
-        <ProjectListTable />
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        My work item List no data
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        My pull request List no data
-      </TabPanel>
     </Box>
   )
 }

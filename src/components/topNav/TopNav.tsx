@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { styled } from '@mui/material/styles'
 import { Box, Stack, Breadcrumbs, Link, Typography, TextField, InputAdornment, Avatar } from '@mui/material'
+import { LinkProps } from '@mui/material/Link'
 import { SearchOutlined, PlaylistAddCheckOutlined, HelpOutlineOutlined, ManageAccountsOutlined } from '@mui/icons-material'
 import { deepPurple, grey, blue } from '@mui/material/colors'
 import { useAppSelector } from '../../redux/hooks'
 import { selectUserName } from '../../redux/reducers/userSlice'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Outlet, useNavigate, Link as RouterLink, useLocation, useParams } from 'react-router-dom'
+import { selectProjectDisplayName } from '../../redux/reducers/projectSlice'
 
 const BreadcrumbItems = styled(Breadcrumbs)({
   '& .MuiBreadcrumbs-li': {
@@ -20,6 +22,7 @@ const BreadcrumbItems = styled(Breadcrumbs)({
     color: grey[500]
   },
   '& .MuiTypography-root': {
+    lineHeight: '2rem',
     fontSize: '.875rem',
     padding: 8,
     borderRadius: 2,
@@ -93,8 +96,12 @@ const SearchInput = styled(TextField)({
   }
 })
 const TopNavContainer = styled(Stack)({
-  justifyContent: 'space-between',
+  position: 'sticky',
+  top: '0',
+  zIndex: '1',
   height: '3rem',
+  backgroundColor: 'white',
+  justifyContent: 'space-between',
   borderBottomWidth: '1px',
   borderBottomStyle: 'solid',
   borderBottomColor: grey[300]
@@ -131,12 +138,45 @@ const TopNavItem = styled('div')({
     cursor: 'pointer'
   }
 })
-
+interface LinkRouterProps extends LinkProps {
+  to: string
+  replace?: boolean
+}
+const LinkRouter = (props: LinkRouterProps): React.ReactElement => {
+  return <Link {...props} component={RouterLink as any} sx={{ color: grey[500], fontWeight: 'medium' }} />
+}
 export const TopNav: React.FunctionComponent = () => {
-  const [isFoucs, setIsFocus] = useState<boolean>(false)
-  const name = useAppSelector(selectUserName)
-  const displayLetter = name?.toString().toUpperCase().charAt(0)
+  const [isFoucs, setIsFocus] = useState(false)
+  const userName = useAppSelector(selectUserName)
+  const displayLetter = userName?.toString().toUpperCase().charAt(0)
   const navigate = useNavigate()
+  const projectName = useAppSelector(selectProjectDisplayName)
+  const { projectId } = useParams()
+  const isShowBreadcrumb = (projectId !== undefined) && (!isFoucs)
+  const location = useLocation()
+  // const pathnames = location.pathname.split('/').forEach((x) => x)
+  // console.log('...........', pathnames)
+  const menuName = location.state?.menuIndex.name ?? 'Overview'
+  const menuPath = location.state?.menuIndex.path ?? ''
+  const subMenuName = location.state?.subMenuIndex?.name ?? 'Summary'
+  const subMenuPath = location.state?.subMenuIndex?.path ?? ''
+  const breadcrumbMap: Array<{ name: any, path: any }> = [{
+    name: userName,
+    path: ''
+  },
+  {
+    name: projectName,
+    path: ''
+  },
+  {
+    name: menuName,
+    path: menuPath
+  },
+  {
+    name: subMenuName,
+    path: subMenuPath
+  }
+  ]
   return (
     <Box>
       <TopNavContainer direction='row'>
@@ -146,25 +186,24 @@ export const TopNav: React.FunctionComponent = () => {
           </Typography>
         </LogoContainer>
         {
-          isFoucs ||
+          isShowBreadcrumb &&
           <BreadcrumbItems aria-label="breadcrumb">
-            <Link underline="hover" color="inherit" href="/">
-              MUI
-            </Link>
-            <Link
-              underline="hover"
-              color="inherit"
-              href="/material-ui/getting-started/installation/"
-            >
-              Core
-            </Link>
-            <Link
-              underline="hover"
-              color="inherit"
-              href="/material-ui/getting-started/installation/"
-            >
-              Breadcrumbs
-            </Link>
+            {breadcrumbMap.map((item, index) => {
+              const last: boolean = index === breadcrumbMap.length - 1
+              return (
+                last
+                  ? (
+                  <Typography key={index}>
+                    {item.name}
+                  </Typography>
+                    )
+                  : (
+                  <LinkRouter underline="hover" key={index} to={item.path}>
+                    {item.name}
+                  </LinkRouter>
+                    )
+              )
+            })}
           </BreadcrumbItems>
         }
         <SearchBarContainer sx={{ marginLeft: 'auto' }}>

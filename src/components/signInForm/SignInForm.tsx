@@ -37,7 +37,7 @@ export const SignInForm: React.FunctionComponent = () => {
   const handleSignIn = (): void => {
     dispatch(userSignIn({ inputName, inputPwd }))
       .then(() => {
-        navigate('/', { replace: true })
+        navigate('/')
       })
       .catch(() => {
         error ?? alert(error)

@@ -5,8 +5,9 @@ import { FiberManualRecord, FactCheck, AccountTree, RocketLaunch, Science, Widge
 import { grey, red, teal, deepOrange, blue, deepPurple, pink, amber, cyan, green } from '@mui/material/colors'
 import Grid from '@mui/material/Unstable_Grid2/Grid2'
 import axios from 'axios'
+import { useNavigate } from 'react-router'
 
-interface ProjectProps {
+export interface ProjectProps {
   id: string
   name: string
   displayName: string
@@ -20,7 +21,7 @@ const LoadingCircular = styled(Skeleton)({
 const LoadingRectangular = styled(Skeleton)({
   height: '12rem',
   width: '19rem',
-  margin: '1.5rem 0 1rem 0',
+  margin: '1.5rem 0 0 0',
   borderRadius: '3px'
 })
 const LoadingLongerRectangular = styled(Skeleton)({
@@ -34,8 +35,9 @@ const HeadProjectsWrapper = styled(Stack)({
   padding: '1rem 0'
 })
 const HeadProjectCard = styled(Card)({
-  minWidth: '18rem',
-  height: '12rem'
+  minWidth: '12rem',
+  height: '12rem',
+  cursor: 'pointer'
 })
 const HeadCardContent = styled(CardContent)({
   height: '7rem'
@@ -74,7 +76,7 @@ const TailAvatarWrapper = styled(Grid)({
   width: '4rem',
   padding: '.5rem'
 })
-const TailNameWrapper = styled(Grid)({
+const TailNameWrapper = styled(Stack)({
   width: 'auto',
   padding: '.5rem'
 })
@@ -90,21 +92,38 @@ const PickAvatarColor = (id: string, colorSet: string[]): string => {
   const pickedColor = colorSet[codeNumber]
   return pickedColor
 }
-export const ProjectListTable = (): any => {
+export const ProjectListTable = (props: { keyword: string, isEnter: boolean, isDone: boolean }): React.ReactElement => {
+  const navigate = useNavigate()
   const [hoverId, setHoverId] = useState<string | null>(null)
   const handleMouseIn = (e: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
     setHoverId(e.currentTarget.id)
   }
   const handleMouseOut = (): void => setHoverId(null)
   const [loading, setLoading] = useState(true)
+  console.log('the begining declare: ', loading)
   const [error, setError] = useState('')
   const [items, setItems] = useState<ProjectProps[]>([])
+  const keyword = props.keyword
+  const isEnter = props.isEnter
+  const isDone = props.isDone
   let itemsHead: ProjectProps[] = []
   let itemsTail: ProjectProps[] = []
-  const fetchProjectItems = async (): Promise<ProjectProps[] | string> => {
+  const fetchProjectItems = async (
+    params: {
+      keyword: string
+      isEnter: boolean
+      isDone: boolean
+    }
+  ): Promise<ProjectProps[] | string> => {
     try {
-      const response = await axios.get('/v1/projects?page=1&size=10')
+      let response
+      setLoading(true)
+      console.log('requesting API: loading: ', loading, 'isDone', params.isDone, 'isEnter', params.isEnter);
+      (params.isDone || params.isEnter)
+        ? response = await axios.get(`/v1/projects?keyword=${params.keyword}&page=1&size=10`)
+        : response = await axios.get('/v1/projects?page=1&size=10')
       setLoading(false)
+      console.log('list: ', response.data.items)
       setItems(response.data.items)
       return items
     } catch (e: any) {
@@ -114,12 +133,17 @@ export const ProjectListTable = (): any => {
     }
   }
   useEffect(() => {
-    fetchProjectItems()
+    console.log('in the useEffect: ', loading)
+    fetchProjectItems({ keyword, isEnter, isDone })
       .catch(() => alert(error))
-  }, [])
+  }, [isDone, isEnter])
   if (items.length > 3) {
     itemsHead = items.slice(0, 3)
     itemsTail = items.slice(3)
+  }
+  const handleToProject = (itemId: string): void => {
+    const projectId = itemId
+    navigate(`/${projectId}`)
   }
   return (
     <>
@@ -132,47 +156,47 @@ export const ProjectListTable = (): any => {
                   <Grid xs={4}>
                     <Stack direction='row'>
                       <LoadingCircular variant="circular" />
-                      <LoadingRectangular variant="rectangular" animation="wave"/>
+                      <LoadingRectangular variant="rectangular" animation="wave" />
                     </Stack>
                   </Grid>
                   <Grid xs={4}>
                     <Stack direction='row'>
                       <LoadingCircular variant="circular" />
-                      <LoadingRectangular variant="rectangular" animation="wave"/>
+                      <LoadingRectangular variant="rectangular" animation="wave" />
                     </Stack>
                   </Grid>
                   <Grid xs={4}>
                     <Stack direction='row'>
                       <LoadingCircular variant="circular" />
-                      <LoadingRectangular variant="rectangular" animation="wave"/>
+                      <LoadingRectangular variant="rectangular" animation="wave" />
                     </Stack>
                   </Grid>
                 </Stack>
                 <Grid xs={12}>
-                <Stack direction='row'>
-                  <LoadingCircular variant="circular" />
-                  <LoadingLongerRectangular variant="rectangular" animation="wave"/>
-                </Stack>
+                  <Stack direction='row'>
+                    <LoadingCircular variant="circular" />
+                    <LoadingLongerRectangular variant="rectangular" animation="wave" />
+                  </Stack>
                 </Grid>
               </>
               : <>
                 {
                   itemsHead.map((item) => {
                     return (
-                      <Grid xs={4} key={item.id}>
+                      <Grid xs={12} md={4} key={item.id} onClick={() => handleToProject(item.id)}>
                         <HeadProjectCard>
                           <HeadCardContent>
                             <Stack direction='row'>
                               <ProjectAvatarWrapper>
                                 <ProjectAvatar variant="rounded" sx={{ backgroundColor: PickAvatarColor(item.id, AvatarPalette) }}>
-                                  I
+                                  {item.displayName?.toString().toUpperCase().charAt(0)}
                                 </ProjectAvatar>
                               </ProjectAvatarWrapper>
                               <ProjectNameWrapper>
                                 <Typography sx={{ fontSize: '1.125rem' }}>
                                   {item.name}
                                 </Typography>
-                                <Typography sx={{ color: grey[400] }}>
+                                <Typography component={'span'} sx={{ color: grey[400] }}>
                                   {item.displayName}
                                 </Typography>
                               </ProjectNameWrapper>
@@ -236,20 +260,20 @@ export const ProjectListTable = (): any => {
         {
           itemsTail.map((item) => {
             return (
-              <>
-                <Stack key={item.id} direction='row'>
+              <div key={item.id}>
+                <Stack direction='row' onClick={() => handleToProject(item.id)} sx={{ cursor: 'pointer' }}>
                   <TailItemCardContent>
                     <Stack direction='row'>
                       <TailAvatarWrapper>
                         <ProjectAvatar variant="rounded" sx={{ backgroundColor: PickAvatarColor(item.id, AvatarPalette) }}>
-                          I
+                          {item.displayName?.toString().toUpperCase().charAt(0)}
                         </ProjectAvatar>
                       </TailAvatarWrapper>
                       <TailNameWrapper>
-                        <Typography sx={{ fontSize: '1.125rem' }}>
-                          {item.name} {item.id}
+                        <Typography component={'span'} sx={{ fontSize: '1.125rem' }}>
+                          {item.name}
                         </Typography>
-                        <Typography sx={{ color: grey[400] }}>
+                        <Typography component={'span'} sx={{ color: grey[400] }}>
                           {item.displayName}
                         </Typography>
                       </TailNameWrapper>
@@ -302,7 +326,7 @@ export const ProjectListTable = (): any => {
                   </CardActionsWrapper>
                 </Stack>
                 <Divider sx={{ borderColor: grey[100] }} />
-              </>
+              </div>
             )
           })
         }

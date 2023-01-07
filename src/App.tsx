@@ -1,7 +1,7 @@
 import React from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { PrivateRoute, SideNav, SideNavInProject, TopNav } from './components'
-import { ProjectListPage, SignInPage, RouteErrorPage } from './pages'
+import { ProjectListPage, ProjectWorkItemsPage, ProjectPullRequestsPage, ProjectSummaryPage, ProjectDashboardPage, SignInPage, RouteErrorPage } from './pages'
 import axios from 'axios'
 import { useAppSelector } from './redux/hooks'
 import { selectUserAccessToken } from './redux/reducers/userSlice'
@@ -30,16 +30,28 @@ const router = createBrowserRouter([
           {
             path: '/',
             element: <ProjectListPage />
+          },
+          {
+            path: '/_work',
+            element: <ProjectWorkItemsPage />
+          },
+          {
+            path: '/_pulls',
+            element: <ProjectPullRequestsPage />
           }
         ]
       },
       {
-        path: '/projectName',
+        path: '/:projectId',
         element: <SideNavInProject />,
         children: [
           {
-            path: '/projectName/',
-            element: <ProjectListPage />
+            path: '/:projectId/',
+            element: <ProjectSummaryPage />
+          },
+          {
+            path: '/:projectId/dashboard',
+            element: <ProjectDashboardPage />
           }
         ]
       }
