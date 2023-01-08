@@ -18,7 +18,8 @@ const CreateTitle = styled(DialogTitle)({
   }
 })
 const ContentWrapper = styled(DialogContent)({
-  padding: '.5rem 1.5rem'
+  padding: '.5rem 1.5rem',
+  overflowY: 'visible'
 })
 const InputLabel = styled(DialogContentText)({
   color: grey[700],
@@ -33,15 +34,9 @@ const InputBar = styled(TextField)({
       borderRadius: 2,
       borderColor: grey[700]
     },
-    '&:focused fieldset': {
+    '&.Mui-focused fieldset': {
       borderWidth: 1,
-      borderColor: grey[700],
-      boxShadow: '0 0 15px -2px #444444'
-    },
-    '& .Mui-focused fieldset': {
-      borderWidth: 5,
-      borderColor: grey[700],
-      boxShadow: '0 0 15px -2px #444444'
+      boxShadow: '0 0 0 2px #bbdefb'
     }
   }
 })
@@ -98,6 +93,7 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
               size='small'
               type="text"
               fullWidth
+              rows={3}
               variant="outlined"
             />
           </ContentWrapper>
@@ -181,13 +177,8 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
                 width: '50%',
                 fontSize: '.75rem',
                 borderRadius: '2px',
-                '& .MuiInputBase-root': {
-                  '& .MuiOutlinedInput-root': {
-                    borderColor: red[100]
-                  }
-                },
-                '& .MuiSelect-outlined': {
-                  borderColor: red[100]
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: grey[900]
                 },
                 '& .MuiSelect-select': {
                   padding: '.5rem'
