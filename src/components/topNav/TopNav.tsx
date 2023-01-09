@@ -146,13 +146,13 @@ const LinkRouter = (props: LinkRouterProps): React.ReactElement => {
   return <Link {...props} component={RouterLink as any} sx={{ color: grey[500], fontWeight: 'medium' }} />
 }
 export const TopNav: React.FunctionComponent = () => {
-  const [isFoucs, setIsFocus] = useState(false)
+  const [isFocus, setIsFocus] = useState(false)
   const userName = useAppSelector(selectUserName)
   const displayLetter = userName?.toString().toUpperCase().charAt(0)
   const navigate = useNavigate()
   const projectName = useAppSelector(selectProjectDisplayName)
   const { projectId } = useParams()
-  const isShowBreadcrumb = (projectId !== undefined) && (!isFoucs)
+  const isShowBreadcrumb = (projectId !== undefined) && (!isFocus)
   const location = useLocation()
   // const pathnames = location.pathname.split('/').forEach((x) => x)
   // console.log('...........', pathnames)
@@ -207,7 +207,7 @@ export const TopNav: React.FunctionComponent = () => {
           </BreadcrumbItems>
         }
         <SearchBarContainer sx={{ marginLeft: 'auto' }}>
-          {isFoucs &&
+          {isFocus &&
             <SearchInputTitle>
               <Typography sx={{ textAlign: 'center', fontSize: '.875rem', lineHeight: '2rem' }}>
                 This project
@@ -226,11 +226,11 @@ export const TopNav: React.FunctionComponent = () => {
             }}
             onFocus={(e) => {
               e.target.placeholder = 'Tpye / for a list of filters'
-              setIsFocus(!isFoucs)
+              setIsFocus(!isFocus)
             }}
             onBlur={(e) => {
               e.target.placeholder = 'Search'
-              setIsFocus(!isFoucs)
+              setIsFocus(!isFocus)
             }}
           />
         </SearchBarContainer>

@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { Box, Grid, Button, IconButton, Link, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControl, RadioGroup, Radio, Typography, FormControlLabel, Select, MenuItem } from '@mui/material'
+import { Box, Grid, Button, IconButton, Link, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControl, RadioGroup, Radio, Typography, FormControlLabel, Select, MenuItem, Tooltip, tooltipClasses, TooltipProps } from '@mui/material'
 import { SelectChangeEvent } from '@mui/material/Select'
-import { Close, Language, Lock, ExpandMore } from '@mui/icons-material'
-import { grey, red } from '@mui/material/colors'
+import { Close, Language, Lock, ExpandMore, ExpandLess, HelpOutline } from '@mui/icons-material'
+import { grey, red, blue } from '@mui/material/colors'
 import { styled } from '@mui/material/styles'
 import { Stack } from '@mui/system'
 
@@ -26,9 +26,6 @@ const InputLabel = styled(DialogContentText)({
   fontSize: '.875rem'
 })
 const InputBar = styled(TextField)({
-  '& .MuiInputBase-root': {
-    padding: 1
-  },
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
       borderRadius: 2,
@@ -40,33 +37,107 @@ const InputBar = styled(TextField)({
     }
   }
 })
-// const RadioWrapper = styled(Grid)({
-//   display: 'flex',
-//   marginLeft: '.5rem',
-//   width: '16rem',
-//   backgroundColor: grey[100],
-//   justifyContent: 'between'
-// })
 const RadioContentWrapper = styled(Stack)({
   padding: '1rem'
 })
+const ConductText = styled(Typography)({
+  padding: '.5rem 1.5rem',
+  color: grey[700],
+  fontWeight: 'regular'
+})
+const AdvancedButton = styled(Button)({
+  margin: '.5rem 1.5rem',
+  padding: '.25rem auto',
+  borderRadius: '2',
+  backgroundColor: grey[200],
+  '&:hover': {
+    backgroundColor: grey[200]
+  }
+})
+const AdvancedHelpIcon = styled(HelpOutline)({
+  marginLeft: '.25rem',
+  fontSize: '1rem',
+  fontWeight: 'light',
+  color: blue[700]
+})
+const HelpTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({
+  [`& .${tooltipClasses.tooltip}`]: {
+    margin: '1rem',
+    backgroundColor: grey[900],
+    fontSize: '.875rem',
+    color: 'white',
+    lineHeight: '1.25rem',
+    borderRadius: '2px'
+  }
+}))
+const MenuProps = {
+  PaperProps: {
+    style: {
+      borderRadius: '2px'
+    }
+  }
+}
+const SelectItem = styled(MenuItem)({
+  fontSize: '.75rem'
+})
+const CancelButton = styled(Button)({
+  padding: '.25rem .5rem',
+  color: grey[900],
+  backgroundColor: grey[100],
+  borderRadius: '2px',
+  border: 'none',
+  '&:hover': {
+    backgroundColor: grey[300]
+  }
+})
+const CreateButton = styled(Button)({
+  marginLeft: '.125rem',
+  padding: '.25rem .5rem',
+  backgroundColor: blue[700],
+  color: 'white',
+  borderRadius: '2px',
+  border: 'none',
+  '&:hover': {
+    backgroundColor: blue[800]
+  }
+})
+// const SelectBar = styled(Select)({}})
 export const CreateProject = (props: { show: boolean, handleClose: () => void }): React.ReactElement => {
   const show = props.show
   const [visibility, setVisibility] = useState('private')
+  const [hoverId, setHoverId] = useState('')
   const [versionController, setVersionController] = useState('git')
+  const [workItemProcess, setWorkItemProcess] = useState('agile')
+  const [showMore, setShowMore] = useState(false)
   const handleClose = props.handleClose
-  const handleRadio = (e: React.MouseEvent<HTMLElement, MouseEvent>): void => setVisibility(e.currentTarget.id)
+  const handleMouseIn = (e: React.MouseEvent<HTMLLabelElement, MouseEvent>): void => setHoverId(e.currentTarget.id)
+  const handleMouseOut = (e: React.MouseEvent<HTMLLabelElement, MouseEvent>): void => {
+    visibility === e.currentTarget.id ||
+    setHoverId('')
+  }
+  const handleRadio = (e: React.MouseEvent<HTMLElement, MouseEvent>): void => {
+    setVisibility(e.currentTarget.id)
+    setHoverId(e.currentTarget.id)
+  }
+  const handleMore = (): void => setShowMore(!showMore)
   const handleController = (e: SelectChangeEvent): void => setVersionController(e.target.value)
+  const handleProcess = (e: SelectChangeEvent): void => setWorkItemProcess(e.target.value)
   return (
     <Box>
       {show &&
         <CreateDialog open={show} onClose={handleClose}>
+          {/* title */}
           <Stack direction='row'>
             <CreateTitle>Subscribe</CreateTitle>
-            <IconButton sx={{ display: 'flex', marginLeft: 'auto', alignItems: 'center' }} onClick={handleClose} >
-              <Close />
-            </IconButton>
+            <Grid sx={{ display: 'flex', marginLeft: 'auto', alignItems: 'center' }}>
+              <IconButton onClick={handleClose} >
+                <Close />
+              </IconButton>
+            </Grid>
           </Stack>
+          {/* project name */}
           <ContentWrapper>
             <InputLabel>
               Project name
@@ -75,13 +146,13 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
             <InputBar
               autoFocus
               margin="dense"
-              id="name"
               size='small'
               type="text"
               fullWidth
               variant="outlined"
             />
           </ContentWrapper>
+          {/* decription */}
           <ContentWrapper>
             <InputLabel>
               Description
@@ -89,14 +160,15 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
             <InputBar
               autoFocus
               margin="dense"
-              id="name"
               size='small'
               type="text"
               fullWidth
+              multiline
               rows={3}
               variant="outlined"
             />
           </ContentWrapper>
+          {/* visibility */}
           <ContentWrapper>
             <InputLabel>
               Visibility
@@ -111,8 +183,25 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
                 <Grid
                   component='label'
                   id='public'
-                  sx={{ display: 'flex', width: '16rem', backgroundColor: grey[200], justifyContent: 'between' }}
+                  sx={{
+                    display: 'flex',
+                    width: '16rem',
+                    backgroundColor: grey[200],
+                    justifyContent: 'between',
+                    borderRadius: '2px',
+                    borderWidth: '2px',
+                    borderStyle: 'solid',
+                    borderColor: grey[200],
+                    cursor: 'pointer',
+                    '&:hover': {
+                      borderWidth: '2px',
+                      borderStyle: 'solid',
+                      borderColor: grey[400]
+                    }
+                  }}
                   onClick={handleRadio}
+                  onMouseEnter={handleMouseIn}
+                  onMouseLeave={handleMouseOut}
                 >
                   <RadioContentWrapper width='50%'>
                     <Language sx={{ color: grey[700], fontSize: '1rem' }} />
@@ -123,20 +212,41 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
                       Anyone on the internet can view the project. Certain features like TFVC are not supported.
                     </Typography>
                   </RadioContentWrapper>
-                  <FormControlLabel
-                    value='public'
-                    control={
-                      <Radio sx={{ '& .MuiSvgIcon-root': { fontSize: '1rem' } }} />
-                    }
-                    label=''
-                    sx={{ display: 'flex', alignItems: 'start', marginLeft: 'auto', marginRight: 0 }}
-                  />
+                  {
+                    (hoverId === 'public' || visibility === 'public') &&
+                    <FormControlLabel
+                      value='public'
+                      control={
+                        <Radio sx={{ '& .MuiSvgIcon-root': { fontSize: '1rem' } }} />
+                      }
+                      label=''
+                      sx={{ display: 'flex', alignItems: 'start', marginLeft: 'auto', marginRight: 0 }}
+                    />
+                  }
                 </Grid>
                 <Grid
                   component='label'
                   id='private'
-                  sx={{ display: 'flex', marginLeft: '.5rem', width: '16rem', backgroundColor: grey[200], justifyContent: 'between' }}
+                  sx={{
+                    display: 'flex',
+                    width: '16rem',
+                    marginLeft: '.5rem',
+                    backgroundColor: grey[200],
+                    justifyContent: 'between',
+                    borderRadius: '2px',
+                    borderWidth: '2px',
+                    borderStyle: 'solid',
+                    borderColor: grey[200],
+                    cursor: 'pointer',
+                    '&:hover': {
+                      borderWidth: '2px',
+                      borderStyle: 'solid',
+                      borderColor: grey[400]
+                    }
+                  }}
                   onClick={handleRadio}
+                  onMouseEnter={handleMouseIn}
+                  onMouseLeave={handleMouseOut}
                 >
                   <RadioContentWrapper width='50%'>
                     <Lock sx={{ color: grey[700], fontSize: '1rem' }} />
@@ -147,54 +257,114 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
                       Only people you give access to will be able to view this project.
                     </Typography>
                   </RadioContentWrapper>
-                  <FormControlLabel
-                    value='private'
-                    control={
-                      <Radio sx={{ '& .MuiSvgIcon-root': { fontSize: '1rem' } }} />
-                    }
-                    label=''
-                    sx={{ display: 'flex', alignItems: 'start', marginLeft: 'auto', marginRight: 0 }}
-                  />
+                  {
+                    (hoverId === 'private' || visibility === 'private') &&
+                    <FormControlLabel
+                      value='private'
+                      control={
+                        <Radio sx={{ '& .MuiSvgIcon-root': { fontSize: '1rem' } }} />
+                      }
+                      label=''
+                      sx={{ display: 'flex', alignItems: 'start', marginLeft: 'auto', marginRight: 0 }}
+                    />
+                  }
                 </Grid>
               </RadioGroup>
             </FormControl>
           </ContentWrapper>
-          <Typography variant='body2' sx={{ padding: '.5rem 1.5rem', color: grey[700], fontWeight: 'regular' }}>
-            By creating this project, you agree to the Azure DevOps <Link>code of conduct</Link>
-          </Typography>
-          <Button disableElevation variant='contained' sx={{ margin: '.5rem 1.5rem', padding: '.25rem auto', borderRadius: '2', backgroundColor: grey[200] }}>
-            <ExpandMore sx={{ color: grey[700] }} />
+          {/* code of conduct */}
+          {
+            visibility === 'public' &&
+            <ConductText variant='body2'>
+              By creating this project, you agree to the Azure DevOps <Link>code of conduct</Link>
+            </ConductText>
+          }
+          {/* advanced button */}
+          <AdvancedButton disableElevation variant='contained' onClick={handleMore}>
+            {showMore
+              ? <ExpandLess sx={{ color: grey[700] }} />
+              : <ExpandMore sx={{ color: grey[700] }} />}
             <Typography color={grey[700]} fontWeight='bold' fontSize='.875rem' >
               Advanced
             </Typography>
-          </Button>
-          <ContentWrapper>
-            <InputLabel>
-              Version control
-            </InputLabel>
-            <Select
-              sx={{
-                width: '50%',
-                fontSize: '.75rem',
-                borderRadius: '2px',
-                '& .MuiOutlinedInput-notchedOutline': {
-                  borderColor: grey[900]
-                },
-                '& .MuiSelect-select': {
-                  padding: '.5rem'
-                }
-              }}
-              defaultValue='git'
-              value={versionController}
-              onChange={handleController}
-            >
-              <MenuItem value='git' sx={{ fontSize: '.75rem' }}>Git</MenuItem>
-              <MenuItem value='team'>Team Foundation Version Control</MenuItem>
-            </Select>
-          </ContentWrapper>
-          <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-            <Button onClick={handleClose}>Subscribe</Button>
+          </AdvancedButton>
+          {/* advanced options */}
+          {showMore &&
+            <ContentWrapper>
+              <Stack direction='row'>
+                <Grid sx={{ width: '16rem' }}>
+                  <InputLabel>
+                    Version control
+                    <HelpTooltip
+                      title='Compare and choose the right version control for your project.'
+                      placement='top'
+                    >
+                      <AdvancedHelpIcon />
+                    </HelpTooltip>
+                  </InputLabel>
+                  <Select
+                    sx={{
+                      width: '100%',
+                      fontSize: '.75rem',
+                      borderRadius: '2px',
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        borderColor: grey[900]
+                      },
+                      '& .MuiSelect-select': {
+                        padding: '.5rem'
+                      }
+                    }}
+                    defaultValue='git'
+                    MenuProps={MenuProps}
+                    value={versionController}
+                    onChange={handleController}
+                  >
+                    <SelectItem value='git'>
+                      Git</SelectItem>
+                    <SelectItem value='team'>
+                      Team Foundation Version Control</SelectItem>
+                  </Select>
+                </Grid>
+                <Grid sx={{ marginLeft: '.5rem', width: '16rem' }}>
+                  <InputLabel>
+                    Work item process
+                    <HelpTooltip
+                      title='Select the right work item process to create a team project.'
+                      placement='top'
+                    >
+                      <AdvancedHelpIcon />
+                    </HelpTooltip>
+                  </InputLabel>
+                  <Select
+                    sx={{
+                      width: '100%',
+                      fontSize: '.75rem',
+                      borderRadius: '2px',
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        borderColor: grey[900]
+                      },
+                      '& .MuiSelect-select': {
+                        padding: '.5rem'
+                      }
+                    }}
+                    defaultValue='agile'
+                    value={workItemProcess}
+                    onChange={handleProcess}
+                  >
+                    <SelectItem value='agile'>Agile</SelectItem>
+                    <SelectItem value='basic'>Basic</SelectItem>
+                    <SelectItem value='cmmi'>CMMI</SelectItem>
+                    <SelectItem value='scrum'>Scrum</SelectItem>
+                  </Select>
+                </Grid>
+              </Stack>
+            </ContentWrapper>
+          }
+          <DialogActions sx={{ padding: '2rem 1rem 1rem 1rem' }}>
+            <CancelButton onClick={handleClose}>
+              Cancel</CancelButton>
+            <CreateButton onClick={handleClose}>
+              Create</CreateButton>
           </DialogActions>
         </CreateDialog>
       }
