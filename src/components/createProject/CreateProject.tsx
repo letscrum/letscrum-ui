@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
-import { Box, Grid, Button, IconButton, Link, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControl, RadioGroup, Radio, Typography, FormControlLabel, Select, MenuItem, Tooltip, tooltipClasses, TooltipProps } from '@mui/material'
+import { Box, Grid, Button, IconButton, Link, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControl, RadioGroup, Radio, Typography, FormControlLabel, Select, MenuItem, Tooltip, tooltipClasses, TooltipProps, AlertProps } from '@mui/material'
 import { SelectChangeEvent } from '@mui/material/Select'
+import MuiAlert from '@mui/material/Alert'
 import { Close, Language, Lock, ExpandMore, ExpandLess, HelpOutline, Check } from '@mui/icons-material'
 import { grey, red, blue, green } from '@mui/material/colors'
 import { styled } from '@mui/material/styles'
 import { Stack } from '@mui/system'
-// import axios from 'axios'
+import axios from 'axios'
 
 const CreateDialog = styled(Dialog)({
   '& .MuiDialog-container': {
@@ -37,6 +38,10 @@ const InputBar = styled(TextField)({
       boxShadow: '0 0 0 2px #bbdefb'
     }
   }
+})
+const CheckIcon = styled(Check)({
+  fontSize: '1rem',
+  color: green[500]
 })
 const RadioContentWrapper = styled(Stack)({
   padding: '1rem'
@@ -107,13 +112,15 @@ const CreateButton = styled(Button)({
 // const SelectBar = styled(Select)({}})
 export const CreateProject = (props: { show: boolean, handleClose: () => void }): React.ReactElement => {
   const show = props.show
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
   const [projectName, setProjectName] = useState('')
+  const [description, setDescription] = useState('')
   const [visibility, setVisibility] = useState('private')
   const [hoverId, setHoverId] = useState('')
   const [versionController, setVersionController] = useState('git')
   const [workItemProcess, setWorkItemProcess] = useState('agile')
   const [showMore, setShowMore] = useState(false)
-  // const handleClose = props.handleClose
   const handleClose = (): void => {
     props.handleClose()
     setProjectName('')
@@ -122,6 +129,7 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
     setWorkItemProcess('agile')
   }
   const handleProjectName = (e: React.ChangeEvent<HTMLInputElement>): void => setProjectName(e.currentTarget.value)
+  const handleDescription = (e: React.ChangeEvent<HTMLInputElement>): void => setDescription(e.currentTarget.value)
   const handleMouseIn = (e: React.MouseEvent<HTMLLabelElement, MouseEvent>): void => setHoverId(e.currentTarget.id)
   const handleMouseOut = (e: React.MouseEvent<HTMLLabelElement, MouseEvent>): void => {
     visibility === e.currentTarget.id ||
@@ -135,12 +143,30 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
   const handleController = (e: SelectChangeEvent): void => setVersionController(e.target.value)
   const handleProcess = (e: SelectChangeEvent): void => setWorkItemProcess(e.target.value)
   const addProject = (): void => {
-    // post new data
+    setLoading(true)
+    try {
+      void axios.post('v1/projects', {
+        displayName: projectName,
+        description
+      })
+      setLoading(false)
+      handleClose()
+    } catch (e: any) {
+      setError(e.message)
+      setLoading(false)
+    }
   }
+  const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert (
+    props,
+    ref
+  ): React.ReactElement {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+  })
   return (
     <Box component='form' noValidate>
       {show &&
         <CreateDialog open={show} onClose={handleClose}>
+          {loading && <>loading</>}
           {/* title */}
           <Stack direction='row'>
             <CreateTitle>Subscribe</CreateTitle>
@@ -151,6 +177,7 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
             </Grid>
           </Stack>
           {/* project name */}
+          {(error !== '') && <Alert severity="error">{error}</Alert>}
           <ContentWrapper>
             <InputLabel>
               Project name
@@ -166,7 +193,7 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
               variant="outlined"
               onChange={handleProjectName}
             />
-            {(Boolean(projectName)) && <Check sx={{ fontSize: '1rem', color: green[500] }} />}
+            {(Boolean(projectName)) && <CheckIcon />}
           </ContentWrapper>
           {/* decription */}
           <ContentWrapper>
@@ -182,7 +209,9 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
               multiline
               rows={3}
               variant="outlined"
+              onChange={handleDescription}
             />
+            {(Boolean(description)) && <CheckIcon />}
           </ContentWrapper>
           {/* visibility */}
           <ContentWrapper>
