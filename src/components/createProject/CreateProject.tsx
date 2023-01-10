@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import { Box, Grid, Button, IconButton, Link, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, FormControl, RadioGroup, Radio, Typography, FormControlLabel, Select, MenuItem, Tooltip, tooltipClasses, TooltipProps } from '@mui/material'
 import { SelectChangeEvent } from '@mui/material/Select'
-import { Close, Language, Lock, ExpandMore, ExpandLess, HelpOutline } from '@mui/icons-material'
-import { grey, red, blue } from '@mui/material/colors'
+import { Close, Language, Lock, ExpandMore, ExpandLess, HelpOutline, Check } from '@mui/icons-material'
+import { grey, red, blue, green } from '@mui/material/colors'
 import { styled } from '@mui/material/styles'
 import { Stack } from '@mui/system'
+// import axios from 'axios'
 
 const CreateDialog = styled(Dialog)({
   '& .MuiDialog-container': {
@@ -106,16 +107,25 @@ const CreateButton = styled(Button)({
 // const SelectBar = styled(Select)({}})
 export const CreateProject = (props: { show: boolean, handleClose: () => void }): React.ReactElement => {
   const show = props.show
+  const [projectName, setProjectName] = useState('')
   const [visibility, setVisibility] = useState('private')
   const [hoverId, setHoverId] = useState('')
   const [versionController, setVersionController] = useState('git')
   const [workItemProcess, setWorkItemProcess] = useState('agile')
   const [showMore, setShowMore] = useState(false)
-  const handleClose = props.handleClose
+  // const handleClose = props.handleClose
+  const handleClose = (): void => {
+    props.handleClose()
+    setProjectName('')
+    setVisibility('private')
+    setVersionController('git')
+    setWorkItemProcess('agile')
+  }
+  const handleProjectName = (e: React.ChangeEvent<HTMLInputElement>): void => setProjectName(e.currentTarget.value)
   const handleMouseIn = (e: React.MouseEvent<HTMLLabelElement, MouseEvent>): void => setHoverId(e.currentTarget.id)
   const handleMouseOut = (e: React.MouseEvent<HTMLLabelElement, MouseEvent>): void => {
     visibility === e.currentTarget.id ||
-    setHoverId('')
+      setHoverId('')
   }
   const handleRadio = (e: React.MouseEvent<HTMLElement, MouseEvent>): void => {
     setVisibility(e.currentTarget.id)
@@ -124,8 +134,11 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
   const handleMore = (): void => setShowMore(!showMore)
   const handleController = (e: SelectChangeEvent): void => setVersionController(e.target.value)
   const handleProcess = (e: SelectChangeEvent): void => setWorkItemProcess(e.target.value)
+  const addProject = (): void => {
+    // post new data
+  }
   return (
-    <Box>
+    <Box component='form' noValidate>
       {show &&
         <CreateDialog open={show} onClose={handleClose}>
           {/* title */}
@@ -145,12 +158,15 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
             </InputLabel>
             <InputBar
               autoFocus
+              required
               margin="dense"
               size='small'
               type="text"
               fullWidth
               variant="outlined"
+              onChange={handleProjectName}
             />
+            {(Boolean(projectName)) && <Check sx={{ fontSize: '1rem', color: green[500] }} />}
           </ContentWrapper>
           {/* decription */}
           <ContentWrapper>
@@ -363,8 +379,13 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
           <DialogActions sx={{ padding: '2rem 1rem 1rem 1rem' }}>
             <CancelButton onClick={handleClose}>
               Cancel</CancelButton>
-            <CreateButton onClick={handleClose}>
-              Create</CreateButton>
+            {
+              projectName !== ''
+                ? <CreateButton onClick={addProject}>
+                  Create</CreateButton>
+                : <CancelButton disabled>
+                  Create</CancelButton>
+            }
           </DialogActions>
         </CreateDialog>
       }
