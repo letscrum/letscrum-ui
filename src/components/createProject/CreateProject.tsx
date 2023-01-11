@@ -43,6 +43,22 @@ const CheckIcon = styled(Check)({
   fontSize: '1rem',
   color: green[500]
 })
+// const VisibilityGrid = styled(Grid)({
+//   display: 'flex',
+//   width: '16rem',
+//   backgroundColor: grey[200],
+//   justifyContent: 'between',
+//   borderRadius: '2px',
+//   borderWidth: '2px',
+//   borderStyle: 'solid',
+//   borderColor: grey[200],
+//   cursor: 'pointer',
+//   '&:hover': {
+//     borderWidth: '2px',
+//     borderStyle: 'solid',
+//     borderColor: grey[400]
+//   }
+// })
 const RadioContentWrapper = styled(Stack)({
   padding: '1rem'
 })
@@ -130,7 +146,7 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
   }
   const handleProjectName = (e: React.ChangeEvent<HTMLInputElement>): void => setProjectName(e.currentTarget.value)
   const handleDescription = (e: React.ChangeEvent<HTMLInputElement>): void => setDescription(e.currentTarget.value)
-  const handleMouseIn = (e: React.MouseEvent<HTMLLabelElement, MouseEvent>): void => setHoverId(e.currentTarget.id)
+  const handleMouseIn = (e: React.MouseEvent): void => setHoverId(e.currentTarget.id)
   const handleMouseOut = (e: React.MouseEvent<HTMLLabelElement, MouseEvent>): void => {
     visibility === e.currentTarget.id ||
       setHoverId('')
