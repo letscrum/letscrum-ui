@@ -219,7 +219,7 @@ export const ProjectListPage: React.FunctionComponent = () => {
   useEffect(() => {
     fetchProjectItems({ keyword, isEnter, isDone })
       .catch(() => alert(error))
-  }, [isDone, isEnter])
+  }, [isDone, isEnter, show])
   if (items.length > 3) {
     itemsHead = items.slice(0, 3)
     itemsTail = items.slice(3)
