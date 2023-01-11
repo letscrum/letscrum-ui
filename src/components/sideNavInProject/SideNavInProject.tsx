@@ -40,8 +40,14 @@ const SideMenuItem = styled(MenuItem)({
     width: '.25rem',
     backgroundColor: grey[500]
   },
-  '.Mui-selected': {
-    backgroundColor: red[300]
+  '& .MuiMenuItem-root': {
+    backgroundColor: grey[200],
+    '& .Mui-selected': {
+      backgroundColor: red[300],
+      '& .Mui-focusVisible': {
+        background: red[500]
+      }
+    }
   }
 })
 const SideMenuIconWrapper = styled(ListItemIcon)({

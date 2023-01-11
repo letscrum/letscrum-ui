@@ -140,6 +140,9 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
   const handleClose = (): void => {
     props.handleClose()
     setProjectName('')
+    setDescription('')
+    setLoading(false)
+    setError('')
     setVisibility('private')
     setVersionController('git')
     setWorkItemProcess('agile')
@@ -160,23 +163,42 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
   const handleProcess = (e: SelectChangeEvent): void => setWorkItemProcess(e.target.value)
   const addProject = (): void => {
     setLoading(true)
-    try {
-      void axios.post('v1/projects', {
-        displayName: projectName,
-        description
+    void axios.post('v1/projects', {
+      displayName: projectName,
+      description
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          setLoading(false)
+          handleClose()
+        }
       })
-      setLoading(false)
-      handleClose()
-    } catch (e: any) {
-      setError(e.message)
-      setLoading(false)
-    }
+      .catch((e) => {
+        setLoading(false)
+        setError(e.response.data.message)
+      })
+    // 'try catch' method has some problem
+    // try {
+    //   const response = await axios.post('v1/projects', {
+    //     displayName: projectName,
+    //     description
+    //   })
+    //   console.log(response)
+    //   setLoading(false)
+    //   handleClose()
+    //   return response
+    // } catch (e: any) {
+    //   console.log(e)
+    //   setError(e.message)
+    //   setLoading(false)
+    //   return error
+    // }
   }
   const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert (
     props,
     ref
   ): React.ReactElement {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+    return <MuiAlert sx={{ margin: '.25rem' }} elevation={6} ref={ref} variant="filled" {...props} />
   })
   return (
     <Box component='form' noValidate>
@@ -426,6 +448,7 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
               Cancel</CancelButton>
             {
               projectName !== ''
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 ? <CreateButton onClick={addProject}>
                   Create</CreateButton>
                 : <CancelButton disabled>
