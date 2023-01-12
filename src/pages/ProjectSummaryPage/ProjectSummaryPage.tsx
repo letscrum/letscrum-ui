@@ -1,7 +1,8 @@
 import React from 'react'
-import { Box, Stack, Avatar, Typography, Button, IconButton, Divider, Grid, Paper, Link } from '@mui/material'
+import { Box, Stack, Avatar, Typography, Button, IconButton, Divider, Grid, Paper, Link, Chip } from '@mui/material'
 import { StarOutline, Lock, GroupAdd } from '@mui/icons-material'
 import { grey } from '@mui/material/colors'
+import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 import styled from '@emotion/styled'
 
 const PrivateButton = styled(Button)({
@@ -78,7 +79,7 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
           <Grid container spacing={2}>
             <Grid item md={12} lg={8} >
               <Paper sx={{ paddingTop: '3rem', paddingBottom: '3rem' }}>
-                <Grid container sx={{ display: 'flex-column', margin: 'auto', justifyContent: 'center', alignItems: 'center', width: '24rem' }}>
+                <Grid container sx={{ flexDirection: 'column', margin: 'auto', justifyContent: 'center', alignItems: 'center' }}>
                   <img src='project_overview_day_zero.IG7Dq6.png' alt='project_overview' style={{ width: '20rem' }} />
                   <Typography variant='h4' sx={{ marginTop: '2rem', fontWeight: 'bold' }}>
                     Welcome to the project!
@@ -118,16 +119,30 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
               </Paper>
             </Grid>
             <Grid item md={12} lg={4}>
-              <Paper>
-                4
+              <Paper sx={{ padding: '2rem' }}>
+                <Typography variant='h6' fontWeight='bold'>Project stats</Typography>
+                <Grid container sx={{ flexDirection: 'column', my: '4rem', justifyContent: 'center', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '5rem', height: '5rem', backgroundColor: grey[100], borderRadius: '50%' }}>
+                    <TrendingUpIcon />
+                  </div>
+                  <Typography variant='body2' fontWeight='bold' marginTop='3rem'>No stats are available at this moment</Typography>
+                  <Typography variant='body2' marginTop='1rem'>Setup a service to see project activity.</Typography>
+                </Grid>
               </Paper>
-              <Paper>
-                4
+              <Paper sx={{ padding: '2rem', marginTop: '1rem' }}>
+                <Stack direction='row'>
+                  <Typography variant='h6' fontWeight='bold'>Members</Typography>
+                  <Chip size='small' sx={{ marginTop: '.125rem', marginLeft: '.25rem', px: '.25rem', backgroundColor: grey[100] }} label='1' />
+                </Stack>
+                <Grid container>
+                  <Avatar sx={{ width: '1.875rem', height: '1.875rem', marginTop: '1rem' }}>
+                    <Typography variant='body2' color='white'>L</Typography></Avatar>
+                </Grid>
               </Paper>
-            </Grid>
-          </Grid>
-        </Box>
-      </Box>
+      </Grid>
+    </Grid>
+        </Box >
+      </Box >
     </Box >
   )
 }
