@@ -43,22 +43,6 @@ const CheckIcon = styled(Check)({
   fontSize: '1rem',
   color: green[500]
 })
-// const VisibilityGrid = styled(Grid)({
-//   display: 'flex',
-//   width: '16rem',
-//   backgroundColor: grey[200],
-//   justifyContent: 'between',
-//   borderRadius: '2px',
-//   borderWidth: '2px',
-//   borderStyle: 'solid',
-//   borderColor: grey[200],
-//   cursor: 'pointer',
-//   '&:hover': {
-//     borderWidth: '2px',
-//     borderStyle: 'solid',
-//     borderColor: grey[400]
-//   }
-// })
 const RadioContentWrapper = styled(Stack)({
   padding: '1rem'
 })
@@ -177,22 +161,6 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
         setLoading(false)
         setError(e.response.data.message)
       })
-    // 'try catch' method has some problem
-    // try {
-    //   const response = await axios.post('v1/projects', {
-    //     displayName: projectName,
-    //     description
-    //   })
-    //   console.log(response)
-    //   setLoading(false)
-    //   handleClose()
-    //   return response
-    // } catch (e: any) {
-    //   console.log(e)
-    //   setError(e.message)
-    //   setLoading(false)
-    //   return error
-    // }
   }
   const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert (
     props,
@@ -426,6 +394,12 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
                       '& .MuiOutlinedInput-notchedOutline': {
                         borderColor: grey[900]
                       },
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: grey[900]
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: grey[900]
+                      },
                       '& .MuiSelect-select': {
                         padding: '.5rem'
                       }
@@ -433,6 +407,7 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
                     defaultValue='agile'
                     value={workItemProcess}
                     onChange={handleProcess}
+                    MenuProps={MenuProps}
                   >
                     <SelectItem value='agile'>Agile</SelectItem>
                     <SelectItem value='basic'>Basic</SelectItem>
