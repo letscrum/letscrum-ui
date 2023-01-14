@@ -100,7 +100,6 @@ export const ProjectListTable = (props: { keyword: string, isEnter: boolean, isD
   }
   const handleMouseOut = (): void => setHoverId(null)
   const [loading, setLoading] = useState(true)
-  console.log('the begining declare: ', loading)
   const [error, setError] = useState('')
   const [items, setItems] = useState<ProjectProps[]>([])
   const keyword = props.keyword
@@ -148,6 +147,7 @@ export const ProjectListTable = (props: { keyword: string, isEnter: boolean, isD
   return (
     <>
       <HeadProjectsWrapper direction='row'>
+        {/* top 3 projects */}
         <Grid container spacing={2} sx={{ flexGrow: 1, width: '100%' }}>
           {
             loading
@@ -256,6 +256,7 @@ export const ProjectListTable = (props: { keyword: string, isEnter: boolean, isD
           }
         </Grid>
       </HeadProjectsWrapper>
+      {/* the rest projects */}
       <Paper>
         {
           itemsTail.map((item) => {

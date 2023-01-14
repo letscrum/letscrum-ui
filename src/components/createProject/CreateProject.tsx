@@ -109,6 +109,12 @@ const CreateButton = styled(Button)({
     backgroundColor: blue[800]
   }
 })
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert (
+  props,
+  ref
+): React.ReactElement {
+  return <MuiAlert sx={{ margin: '.25rem' }} elevation={6} ref={ref} variant="filled" {...props} />
+})
 // const SelectBar = styled(Select)({}})
 export const CreateProject = (props: { show: boolean, handleClose: () => void }): React.ReactElement => {
   const show = props.show
@@ -162,12 +168,6 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
         setError(e.response.data.message)
       })
   }
-  const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert (
-    props,
-    ref
-  ): React.ReactElement {
-    return <MuiAlert sx={{ margin: '.25rem' }} elevation={6} ref={ref} variant="filled" {...props} />
-  })
   return (
     <Box component='form' noValidate>
       {show &&

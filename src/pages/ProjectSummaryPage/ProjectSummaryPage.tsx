@@ -1,7 +1,12 @@
 import React, { useState } from 'react'
-import { Box, Stack, Avatar, Typography, Button, IconButton, Divider, Grid, Paper, Link, Chip, FormControl, Select, MenuItem, SelectChangeEvent } from '@mui/material'
-import { StarOutline, Lock, GroupAdd, TrendingUp, Edit, Assignment, AssignmentTurnedIn, Commit } from '@mui/icons-material'
-import { grey, red } from '@mui/material/colors'
+import {
+  Box, Stack, Avatar, Typography, Button, IconButton, Divider, Grid, Paper, Link, Chip, FormControl, Select, MenuItem, SelectChangeEvent,
+  Dialog, DialogTitle, AlertProps, DialogContent, DialogContentText, TextField, RadioGroup, Radio, FormControlLabel, DialogActions
+} from '@mui/material'
+import MuiAlert from '@mui/material/Alert'
+import { FormControlLabelProps } from '@mui/material/FormControlLabel'
+import { StarOutline, Lock, GroupAdd, TrendingUp, Edit, Assignment, AssignmentTurnedIn, Commit, Close } from '@mui/icons-material'
+import { grey, red, blue } from '@mui/material/colors'
 import styled from '@emotion/styled'
 
 const HeaderWrapper = styled(Stack)({
@@ -91,12 +96,112 @@ const AboutEditButton = styled(IconButton)({
     borderRadius: '2px'
   }
 })
+const EditDialog = styled(Dialog)({
+  '& .MuiDialog-container': {
+    justifyContent: 'end'
+  }
+})
+const DialogContentWrapper = styled(DialogContent)({
+  width: '32.5rem',
+  padding: '1rem 1.5rem',
+  overflowY: 'visible',
+  overflowX: 'visible'
+})
+const EditTitle = styled(DialogTitle)({
+  fontWeight: 'bold',
+  color: grey[900]
+})
+const InputLabel = styled(DialogContentText)({
+  color: grey[900],
+  fontWeight: 'bold',
+  fontSize: '1rem'
+})
+const InputBar = styled(TextField)({
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderRadius: 2,
+      borderColor: grey[700]
+    },
+    '&.Mui-focused fieldset': {
+      borderWidth: 1,
+      boxShadow: '0 0 0 2px #bbdefb'
+    }
+  }
+})
+const AddTagsButton = styled(Button)({
+  padding: '.1rem',
+  backgroundColor: 'rgb(239, 246, 252)',
+  fontSize: '.6125rem',
+  color: grey[500],
+  borderRadius: '2px',
+  '&:hover': {
+    backgroundColor: blue[50]
+  },
+  '&:active': {
+    color: 'white',
+    backgroundColor: blue[500]
+  }
+})
+const CancelButton = styled(Button)({
+  padding: '.25rem .5rem',
+  color: grey[900],
+  backgroundColor: grey[100],
+  borderRadius: '2px',
+  border: 'none',
+  '&:hover': {
+    backgroundColor: grey[300]
+  }
+})
+const CreateButton = styled(Button)({
+  marginLeft: '.125rem',
+  padding: '.25rem .5rem',
+  backgroundColor: blue[700],
+  color: 'white',
+  borderRadius: '2px',
+  border: 'none',
+  '&:hover': {
+    backgroundColor: blue[800]
+  }
+})
+const StyledFormControlLabel = styled((props: FormControlLabelProps) => (
+  <FormControlLabel {...props} />
+))({
+  '.MuiFormControlLabel-label': {
+    fontSize: '.875rem'
+  }
+})
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert (
+  props,
+  ref
+): React.ReactElement {
+  return <MuiAlert sx={{ margin: '.25rem' }} elevation={6} ref={ref} variant="filled" {...props} />
+})
+const EmptyReadme: React.FunctionComponent = () => {
+  return (
+    <div style={{ padding: '1rem', backgroundColor: 'rgb(249, 235, 235)' }}>
+      <Typography variant='body2' sx={{ color: red[600], marginBottom: '.5rem' }}>We could not find Readme.md</Typography>
+      <Typography variant='body2'>Seems like the file has not been created or was deleted.</Typography>
+    </div>
+  )
+}
 export const ProjectSummaryPage: React.FunctionComponent = () => {
+  const [show, setShow] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [description, setDescription] = useState('')
+  const [fileType, setFileType] = useState<'readme' | 'wiki'>('readme')
   const [period, setPeriod] = useState('7')
+  console.log('console---', setLoading, setError, setFileType)
   const handlePeriod = (e: SelectChangeEvent): void => setPeriod(e.target.value)
+  const handleShow = (): void => setShow(true)
+  const handleClose = (): void => setShow(false)
+  const handleDescription = (e: React.ChangeEvent<HTMLInputElement>): void => setDescription(e.currentTarget.value)
+  const editProject = (): void => { }
   return (
     <Box width='100%'>
+      {/* detail page */}
       <Box width='calc(100wh - 16rem - 1px)'>
+        {/* header */}
         <HeaderWrapper direction='row'>
           <Avatar variant='rounded'>T</Avatar>
           <TitleText variant='h6' >test create project</TitleText>
@@ -161,15 +266,16 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
               <ContentWrapper>
                 <Stack direction='row' >
                   <Typography variant='h6' fontWeight='bold'>About this project</Typography>
-                  <AboutEditButton>
+                  <AboutEditButton onClick={handleShow}>
                     <Edit sx={{ fontSize: '1rem' }} />
                   </AboutEditButton>
                 </Stack>
                 <Typography variant='body2' sx={{ marginTop: '2rem', marginBottom: '1rem' }}>Project description</Typography>
-                <div style={{ width: '100%', padding: '1rem', backgroundColor: 'rgb(249, 235, 235)' }}>
+                <EmptyReadme />
+                {/* <div style={{ padding: '1rem', backgroundColor: 'rgb(249, 235, 235)' }}>
                   <Typography variant='body2' sx={{ color: red[600], marginBottom: '.5rem' }}>We could not find Readme.md</Typography>
                   <Typography variant='body2'>Seems like the file has not been created or was deleted.</Typography>
-                </div>
+                </div> */}
               </ContentWrapper>
             </Grid>
             <Grid item md={12} lg={4}>
@@ -197,6 +303,7 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                       displayEmpty
                       inputProps={{ 'aria-label': 'Without label' }}
                       sx={{
+                        width: '8rem',
                         backgroundColor: grey[200],
                         borderRadius: '2px',
                         fontSize: '.875rem',
@@ -234,7 +341,7 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                       </Stack>
                     </Grid>
                     <Grid item xs={6}>
-                    <Stack direction='row' sx={{ display: 'flex', height: '4rem', alignItems: 'center' }}>
+                      <Stack direction='row' sx={{ display: 'flex', height: '4rem', alignItems: 'center' }}>
                         <div style={{ display: 'flex', marginRight: '1rem', width: '2rem', height: '2rem', justifyContent: 'center', alignItems: 'center', backgroundColor: grey[100], borderRadius: '2px' }}>
                           <AssignmentTurnedIn sx={{ fontSize: '1rem' }} />
                         </div>
@@ -246,19 +353,19 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                     </Grid>
                   </Grid>
                   <Grid item xs={12} paddingY='1rem'>
-                      <Typography>Repos</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Stack direction='row' sx={{ display: 'flex', height: '4rem', alignItems: 'center' }}>
-                        <div style={{ display: 'flex', marginRight: '1rem', width: '2rem', height: '2rem', justifyContent: 'center', alignItems: 'center', backgroundColor: grey[100], borderRadius: '2px' }}>
-                          <Commit sx={{ fontSize: '1rem' }} />
-                        </div>
-                        <Grid item xs={8}>
-                          <Typography sx={{ fontSize: '.75rem' }}>0</Typography>
-                          <Typography sx={{ fontSize: '.75rem' }}>Changesets by 0 authors</Typography>
-                        </Grid>
-                      </Stack>
-                    </Grid>
+                    <Typography>Repos</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Stack direction='row' sx={{ display: 'flex', height: '4rem', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', marginRight: '1rem', width: '2rem', height: '2rem', justifyContent: 'center', alignItems: 'center', backgroundColor: grey[100], borderRadius: '2px' }}>
+                        <Commit sx={{ fontSize: '1rem' }} />
+                      </div>
+                      <Grid item xs={8}>
+                        <Typography sx={{ fontSize: '.75rem' }}>0</Typography>
+                        <Typography sx={{ fontSize: '.75rem' }}>Changesets by 0 authors</Typography>
+                      </Grid>
+                    </Stack>
+                  </Grid>
                 </Box>
               </ContentWrapper>
               {/* members */}
@@ -276,6 +383,74 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
           </Grid>
         </MainWrapper >
       </Box >
+      {/* edit about pop */}
+      <Box component='form' noValidate>
+        {show &&
+          <EditDialog open={show} onClose={handleClose}>
+            {loading && <>loading</>}
+            {/* title */}
+            <Stack direction='row'>
+              <EditTitle>About this project</EditTitle>
+              <Grid sx={{ display: 'flex', marginLeft: 'auto', alignItems: 'center' }}>
+                <IconButton onClick={handleClose} >
+                  <Close />
+                </IconButton>
+              </Grid>
+            </Stack>
+            {/* decription */}
+            {(error !== '') && <Alert severity="error">{error}</Alert>}
+            <DialogContentWrapper>
+              <InputLabel>
+                Description
+                <span style={{ color: red[500] }}>*</span>
+              </InputLabel>
+              <InputBar
+                autoFocus
+                required
+                margin="dense"
+                size='small'
+                type="text"
+                fullWidth
+                variant="outlined"
+                onChange={handleDescription}
+                value={description}
+              />
+            </DialogContentWrapper>
+            {/* tags */}
+            <DialogContentWrapper>
+              <InputLabel>
+                Tags
+              </InputLabel>
+              <AddTagsButton>Add tags</AddTagsButton>
+            </DialogContentWrapper>
+            {/* about */}
+            <DialogContentWrapper>
+              <InputLabel>
+                About
+              </InputLabel>
+              <FormControl>
+                <RadioGroup
+                  row
+                  aria-labelledby="demo-row-radio-buttons-group-label"
+                  name="row-radio-buttons-group"
+                  value={fileType}
+                >
+                  <StyledFormControlLabel value='readme' control={<Radio size='small' />} label='Readme File' />
+                  <StyledFormControlLabel value='wiki' control={<Radio size='small' />} label='Wiki' />
+                </RadioGroup>
+              </FormControl>
+            </DialogContentWrapper>
+            <DialogContentWrapper>
+              <EmptyReadme />
+            </DialogContentWrapper>
+            <DialogActions sx={{ padding: '2rem 1rem 1rem 1rem' }}>
+              <CancelButton onClick={handleClose}>
+                Cancel</CancelButton>
+              <CreateButton onClick={editProject}>
+                Create</CreateButton>
+            </DialogActions>
+          </EditDialog>}
+      </Box>
     </Box>
   )
 }
