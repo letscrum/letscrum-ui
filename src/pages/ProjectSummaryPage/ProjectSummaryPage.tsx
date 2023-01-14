@@ -5,7 +5,7 @@ import {
 } from '@mui/material'
 import MuiAlert from '@mui/material/Alert'
 import { FormControlLabelProps } from '@mui/material/FormControlLabel'
-import { StarOutline, Lock, GroupAdd, TrendingUp, Edit, Assignment, AssignmentTurnedIn, Commit, Close } from '@mui/icons-material'
+import { StarOutline, Lock, GroupAdd, TrendingUp, Edit, Assignment, AssignmentTurnedIn, Commit, Close, Add, Clear } from '@mui/icons-material'
 import { grey, red, blue } from '@mui/material/colors'
 import styled from '@emotion/styled'
 
@@ -129,7 +129,7 @@ const InputBar = styled(TextField)({
   }
 })
 const AddTagsButton = styled(Button)({
-  padding: '.1rem',
+  height: '1.5rem',
   backgroundColor: 'rgb(239, 246, 252)',
   fontSize: '.6125rem',
   color: grey[500],
@@ -140,6 +140,72 @@ const AddTagsButton = styled(Button)({
   '&:active': {
     color: 'white',
     backgroundColor: blue[500]
+  }
+})
+const AddTagsIconButton = styled(Button)({
+  height: '1.5rem',
+  width: '1.5rem',
+  padding: '0',
+  marginLeft: '.5rem',
+  backgroundColor: 'rgb(239, 246, 252)',
+  borderRadius: '0',
+  minWidth: '0',
+  '&:hover': {
+    backgroundColor: blue[50]
+  },
+  '&:active': {
+    color: 'white',
+    backgroundColor: blue[500]
+  },
+  '& .MuiButton-startIcon': {
+    margin: '0'
+  },
+  '& .MuiSvgIcon-root': {
+    color: grey[600],
+    fontSize: '1rem'
+  }
+})
+const AddTagsInput = styled(TextField)({
+  backgroundColor: 'rgb(239, 246, 252)',
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderRadius: 0,
+      borderColor: grey[500]
+    },
+    '&:hover fieldset': {
+      borderColor: grey[500]
+    },
+    '&.Mui-focused fieldset': {
+      borderWidth: 1,
+      borderColor: grey[500]
+    }
+  },
+  '& .MuiInputBase-input': {
+    width: '12.5rem',
+    height: '1.5rem',
+    padding: '0 2px',
+    fontSize: '.6125rem',
+    fontWeight: '300',
+    color: grey[900]
+  }
+})
+const TagChip = styled(Chip)({
+  height: '1.5rem',
+  borderRadius: 0,
+  padding: '2px',
+  backgroundColor: 'rgb(239, 246, 252)',
+  color: grey[600],
+  '& .MuiChip-label': {
+    padding: '0',
+    marginLeft: '.5rem',
+    marginRight: '.5rem'
+  },
+  '& .MuiSvgIcon-root': {
+    margin: '0'
+  },
+  '& .MuiChip-deleteIcon': {
+    color: grey[600],
+    fontSize: '1rem'
   }
 })
 const CancelButton = styled(Button)({
@@ -170,7 +236,8 @@ const StyledFormControlLabel = styled((props: FormControlLabelProps) => (
     fontSize: '.875rem'
   }
 })
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert (
+// eslint-disable-next-line @typescript-eslint/space-before-function-paren
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
   ref
 ): React.ReactElement {
@@ -197,6 +264,7 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
   const handleClose = (): void => setShow(false)
   const handleDescription = (e: React.ChangeEvent<HTMLInputElement>): void => setDescription(e.currentTarget.value)
   const editProject = (): void => { }
+  const handleTagsDelete = (): void => { }
   return (
     <Box width='100%'>
       {/* detail page */}
@@ -402,7 +470,6 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
             <DialogContentWrapper>
               <InputLabel>
                 Description
-                <span style={{ color: red[500] }}>*</span>
               </InputLabel>
               <InputBar
                 autoFocus
@@ -422,6 +489,9 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                 Tags
               </InputLabel>
               <AddTagsButton>Add tags</AddTagsButton>
+              <AddTagsInput />
+              <TagChip label='input value' onDelete={handleTagsDelete} deleteIcon={<Clear />} />
+              <AddTagsIconButton startIcon={<Add />}/>
             </DialogContentWrapper>
             {/* about */}
             <DialogContentWrapper>
@@ -439,10 +509,36 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                   <StyledFormControlLabel value='wiki' control={<Radio size='small' />} label='Wiki' />
                 </RadioGroup>
               </FormControl>
+              <Select
+                sx={{
+                  width: '100%',
+                  fontSize: '.75rem',
+                  borderRadius: '2px',
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: grey[500]
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderWidth: '1px',
+                    borderColor: grey[500]
+                  },
+                  '& .MuiSelect-select': {
+                    padding: '.5rem'
+                  }
+                }}
+                MenuProps={MenuProps}
+                defaultValue='file destination'
+              >
+                <SelectItem value='git'>
+                  Search Bar
+                </SelectItem>
+                <SelectItem value='team'>
+                  Search results
+                </SelectItem>
+              </Select>
             </DialogContentWrapper>
-            <DialogContentWrapper>
+            <div style={{ padding: '0 1.5rem' }}>
               <EmptyReadme />
-            </DialogContentWrapper>
+            </div>
             <DialogActions sx={{ padding: '2rem 1rem 1rem 1rem' }}>
               <CancelButton onClick={handleClose}>
                 Cancel</CancelButton>
