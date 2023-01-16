@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Box, Stack, Avatar, Typography, Button, IconButton, Divider, Grid, Paper, Link, Chip, FormControl, Select, MenuItem, SelectChangeEvent,
   Dialog, DialogTitle, AlertProps, DialogContent, DialogContentText, TextField, RadioGroup, Radio, FormControlLabel, DialogActions
@@ -8,6 +8,9 @@ import { FormControlLabelProps } from '@mui/material/FormControlLabel'
 import { StarOutline, Lock, GroupAdd, TrendingUp, Edit, Assignment, AssignmentTurnedIn, Commit, Close, Add, Clear } from '@mui/icons-material'
 import { grey, red, blue } from '@mui/material/colors'
 import styled from '@emotion/styled'
+import { useAppDispatch, useAppSelector } from '../../redux/hooks'
+import { fecthProject, selectProjcetLoading, selectProjcetUpdateLoading, selectProjectDisplayName, selectProjectError, selectProjectUpdateError, updateProject } from '../../redux/reducers/projectSlice'
+import { useParams } from 'react-router-dom'
 
 const HeaderWrapper = styled(Stack)({
   position: 'sticky',
@@ -146,7 +149,6 @@ const AddTagsIconButton = styled(Button)({
   height: '1.5rem',
   width: '1.5rem',
   padding: '0',
-  marginLeft: '.5rem',
   backgroundColor: 'rgb(239, 246, 252)',
   borderRadius: '0',
   minWidth: '0',
@@ -193,6 +195,7 @@ const TagChip = styled(Chip)({
   height: '1.5rem',
   borderRadius: 0,
   padding: '2px',
+  marginRight: '.5rem',
   backgroundColor: 'rgb(239, 246, 252)',
   color: grey[600],
   '& .MuiChip-label': {
@@ -253,300 +256,380 @@ const EmptyReadme: React.FunctionComponent = () => {
 }
 export const ProjectSummaryPage: React.FunctionComponent = () => {
   const [show, setShow] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const { projectId } = useParams()
+  const id = projectId ?? ''
+  const fetchLoading = useAppSelector(selectProjcetLoading)
+  const fetchError = useAppSelector(selectProjectError)
+  const displayName = useAppSelector(selectProjectDisplayName)
+  const dispatch = useAppDispatch()
+  const updateLoading = useAppSelector(selectProjcetUpdateLoading)
+  const updateError = useAppSelector(selectProjectUpdateError)
   const [description, setDescription] = useState('')
-  const [fileType, setFileType] = useState<'readme' | 'wiki'>('readme')
   const [period, setPeriod] = useState('7')
-  console.log('console---', setLoading, setError, setFileType)
+  const [addTagsButtonShow, setAddTagsButtonShow] = useState(true)
+  const [addTagsIconButtonShow, setAddTagsIconButtonShow] = useState(false)
+  const [tagInputShow, setTagInputShow] = useState(false)
+  const [tagValue, setTagValue] = useState('')
+  const [tags, setTags] = useState<string[]>([])
+  useEffect(() => {
+    const handleWindowClick = (): void => setTagInputShow(false)
+    const showState = (): void => console.log('tagInputShow is true')
+    tagInputShow
+      ? document.addEventListener('click', showState)
+      : document.removeEventListener('click', handleWindowClick)
+    return () => window.removeEventListener('click', handleWindowClick)
+  }, [tagInputShow, setTagInputShow])
   const handlePeriod = (e: SelectChangeEvent): void => setPeriod(e.target.value)
   const handleShow = (): void => setShow(true)
   const handleClose = (): void => setShow(false)
   const handleDescription = (e: React.ChangeEvent<HTMLInputElement>): void => setDescription(e.currentTarget.value)
-  const editProject = (): void => { }
-  const handleTagsDelete = (): void => { }
+  const handleAddtagsButtonShow = (): void => {
+    setAddTagsButtonShow(false)
+    setTagInputShow(true)
+  }
+  const handleAddTagsInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => setTagValue(e.currentTarget.value)
+  const handleEnerAddTag = (e: any): void => {
+    const value = e.key
+    if (value === 'Enter') {
+      setTagInputShow(false)
+      setAddTagsButtonShow(false)
+      setAddTagsIconButtonShow(true)
+      setTags([
+        ...tags,
+        tagValue
+      ])
+    }
+  }
+  const handleBlurAddTag = (): void => {
+    setTagInputShow(false)
+    setAddTagsButtonShow(false)
+    setAddTagsIconButtonShow(true)
+  }
+  const handleTagsDelete = (index: number, e: any): void => {
+    setTags(tags.filter(t => t !== tags[index]))
+  }
+  // how to handle error as follow ???
+  useEffect(() => {
+    dispatch(fecthProject({ id }))
+      .catch(() => alert(fetchError))
+    if (tags.length === 0) {
+      setAddTagsButtonShow(true)
+      setAddTagsIconButtonShow(false)
+    }
+  }, [tags])
+  const handleSaveProject = (): void => {
+    dispatch(updateProject({ id, description }))
+      .catch(() => updateError)
+    handleClose()
+  }
   return (
     <Box width='100%'>
       {/* detail page */}
-      <Box width='calc(100wh - 16rem - 1px)'>
-        {/* header */}
-        <HeaderWrapper direction='row'>
-          <Avatar variant='rounded'>T</Avatar>
-          <TitleText variant='h6' >test create project</TitleText>
-          <PrivateButton variant='contained' size='small' disableElevation >
-            <Lock sx={{ fontSize: '1rem' }} />
-            <HeaderButtonText>Private</HeaderButtonText>
-          </PrivateButton>
-          <InviteButton variant='contained' size='small' disableElevation>
-            <GroupAdd sx={{ fontSize: '1rem' }} />
-            <HeaderButtonText>Invite</HeaderButtonText>
-          </InviteButton>
-          <FavoriteButton>
-            <StarOutline sx={{ fontSize: '1rem', color: 'brown' }} />
-          </FavoriteButton>
-        </HeaderWrapper>
-        <HeaderDivider />
-        {/* main content */}
-        <MainWrapper>
-          <Grid container spacing={2}>
-            <Grid item md={12} lg={8} >
-              {/* empty about */}
-              <ContentWrapper>
-                <Grid container sx={{ flexDirection: 'column', margin: 'auto', justifyContent: 'center', alignItems: 'center' }}>
-                  <img src='project_overview_day_zero.IG7Dq6.png' alt='project_overview' style={{ width: '20rem' }} />
-                  <Typography variant='h4' sx={{ marginTop: '2rem', fontWeight: 'bold' }}>
-                    Welcome to the project!
-                  </Typography>
-                  <Typography variant='body2'>
-                    What service would you like to start with?
-                  </Typography>
-                  <Grid container sx={{ display: 'flex', marginTop: '1rem', justifyContent: 'center', alignItems: 'center' }}>
-                    <WelcomeNavButton variant='contained' size='small' disableElevation>
-                      <ButtonText>
-                        Boards
-                      </ButtonText>
-                    </WelcomeNavButton>
-                    <WelcomeNavButton variant='contained' size='small' disableElevation>
-                      <ButtonText>
-                        Repos
-                      </ButtonText>
-                    </WelcomeNavButton>
-                    <WelcomeNavButton variant='contained' size='small' disableElevation>
-                      <ButtonText>
-                        Pipelines
-                      </ButtonText>
-                    </WelcomeNavButton>
-                    <WelcomeNavButton variant='contained' size='small' disableElevation>
-                      <ButtonText>
-                        Test Plans
-                      </ButtonText>
-                    </WelcomeNavButton>
-                    <WelcomeNavButton variant='contained' size='small' disableElevation>
-                      <ButtonText>
-                        Artifacts
-                      </ButtonText>
-                    </WelcomeNavButton>
-                  </Grid>
-                  <Link sx={{ marginTop: '1rem', textDecoration: 'none', cursor: 'pointer' }}>or manage your services</Link>
-                </Grid>
-              </ContentWrapper>
-              {/* about */}
-              <ContentWrapper>
-                <Stack direction='row' >
-                  <Typography variant='h6' fontWeight='bold'>About this project</Typography>
-                  <AboutEditButton onClick={handleShow}>
-                    <Edit sx={{ fontSize: '1rem' }} />
-                  </AboutEditButton>
-                </Stack>
-                <Typography variant='body2' sx={{ marginTop: '2rem', marginBottom: '1rem' }}>Project description</Typography>
-                <EmptyReadme />
-                {/* <div style={{ padding: '1rem', backgroundColor: 'rgb(249, 235, 235)' }}>
-                  <Typography variant='body2' sx={{ color: red[600], marginBottom: '.5rem' }}>We could not find Readme.md</Typography>
-                  <Typography variant='body2'>Seems like the file has not been created or was deleted.</Typography>
-                </div> */}
-              </ContentWrapper>
-            </Grid>
-            <Grid item md={12} lg={4}>
-              <ContentWrapper>
-                {/* empty stats */}
-                <Typography variant='h6' fontWeight='bold'>Project stats</Typography>
-                <Grid container sx={{ flexDirection: 'column', my: '4rem', justifyContent: 'center', alignItems: 'center' }}>
-                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '5rem', height: '5rem', backgroundColor: grey[100], borderRadius: '50%' }}>
-                    <TrendingUp />
-                  </div>
-                  <Typography variant='body2' fontWeight='bold' marginTop='3rem'>No stats are available at this moment</Typography>
-                  <Typography variant='body2' marginTop='1rem'>Setup a service to see project activity.</Typography>
-                </Grid>
-              </ContentWrapper>
-              {/* stats */}
-              <ContentWrapper>
-                <Stack direction='row'>
-                  <Typography variant='h6' fontWeight='bold'>Project stats</Typography>
-                  {/* periods filter */}
-                  <FormControl sx={{ ml: 'auto' }} size='small' >
-                    <Select
-                      value={period}
-                      onChange={handlePeriod}
-                      MenuProps={MenuProps}
-                      displayEmpty
-                      inputProps={{ 'aria-label': 'Without label' }}
-                      sx={{
-                        width: '8rem',
-                        backgroundColor: grey[200],
-                        borderRadius: '2px',
-                        fontSize: '.875rem',
-                        '& .MuiOutlinedInput-notchedOutline': {
-                          borderColor: grey[200]
-                        },
-                        '&:hover .MuiOutlinedInput-notchedOutline': {
-                          borderColor: grey[200]
-                        },
-                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                          borderColor: grey[200]
-                        }
-                      }}
-                    >
-                      <SelectItem value={'1'}>Last 1 day</SelectItem>
-                      <SelectItem value={'7'}>Last 7 days</SelectItem>
-                      <SelectItem value={'30'}>Last 30 day</SelectItem>
-                    </Select>
-                  </FormControl>
-                </Stack>
-                <Box sx={{ flexGrow: 1 }}>
-                  <Grid container>
-                    <Grid item xs={12} paddingY='1rem'>
-                      <Typography>Boards</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Stack direction='row' sx={{ display: 'flex', height: '4rem', alignItems: 'center' }}>
-                        <div style={{ display: 'flex', marginRight: '1rem', width: '2rem', height: '2rem', justifyContent: 'center', alignItems: 'center', backgroundColor: grey[100], borderRadius: '2px' }}>
-                          <Assignment sx={{ fontSize: '1rem' }} />
-                        </div>
-                        <Grid item xs={8}>
-                          <Typography sx={{ fontSize: '.75rem' }}>0</Typography>
-                          <Typography sx={{ fontSize: '.75rem' }}>Work items created</Typography>
-                        </Grid>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Stack direction='row' sx={{ display: 'flex', height: '4rem', alignItems: 'center' }}>
-                        <div style={{ display: 'flex', marginRight: '1rem', width: '2rem', height: '2rem', justifyContent: 'center', alignItems: 'center', backgroundColor: grey[100], borderRadius: '2px' }}>
-                          <AssignmentTurnedIn sx={{ fontSize: '1rem' }} />
-                        </div>
-                        <Grid item xs={8}>
-                          <Typography sx={{ fontSize: '.75rem' }}>0</Typography>
-                          <Typography sx={{ fontSize: '.75rem' }}>Work items completed</Typography>
-                        </Grid>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                  <Grid item xs={12} paddingY='1rem'>
-                    <Typography>Repos</Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Stack direction='row' sx={{ display: 'flex', height: '4rem', alignItems: 'center' }}>
-                      <div style={{ display: 'flex', marginRight: '1rem', width: '2rem', height: '2rem', justifyContent: 'center', alignItems: 'center', backgroundColor: grey[100], borderRadius: '2px' }}>
-                        <Commit sx={{ fontSize: '1rem' }} />
-                      </div>
-                      <Grid item xs={8}>
-                        <Typography sx={{ fontSize: '.75rem' }}>0</Typography>
-                        <Typography sx={{ fontSize: '.75rem' }}>Changesets by 0 authors</Typography>
+      <React.Fragment>
+        {
+          fetchLoading ||
+          <Box width='calc(100wh - 16rem - 1px)'>
+            {/* header */}
+            <HeaderWrapper direction='row'>
+              <Avatar variant='rounded'>T</Avatar>
+              <TitleText variant='h6' >{displayName}</TitleText>
+              <PrivateButton variant='contained' size='small' disableElevation >
+                <Lock sx={{ fontSize: '1rem' }} />
+                <HeaderButtonText>Private</HeaderButtonText>
+              </PrivateButton>
+              <InviteButton variant='contained' size='small' disableElevation>
+                <GroupAdd sx={{ fontSize: '1rem' }} />
+                <HeaderButtonText>Invite</HeaderButtonText>
+              </InviteButton>
+              <FavoriteButton>
+                <StarOutline sx={{ fontSize: '1rem', color: 'brown' }} />
+              </FavoriteButton>
+            </HeaderWrapper>
+            <HeaderDivider />
+            {/* main content */}
+            <MainWrapper>
+              <Grid container spacing={2}>
+                <Grid item md={12} lg={8} >
+                  {/* empty about */}
+                  <ContentWrapper>
+                    <Grid container sx={{ flexDirection: 'column', margin: 'auto', justifyContent: 'center', alignItems: 'center' }}>
+                      <img src='project_overview_day_zero.IG7Dq6.png' alt='project_overview' style={{ width: '20rem' }} />
+                      <Typography variant='h4' sx={{ marginTop: '2rem', fontWeight: 'bold' }}>
+                        Welcome to the project!
+                      </Typography>
+                      <Typography variant='body2'>
+                        What service would you like to start with?
+                      </Typography>
+                      <Grid container sx={{ display: 'flex', marginTop: '1rem', justifyContent: 'center', alignItems: 'center' }}>
+                        <WelcomeNavButton variant='contained' size='small' disableElevation>
+                          <ButtonText>
+                            Boards
+                          </ButtonText>
+                        </WelcomeNavButton>
+                        <WelcomeNavButton variant='contained' size='small' disableElevation>
+                          <ButtonText>
+                            Repos
+                          </ButtonText>
+                        </WelcomeNavButton>
+                        <WelcomeNavButton variant='contained' size='small' disableElevation>
+                          <ButtonText>
+                            Pipelines
+                          </ButtonText>
+                        </WelcomeNavButton>
+                        <WelcomeNavButton variant='contained' size='small' disableElevation>
+                          <ButtonText>
+                            Test Plans
+                          </ButtonText>
+                        </WelcomeNavButton>
+                        <WelcomeNavButton variant='contained' size='small' disableElevation>
+                          <ButtonText>
+                            Artifacts
+                          </ButtonText>
+                        </WelcomeNavButton>
                       </Grid>
+                      <Link sx={{ marginTop: '1rem', textDecoration: 'none', cursor: 'pointer' }}>or manage your services</Link>
+                    </Grid>
+                  </ContentWrapper>
+                  {/* about */}
+                  <ContentWrapper>
+                    <Stack direction='row' >
+                      <Typography variant='h6' fontWeight='bold'>About this project</Typography>
+                      <AboutEditButton onClick={handleShow}>
+                        <Edit sx={{ fontSize: '1rem' }} />
+                      </AboutEditButton>
                     </Stack>
-                  </Grid>
-                </Box>
-              </ContentWrapper>
-              {/* members */}
-              <ContentWrapper sx={{ marginTop: '1rem' }}>
-                <Stack direction='row'>
-                  <Typography variant='h6' fontWeight='bold'>Members</Typography>
-                  <Chip size='small' sx={{ marginTop: '.125rem', marginLeft: '.25rem', px: '.25rem', backgroundColor: grey[100] }} label='1' />
-                </Stack>
-                <Grid container>
-                  <Avatar sx={{ width: '1.875rem', height: '1.875rem', marginTop: '1rem' }}>
-                    <Typography variant='body2' color='white'>L</Typography></Avatar>
+                    <Typography variant='body2' sx={{ marginTop: '2rem', marginBottom: '1rem' }}>Project description</Typography>
+                    <EmptyReadme />
+                  </ContentWrapper>
                 </Grid>
-              </ContentWrapper>
-            </Grid>
-          </Grid>
-        </MainWrapper >
-      </Box >
-      {/* edit about pop */}
-      <Box component='form' noValidate>
-        {show &&
-          <EditDialog open={show} onClose={handleClose}>
-            {loading && <>loading</>}
-            {/* title */}
-            <Stack direction='row'>
-              <EditTitle>About this project</EditTitle>
-              <Grid sx={{ display: 'flex', marginLeft: 'auto', alignItems: 'center' }}>
-                <IconButton onClick={handleClose} >
-                  <Close />
-                </IconButton>
+                <Grid item md={12} lg={4}>
+                  <ContentWrapper>
+                    {/* empty stats */}
+                    <Typography variant='h6' fontWeight='bold'>Project stats</Typography>
+                    <Grid container sx={{ flexDirection: 'column', my: '4rem', justifyContent: 'center', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '5rem', height: '5rem', backgroundColor: grey[100], borderRadius: '50%' }}>
+                        <TrendingUp />
+                      </div>
+                      <Typography variant='body2' fontWeight='bold' marginTop='3rem'>No stats are available at this moment</Typography>
+                      <Typography variant='body2' marginTop='1rem'>Setup a service to see project activity.</Typography>
+                    </Grid>
+                  </ContentWrapper>
+                  {/* stats */}
+                  <ContentWrapper>
+                    <Stack direction='row'>
+                      <Typography variant='h6' fontWeight='bold'>Project stats</Typography>
+                      {/* periods filter */}
+                      <FormControl sx={{ ml: 'auto' }} size='small' >
+                        <Select
+                          value={period}
+                          onChange={handlePeriod}
+                          MenuProps={MenuProps}
+                          displayEmpty
+                          inputProps={{ 'aria-label': 'Without label' }}
+                          sx={{
+                            width: '8rem',
+                            backgroundColor: grey[200],
+                            borderRadius: '2px',
+                            fontSize: '.875rem',
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: grey[200]
+                            },
+                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                              borderColor: grey[200]
+                            },
+                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                              borderColor: grey[200]
+                            }
+                          }}
+                        >
+                          <SelectItem value={'1'}>Last 1 day</SelectItem>
+                          <SelectItem value={'7'}>Last 7 days</SelectItem>
+                          <SelectItem value={'30'}>Last 30 day</SelectItem>
+                        </Select>
+                      </FormControl>
+                    </Stack>
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Grid container>
+                        <Grid item xs={12} paddingY='1rem'>
+                          <Typography>Boards</Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Stack direction='row' sx={{ display: 'flex', height: '4rem', alignItems: 'center' }}>
+                            <div style={{ display: 'flex', marginRight: '1rem', width: '2rem', height: '2rem', justifyContent: 'center', alignItems: 'center', backgroundColor: grey[100], borderRadius: '2px' }}>
+                              <Assignment sx={{ fontSize: '1rem' }} />
+                            </div>
+                            <Grid item xs={8}>
+                              <Typography sx={{ fontSize: '.75rem' }}>0</Typography>
+                              <Typography sx={{ fontSize: '.75rem' }}>Work items created</Typography>
+                            </Grid>
+                          </Stack>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Stack direction='row' sx={{ display: 'flex', height: '4rem', alignItems: 'center' }}>
+                            <div style={{ display: 'flex', marginRight: '1rem', width: '2rem', height: '2rem', justifyContent: 'center', alignItems: 'center', backgroundColor: grey[100], borderRadius: '2px' }}>
+                              <AssignmentTurnedIn sx={{ fontSize: '1rem' }} />
+                            </div>
+                            <Grid item xs={8}>
+                              <Typography sx={{ fontSize: '.75rem' }}>0</Typography>
+                              <Typography sx={{ fontSize: '.75rem' }}>Work items completed</Typography>
+                            </Grid>
+                          </Stack>
+                        </Grid>
+                      </Grid>
+                      <Grid item xs={12} paddingY='1rem'>
+                        <Typography>Repos</Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Stack direction='row' sx={{ display: 'flex', height: '4rem', alignItems: 'center' }}>
+                          <div style={{ display: 'flex', marginRight: '1rem', width: '2rem', height: '2rem', justifyContent: 'center', alignItems: 'center', backgroundColor: grey[100], borderRadius: '2px' }}>
+                            <Commit sx={{ fontSize: '1rem' }} />
+                          </div>
+                          <Grid item xs={8}>
+                            <Typography sx={{ fontSize: '.75rem' }}>0</Typography>
+                            <Typography sx={{ fontSize: '.75rem' }}>Changesets by 0 authors</Typography>
+                          </Grid>
+                        </Stack>
+                      </Grid>
+                    </Box>
+                  </ContentWrapper>
+                  {/* members */}
+                  <ContentWrapper sx={{ marginTop: '1rem' }}>
+                    <Stack direction='row'>
+                      <Typography variant='h6' fontWeight='bold'>Members</Typography>
+                      <Chip size='small' sx={{ marginTop: '.125rem', marginLeft: '.25rem', px: '.25rem', backgroundColor: grey[100] }} label='1' />
+                    </Stack>
+                    <Grid container>
+                      <Avatar sx={{ width: '1.875rem', height: '1.875rem', marginTop: '1rem' }}>
+                        <Typography variant='body2' color='white'>L</Typography></Avatar>
+                    </Grid>
+                  </ContentWrapper>
+                </Grid>
               </Grid>
-            </Stack>
-            {/* decription */}
-            {(error !== '') && <Alert severity="error">{error}</Alert>}
-            <DialogContentWrapper>
-              <InputLabel>
-                Description
-              </InputLabel>
-              <InputBar
-                autoFocus
-                required
-                margin="dense"
-                size='small'
-                type="text"
-                fullWidth
-                variant="outlined"
-                onChange={handleDescription}
-                value={description}
-              />
-            </DialogContentWrapper>
-            {/* tags */}
-            <DialogContentWrapper>
-              <InputLabel>
-                Tags
-              </InputLabel>
-              <AddTagsButton>Add tags</AddTagsButton>
-              <AddTagsInput />
-              <TagChip label='input value' onDelete={handleTagsDelete} deleteIcon={<Clear />} />
-              <AddTagsIconButton startIcon={<Add />}/>
-            </DialogContentWrapper>
-            {/* about */}
-            <DialogContentWrapper>
-              <InputLabel>
-                About
-              </InputLabel>
-              <FormControl>
-                <RadioGroup
-                  row
-                  aria-labelledby="demo-row-radio-buttons-group-label"
-                  name="row-radio-buttons-group"
-                  value={fileType}
+            </MainWrapper >
+          </Box >
+        }
+        {/* edit about pop */}
+        <Box component='form' noValidate>
+          {show &&
+            <EditDialog open={show} onClose={handleClose}>
+              {updateLoading && <Typography>loading</Typography>}
+              {/* title */}
+              <Stack direction='row'>
+                <EditTitle>About this project</EditTitle>
+                <Grid sx={{ display: 'flex', marginLeft: 'auto', alignItems: 'center' }}>
+                  <IconButton onClick={handleClose} >
+                    <Close />
+                  </IconButton>
+                </Grid>
+              </Stack>
+              {/* decription */}
+              {(Boolean(updateError)) && <Alert severity="error">{updateError}</Alert>}
+              <DialogContentWrapper>
+                <InputLabel>
+                  Description
+                </InputLabel>
+                <InputBar
+                  autoFocus
+                  required
+                  margin="dense"
+                  size='small'
+                  type="text"
+                  fullWidth
+                  variant="outlined"
+                  onChange={handleDescription}
+                  value={description}
+                />
+              </DialogContentWrapper>
+              {/* tags */}
+              <DialogContentWrapper>
+                <InputLabel>
+                  Tags
+                </InputLabel>
+                {/* add tags button */}
+                {
+                  addTagsButtonShow &&
+                  <AddTagsButton onClick={handleAddtagsButtonShow}>
+                    Add tags
+                  </AddTagsButton>
+                }
+                {/* tags */}
+                {
+                  tags.length !== 0 &&
+                  tags.map((item, index) => {
+                    return (
+                      <TagChip key={`${item} + ${index}`} label={item} onDelete={(e) => handleTagsDelete(index, e)} deleteIcon={<Clear />} />
+                    )
+                  })
+                }
+                {/* input bar */}
+                {
+                  tagInputShow &&
+                  <AddTagsInput
+                    onChange={handleAddTagsInputChange}
+                    onKeyDown={handleEnerAddTag}
+                    onBlur={handleBlurAddTag} />
+                }
+                {/* add icon button */}
+                {
+                  addTagsIconButtonShow &&
+                  <AddTagsIconButton startIcon={<Add onClick={handleAddtagsButtonShow} />} />
+                }
+              </DialogContentWrapper>
+              {/* about */}
+              <DialogContentWrapper>
+                <InputLabel>
+                  About
+                </InputLabel>
+                <FormControl>
+                  <RadioGroup
+                    row
+                    aria-labelledby="demo-row-radio-buttons-group-label"
+                    name="row-radio-buttons-group"
+                    defaultValue='readme'
+                  >
+                    <StyledFormControlLabel value='readme' control={<Radio size='small' />} label='Readme File' />
+                    <StyledFormControlLabel value='wiki' control={<Radio size='small' />} label='Wiki' />
+                  </RadioGroup>
+                </FormControl>
+                <Select
+                  sx={{
+                    width: '100%',
+                    fontSize: '.75rem',
+                    borderRadius: '2px',
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: grey[500]
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderWidth: '1px',
+                      borderColor: grey[500]
+                    },
+                    '& .MuiSelect-select': {
+                      padding: '.5rem'
+                    }
+                  }}
+                  MenuProps={MenuProps}
+                  defaultValue=''
                 >
-                  <StyledFormControlLabel value='readme' control={<Radio size='small' />} label='Readme File' />
-                  <StyledFormControlLabel value='wiki' control={<Radio size='small' />} label='Wiki' />
-                </RadioGroup>
-              </FormControl>
-              <Select
-                sx={{
-                  width: '100%',
-                  fontSize: '.75rem',
-                  borderRadius: '2px',
-                  '&:hover .MuiOutlinedInput-notchedOutline': {
-                    borderColor: grey[500]
-                  },
-                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                    borderWidth: '1px',
-                    borderColor: grey[500]
-                  },
-                  '& .MuiSelect-select': {
-                    padding: '.5rem'
-                  }
-                }}
-                MenuProps={MenuProps}
-                defaultValue='file destination'
-              >
-                <SelectItem value='git'>
-                  Search Bar
-                </SelectItem>
-                <SelectItem value='team'>
-                  Search results
-                </SelectItem>
-              </Select>
-            </DialogContentWrapper>
-            <div style={{ padding: '0 1.5rem' }}>
-              <EmptyReadme />
-            </div>
-            <DialogActions sx={{ padding: '2rem 1rem 1rem 1rem' }}>
-              <CancelButton onClick={handleClose}>
-                Cancel</CancelButton>
-              <CreateButton onClick={editProject}>
-                Create</CreateButton>
-            </DialogActions>
-          </EditDialog>}
-      </Box>
+                  <SelectItem value=''>
+                    Search Bar
+                  </SelectItem>
+                  <SelectItem value='result'>
+                    Search results
+                  </SelectItem>
+                </Select>
+              </DialogContentWrapper>
+              <div style={{ padding: '0 1.5rem' }}>
+                <EmptyReadme />
+              </div>
+              <DialogActions sx={{ padding: '2rem 1rem 1rem 1rem' }}>
+                <CancelButton onClick={handleClose}>
+                  Cancel</CancelButton>
+                <CreateButton onClick={handleSaveProject}>
+                  Save</CreateButton>
+              </DialogActions>
+            </EditDialog>}
+        </Box>
+      </React.Fragment>
     </Box>
   )
 }

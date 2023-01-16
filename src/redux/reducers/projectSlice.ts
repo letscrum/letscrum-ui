@@ -7,12 +7,16 @@ interface ProjectState {
   error: any
   id: string | null
   displayName: string | null
+  updateLoading: boolean
+  updateError: any
 }
 const initialState: ProjectState = {
   loading: false,
   error: null,
   id: null,
-  displayName: null
+  displayName: null,
+  updateLoading: false,
+  updateError: null
 }
 
 export const fecthProject = createAsyncThunk(
@@ -21,6 +25,19 @@ export const fecthProject = createAsyncThunk(
     try {
       const projectData: any = await axios.get(`/v1/projects/${params.id}`)
       return projectData.data.item
+    } catch (e: any) {
+      return e.message
+    }
+  }
+)
+export const updateProject = createAsyncThunk(
+  'project/update',
+  async (params: { id: string, description: string }) => {
+    try {
+      const result = await axios.put(`/v1/projects/${params.id}`, {
+        description: params.description
+      })
+      return result.data
     } catch (e: any) {
       return e.message
     }
@@ -44,10 +61,22 @@ export const projectSlice = createSlice({
         state.loading = false
         state.error = action.payload
       })
+      .addCase(updateProject.pending, (state) => {
+        state.updateLoading = true
+      })
+      .addCase(updateProject.fulfilled, (state) => {
+        state.updateLoading = false
+      })
+      .addCase(updateProject.rejected, (state, action) => {
+        state.updateLoading = false
+        state.updateError = action.payload
+      })
   }
 })
 export const selectProjcetLoading = (state: RootState): boolean => state.project.loading
 export const selectProjectError = (state: RootState): any => state.project.error
+export const selectProjcetUpdateLoading = (state: RootState): boolean => state.project.updateLoading
+export const selectProjectUpdateError = (state: RootState): any => state.project.updateError
 export const selectProjectId = (state: RootState): string | null => state.project.id
 export const selectProjectDisplayName = (state: RootState): string | null => state.project.displayName
 export default projectSlice.reducer

@@ -235,9 +235,7 @@ export const SideNavInProject: React.FunctionComponent = () => {
                         </SideMenuItemText>
                       </SideSubMenuItem>
                     )
-                  })
-                  )
-                  }
+                  }))}
                 </MenuList>
               </div>
             )
