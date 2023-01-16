@@ -7,6 +7,7 @@ interface ProjectState {
   error: any
   id: string | null
   displayName: string | null
+  description: string | null
   updateLoading: boolean
   updateError: any
 }
@@ -15,6 +16,7 @@ const initialState: ProjectState = {
   error: null,
   id: null,
   displayName: null,
+  description: null,
   updateLoading: false,
   updateError: null
 }
@@ -24,6 +26,7 @@ export const fecthProject = createAsyncThunk(
   async (params: { id: string }) => {
     try {
       const projectData: any = await axios.get(`/v1/projects/${params.id}`)
+      console.log('fetch project detail data: ', projectData)
       return projectData.data.item
     } catch (e: any) {
       return e.message
@@ -32,11 +35,14 @@ export const fecthProject = createAsyncThunk(
 )
 export const updateProject = createAsyncThunk(
   'project/update',
-  async (params: { id: string, description: string }) => {
+  async (params: { id: string, displayName: string | null, newDescription: string | null }) => {
     try {
       const result = await axios.put(`/v1/projects/${params.id}`, {
-        description: params.description
+        displayName: params.displayName,
+        description: params.newDescription
       })
+      console.log('put project data: ', params.newDescription)
+      console.log('result data: ', result)
       return result.data
     } catch (e: any) {
       return e.message
@@ -56,6 +62,7 @@ export const projectSlice = createSlice({
         state.loading = false
         state.id = action.payload.id
         state.displayName = action.payload.displayName
+        state.description = action.payload.description
       })
       .addCase(fecthProject.rejected, (state, action) => {
         state.loading = false
@@ -79,4 +86,5 @@ export const selectProjcetUpdateLoading = (state: RootState): boolean => state.p
 export const selectProjectUpdateError = (state: RootState): any => state.project.updateError
 export const selectProjectId = (state: RootState): string | null => state.project.id
 export const selectProjectDisplayName = (state: RootState): string | null => state.project.displayName
+export const selectProjectDescription = (state: RootState): string | null => state.project.description
 export default projectSlice.reducer

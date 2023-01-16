@@ -9,7 +9,7 @@ import { StarOutline, Lock, GroupAdd, TrendingUp, Edit, Assignment, AssignmentTu
 import { grey, red, blue } from '@mui/material/colors'
 import styled from '@emotion/styled'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
-import { fecthProject, selectProjcetLoading, selectProjcetUpdateLoading, selectProjectDisplayName, selectProjectError, selectProjectUpdateError, updateProject } from '../../redux/reducers/projectSlice'
+import { fecthProject, selectProjcetLoading, selectProjcetUpdateLoading, selectProjectDescription, selectProjectDisplayName, selectProjectError, selectProjectUpdateError, updateProject } from '../../redux/reducers/projectSlice'
 import { useParams } from 'react-router-dom'
 
 const HeaderWrapper = styled(Stack)({
@@ -261,10 +261,11 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
   const fetchLoading = useAppSelector(selectProjcetLoading)
   const fetchError = useAppSelector(selectProjectError)
   const displayName = useAppSelector(selectProjectDisplayName)
+  const description = useAppSelector(selectProjectDescription)
+  const [newDescription, setNewDescription] = useState('')
   const dispatch = useAppDispatch()
   const updateLoading = useAppSelector(selectProjcetUpdateLoading)
   const updateError = useAppSelector(selectProjectUpdateError)
-  const [description, setDescription] = useState('')
   const [period, setPeriod] = useState('7')
   const [addTagsButtonShow, setAddTagsButtonShow] = useState(true)
   const [addTagsIconButtonShow, setAddTagsIconButtonShow] = useState(false)
@@ -282,7 +283,7 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
   const handlePeriod = (e: SelectChangeEvent): void => setPeriod(e.target.value)
   const handleShow = (): void => setShow(true)
   const handleClose = (): void => setShow(false)
-  const handleDescription = (e: React.ChangeEvent<HTMLInputElement>): void => setDescription(e.currentTarget.value)
+  const handleDescription = (e: React.ChangeEvent<HTMLInputElement>): void => setNewDescription(e.currentTarget.value)
   const handleAddtagsButtonShow = (): void => {
     setAddTagsButtonShow(false)
     setTagInputShow(true)
@@ -305,10 +306,15 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
     setAddTagsButtonShow(false)
     setAddTagsIconButtonShow(true)
   }
-  const handleTagsDelete = (index: number, e: any): void => {
-    setTags(tags.filter(t => t !== tags[index]))
-  }
+  const handleTagsDelete = (index: number, e: any): void => setTags(tags.filter(t => t !== tags[index]))
   // how to handle error as follow ???
+  const handleSaveProject = (): void => {
+    dispatch(updateProject({ id, displayName, newDescription }))
+      .catch(() => updateError)
+    handleClose()
+    dispatch(fecthProject({ id }))
+      .catch(() => alert(fetchError))
+  }
   useEffect(() => {
     dispatch(fecthProject({ id }))
       .catch(() => alert(fetchError))
@@ -317,11 +323,6 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
       setAddTagsIconButtonShow(false)
     }
   }, [tags])
-  const handleSaveProject = (): void => {
-    dispatch(updateProject({ id, description }))
-      .catch(() => updateError)
-    handleClose()
-  }
   return (
     <Box width='100%'>
       {/* detail page */}
@@ -350,57 +351,78 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
             <MainWrapper>
               <Grid container spacing={2}>
                 <Grid item md={12} lg={8} >
-                  {/* empty about */}
-                  <ContentWrapper>
-                    <Grid container sx={{ flexDirection: 'column', margin: 'auto', justifyContent: 'center', alignItems: 'center' }}>
-                      <img src='project_overview_day_zero.IG7Dq6.png' alt='project_overview' style={{ width: '20rem' }} />
-                      <Typography variant='h4' sx={{ marginTop: '2rem', fontWeight: 'bold' }}>
-                        Welcome to the project!
-                      </Typography>
-                      <Typography variant='body2'>
-                        What service would you like to start with?
-                      </Typography>
-                      <Grid container sx={{ display: 'flex', marginTop: '1rem', justifyContent: 'center', alignItems: 'center' }}>
-                        <WelcomeNavButton variant='contained' size='small' disableElevation>
-                          <ButtonText>
-                            Boards
-                          </ButtonText>
-                        </WelcomeNavButton>
-                        <WelcomeNavButton variant='contained' size='small' disableElevation>
-                          <ButtonText>
-                            Repos
-                          </ButtonText>
-                        </WelcomeNavButton>
-                        <WelcomeNavButton variant='contained' size='small' disableElevation>
-                          <ButtonText>
-                            Pipelines
-                          </ButtonText>
-                        </WelcomeNavButton>
-                        <WelcomeNavButton variant='contained' size='small' disableElevation>
-                          <ButtonText>
-                            Test Plans
-                          </ButtonText>
-                        </WelcomeNavButton>
-                        <WelcomeNavButton variant='contained' size='small' disableElevation>
-                          <ButtonText>
-                            Artifacts
-                          </ButtonText>
-                        </WelcomeNavButton>
-                      </Grid>
-                      <Link sx={{ marginTop: '1rem', textDecoration: 'none', cursor: 'pointer' }}>or manage your services</Link>
-                    </Grid>
-                  </ContentWrapper>
                   {/* about */}
-                  <ContentWrapper>
-                    <Stack direction='row' >
-                      <Typography variant='h6' fontWeight='bold'>About this project</Typography>
-                      <AboutEditButton onClick={handleShow}>
-                        <Edit sx={{ fontSize: '1rem' }} />
-                      </AboutEditButton>
-                    </Stack>
-                    <Typography variant='body2' sx={{ marginTop: '2rem', marginBottom: '1rem' }}>Project description</Typography>
-                    <EmptyReadme />
-                  </ContentWrapper>
+                  {
+                    (description === null && tags.length === 0)
+                      ? <ContentWrapper>
+                        <Grid container sx={{ flexDirection: 'column', margin: 'auto', justifyContent: 'center', alignItems: 'center' }}>
+                          <img src='project_overview_day_zero.IG7Dq6.png' alt='project_overview' style={{ width: '20rem' }} />
+                          <Typography variant='h4' sx={{ marginTop: '2rem', fontWeight: 'bold' }}>
+                            Welcome to the project!
+                          </Typography>
+                          <Typography variant='body2'>
+                            What service would you like to start with?
+                          </Typography>
+                          <Grid container sx={{ display: 'flex', marginTop: '1rem', justifyContent: 'center', alignItems: 'center' }}>
+                            <WelcomeNavButton variant='contained' size='small' disableElevation>
+                              <ButtonText>
+                                Boards
+                              </ButtonText>
+                            </WelcomeNavButton>
+                            <WelcomeNavButton variant='contained' size='small' disableElevation>
+                              <ButtonText>
+                                Repos
+                              </ButtonText>
+                            </WelcomeNavButton>
+                            <WelcomeNavButton variant='contained' size='small' disableElevation>
+                              <ButtonText>
+                                Pipelines
+                              </ButtonText>
+                            </WelcomeNavButton>
+                            <WelcomeNavButton variant='contained' size='small' disableElevation>
+                              <ButtonText>
+                                Test Plans
+                              </ButtonText>
+                            </WelcomeNavButton>
+                            <WelcomeNavButton variant='contained' size='small' disableElevation>
+                              <ButtonText>
+                                Artifacts
+                              </ButtonText>
+                            </WelcomeNavButton>
+                          </Grid>
+                          <Link sx={{ marginTop: '1rem', textDecoration: 'none', cursor: 'pointer' }}>
+                            or manage your services
+                          </Link>
+                        </Grid>
+                      </ContentWrapper>
+                      : <ContentWrapper>
+                        <Stack direction='row' >
+                          <Typography variant='h6' fontWeight='bold'>
+                            About this project
+                          </Typography>
+                          <AboutEditButton onClick={handleShow}>
+                            <Edit sx={{ fontSize: '1rem' }} />
+                          </AboutEditButton>
+                        </Stack>
+                        <Typography variant='body2' sx={{ marginTop: '2rem', marginBottom: '1rem' }}>
+                          description: {description}
+                          <br/>
+                          newDescription: {newDescription}
+                        </Typography>
+                        {tags.length !== 0 && <>
+                          <Typography>
+                            Tags
+                          </Typography>
+                          {tags.map((item, index) => {
+                            return (
+                              <TagChip key={`${item} + ${index}`} label={item} onDelete={(e) => handleTagsDelete(index, e)} deleteIcon={<Clear />} />
+                            )
+                          })}
+                        </>
+                        }
+                        <EmptyReadme />
+                      </ContentWrapper>
+                  }
                 </Grid>
                 <Grid item md={12} lg={4}>
                   <ContentWrapper>
@@ -410,8 +432,12 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '5rem', height: '5rem', backgroundColor: grey[100], borderRadius: '50%' }}>
                         <TrendingUp />
                       </div>
-                      <Typography variant='body2' fontWeight='bold' marginTop='3rem'>No stats are available at this moment</Typography>
-                      <Typography variant='body2' marginTop='1rem'>Setup a service to see project activity.</Typography>
+                      <Typography variant='body2' fontWeight='bold' marginTop='3rem'>
+                        No stats are available at this moment
+                      </Typography>
+                      <Typography variant='body2' marginTop='1rem'>
+                        Setup a service to see project activity.
+                      </Typography>
                     </Grid>
                   </ContentWrapper>
                   {/* stats */}
@@ -537,7 +563,7 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                   fullWidth
                   variant="outlined"
                   onChange={handleDescription}
-                  value={description}
+                  value={newDescription}
                 />
               </DialogContentWrapper>
               {/* tags */}
