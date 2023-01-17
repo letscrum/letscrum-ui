@@ -117,7 +117,8 @@ const EditTitle = styled(DialogTitle)({
 const InputLabel = styled(DialogContentText)({
   color: grey[900],
   fontWeight: 'bold',
-  fontSize: '1rem'
+  fontSize: '1rem',
+  marginBottom: '.25rem'
 })
 const InputBar = styled(TextField)({
   '& .MuiOutlinedInput-root': {
@@ -133,6 +134,7 @@ const InputBar = styled(TextField)({
 })
 const AddTagsButton = styled(Button)({
   height: '1.5rem',
+  marginTop: '.25rem',
   backgroundColor: 'rgb(239, 246, 252)',
   fontSize: '.6125rem',
   color: grey[500],
@@ -149,6 +151,7 @@ const AddTagsIconButton = styled(Button)({
   height: '1.5rem',
   width: '1.5rem',
   padding: '0',
+  marginTop: '.25rem',
   backgroundColor: 'rgb(239, 246, 252)',
   borderRadius: '0',
   minWidth: '0',
@@ -168,6 +171,10 @@ const AddTagsIconButton = styled(Button)({
   }
 })
 const AddTagsInput = styled(TextField)({
+  // position: 'relative',
+  // top: '1.5px',
+  marginRight: '.5rem',
+  marginTop: '.25rem',
   backgroundColor: 'rgb(239, 246, 252)',
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
@@ -196,6 +203,7 @@ const TagChip = styled(Chip)({
   borderRadius: 0,
   padding: '2px',
   marginRight: '.5rem',
+  marginTop: '.25rem',
   backgroundColor: 'rgb(239, 246, 252)',
   color: grey[600],
   '& .MuiChip-label': {
@@ -272,14 +280,6 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
   const [tagInputShow, setTagInputShow] = useState(false)
   const [tagValue, setTagValue] = useState('')
   const [tags, setTags] = useState<string[]>([])
-  useEffect(() => {
-    const handleWindowClick = (): void => setTagInputShow(false)
-    const showState = (): void => console.log('tagInputShow is true')
-    tagInputShow
-      ? document.addEventListener('click', showState)
-      : document.removeEventListener('click', handleWindowClick)
-    return () => window.removeEventListener('click', handleWindowClick)
-  }, [tagInputShow, setTagInputShow])
   const handlePeriod = (e: SelectChangeEvent): void => setPeriod(e.target.value)
   const handleShow = (): void => setShow(true)
   const handleClose = (): void => setShow(false)
@@ -302,6 +302,10 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
     }
   }
   const handleBlurAddTag = (): void => {
+    setTags([
+      ...tags,
+      tagValue
+    ])
     setTagInputShow(false)
     setAddTagsButtonShow(false)
     setAddTagsIconButtonShow(true)
@@ -326,7 +330,7 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
   return (
     <Box width='100%'>
       {/* detail page */}
-      <React.Fragment>
+      <>
         {
           fetchLoading ||
           <Box width='calc(100wh - 16rem - 1px)'>
@@ -354,6 +358,7 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                   {/* about */}
                   {
                     (description === null && tags.length === 0)
+                      // empty about
                       ? <ContentWrapper>
                         <Grid container sx={{ flexDirection: 'column', margin: 'auto', justifyContent: 'center', alignItems: 'center' }}>
                           <img src='project_overview_day_zero.IG7Dq6.png' alt='project_overview' style={{ width: '20rem' }} />
@@ -406,19 +411,20 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                         </Stack>
                         <Typography variant='body2' sx={{ marginTop: '2rem', marginBottom: '1rem' }}>
                           description: {description}
-                          <br/>
+                          <br />
                           newDescription: {newDescription}
                         </Typography>
-                        {tags.length !== 0 && <>
-                          <Typography>
-                            Tags
-                          </Typography>
-                          {tags.map((item, index) => {
-                            return (
-                              <TagChip key={`${item} + ${index}`} label={item} onDelete={(e) => handleTagsDelete(index, e)} deleteIcon={<Clear />} />
-                            )
-                          })}
-                        </>
+                        {
+                          tags.length !== 0 && <div style={{ paddingTop: '1rem', paddingBottom: '1rem' }}>
+                            <InputLabel>
+                              Tags
+                            </InputLabel>
+                            {tags.map((item, index) => {
+                              return (
+                                <TagChip key={`${item} + ${index}`} label={item} onDelete={(e) => handleTagsDelete(index, e)} deleteIcon={<Clear />} />
+                              )
+                            })}
+                          </div>
                         }
                         <EmptyReadme />
                       </ContentWrapper>
@@ -532,7 +538,7 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                 </Grid>
               </Grid>
             </MainWrapper >
-          </Box >
+          </Box>
         }
         {/* edit about pop */}
         <Box component='form' noValidate>
@@ -598,7 +604,7 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                 {/* add icon button */}
                 {
                   addTagsIconButtonShow &&
-                  <AddTagsIconButton startIcon={<Add onClick={handleAddtagsButtonShow} />} />
+                  <AddTagsIconButton startIcon={<Add />} onClick={handleAddtagsButtonShow} />
                 }
               </DialogContentWrapper>
               {/* about */}
@@ -655,7 +661,7 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
               </DialogActions>
             </EditDialog>}
         </Box>
-      </React.Fragment>
+      </>
     </Box>
   )
 }

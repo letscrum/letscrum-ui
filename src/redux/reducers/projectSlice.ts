@@ -26,7 +26,6 @@ export const fecthProject = createAsyncThunk(
   async (params: { id: string }) => {
     try {
       const projectData: any = await axios.get(`/v1/projects/${params.id}`)
-      console.log('fetch project detail data: ', projectData)
       return projectData.data.item
     } catch (e: any) {
       return e.message
@@ -41,8 +40,6 @@ export const updateProject = createAsyncThunk(
         displayName: params.displayName,
         description: params.newDescription
       })
-      console.log('put project data: ', params.newDescription)
-      console.log('result data: ', result)
       return result.data
     } catch (e: any) {
       return e.message

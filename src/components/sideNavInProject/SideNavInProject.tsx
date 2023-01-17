@@ -176,7 +176,7 @@ export const SideNavInProject: React.FunctionComponent = () => {
             height: 'calc(100% - 3rem - 1px)',
             backgroundColor: grey[200],
             boxSizing: 'border-box',
-            overflowX: 'visible'
+            overflowX: 'hidden'
           }
         }}
         variant="permanent"
