@@ -9,7 +9,7 @@ import { StarOutline, Lock, GroupAdd, TrendingUp, Edit, Assignment, AssignmentTu
 import { grey, red, blue } from '@mui/material/colors'
 import styled from '@emotion/styled'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
-import { fecthProject, selectProjcetLoading, selectProjcetUpdateLoading, selectProjectDescription, selectProjectDisplayName, selectProjectError, selectProjectUpdateError, updateProject } from '../../redux/reducers/projectSlice'
+import { fecthProject, selectProjcetLoading, selectProjcetUpdateLoading, selectProjectDescription, selectProjectDisplayName, selectProjectError, selectProjectMembers, selectProjectUpdateError, updateProject } from '../../redux/reducers/projectSlice'
 import { useParams } from 'react-router-dom'
 
 const HeaderWrapper = styled(Stack)({
@@ -270,6 +270,7 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
   const fetchError = useAppSelector(selectProjectError)
   const displayName = useAppSelector(selectProjectDisplayName)
   const description = useAppSelector(selectProjectDescription)
+  const members = useAppSelector(selectProjectMembers)
   const [newDescription, setNewDescription] = useState('')
   const dispatch = useAppDispatch()
   const updateLoading = useAppSelector(selectProjcetUpdateLoading)
@@ -431,108 +432,121 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                   }
                 </Grid>
                 <Grid item md={12} lg={4}>
-                  <ContentWrapper>
-                    {/* empty stats */}
-                    <Typography variant='h6' fontWeight='bold'>Project stats</Typography>
-                    <Grid container sx={{ flexDirection: 'column', my: '4rem', justifyContent: 'center', alignItems: 'center' }}>
-                      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '5rem', height: '5rem', backgroundColor: grey[100], borderRadius: '50%' }}>
-                        <TrendingUp />
-                      </div>
-                      <Typography variant='body2' fontWeight='bold' marginTop='3rem'>
-                        No stats are available at this moment
-                      </Typography>
-                      <Typography variant='body2' marginTop='1rem'>
-                        Setup a service to see project activity.
-                      </Typography>
-                    </Grid>
-                  </ContentWrapper>
-                  {/* stats */}
-                  <ContentWrapper>
-                    <Stack direction='row'>
-                      <Typography variant='h6' fontWeight='bold'>Project stats</Typography>
-                      {/* periods filter */}
-                      <FormControl sx={{ ml: 'auto' }} size='small' >
-                        <Select
-                          value={period}
-                          onChange={handlePeriod}
-                          MenuProps={MenuProps}
-                          displayEmpty
-                          inputProps={{ 'aria-label': 'Without label' }}
-                          sx={{
-                            width: '8rem',
-                            backgroundColor: grey[200],
-                            borderRadius: '2px',
-                            fontSize: '.875rem',
-                            '& .MuiOutlinedInput-notchedOutline': {
-                              borderColor: grey[200]
-                            },
-                            '&:hover .MuiOutlinedInput-notchedOutline': {
-                              borderColor: grey[200]
-                            },
-                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                              borderColor: grey[200]
-                            }
-                          }}
-                        >
-                          <SelectItem value={'1'}>Last 1 day</SelectItem>
-                          <SelectItem value={'7'}>Last 7 days</SelectItem>
-                          <SelectItem value={'30'}>Last 30 day</SelectItem>
-                        </Select>
-                      </FormControl>
-                    </Stack>
-                    <Box sx={{ flexGrow: 1 }}>
-                      <Grid container>
-                        <Grid item xs={12} paddingY='1rem'>
-                          <Typography>Boards</Typography>
-                        </Grid>
-                        <Grid item xs={6}>
-                          <Stack direction='row' sx={{ display: 'flex', height: '4rem', alignItems: 'center' }}>
-                            <div style={{ display: 'flex', marginRight: '1rem', width: '2rem', height: '2rem', justifyContent: 'center', alignItems: 'center', backgroundColor: grey[100], borderRadius: '2px' }}>
-                              <Assignment sx={{ fontSize: '1rem' }} />
-                            </div>
-                            <Grid item xs={8}>
-                              <Typography sx={{ fontSize: '.75rem' }}>0</Typography>
-                              <Typography sx={{ fontSize: '.75rem' }}>Work items created</Typography>
-                            </Grid>
-                          </Stack>
-                        </Grid>
-                        <Grid item xs={6}>
-                          <Stack direction='row' sx={{ display: 'flex', height: '4rem', alignItems: 'center' }}>
-                            <div style={{ display: 'flex', marginRight: '1rem', width: '2rem', height: '2rem', justifyContent: 'center', alignItems: 'center', backgroundColor: grey[100], borderRadius: '2px' }}>
-                              <AssignmentTurnedIn sx={{ fontSize: '1rem' }} />
-                            </div>
-                            <Grid item xs={8}>
-                              <Typography sx={{ fontSize: '.75rem' }}>0</Typography>
-                              <Typography sx={{ fontSize: '.75rem' }}>Work items completed</Typography>
-                            </Grid>
-                          </Stack>
-                        </Grid>
-                      </Grid>
-                      <Grid item xs={12} paddingY='1rem'>
-                        <Typography>Repos</Typography>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Stack direction='row' sx={{ display: 'flex', height: '4rem', alignItems: 'center' }}>
-                          <div style={{ display: 'flex', marginRight: '1rem', width: '2rem', height: '2rem', justifyContent: 'center', alignItems: 'center', backgroundColor: grey[100], borderRadius: '2px' }}>
-                            <Commit sx={{ fontSize: '1rem' }} />
+                  {/* empty stats */}
+                  {
+                    (description === null && tags.length === 0)
+                      ? <ContentWrapper>
+                        <Typography variant='h6' fontWeight='bold'>Project stats</Typography>
+                        <Grid container sx={{ flexDirection: 'column', my: '4rem', justifyContent: 'center', alignItems: 'center' }}>
+                          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '5rem', height: '5rem', backgroundColor: grey[100], borderRadius: '50%' }}>
+                            <TrendingUp />
                           </div>
-                          <Grid item xs={8}>
-                            <Typography sx={{ fontSize: '.75rem' }}>0</Typography>
-                            <Typography sx={{ fontSize: '.75rem' }}>Changesets by 0 authors</Typography>
-                          </Grid>
+                          <Typography variant='body2' fontWeight='bold' marginTop='3rem'>
+                            No stats are available at this moment
+                          </Typography>
+                          <Typography variant='body2' marginTop='1rem'>
+                            Setup a service to see project activity.
+                          </Typography>
+                        </Grid>
+                      </ContentWrapper>
+                      : <ContentWrapper>
+                        <Stack direction='row'>
+                          <Typography variant='h6' fontWeight='bold'>Project stats</Typography>
+                          {/* periods filter */}
+                          <FormControl sx={{ ml: 'auto' }} size='small' >
+                            <Select
+                              value={period}
+                              onChange={handlePeriod}
+                              MenuProps={MenuProps}
+                              displayEmpty
+                              inputProps={{ 'aria-label': 'Without label' }}
+                              sx={{
+                                width: '8rem',
+                                backgroundColor: grey[200],
+                                borderRadius: '2px',
+                                fontSize: '.875rem',
+                                '& .MuiOutlinedInput-notchedOutline': {
+                                  borderColor: grey[200]
+                                },
+                                '&:hover .MuiOutlinedInput-notchedOutline': {
+                                  borderColor: grey[200]
+                                },
+                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                  borderColor: grey[200]
+                                }
+                              }}
+                            >
+                              <SelectItem value={'1'}>Last 1 day</SelectItem>
+                              <SelectItem value={'7'}>Last 7 days</SelectItem>
+                              <SelectItem value={'30'}>Last 30 day</SelectItem>
+                            </Select>
+                          </FormControl>
                         </Stack>
-                      </Grid>
-                    </Box>
-                  </ContentWrapper>
+                        <Box sx={{ flexGrow: 1 }}>
+                          <Grid container>
+                            <Grid item xs={12} paddingY='1rem'>
+                              <Typography>Boards</Typography>
+                            </Grid>
+                            <Grid item xs={6}>
+                              <Stack direction='row' sx={{ display: 'flex', height: '4rem', alignItems: 'center' }}>
+                                <div style={{ display: 'flex', marginRight: '1rem', width: '2rem', height: '2rem', justifyContent: 'center', alignItems: 'center', backgroundColor: grey[100], borderRadius: '2px' }}>
+                                  <Assignment sx={{ fontSize: '1rem' }} />
+                                </div>
+                                <Grid item xs={8}>
+                                  <Typography sx={{ fontSize: '.75rem' }}>0</Typography>
+                                  <Typography sx={{ fontSize: '.75rem' }}>Work items created</Typography>
+                                </Grid>
+                              </Stack>
+                            </Grid>
+                            <Grid item xs={6}>
+                              <Stack direction='row' sx={{ display: 'flex', height: '4rem', alignItems: 'center' }}>
+                                <div style={{ display: 'flex', marginRight: '1rem', width: '2rem', height: '2rem', justifyContent: 'center', alignItems: 'center', backgroundColor: grey[100], borderRadius: '2px' }}>
+                                  <AssignmentTurnedIn sx={{ fontSize: '1rem' }} />
+                                </div>
+                                <Grid item xs={8}>
+                                  <Typography sx={{ fontSize: '.75rem' }}>0</Typography>
+                                  <Typography sx={{ fontSize: '.75rem' }}>Work items completed</Typography>
+                                </Grid>
+                              </Stack>
+                            </Grid>
+                          </Grid>
+                          <Grid item xs={12} paddingY='1rem'>
+                            <Typography>Repos</Typography>
+                          </Grid>
+                          <Grid item xs={6}>
+                            <Stack direction='row' sx={{ display: 'flex', height: '4rem', alignItems: 'center' }}>
+                              <div style={{ display: 'flex', marginRight: '1rem', width: '2rem', height: '2rem', justifyContent: 'center', alignItems: 'center', backgroundColor: grey[100], borderRadius: '2px' }}>
+                                <Commit sx={{ fontSize: '1rem' }} />
+                              </div>
+                              <Grid item xs={8}>
+                                <Typography sx={{ fontSize: '.75rem' }}>0</Typography>
+                                <Typography sx={{ fontSize: '.75rem' }}>Changesets by 0 authors</Typography>
+                              </Grid>
+                            </Stack>
+                          </Grid>
+                        </Box>
+                      </ContentWrapper>
+                  }
                   {/* members */}
                   <ContentWrapper sx={{ marginTop: '1rem' }}>
                     <Stack direction='row'>
                       <Typography variant='h6' fontWeight='bold'>Members</Typography>
-                      <Chip size='small' sx={{ marginTop: '.125rem', marginLeft: '.25rem', px: '.25rem', backgroundColor: grey[100] }} label='1' />
+                      <Chip
+                        size='small'
+                        sx={{ marginTop: '.125rem', marginLeft: '.25rem', px: '.25rem', backgroundColor: grey[100] }}
+                        label={members.length} />
                     </Stack>
                     <Grid container>
-                      <Avatar sx={{ width: '1.875rem', height: '1.875rem', marginTop: '1rem' }}>
-                        <Typography variant='body2' color='white'>L</Typography></Avatar>
+                      {
+                        members.map((item: { userId: string | null, userName: string | null }) => {
+                          return (
+                            <Avatar key={item.userId} sx={{ width: '1.875rem', height: '1.875rem', marginTop: '1rem' }}>
+                              <Typography variant='body2' color='white'>
+                                {item.userName?.toString().toUpperCase().charAt(0)}
+                              </Typography></Avatar>
+                          )
+                        })
+                      }
                     </Grid>
                   </ContentWrapper>
                 </Grid>

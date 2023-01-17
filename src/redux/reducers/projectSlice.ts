@@ -8,6 +8,10 @@ interface ProjectState {
   id: string | null
   displayName: string | null
   description: string | null
+  members: Array<{
+    userId: string | null
+    userName: string | null
+  }>
   updateLoading: boolean
   updateError: any
 }
@@ -17,6 +21,10 @@ const initialState: ProjectState = {
   id: null,
   displayName: null,
   description: null,
+  members: [{
+    userId: null,
+    userName: null
+  }],
   updateLoading: false,
   updateError: null
 }
@@ -60,6 +68,8 @@ export const projectSlice = createSlice({
         state.id = action.payload.id
         state.displayName = action.payload.displayName
         state.description = action.payload.description
+        state.members = action.payload.members
+        console.log('fetch members: ', action.payload.members)
       })
       .addCase(fecthProject.rejected, (state, action) => {
         state.loading = false
@@ -84,4 +94,8 @@ export const selectProjectUpdateError = (state: RootState): any => state.project
 export const selectProjectId = (state: RootState): string | null => state.project.id
 export const selectProjectDisplayName = (state: RootState): string | null => state.project.displayName
 export const selectProjectDescription = (state: RootState): string | null => state.project.description
+export const selectProjectMembers = (state: RootState): Array<{
+  userId: string | null
+  userName: string | null
+}> => state.project.members
 export default projectSlice.reducer
