@@ -219,6 +219,14 @@ const TagChip = styled(Chip)({
     fontSize: '1rem'
   }
 })
+const StateCounter = styled(Typography)({
+  fontSize: '.875rem',
+  fontWeight: 'bold'
+})
+const StateDecription = styled(Typography)({
+  fontSize: '.75rem',
+  color: grey[500]
+})
 const CancelButton = styled(Button)({
   padding: '.25rem .5rem',
   color: grey[900],
@@ -450,6 +458,7 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                         </Grid>
                       </ContentWrapper>
                       : <ContentWrapper>
+                        {/* no api data */}
                         <Stack direction='row'>
                           <Typography variant='h6' fontWeight='bold'>Project stats</Typography>
                           {/* periods filter */}
@@ -493,8 +502,8 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                                   <Assignment sx={{ fontSize: '1rem' }} />
                                 </div>
                                 <Grid item xs={8}>
-                                  <Typography sx={{ fontSize: '.75rem' }}>0</Typography>
-                                  <Typography sx={{ fontSize: '.75rem' }}>Work items created</Typography>
+                                  <StateCounter>0</StateCounter>
+                                  <StateDecription>Work items created</StateDecription>
                                 </Grid>
                               </Stack>
                             </Grid>
@@ -504,8 +513,8 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                                   <AssignmentTurnedIn sx={{ fontSize: '1rem' }} />
                                 </div>
                                 <Grid item xs={8}>
-                                  <Typography sx={{ fontSize: '.75rem' }}>0</Typography>
-                                  <Typography sx={{ fontSize: '.75rem' }}>Work items completed</Typography>
+                                  <StateCounter>0</StateCounter>
+                                  <StateDecription>Work items completed</StateDecription>
                                 </Grid>
                               </Stack>
                             </Grid>
@@ -519,8 +528,8 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                                 <Commit sx={{ fontSize: '1rem' }} />
                               </div>
                               <Grid item xs={8}>
-                                <Typography sx={{ fontSize: '.75rem' }}>0</Typography>
-                                <Typography sx={{ fontSize: '.75rem' }}>Changesets by 0 authors</Typography>
+                                <StateCounter>0</StateCounter>
+                                <StateDecription>Changesets by 0 authors</StateDecription>
                               </Grid>
                             </Stack>
                           </Grid>
