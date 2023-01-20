@@ -14,6 +14,7 @@ import {
   selectProjectMembers, selectProjectUpdateError, updateProject
 } from '../../redux/reducers/projectSlice'
 import { useParams } from 'react-router-dom'
+import PickAvatarColor from '../../utils/PickAvatarColor'
 
 const HeaderWrapper = styled(Stack)({
   position: 'sticky',
@@ -498,7 +499,7 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
           <Box width='calc(100wh - 16rem - 1px)'>
             {/* header */}
             <HeaderWrapper direction='row'>
-              <Avatar variant='rounded'>T</Avatar>
+              <Avatar variant='rounded' sx={{ backgroundColor: PickAvatarColor(id) }}>T</Avatar>
               <TitleText variant='h6' >{displayName}</TitleText>
               <PrivateButton variant='contained' size='small' disableElevation >
                 <Lock sx={{ fontSize: '1rem' }} />
