@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import {
   Box, Stack, Avatar, Typography, Button, IconButton, Divider, Grid, Paper, Link, Chip, FormControl, Select, MenuItem, SelectChangeEvent,
-  Dialog, DialogTitle, AlertProps, DialogContent, DialogContentText, TextField, RadioGroup, Radio, FormControlLabel, DialogActions
+  Dialog, DialogTitle, AlertProps, DialogContent, DialogContentText, TextField, RadioGroup, Radio, FormControlLabel, DialogActions, InputAdornment
 } from '@mui/material'
 import MuiAlert from '@mui/material/Alert'
 import { FormControlLabelProps } from '@mui/material/FormControlLabel'
-import { StarOutline, Lock, GroupAdd, TrendingUp, Edit, Assignment, AssignmentTurnedIn, Commit, Close, Add, Clear } from '@mui/icons-material'
-import { grey, red, blue } from '@mui/material/colors'
+import { StarOutline, Lock, GroupAdd, TrendingUp, Edit, Assignment, AssignmentTurnedIn, Commit, Close, Add, Clear, FilterAlt, Hub } from '@mui/icons-material'
+import { grey, red, blue, purple } from '@mui/material/colors'
 import styled from '@emotion/styled'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
-import { fecthProject, selectProjcetLoading, selectProjcetUpdateLoading, selectProjectDescription, selectProjectDisplayName, selectProjectError, selectProjectMembers, selectProjectUpdateError, updateProject } from '../../redux/reducers/projectSlice'
+import {
+  fecthProject, selectProjcetLoading, selectProjcetUpdateLoading, selectProjectDescription, selectProjectDisplayName, selectProjectError,
+  selectProjectMembers, selectProjectUpdateError, updateProject
+} from '../../redux/reducers/projectSlice'
 import { useParams } from 'react-router-dom'
 
 const HeaderWrapper = styled(Stack)({
@@ -56,16 +59,6 @@ const MainWrapper = styled(Box)({
 })
 const ContentWrapper = styled(Paper)({
   padding: '2rem'
-})
-const MenuProps = {
-  PaperProps: {
-    style: {
-      borderRadius: '2px'
-    }
-  }
-}
-const SelectItem = styled(MenuItem)({
-  fontSize: '.75rem'
 })
 const WelcomeNavButton = styled(Button)({
   margin: '.5rem',
@@ -219,6 +212,113 @@ const TagChip = styled(Chip)({
     fontSize: '1rem'
   }
 })
+const AboutSelect = styled(Select)({
+  width: '100%',
+  borderRadius: '2px',
+  '&:hover .MuiOutlinedInput-notchedOutline': {
+    borderColor: grey[500]
+  },
+  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+    borderWidth: '1px',
+    borderColor: grey[500]
+  },
+  '& .MuiSelect-select': {
+    display: 'flex',
+    padding: '.5rem',
+    alignItems: 'center'
+  }
+})
+const MenuProps = {
+  PaperProps: {
+    style: {
+      borderRadius: '2px'
+    }
+  }
+}
+const FilterInput = styled(TextField)({
+  width: '100%',
+  '& .MuiInputBase-root': {
+    borderRadius: 2,
+    backgroundColor: grey[100],
+    padding: 1
+  },
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderStyle: 'none'
+    }
+  },
+  '& .MuiInputAdornment-root': {
+    width: '2rem',
+    marginRight: 0,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  '& .MuiSvgIcon-root': {
+    fontSize: '.875rem',
+    color: grey[500]
+  },
+  '& .MuiInputBase-input': {
+    width: '12.5rem',
+    padding: '2px 3px',
+    height: '1.5rem',
+    fontSize: '.875rem',
+    fontWeight: '300',
+    color: grey[900]
+  }
+})
+const SelectSearchBar = styled(MenuItem)({
+  paddingLeft: '.5rem',
+  paddingRight: '.5rem',
+  fontSize: '.75rem',
+  // backgroundColor: 'white',
+  '& .MuiButtonBase-root': {
+    backgroundColor: 'white'
+  },
+  '& .MuiMenuItem-root': {
+    backgroundColor: 'white'
+  },
+  '&:hover': {
+    backgroundColor: 'white'
+  }
+})
+const SelectItem = styled(MenuItem)({
+  paddingLeft: '.5rem',
+  paddingRight: '.5rem',
+  fontSize: '.75rem'
+})
+const MenuItemHub = styled(Hub)({
+  marginRight: '.5rem',
+  fontSize: '1rem',
+  color: purple[800]
+})
+const MenuItemText = styled(Typography)({
+  fontSize: '.75rem'
+})
+const TrendingUpContainer = styled('div')({
+  display: 'flex',
+  width: '5rem',
+  height: '5rem',
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: grey[100],
+  borderRadius: '50%'
+})
+const StateContainer = styled(Stack)({
+  display: 'flex',
+  height: '4rem',
+  alignItems: 'center'
+})
+const StateIconBackground = styled('div')({
+  display: 'flex',
+  marginRight: '1rem',
+  width: '2rem',
+  height: '2rem',
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: grey[100],
+  borderRadius: '2px'
+})
 const StateCounter = styled(Typography)({
   fontSize: '.875rem',
   fontWeight: 'bold'
@@ -226,6 +326,17 @@ const StateCounter = styled(Typography)({
 const StateDecription = styled(Typography)({
   fontSize: '.75rem',
   color: grey[500]
+})
+const MembersNumber = styled(Chip)({
+  marginTop: '.125rem',
+  marginLeft: '.25rem',
+  px: '.25rem',
+  backgroundColor: grey[100]
+})
+const MemberAvatar = styled(Avatar)({
+  width: '1.875rem',
+  height: '1.875rem',
+  marginTop: '1rem'
 })
 const CancelButton = styled(Button)({
   padding: '.25rem .5rem',
@@ -289,9 +400,32 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
   const [tagInputShow, setTagInputShow] = useState(false)
   const [tagValue, setTagValue] = useState('')
   const [tags, setTags] = useState<string[]>([])
+  const [aboutType, setAboutType] = useState('readme')
+  const [repositoryKeyword, setRepositoryKeyword] = useState('')
+  const defaultRepos = [{
+    id: '1',
+    name: 'imoogoo',
+    value: 'imoogoo'
+  },
+  {
+    id: '2',
+    name: 'shinemap',
+    value: 'shinemap'
+  },
+  {
+    id: '3',
+    name: 'simpletour',
+    value: 'simpletour'
+  }]
+  const [repos, setRepos] = useState(defaultRepos)
   const handlePeriod = (e: SelectChangeEvent): void => setPeriod(e.target.value)
   const handleShow = (): void => setShow(true)
-  const handleClose = (): void => setShow(false)
+  const handleClose = (): void => {
+    setShow(false)
+    setNewDescription('')
+    setAboutType('readme')
+    setRepositoryKeyword('')
+  }
   const handleDescription = (e: React.ChangeEvent<HTMLInputElement>): void => setNewDescription(e.currentTarget.value)
   const handleAddtagsButtonShow = (): void => {
     setAddTagsButtonShow(false)
@@ -319,18 +453,37 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
     setAddTagsButtonShow(false)
     setAddTagsIconButtonShow(true)
   }
-  const handleTagsDelete = (index: number, e: any): void => setTags(tags.filter(t => t !== tags[index]))
-  // how to handle error as follow ???
+  const handleTagsDelete = (index: number, e: ChangeEvent<HTMLInputElement>): void => setTags(tags.filter(t => t !== tags[index]))
+  const handleAboutType = (e: ChangeEvent<HTMLInputElement>): void => setAboutType((e.target as HTMLInputElement).value)
+  const handleRepositorySearch = (e: ChangeEvent<HTMLInputElement>): void => {
+    const keyword = e.target.value
+    setRepositoryKeyword(keyword)
+    console.log('keyword: ', keyword)
+    keyword !== null
+      ? setRepos(defaultRepos.filter((i) => {
+        console.log('i.value', i.value)
+        console.log('i.value.match', i.value.match(keyword))
+        return i.value.match(keyword) !== null
+      }))
+      : setRepos(defaultRepos)
+    console.log('keyword: ', keyword, ' + repos: ', defaultRepos.filter((i) => i.value.match(keyword) !== null))
+    console.log('repos: ', repos)
+  }
+  // const handleSubmitRepositorySearch = (): any => { }
   const handleSaveProject = (): void => {
+    // update project data
     dispatch(updateProject({ id, displayName, newDescription }))
       .catch(() => updateError)
     handleClose()
+    // re-render detail
     dispatch(fecthProject({ id }))
-      .catch(() => alert(fetchError))
+      .catch(() => fetchError)
   }
   useEffect(() => {
+    // fetch data by default
     dispatch(fecthProject({ id }))
       .catch(() => alert(fetchError))
+    // update tags
     if (tags.length === 0) {
       setAddTagsButtonShow(true)
       setAddTagsIconButtonShow(false)
@@ -446,9 +599,9 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                       ? <ContentWrapper>
                         <Typography variant='h6' fontWeight='bold'>Project stats</Typography>
                         <Grid container sx={{ flexDirection: 'column', my: '4rem', justifyContent: 'center', alignItems: 'center' }}>
-                          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '5rem', height: '5rem', backgroundColor: grey[100], borderRadius: '50%' }}>
+                          <TrendingUpContainer>
                             <TrendingUp />
-                          </div>
+                          </TrendingUpContainer>
                           <Typography variant='body2' fontWeight='bold' marginTop='3rem'>
                             No stats are available at this moment
                           </Typography>
@@ -497,41 +650,41 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                               <Typography>Boards</Typography>
                             </Grid>
                             <Grid item xs={6}>
-                              <Stack direction='row' sx={{ display: 'flex', height: '4rem', alignItems: 'center' }}>
-                                <div style={{ display: 'flex', marginRight: '1rem', width: '2rem', height: '2rem', justifyContent: 'center', alignItems: 'center', backgroundColor: grey[100], borderRadius: '2px' }}>
+                              <StateContainer direction='row'>
+                                <StateIconBackground>
                                   <Assignment sx={{ fontSize: '1rem' }} />
-                                </div>
+                                </StateIconBackground>
                                 <Grid item xs={8}>
                                   <StateCounter>0</StateCounter>
                                   <StateDecription>Work items created</StateDecription>
                                 </Grid>
-                              </Stack>
+                              </StateContainer>
                             </Grid>
                             <Grid item xs={6}>
-                              <Stack direction='row' sx={{ display: 'flex', height: '4rem', alignItems: 'center' }}>
-                                <div style={{ display: 'flex', marginRight: '1rem', width: '2rem', height: '2rem', justifyContent: 'center', alignItems: 'center', backgroundColor: grey[100], borderRadius: '2px' }}>
+                              <StateContainer direction='row'>
+                                <StateIconBackground>
                                   <AssignmentTurnedIn sx={{ fontSize: '1rem' }} />
-                                </div>
+                                </StateIconBackground>
                                 <Grid item xs={8}>
                                   <StateCounter>0</StateCounter>
                                   <StateDecription>Work items completed</StateDecription>
                                 </Grid>
-                              </Stack>
+                              </StateContainer>
                             </Grid>
                           </Grid>
                           <Grid item xs={12} paddingY='1rem'>
                             <Typography>Repos</Typography>
                           </Grid>
                           <Grid item xs={6}>
-                            <Stack direction='row' sx={{ display: 'flex', height: '4rem', alignItems: 'center' }}>
-                              <div style={{ display: 'flex', marginRight: '1rem', width: '2rem', height: '2rem', justifyContent: 'center', alignItems: 'center', backgroundColor: grey[100], borderRadius: '2px' }}>
+                            <StateContainer direction='row'>
+                              <StateIconBackground>
                                 <Commit sx={{ fontSize: '1rem' }} />
-                              </div>
+                              </StateIconBackground>
                               <Grid item xs={8}>
                                 <StateCounter>0</StateCounter>
                                 <StateDecription>Changesets by 0 authors</StateDecription>
                               </Grid>
-                            </Stack>
+                            </StateContainer>
                           </Grid>
                         </Box>
                       </ContentWrapper>
@@ -540,19 +693,19 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                   <ContentWrapper sx={{ marginTop: '1rem' }}>
                     <Stack direction='row'>
                       <Typography variant='h6' fontWeight='bold'>Members</Typography>
-                      <Chip
+                      <MembersNumber
                         size='small'
-                        sx={{ marginTop: '.125rem', marginLeft: '.25rem', px: '.25rem', backgroundColor: grey[100] }}
                         label={members.length} />
                     </Stack>
                     <Grid container>
                       {
                         members.map((item: { userId: string | null, userName: string | null }) => {
                           return (
-                            <Avatar key={item.userId} sx={{ width: '1.875rem', height: '1.875rem', marginTop: '1rem' }}>
+                            <MemberAvatar key={item.userId}>
                               <Typography variant='body2' color='white'>
                                 {item.userName?.toString().toUpperCase().charAt(0)}
-                              </Typography></Avatar>
+                              </Typography>
+                            </MemberAvatar>
                           )
                         })
                       }
@@ -635,43 +788,53 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                 <InputLabel>
                   About
                 </InputLabel>
-                <FormControl>
-                  <RadioGroup
-                    row
-                    aria-labelledby="demo-row-radio-buttons-group-label"
-                    name="row-radio-buttons-group"
-                    defaultValue='readme'
-                  >
-                    <StyledFormControlLabel value='readme' control={<Radio size='small' />} label='Readme File' />
-                    <StyledFormControlLabel value='wiki' control={<Radio size='small' />} label='Wiki' />
-                  </RadioGroup>
-                </FormControl>
-                <Select
-                  sx={{
-                    width: '100%',
-                    fontSize: '.75rem',
-                    borderRadius: '2px',
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: grey[500]
-                    },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderWidth: '1px',
-                      borderColor: grey[500]
-                    },
-                    '& .MuiSelect-select': {
-                      padding: '.5rem'
-                    }
-                  }}
-                  MenuProps={MenuProps}
-                  defaultValue=''
+                <RadioGroup
+                  row
+                  aria-labelledby="demo-row-radio-buttons-group-label"
+                  name="row-radio-buttons-group"
+                  value={aboutType}
+                  onChange={handleAboutType}
                 >
-                  <SelectItem value=''>
-                    Search Bar
-                  </SelectItem>
-                  <SelectItem value='result'>
-                    Search results
-                  </SelectItem>
-                </Select>
+                  <StyledFormControlLabel label='Readme File' value='readme' control={<Radio size='small' />} />
+                  <StyledFormControlLabel label='Wiki' value='wiki' control={<Radio size='small' />} />
+                </RadioGroup>
+                {aboutType === 'readme' &&
+                  <AboutSelect
+                    MenuProps={MenuProps}
+                    defaultValue=''
+                  >
+                    {/* search bar */}
+                    <SelectSearchBar>
+                      <FilterInput
+                        placeholder='Filter repositories'
+                        value={repositoryKeyword}
+                        size='small'
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <FilterAlt />
+                            </InputAdornment>
+                          )
+                        }}
+                        onChange={handleRepositorySearch}
+                      // onKeyDown={handleSubmitRepositorySearch}
+                      />
+                    </SelectSearchBar>
+                    {/* item list */}
+                    {
+                      repos.map((item, index) => {
+                        return (
+                          <SelectItem key={`${index} + ${item.value}`} value={item.value}>
+                            <MenuItemHub />
+                            <MenuItemText>
+                              {item.name}
+                            </MenuItemText>
+                          </SelectItem>
+                        )
+                      })
+                    }
+                  </AboutSelect>
+                }
               </DialogContentWrapper>
               <div style={{ padding: '0 1.5rem' }}>
                 <EmptyReadme />

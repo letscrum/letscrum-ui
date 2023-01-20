@@ -44,11 +44,11 @@ export const updateProject = createAsyncThunk(
   'project/update',
   async (params: { id: string, displayName: string | null, newDescription: string | null }) => {
     try {
-      const result = await axios.put(`/v1/projects/${params.id}`, {
+      const response = await axios.put(`/v1/projects/${params.id}`, {
         displayName: params.displayName,
         description: params.newDescription
       })
-      return result.data
+      return response.data
     } catch (e: any) {
       return e.message
     }
@@ -69,7 +69,6 @@ export const projectSlice = createSlice({
         state.displayName = action.payload.displayName
         state.description = action.payload.description
         state.members = action.payload.members
-        console.log('fetch members: ', action.payload.members)
       })
       .addCase(fecthProject.rejected, (state, action) => {
         state.loading = false

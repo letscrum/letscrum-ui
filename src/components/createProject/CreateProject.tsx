@@ -151,22 +151,38 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
   const handleMore = (): void => setShowMore(!showMore)
   const handleController = (e: SelectChangeEvent): void => setVersionController(e.target.value)
   const handleProcess = (e: SelectChangeEvent): void => setWorkItemProcess(e.target.value)
-  const addProject = (): void => {
+  // const addProject = (): void => {
+  //   setLoading(true)
+  //   void axios.post('v1/projects', {
+  //     displayName: projectName,
+  //     description
+  //   })
+  //     .then((res) => {
+  //       if (res.status === 200) {
+  //         setLoading(false)
+  //         handleClose()
+  //       }
+  //     })
+  //     .catch((e) => {
+  //       setLoading(false)
+  //       setError(e.response.data.message)
+  //     })
+  // }
+  const createProject = async (): Promise<string> => {
     setLoading(true)
-    void axios.post('v1/projects', {
-      displayName: projectName,
-      description
-    })
-      .then((res) => {
-        if (res.status === 200) {
-          setLoading(false)
-          handleClose()
-        }
+    try {
+      const response = await axios.post('v1/projects', {
+        displayName: projectName,
+        description
       })
-      .catch((e) => {
-        setLoading(false)
-        setError(e.response.data.message)
-      })
+      setLoading(false)
+      handleClose()
+      return response.data
+    } catch (e: any) {
+      setLoading(false)
+      setError(e.response.data.message)
+      return error
+    }
   }
   return (
     <Box component='form' noValidate>
@@ -424,7 +440,7 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
             {
               projectName !== ''
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                ? <CreateButton onClick={addProject}>
+                ? <CreateButton onClick={createProject}>
                   Create</CreateButton>
                 : <CancelButton disabled>
                   Create</CancelButton>
