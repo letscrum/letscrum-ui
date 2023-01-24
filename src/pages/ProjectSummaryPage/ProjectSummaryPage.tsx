@@ -1,11 +1,11 @@
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import {
   Box, Stack, Avatar, Typography, Button, IconButton, Divider, Grid, Paper, Link, Chip, FormControl, Select, MenuItem, SelectChangeEvent,
-  Dialog, DialogTitle, AlertProps, DialogContent, DialogContentText, TextField, RadioGroup, Radio, FormControlLabel, DialogActions, InputAdornment
+  Dialog, DialogTitle, AlertProps, DialogContent, DialogContentText, TextField, RadioGroup, Radio, FormControlLabel, DialogActions, InputAdornment, Tooltip, TooltipProps, tooltipClasses, Autocomplete
 } from '@mui/material'
 import MuiAlert from '@mui/material/Alert'
 import { FormControlLabelProps } from '@mui/material/FormControlLabel'
-import { StarOutline, Lock, GroupAdd, TrendingUp, Edit, Assignment, AssignmentTurnedIn, Commit, Close, Add, Clear, FilterAlt, Hub } from '@mui/icons-material'
+import { StarOutline, Lock, GroupAdd, TrendingUp, Edit, Assignment, AssignmentTurnedIn, Commit, Close, Add, Clear, FilterAlt, Hub, ContactMailOutlined } from '@mui/icons-material'
 import { grey, red, blue, purple } from '@mui/material/colors'
 import styled from '@emotion/styled'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
@@ -15,7 +15,13 @@ import {
 } from '../../redux/reducers/projectSlice'
 import { useParams } from 'react-router-dom'
 import PickAvatarColor from '../../utils/PickAvatarColor'
+import axios from 'axios'
 
+interface UserType {
+  id: string
+  name: string
+  email: string
+}
 const HeaderWrapper = styled(Stack)({
   position: 'sticky',
   zIndex: 1,
@@ -27,6 +33,18 @@ const TitleText = styled(Typography)({
   lineHeight: '40px',
   marginLeft: '.5rem'
 })
+const HelpTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({
+  [`& .${tooltipClasses.tooltip}`]: {
+    margin: '1rem',
+    backgroundColor: grey[900],
+    fontSize: '.875rem',
+    color: 'white',
+    lineHeight: '1.25rem',
+    borderRadius: '2px'
+  }
+}))
 const PrivateButton = styled(Button)({
   marginLeft: 'auto',
   height: '2rem',
@@ -120,10 +138,34 @@ const InputBar = styled(TextField)({
       borderRadius: 2,
       borderColor: grey[700]
     },
+    '&:hover fieldset': {
+      borderWidth: 1,
+      boxShadow: '0 0 0 2px #bbdefb'
+    },
     '&.Mui-focused fieldset': {
       borderWidth: 1,
       boxShadow: '0 0 0 2px #bbdefb'
     }
+  }
+})
+const AutoCompleteInput = styled(TextField)({
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderRadius: 2,
+      borderColor: grey[700]
+    },
+    '&:hover fieldset': {
+      borderWidth: 1,
+      boxShadow: '0 0 0 2px #bbdefb'
+    },
+    '&.Mui-focused fieldset': {
+      borderWidth: 1,
+      boxShadow: '0 0 0 2px #bbdefb'
+    }
+  },
+  '& .MuiChip-root': {
+    height: '1.5rem',
+    fontSize: '.75rem'
   }
 })
 const AddTagsButton = styled(Button)({
@@ -384,6 +426,7 @@ const EmptyReadme: React.FunctionComponent = () => {
 }
 export const ProjectSummaryPage: React.FunctionComponent = () => {
   const [show, setShow] = useState(false)
+  const [showInvitation, setShowInvitation] = useState(false)
   const { projectId } = useParams()
   const id = projectId ?? ''
   const fetchLoading = useAppSelector(selectProjcetLoading)
@@ -419,6 +462,15 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
     value: 'simpletour'
   }]
   const [repos, setRepos] = useState(defaultRepos)
+  const initUser: UserType[] = [{
+    id: '123',
+    name: 'userName',
+    email: 'email@letscrum.io'
+  }]
+  const [users, setUsers] = useState<UserType[]>(initUser)
+  const [loadingUsers, setLoadingUsers] = useState(true)
+  const [usersError, setUsersError] = useState('')
+  const [openUsers, setOpenUsers] = useState(false)
   const handlePeriod = (e: SelectChangeEvent): void => setPeriod(e.target.value)
   const handleShow = (): void => setShow(true)
   const handleClose = (): void => {
@@ -480,6 +532,29 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
     dispatch(fecthProject({ id }))
       .catch(() => fetchError)
   }
+  const handleShowInvitaion = (): void => setShowInvitation(true)
+  const handleCloseInvitation = (): void => setShowInvitation(false)
+  const fetchUsers = async (): Promise<any> => {
+    try {
+      const response = await axios.get('v1/users')
+      setLoadingUsers(false)
+      console.log('response.data.items: ', response.data.items)
+      console.log('users: ', users)
+      console.log('setUsers: ', setUsers)
+      // setUsers([
+      //   ...users,
+      //   response.data.items
+      // ])
+      return users
+    } catch (e: any) {
+      setUsersError(e.message)
+      setLoadingUsers(false)
+      return usersError
+    }
+  }
+  useEffect(() => {
+    void fetchUsers()
+  }, [])
   useEffect(() => {
     // fetch data by default
     dispatch(fecthProject({ id }))
@@ -501,17 +576,21 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
             <HeaderWrapper direction='row'>
               <Avatar variant='rounded' sx={{ backgroundColor: PickAvatarColor(id) }}>T</Avatar>
               <TitleText variant='h6' >{displayName}</TitleText>
-              <PrivateButton variant='contained' size='small' disableElevation >
-                <Lock sx={{ fontSize: '1rem' }} />
-                <HeaderButtonText>Private</HeaderButtonText>
-              </PrivateButton>
-              <InviteButton variant='contained' size='small' disableElevation>
+              <HelpTooltip disableFocusListener title='Shared with members of the project'>
+                <PrivateButton variant='contained' size='small' disableElevation >
+                  <Lock sx={{ fontSize: '1rem' }} />
+                  <HeaderButtonText>Private</HeaderButtonText>
+                </PrivateButton>
+              </HelpTooltip>
+              <InviteButton variant='contained' size='small' disableElevation onClick={handleShowInvitaion}>
                 <GroupAdd sx={{ fontSize: '1rem' }} />
                 <HeaderButtonText>Invite</HeaderButtonText>
               </InviteButton>
-              <FavoriteButton>
-                <StarOutline sx={{ fontSize: '1rem', color: 'brown' }} />
-              </FavoriteButton>
+              <HelpTooltip disableFocusListener title='Add to favorites'>
+                <FavoriteButton>
+                  <StarOutline sx={{ fontSize: '1rem', color: 'brown' }} />
+                </FavoriteButton>
+              </HelpTooltip>
             </HeaderWrapper>
             <HeaderDivider />
             {/* main content */}
@@ -568,9 +647,11 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                           <Typography variant='h6' fontWeight='bold'>
                             About this project
                           </Typography>
-                          <AboutEditButton onClick={handleShow}>
-                            <Edit sx={{ fontSize: '1rem' }} />
-                          </AboutEditButton>
+                          <HelpTooltip disableFocusListener title='Edit project information'>
+                            <AboutEditButton onClick={handleShow}>
+                              <Edit sx={{ fontSize: '1rem' }} />
+                            </AboutEditButton>
+                          </HelpTooltip>
                         </Stack>
                         <Typography variant='body2' sx={{ marginTop: '2rem', marginBottom: '1rem' }}>
                           description: {description}
@@ -847,6 +928,120 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                   Save</CreateButton>
               </DialogActions>
             </EditDialog>}
+        </Box>
+        {/* invite new members */}
+        <Box component='form' noValidate>
+          {
+            showInvitation &&
+            <EditDialog open={showInvitation} onClose={handleCloseInvitation}>
+              {/* title */}
+              <Stack direction='row'>
+                <div>
+                  <EditTitle>Invite members to {displayName}</EditTitle>
+                  <Typography sx={{ fontWeight: 'light' }}>
+                    Search and add users to your {displayName}
+                  </Typography>
+                </div>
+                <Grid sx={{ display: 'flex', marginLeft: 'auto', alignItems: 'center' }}>
+                  <IconButton onClick={handleClose} >
+                    <Close />
+                  </IconButton>
+                </Grid>
+              </Stack>
+              <DialogContentWrapper>
+                <InputLabel>
+                  Users
+                </InputLabel>
+                <Autocomplete
+                  freeSolo
+                  multiple
+                  disableClearable
+                  sx={{
+                    '& .MuiInputBase-root': {
+                      padding: '0'
+                    }
+                  }}
+                  open={openUsers}
+                  onOpen={() => setOpenUsers(true)}
+                  onClose={() => setOpenUsers(false)}
+                  loading={loadingUsers}
+                  options={users}
+                  getOptionLabel={(option: any) => option.name ?? option}
+                  renderOption={(props, option, { selected }) => (
+                    <MenuItem
+                      {...props}
+                      sx={{
+                        padding: '.25rem 0',
+                        '&:hover': { backgroundColor: grey[200] }
+                      }}
+                    >
+                      <Avatar sx={{ marginRight: '.5rem', width: '1.5rem', height: '1.5rem', fontSize: '.75rem' }}>
+                        {option.name.toString().toUpperCase().charAt(0)}
+                      </Avatar>
+                      <Stack>
+                        <Typography variant='body2'>{option.name}</Typography>
+                        <Typography sx={{ fontSize: '.75rem', color: grey[700] }}>{option.email}</Typography>
+                      </Stack>
+                      <ContactMailOutlined sx={{ marginLeft: 'auto', fontSize: '1rem', color: grey[700] }} />
+                    </MenuItem>
+                  )}
+                  renderInput={(params) => (
+                    <AutoCompleteInput
+                      {...params}
+                      placeholder='hello'
+                      InputProps={{
+                        ...params.InputProps,
+                        type: 'search'
+                      }}
+                    />
+                  )}
+                  ChipProps={{
+                    deleteIcon: <Clear sx={{ width: '.875rem', height: '.875rem' }} />
+                  }}
+                />
+              </DialogContentWrapper>
+              <DialogContentWrapper>
+                <InputLabel>
+                  Add to team(s)
+                </InputLabel>
+                <AboutSelect
+                  MenuProps={MenuProps}
+                  defaultValue=''
+                >
+                  {/* search bar */}
+                  <SelectSearchBar>
+                    <FilterInput
+                      placeholder='Filter repositories'
+                      value={repositoryKeyword}
+                      size='small'
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <FilterAlt />
+                          </InputAdornment>
+                        )
+                      }}
+                      onChange={handleRepositorySearch}
+                    // onKeyDown={handleSubmitRepositorySearch}
+                    />
+                  </SelectSearchBar>
+                  {/* item list */}
+                  {
+                    repos.map((item, index) => {
+                      return (
+                        <SelectItem key={`${index} + ${item.value}`} value={item.value}>
+                          <MenuItemHub />
+                          <MenuItemText>
+                            {item.name}
+                          </MenuItemText>
+                        </SelectItem>
+                      )
+                    })
+                  }
+                </AboutSelect>
+              </DialogContentWrapper>
+            </EditDialog>
+          }
         </Box>
       </>
     </Box>
