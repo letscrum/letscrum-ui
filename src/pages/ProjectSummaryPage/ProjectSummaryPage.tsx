@@ -1,7 +1,8 @@
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import {
   Box, Stack, Avatar, Typography, Button, IconButton, Divider, Grid, Paper, Link, Chip, FormControl, Select, MenuItem, SelectChangeEvent,
-  Dialog, DialogTitle, AlertProps, DialogContent, DialogContentText, TextField, RadioGroup, Radio, FormControlLabel, DialogActions, InputAdornment, Tooltip, TooltipProps, tooltipClasses, Autocomplete
+  Dialog, DialogTitle, AlertProps, DialogContent, DialogContentText, TextField, RadioGroup, Radio, FormControlLabel, DialogActions, InputAdornment, Tooltip, TooltipProps, tooltipClasses,
+  Autocomplete, Checkbox
 } from '@mui/material'
 import MuiAlert from '@mui/material/Alert'
 import { FormControlLabelProps } from '@mui/material/FormControlLabel'
@@ -152,7 +153,7 @@ const AutoCompleteInput = styled(TextField)({
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
       borderRadius: 2,
-      borderColor: grey[700]
+      borderColor: grey[500]
     },
     '&:hover fieldset': {
       borderWidth: 1,
@@ -162,10 +163,6 @@ const AutoCompleteInput = styled(TextField)({
       borderWidth: 1,
       boxShadow: '0 0 0 2px #bbdefb'
     }
-  },
-  '& .MuiChip-root': {
-    height: '1.5rem',
-    fontSize: '.75rem'
   }
 })
 const AddTagsButton = styled(Button)({
@@ -468,9 +465,12 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
     email: 'email@letscrum.io'
   }]
   const [users, setUsers] = useState<UserType[]>(initUser)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // const [selectedMembers, setSelectedMembers] = useState<UserType[]>([])
   const [loadingUsers, setLoadingUsers] = useState(true)
   const [usersError, setUsersError] = useState('')
   const [openUsers, setOpenUsers] = useState(false)
+  const [theTeam, setTheTeam] = useState<string>('')
   const handlePeriod = (e: SelectChangeEvent): void => setPeriod(e.target.value)
   const handleShow = (): void => setShow(true)
   const handleClose = (): void => {
@@ -533,7 +533,16 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
       .catch(() => fetchError)
   }
   const handleShowInvitaion = (): void => setShowInvitation(true)
-  const handleCloseInvitation = (): void => setShowInvitation(false)
+  const handleCloseInvitation = (): void => {
+    setShowInvitation(false)
+    setTheTeam('')
+  }
+  const handleTeam = (event: any): void => {
+    const {
+      target: { value }
+    } = event
+    setTheTeam(value)
+  }
   const fetchUsers = async (): Promise<any> => {
     try {
       const response = await axios.get('v1/users')
@@ -937,13 +946,13 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
               {/* title */}
               <Stack direction='row'>
                 <div>
-                  <EditTitle>Invite members to {displayName}</EditTitle>
-                  <Typography sx={{ fontWeight: 'light' }}>
+                  <EditTitle sx={{ paddingBottom: '0' }}>Invite members to {displayName}</EditTitle>
+                  <EditTitle sx={{ paddingTop: '0', fontSize: '.875rem' }}>
                     Search and add users to your {displayName}
-                  </Typography>
+                  </EditTitle>
                 </div>
                 <Grid sx={{ display: 'flex', marginLeft: 'auto', alignItems: 'center' }}>
-                  <IconButton onClick={handleClose} >
+                  <IconButton sx={{ marginRight: '.5rem' }} onClick={handleCloseInvitation} >
                     <Close />
                   </IconButton>
                 </Grid>
@@ -959,11 +968,27 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                   sx={{
                     '& .MuiInputBase-root': {
                       padding: '0'
+                    },
+                    '& .MuiChip-root': {
+                      '& .MuiChip-avatar': {
+                        marginLeft: '0',
+                        color: 'white'
+                      }
                     }
                   }}
                   open={openUsers}
                   onOpen={() => setOpenUsers(true)}
                   onClose={() => setOpenUsers(false)}
+                  // value={selectedMembers.map((member) => member.name ?? '')}
+                  // onChange={(e, newSelected: any) => {
+                  //   console.log(e)
+                  //   console.log(newSelected)
+                  //   console.log(selectedMembers)
+                  //   setSelectedMembers([
+                  //     newSelected[newSelected.length - 1]
+                  //   ])
+                  // }
+                  // }
                   loading={loadingUsers}
                   options={users}
                   getOptionLabel={(option: any) => option.name ?? option}
@@ -975,7 +1000,7 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                         '&:hover': { backgroundColor: grey[200] }
                       }}
                     >
-                      <Avatar sx={{ marginRight: '.5rem', width: '1.5rem', height: '1.5rem', fontSize: '.75rem' }}>
+                      <Avatar sx={{ marginRight: '.5rem', width: '1.5rem', height: '1.5rem', backgroundColor: PickAvatarColor('12'), fontSize: '.75rem' }}>
                         {option.name.toString().toUpperCase().charAt(0)}
                       </Avatar>
                       <Stack>
@@ -988,16 +1013,33 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                   renderInput={(params) => (
                     <AutoCompleteInput
                       {...params}
-                      placeholder='hello'
+                      // sx={{
+                      //   '&::placeholder': {
+                      //     fontSize: '.75rem', color: grey[600]
+                      //   }
+                      // }}
+                      placeholder='Use semicolons to separate multiple email addresses.'
                       InputProps={{
                         ...params.InputProps,
                         type: 'search'
                       }}
                     />
                   )}
-                  ChipProps={{
-                    deleteIcon: <Clear sx={{ width: '.875rem', height: '.875rem' }} />
-                  }}
+                  renderTags={(value: readonly UserType[], getTagProps) =>
+                    value.map((option: UserType, index: number) => (
+                      // eslint-disable-next-line react/jsx-key
+                      <Chip
+                        sx={{ height: '1.5rem', fontSize: '.75rem' }}
+                        avatar={
+                          <Avatar sx={{ marginLeft: '0', backgroundColor: PickAvatarColor('12'), fontSize: '.75rem' }}>
+                            {option.name?.toString().toUpperCase().charAt(0)}
+                          </Avatar>
+                        }
+                        deleteIcon={<Clear sx={{ width: '.875rem', height: '.875rem' }} />}
+                        label={option.name ?? ''}
+                        {...getTagProps({ index })} />
+                    ))
+                  }
                 />
               </DialogContentWrapper>
               <DialogContentWrapper>
@@ -1007,31 +1049,16 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                 <AboutSelect
                   MenuProps={MenuProps}
                   defaultValue=''
+                  value={theTeam}
+                  onChange={handleTeam}
                 >
-                  {/* search bar */}
-                  <SelectSearchBar>
-                    <FilterInput
-                      placeholder='Filter repositories'
-                      value={repositoryKeyword}
-                      size='small'
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <FilterAlt />
-                          </InputAdornment>
-                        )
-                      }}
-                      onChange={handleRepositorySearch}
-                    // onKeyDown={handleSubmitRepositorySearch}
-                    />
-                  </SelectSearchBar>
                   {/* item list */}
                   {
                     repos.map((item, index) => {
                       return (
                         <SelectItem key={`${index} + ${item.value}`} value={item.value}>
-                          <MenuItemHub />
-                          <MenuItemText>
+                          <Checkbox sx={{ padding: '0' }} checked={theTeam.includes(item.value)} />
+                          <MenuItemText sx={{ marginLeft: '.5rem' }}>
                             {item.name}
                           </MenuItemText>
                         </SelectItem>
@@ -1040,6 +1067,14 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                   }
                 </AboutSelect>
               </DialogContentWrapper>
+              <DialogActions sx={{ padding: '2rem 1rem 1rem 1rem' }}>
+                <CancelButton onClick={handleCloseInvitation}>
+                  Cancel</CancelButton>
+                <CreateButton>
+                  Create</CreateButton>
+                <CancelButton disabled>
+                  Create</CancelButton>
+              </DialogActions>
             </EditDialog>
           }
         </Box>
