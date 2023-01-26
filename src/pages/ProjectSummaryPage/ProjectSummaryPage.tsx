@@ -115,10 +115,15 @@ const AboutEditButton = styled(IconButton)({
 const EditDialog = styled(Dialog)({
   '& .MuiDialog-container': {
     justifyContent: 'end'
+  },
+  '& .MuiPaper-root': {
+    height: 'calc(100% - 4rem)'
   }
 })
 const DialogContentWrapper = styled(DialogContent)({
+  flex: '0 0 auto',
   width: '32.5rem',
+  height: 'auto',
   padding: '1rem 1.5rem',
   overflowY: 'visible',
   overflowX: 'visible'
@@ -930,7 +935,7 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
               <div style={{ padding: '0 1.5rem' }}>
                 <EmptyReadme />
               </div>
-              <DialogActions sx={{ padding: '2rem 1rem 1rem 1rem' }}>
+              <DialogActions sx={{ padding: '2rem 1rem 1rem 1rem', marginTop: 'auto' }}>
                 <CancelButton onClick={handleClose}>
                   Cancel</CancelButton>
                 <CreateButton onClick={handleSaveProject}>
@@ -1067,7 +1072,7 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                   }
                 </AboutSelect>
               </DialogContentWrapper>
-              <DialogActions sx={{ padding: '2rem 1rem 1rem 1rem' }}>
+              <DialogActions sx={{ padding: '2rem 1rem 1rem 1rem', marginTop: 'auto' }}>
                 <CancelButton onClick={handleCloseInvitation}>
                   Cancel</CancelButton>
                 <CreateButton>
