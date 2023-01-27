@@ -6,6 +6,7 @@ import { Assessment, Dashboard, FactCheck, Settings, CardGiftcard, Add } from '@
 import { styled } from '@mui/system'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 import { fecthProject, selectProjcetLoading, selectProjectDisplayName, selectProjectError } from '../../redux/reducers/projectSlice'
+import PickAvatarColor from '../../utils/PickAvatarColor'
 
 const SideMenuDivider = styled(Divider)({
   margin: '0 .5rem'
@@ -176,7 +177,7 @@ export const SideNavInProject: React.FunctionComponent = () => {
             height: 'calc(100% - 3rem - 1px)',
             backgroundColor: grey[200],
             boxSizing: 'border-box',
-            overflowX: 'visible'
+            overflowX: 'hidden'
           }
         }}
         variant="permanent"
@@ -184,7 +185,7 @@ export const SideNavInProject: React.FunctionComponent = () => {
       >
         <SideMenuTitle direction='row'>
           <SideMenuIconWrapper sx={{ minWidth: '3rem' }}>
-            <Avatar sx={{ width: '1.5rem', height: '1.5rem', bgcolor: red[900] }} variant="rounded">
+            <Avatar sx={{ width: '1.5rem', height: '1.5rem', bgcolor: PickAvatarColor(id) }} variant="rounded">
               <Typography sx={{ fontSize: '.875rem', fontWeight: 300 }}>
                 {displayLetter}
               </Typography>
@@ -235,9 +236,7 @@ export const SideNavInProject: React.FunctionComponent = () => {
                         </SideMenuItemText>
                       </SideSubMenuItem>
                     )
-                  })
-                  )
-                  }
+                  }))}
                 </MenuList>
               </div>
             )

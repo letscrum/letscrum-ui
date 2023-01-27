@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { Stack, Card, CardContent, Typography, CardActions, Avatar, Paper, Divider, Skeleton } from '@mui/material'
 import styled from '@emotion/styled'
 import { FiberManualRecord, FactCheck, AccountTree, RocketLaunch, Science, Widgets } from '@mui/icons-material'
-import { grey, red, teal, deepOrange, blue, deepPurple, pink, amber, cyan, green } from '@mui/material/colors'
+import { grey, teal, deepOrange, blue, deepPurple, pink } from '@mui/material/colors'
 import Grid from '@mui/material/Unstable_Grid2/Grid2'
 import axios from 'axios'
 import { useNavigate } from 'react-router'
+import PickAvatarColor from '../../utils/PickAvatarColor'
 
 export interface ProjectProps {
   id: string
@@ -84,14 +85,14 @@ const ProjectAvatar = styled(Avatar)({
   width: '3rem',
   height: '3rem'
 })
-const AvatarPalette = [grey[700], red[700], teal[700], deepOrange[700], blue[700], deepPurple[700], pink[700], amber[700], cyan[700], green[700]]
-const PickAvatarColor = (id: string, colorSet: string[]): string => {
-  const i = id.length
-  const code = id[i - 1]
-  const codeNumber = Number(code)
-  const pickedColor = colorSet[codeNumber]
-  return pickedColor
-}
+// const AvatarPalette = [grey[700], red[700], teal[700], deepOrange[700], blue[700], deepPurple[700], pink[700], amber[700], cyan[700], green[700]]
+// const PickAvatarColor = (id: string, colorSet: string[]): string => {
+//   const i = id.length
+//   const code = id[i - 1]
+//   const codeNumber = Number(code)
+//   const pickedColor = colorSet[codeNumber]
+//   return pickedColor
+// }
 export const ProjectListTable = (props: { keyword: string, isEnter: boolean, isDone: boolean }): React.ReactElement => {
   const navigate = useNavigate()
   const [hoverId, setHoverId] = useState<string | null>(null)
@@ -100,7 +101,6 @@ export const ProjectListTable = (props: { keyword: string, isEnter: boolean, isD
   }
   const handleMouseOut = (): void => setHoverId(null)
   const [loading, setLoading] = useState(true)
-  console.log('the begining declare: ', loading)
   const [error, setError] = useState('')
   const [items, setItems] = useState<ProjectProps[]>([])
   const keyword = props.keyword
@@ -148,6 +148,7 @@ export const ProjectListTable = (props: { keyword: string, isEnter: boolean, isD
   return (
     <>
       <HeadProjectsWrapper direction='row'>
+        {/* top 3 projects */}
         <Grid container spacing={2} sx={{ flexGrow: 1, width: '100%' }}>
           {
             loading
@@ -188,7 +189,7 @@ export const ProjectListTable = (props: { keyword: string, isEnter: boolean, isD
                           <HeadCardContent>
                             <Stack direction='row'>
                               <ProjectAvatarWrapper>
-                                <ProjectAvatar variant="rounded" sx={{ backgroundColor: PickAvatarColor(item.id, AvatarPalette) }}>
+                                <ProjectAvatar variant="rounded" sx={{ backgroundColor: PickAvatarColor(item.id) }}>
                                   {item.displayName?.toString().toUpperCase().charAt(0)}
                                 </ProjectAvatar>
                               </ProjectAvatarWrapper>
@@ -256,6 +257,7 @@ export const ProjectListTable = (props: { keyword: string, isEnter: boolean, isD
           }
         </Grid>
       </HeadProjectsWrapper>
+      {/* the rest projects */}
       <Paper>
         {
           itemsTail.map((item) => {
@@ -265,7 +267,7 @@ export const ProjectListTable = (props: { keyword: string, isEnter: boolean, isD
                   <TailItemCardContent>
                     <Stack direction='row'>
                       <TailAvatarWrapper>
-                        <ProjectAvatar variant="rounded" sx={{ backgroundColor: PickAvatarColor(item.id, AvatarPalette) }}>
+                        <ProjectAvatar variant="rounded" sx={{ backgroundColor: PickAvatarColor(item.id) }}>
                           {item.displayName?.toString().toUpperCase().charAt(0)}
                         </ProjectAvatar>
                       </TailAvatarWrapper>

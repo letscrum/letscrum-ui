@@ -43,22 +43,6 @@ const CheckIcon = styled(Check)({
   fontSize: '1rem',
   color: green[500]
 })
-// const VisibilityGrid = styled(Grid)({
-//   display: 'flex',
-//   width: '16rem',
-//   backgroundColor: grey[200],
-//   justifyContent: 'between',
-//   borderRadius: '2px',
-//   borderWidth: '2px',
-//   borderStyle: 'solid',
-//   borderColor: grey[200],
-//   cursor: 'pointer',
-//   '&:hover': {
-//     borderWidth: '2px',
-//     borderStyle: 'solid',
-//     borderColor: grey[400]
-//   }
-// })
 const RadioContentWrapper = styled(Stack)({
   padding: '1rem'
 })
@@ -125,6 +109,12 @@ const CreateButton = styled(Button)({
     backgroundColor: blue[800]
   }
 })
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert (
+  props,
+  ref
+): React.ReactElement {
+  return <MuiAlert sx={{ margin: '.25rem' }} elevation={6} ref={ref} variant="filled" {...props} />
+})
 // const SelectBar = styled(Select)({}})
 export const CreateProject = (props: { show: boolean, handleClose: () => void }): React.ReactElement => {
   const show = props.show
@@ -161,45 +151,39 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
   const handleMore = (): void => setShowMore(!showMore)
   const handleController = (e: SelectChangeEvent): void => setVersionController(e.target.value)
   const handleProcess = (e: SelectChangeEvent): void => setWorkItemProcess(e.target.value)
-  const addProject = (): void => {
+  // const addProject = (): void => {
+  //   setLoading(true)
+  //   void axios.post('v1/projects', {
+  //     displayName: projectName,
+  //     description
+  //   })
+  //     .then((res) => {
+  //       if (res.status === 200) {
+  //         setLoading(false)
+  //         handleClose()
+  //       }
+  //     })
+  //     .catch((e) => {
+  //       setLoading(false)
+  //       setError(e.response.data.message)
+  //     })
+  // }
+  const createProject = async (): Promise<string> => {
     setLoading(true)
-    void axios.post('v1/projects', {
-      displayName: projectName,
-      description
-    })
-      .then((res) => {
-        if (res.status === 200) {
-          setLoading(false)
-          handleClose()
-        }
+    try {
+      const response = await axios.post('v1/projects', {
+        displayName: projectName,
+        description
       })
-      .catch((e) => {
-        setLoading(false)
-        setError(e.response.data.message)
-      })
-    // 'try catch' method has some problem
-    // try {
-    //   const response = await axios.post('v1/projects', {
-    //     displayName: projectName,
-    //     description
-    //   })
-    //   console.log(response)
-    //   setLoading(false)
-    //   handleClose()
-    //   return response
-    // } catch (e: any) {
-    //   console.log(e)
-    //   setError(e.message)
-    //   setLoading(false)
-    //   return error
-    // }
+      setLoading(false)
+      handleClose()
+      return response.data
+    } catch (e: any) {
+      setLoading(false)
+      setError(e.response.data.message)
+      return error
+    }
   }
-  const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert (
-    props,
-    ref
-  ): React.ReactElement {
-    return <MuiAlert sx={{ margin: '.25rem' }} elevation={6} ref={ref} variant="filled" {...props} />
-  })
   return (
     <Box component='form' noValidate>
       {show &&
@@ -426,6 +410,12 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
                       '& .MuiOutlinedInput-notchedOutline': {
                         borderColor: grey[900]
                       },
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: grey[900]
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: grey[900]
+                      },
                       '& .MuiSelect-select': {
                         padding: '.5rem'
                       }
@@ -433,6 +423,7 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
                     defaultValue='agile'
                     value={workItemProcess}
                     onChange={handleProcess}
+                    MenuProps={MenuProps}
                   >
                     <SelectItem value='agile'>Agile</SelectItem>
                     <SelectItem value='basic'>Basic</SelectItem>
@@ -449,7 +440,7 @@ export const CreateProject = (props: { show: boolean, handleClose: () => void })
             {
               projectName !== ''
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                ? <CreateButton onClick={addProject}>
+                ? <CreateButton onClick={createProject}>
                   Create</CreateButton>
                 : <CancelButton disabled>
                   Create</CancelButton>
