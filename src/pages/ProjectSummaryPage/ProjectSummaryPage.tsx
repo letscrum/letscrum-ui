@@ -19,10 +19,19 @@ import PickAvatarColor from '../../utils/PickAvatarColor'
 import axios from 'axios'
 
 interface UserType {
-  id: string
-  name: string
+  // id: string
+  // name: string
+  // email: string
+  createdAt: string
   email: string
+  id: string
+  isSuperAdmin: boolean
+  name: string
+  password: string
+  token: string
+  updatedAt: string
 }
+
 const HeaderWrapper = styled(Stack)({
   position: 'sticky',
   zIndex: 1,
@@ -465,12 +474,16 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
   }]
   const [repos, setRepos] = useState(defaultRepos)
   const initUser: UserType[] = [{
+    createdAt: 'string',
+    email: 'string@Email.com',
     id: '123',
+    isSuperAdmin: false,
     name: 'userName',
-    email: 'email@letscrum.io'
+    password: 'string',
+    token: '',
+    updatedAt: 'string'
   }]
   const [users, setUsers] = useState<UserType[]>(initUser)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   // const [selectedMembers, setSelectedMembers] = useState<UserType[]>([])
   const [loadingUsers, setLoadingUsers] = useState(true)
   const [usersError, setUsersError] = useState('')
@@ -553,12 +566,11 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
       const response = await axios.get('v1/users')
       setLoadingUsers(false)
       console.log('response.data.items: ', response.data.items)
-      console.log('users: ', users)
-      console.log('setUsers: ', setUsers)
       // setUsers([
       //   ...users,
       //   response.data.items
       // ])
+      console.log('setUsers: ', setUsers)
       return users
     } catch (e: any) {
       setUsersError(e.message)
@@ -984,16 +996,16 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
                   open={openUsers}
                   onOpen={() => setOpenUsers(true)}
                   onClose={() => setOpenUsers(false)}
-                  // value={selectedMembers.map((member) => member.name ?? '')}
+                  // value={selectedMembers}
                   // onChange={(e, newSelected: any) => {
-                  //   console.log(e)
-                  //   console.log(newSelected)
-                  //   console.log(selectedMembers)
+                  //   console.log('====================newSelected: ', newSelected)
+                  //   console.log('====================before selectedMembers: ', selectedMembers)
                   //   setSelectedMembers([
-                  //     newSelected[newSelected.length - 1]
+                  //     ...selectedMembers,
+                  //     newSelected
                   //   ])
-                  // }
-                  // }
+                  //   console.log('====================after selectedMembers: ', selectedMembers)
+                  // }}
                   loading={loadingUsers}
                   options={users}
                   getOptionLabel={(option: any) => option.name ?? option}
