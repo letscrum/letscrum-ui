@@ -1,7 +1,7 @@
 import React, { useState, ReactElement, useEffect } from 'react'
 import { Outlet, useNavigate, useParams } from 'react-router-dom'
 import { Box, Stack, MenuList, MenuItem, ListItemIcon, ListItemText, Avatar, Typography, Button, Drawer, Divider } from '@mui/material'
-import { grey, blue, red } from '@mui/material/colors'
+import { grey, blue, red, teal } from '@mui/material/colors'
 import { Assessment, Dashboard, FactCheck, Settings, CardGiftcard, Add } from '@mui/icons-material'
 import { styled } from '@mui/system'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
@@ -135,9 +135,9 @@ export const SideNavInProject: React.FunctionComponent = () => {
   },
   {
     name: 'Boards',
-    path: '',
+    path: '_workitems',
     key: 'boards',
-    icon: <FactCheck sx={{ fontSize: '1.75rem', color: blue[700] }} />,
+    icon: <FactCheck sx={{ fontSize: '1.75rem', color: teal[500] }} />,
     children: []
   }]
   const handleMenuItem = (path: string, index: number): void => {
