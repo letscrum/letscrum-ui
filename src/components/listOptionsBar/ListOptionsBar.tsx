@@ -120,7 +120,7 @@ export const ListOptionsBar: React.FunctionComponent = () => {
   const handleCloseSortMenu = (): void => setSortAnchorEl(null)
   return (
     <Box>
-      <Stack direction='row' sx={{ margin: '.875rem .5rem .125rem .5rem' }}>
+      <Stack direction='row' sx={{ margin: '1rem .5rem .125rem .5rem' }}>
         <List
           component="nav"
           aria-label="Device settings"
