@@ -112,8 +112,8 @@ export const ListOptionsBar: React.FunctionComponent = () => {
   ): void => {
     setSelectedSortIndex(index)
     setSortAnchorEl(null)
-    console.log('index: ', index)
-    console.log('seletedSortIndex: ', selectedSortIndex)
+    // console.log('index: ', index)
+    // console.log('seletedSortIndex: ', selectedSortIndex)
   }
   const handleClickNewButton = (e: MouseEvent<HTMLElement>): void => setAnchorEl(e.currentTarget)
   const handleCloseNewMenu = (): void => setAnchorEl(null)

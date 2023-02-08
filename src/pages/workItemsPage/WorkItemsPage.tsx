@@ -1,8 +1,10 @@
 import React, { useState, MouseEvent } from 'react'
 import { Box, Typography, Stack, MenuProps, styled, Menu, Button, MenuItem, alpha, Checkbox, Divider, Theme } from '@mui/material'
-import { AssignmentTurnedIn, BakeryDining, EmojiEvents, FilterAltOutlined, KeyboardArrowDown, ListAlt, Park, PestControl, Science, Clear } from '@mui/icons-material'
+import { AssignmentTurnedIn, BakeryDining, EmojiEvents, FilterAltOutlined, KeyboardArrowDown, ListAlt, Park, PestControl, Science, Clear, Shortcut, FileCopyOutlined, EmailOutlined } from '@mui/icons-material'
 import { amber, blue, deepOrange, deepPurple, grey, purple, red, teal } from '@mui/material/colors'
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid'
+import { DataGrid, GridActionsCellItem, GridCellParams, GridColumns } from '@mui/x-data-grid'
+import { randomUpdatedDate } from '@mui/x-data-grid-generator'
+import clsx from 'clsx'
 import { ListOptionsBar } from '../../components'
 
 const initialItemTypes = [
@@ -64,49 +66,23 @@ const initialItemTypes = [
   }
 ]
 
-const columns: GridColDef[] = [
-  { field: 'id', headerName: 'ID', width: 70 },
-  { field: 'firstName', headerName: 'First name', width: 130 },
-  { field: 'lastName', headerName: 'Last name', width: 130 },
-  {
-    field: 'age',
-    headerName: 'Age',
-    type: 'number',
-    width: 90
-  },
-  {
-    field: 'fullName',
-    headerName: 'Full name',
-    description: 'This column has a value getter and is not sortable.',
-    sortable: false,
-    width: 160,
-    valueGetter: (params: GridValueGetterParams) =>
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `${params.row.firstName ?? ''} ${params.row.lastName ?? ''}`
-  }
-]
-
 const rows = [
-  { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-  { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-  { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-  { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-  { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-  { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-  { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-  { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-  { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 }
+  { id: 1, type: 'bug', title: 'Shoveling Snow', assign: 'Jon', state: 'open', area: 'Canada', tags: 'Tags', comments: 'Comments', activity: randomUpdatedDate() },
+  { id: 3, type: 'test', title: 'Padding', assign: 'Anna', state: 'To Do', area: 'Canada', tags: 'Summer', comments: 'Comments', activity: randomUpdatedDate() }
 ]
 
+// if use RowType, will be imcampable error
+// type RowType = typeof rows[number]
+
+// eslint-disable-next-line @typescript-eslint/space-before-function-paren
 function customCheckbox (theme: Theme): any {
   return {
     '& .MuiCheckbox-root svg': {
       width: 16,
       height: 16,
       backgroundColor: 'transparent',
-      border: `2px solid ${
-        theme.palette.mode === 'light' ? grey[400] : 'rgb(67, 67, 67)'
-      }`,
+      border: `2px solid ${theme.palette.mode === 'light' ? grey[400] : 'rgb(67, 67, 67)'
+        }`,
       borderRadius: '50%'
     },
     '& .MuiCheckbox-root svg path': {
@@ -196,6 +172,69 @@ const FilterMenu = styled((props: MenuProps) => (
 }))
 
 export const WorkItemsPage: React.FunctionComponent = () => {
+  // const columns: GridColDef[] =
+  const columns = React.useMemo<GridColumns>(
+    () => [
+      { field: 'id', headerName: 'ID', width: 70, headerClassName: 'dataGrid--header' },
+      {
+        field: 'type',
+        headerName: 'Type',
+        width: 14,
+        sortable: false,
+        renderCell: (params) => {
+          if (params.value === 'bug') return <PestControl sx={{ color: red[900], fontSize: 'small' }} />
+          return <AssignmentTurnedIn sx={{ color: amber[900], fontSize: 'small' }} />
+        },
+        headerClassName: 'dataGrid--header'
+      },
+      {
+        field: 'title',
+        headerName: 'Title',
+        width: 200,
+        cellClassName: (params: GridCellParams<string>): any => {
+          if (params.value == null) {
+            return ''
+          }
+          return clsx('titleColumn--hover')
+        },
+        headerClassName: 'dataGrid--header'
+      },
+      {
+        field: 'actions',
+        type: 'actions',
+        getActions: () => [
+          <GridActionsCellItem
+            key='open'
+            icon={<Shortcut sx={{ fontSize: 'large', color: grey[700] }} />}
+            label='Open selected items in Queries'
+            sx={{ color: grey[800], fontSize: '.875rem', fontWeight: '400' }}
+            showInMenu
+          />,
+          <GridActionsCellItem
+            key='copy'
+            icon={<FileCopyOutlined sx={{ fontSize: 'large', color: grey[700] }} />}
+            label='Copy to clipboard'
+            sx={{ color: grey[800], fontSize: '.875rem', fontWeight: '400' }}
+            showInMenu
+          />,
+          <GridActionsCellItem
+            key='email'
+            icon={<EmailOutlined sx={{ fontSize: 'large', color: grey[700] }} />}
+            label='Email'
+            sx={{ color: grey[800], fontSize: '.875rem', fontWeight: '400' }}
+            showInMenu
+          />
+        ]
+      },
+      { field: 'assign', headerName: 'Assign To', width: 120, sortable: false, headerClassName: 'dataGrid--header' },
+      { field: 'state', headerName: 'State', width: 80, sortable: false, headerClassName: 'dataGrid--header' },
+      { field: 'area', headerName: 'Area Path', width: 120, sortable: false, headerClassName: 'dataGrid--header' },
+      { field: 'tags', headerName: 'Tags', width: 120, sortable: false, headerClassName: 'dataGrid--header' },
+      { field: 'comments', headerName: 'Comments', width: 90, sortable: false, headerClassName: 'dataGrid--header' },
+      { field: 'activity', headerName: 'Activity Date', type: 'dateTime', width: 180, sortable: false, headerClassName: 'dataGrid--header' }
+    ],
+    []
+  )
   const [typesAnchorEl, setTypesAnchorEl] = useState<null | HTMLElement>(null)
   const [workItemTypes, setWorkItemTypes] = useState(initialItemTypes)
   const openTypesMenu = Boolean(typesAnchorEl)
@@ -208,7 +247,17 @@ export const WorkItemsPage: React.FunctionComponent = () => {
     setWorkItemTypes(newItemTypes)
   }
   return (
-    <Box padding='1rem'>
+    <Box sx={{
+      padding: '1rem',
+      '& .dataGrid--header': { fontSize: '.75rem' },
+      '& .titleColumn--hover': {
+        cursor: 'pointer',
+        '&:hover': {
+          color: blue[800],
+          textDecoration: 'underline'
+        }
+      }
+    }} >
       {/* title */}
       <Typography sx={{ marginLeft: '.5rem', fontSize: '1.125rem', fontWeight: 'light' }}>
         Work items
@@ -278,11 +327,8 @@ export const WorkItemsPage: React.FunctionComponent = () => {
           columns={columns}
           pageSize={5}
           rowsPerPageOptions={[5]}
-          checkboxSelection={true}
+          checkboxSelection
           disableColumnMenu
-          // components={{
-          //   BaseCheckbox: Check
-          // }}
         />
       </div>
     </Box>
