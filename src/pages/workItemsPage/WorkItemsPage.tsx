@@ -1,6 +1,9 @@
 import React, { useState, MouseEvent } from 'react'
-import { Box, Typography, Stack, MenuProps, styled, Menu, Button, MenuItem, alpha, Checkbox, Divider, Theme } from '@mui/material'
-import { AssignmentTurnedIn, BakeryDining, EmojiEvents, FilterAltOutlined, KeyboardArrowDown, ListAlt, Park, PestControl, Science, Clear, Shortcut, FileCopyOutlined, EmailOutlined } from '@mui/icons-material'
+import { Box, Typography, Stack, MenuProps, styled, Menu, Button, MenuItem, alpha, Checkbox, Divider, Theme, Avatar } from '@mui/material'
+import {
+  AssignmentTurnedIn, BakeryDining, EmojiEvents, FilterAltOutlined, KeyboardArrowDown, ListAlt, Park, PestControl, Science, Clear,
+  Shortcut, FileCopyOutlined, EmailOutlined, PersonOutlineOutlined, MoreHorizOutlined
+} from '@mui/icons-material'
 import { amber, blue, deepOrange, deepPurple, grey, purple, red, teal } from '@mui/material/colors'
 import { DataGrid, GridActionsCellItem, GridCellParams, GridColumns } from '@mui/x-data-grid'
 import { randomUpdatedDate } from '@mui/x-data-grid-generator'
@@ -75,14 +78,13 @@ const rows = [
 // type RowType = typeof rows[number]
 
 // eslint-disable-next-line @typescript-eslint/space-before-function-paren
-function customCheckbox (theme: Theme): any {
+function customCheckbox(theme: Theme): any {
   return {
     '& .MuiCheckbox-root svg': {
-      width: 16,
-      height: 16,
+      width: 12,
+      height: 12,
       backgroundColor: 'transparent',
-      border: `2px solid ${theme.palette.mode === 'light' ? grey[400] : 'rgb(67, 67, 67)'
-        }`,
+      border: `2px solid ${theme.palette.mode === 'light' ? grey[400] : 'rgb(67, 67, 67)'}`,
       borderRadius: '50%'
     },
     '& .MuiCheckbox-root svg path': {
@@ -172,7 +174,6 @@ const FilterMenu = styled((props: MenuProps) => (
 }))
 
 export const WorkItemsPage: React.FunctionComponent = () => {
-  // const columns: GridColDef[] =
   const columns = React.useMemo<GridColumns>(
     () => [
       { field: 'id', headerName: 'ID', width: 70, headerClassName: 'dataGrid--header' },
@@ -226,8 +227,56 @@ export const WorkItemsPage: React.FunctionComponent = () => {
           />
         ]
       },
-      { field: 'assign', headerName: 'Assign To', width: 120, sortable: false, headerClassName: 'dataGrid--header' },
-      { field: 'state', headerName: 'State', width: 80, sortable: false, headerClassName: 'dataGrid--header' },
+      {
+        field: 'assign',
+        headerName: 'Assign To',
+        width: 120,
+        sortable: false,
+        renderCell: (params) => {
+          if (params.value == null || params.value === undefined || params.value === '') {
+            return (
+              <Stack direction='row' sx={{ display: 'flex', alignItems: 'center' }}>
+                <Avatar sx={{ width: '1rem', height: '1rem' }}>
+                  <PersonOutlineOutlined />
+                </Avatar>
+                <Typography sx={{ fontSize: '.875rem', marginLeft: '.25rem' }}>
+                  {params.value}
+                </Typography>
+              </Stack>
+            )
+          }
+          return (
+            <Stack direction='row' sx={{ display: 'flex', alignItems: 'center' }}>
+              <Avatar sx={{ width: '1rem', height: '1rem' }} >
+                <Typography sx={{ fontSize: '.5rem' }}>
+                  {params.value}
+                </Typography>
+              </Avatar>
+              <Typography sx={{ fontSize: '.875rem', marginLeft: '.25rem' }}>
+                {params.value}
+              </Typography>
+            </Stack>
+          )
+        },
+        headerClassName: 'dataGrid--header'
+      },
+      {
+        field: 'state',
+        headerName: 'State',
+        width: 80,
+        sortable: false,
+        renderCell: (params) => {
+          return (
+            <Stack direction='row' sx={{ display: 'flex', alignItems: 'center' }}>
+              <div style={{ width: '.5rem', height: '.5rem', borderRadius: '50%', backgroundColor: grey[400] }} />
+              <Typography sx={{ fontSize: '.875rem', marginLeft: '.5rem' }}>
+                {params.value}
+              </Typography>
+            </Stack>
+          )
+        },
+        headerClassName: 'dataGrid--header'
+      },
       { field: 'area', headerName: 'Area Path', width: 120, sortable: false, headerClassName: 'dataGrid--header' },
       { field: 'tags', headerName: 'Tags', width: 120, sortable: false, headerClassName: 'dataGrid--header' },
       { field: 'comments', headerName: 'Comments', width: 90, sortable: false, headerClassName: 'dataGrid--header' },
@@ -249,7 +298,9 @@ export const WorkItemsPage: React.FunctionComponent = () => {
   return (
     <Box sx={{
       padding: '1rem',
-      '& .dataGrid--header': { fontSize: '.75rem' },
+      '& .dataGrid--header': {
+        fontSize: '.75rem'
+      },
       '& .titleColumn--hover': {
         cursor: 'pointer',
         '&:hover': {
@@ -329,6 +380,9 @@ export const WorkItemsPage: React.FunctionComponent = () => {
           rowsPerPageOptions={[5]}
           checkboxSelection
           disableColumnMenu
+          components={{
+            MoreActionsIcon: MoreHorizOutlined
+          }}
         />
       </div>
     </Box>
