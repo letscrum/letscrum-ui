@@ -426,6 +426,7 @@ export const WorkItemsPage: React.FunctionComponent = () => {
   const handleCloseFitersBar = (): void => setFiltersBarShow(false)
   return (
     <Box sx={{
+      width: '100%',
       padding: '1rem',
       '& .dataGrid--header': {
         fontSize: '.75rem'

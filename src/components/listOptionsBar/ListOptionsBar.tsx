@@ -119,7 +119,7 @@ export const ListOptionsBar: React.FunctionComponent = () => {
   const handleCloseNewMenu = (): void => setAnchorEl(null)
   const handleCloseSortMenu = (): void => setSortAnchorEl(null)
   return (
-    <Box>
+    <Box width='100%'>
       <Stack direction='row' sx={{ margin: '1rem .5rem .125rem .5rem' }}>
         <List
           component="nav"
@@ -260,13 +260,13 @@ export const ListOptionsBar: React.FunctionComponent = () => {
             Recycle Bin
           </Typography>
         </Button>
-        <IconButton sx={{ marginLeft: '1rem' }}>
+        <IconButton sx={{ marginLeft: 'auto', marginY: 'auto' }}>
           <TuneOutlined sx={{ color: blue[900], fontSize: '1rem' }} />
         </IconButton>
-        <IconButton>
+        <IconButton sx={{ marginY: 'auto' }}>
           <FilterAltOutlined sx={{ color: blue[900], fontSize: '1rem' }} />
         </IconButton>
-        <IconButton>
+        <IconButton sx={{ marginY: 'auto' }}>
           <OpenInFullOutlined sx={{ color: blue[900], fontSize: '1rem' }} />
         </IconButton>
       </Stack>
