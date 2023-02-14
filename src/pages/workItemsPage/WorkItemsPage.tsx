@@ -361,7 +361,8 @@ export const WorkItemsPage: React.FunctionComponent = () => {
     ],
     []
   )
-  // types fiter control
+  // types filter control
+  const [filteringTypes, setFilteringTypes] = useState(false)
   const [typesAnchorEl, setTypesAnchorEl] = useState<null | HTMLElement>(null)
   const [workItemTypes, setWorkItemTypes] = useState(initialItemTypes)
   const openTypesMenu = Boolean(typesAnchorEl)
@@ -370,10 +371,22 @@ export const WorkItemsPage: React.FunctionComponent = () => {
   const handleTypesCheck = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const newItemTypes = [...workItemTypes]
     const selectedTypes = newItemTypes.find((item) => item.key === event.target.name)
-    if (selectedTypes !== undefined) selectedTypes.checked = event.target.checked
+    if (selectedTypes !== undefined) {
+      selectedTypes.checked = event.target.checked
+      setFilteringTypes(true)
+    }
+    const canceledTypes = newItemTypes.filter((item) => item.checked)
+    if (canceledTypes.length === 0) setFilteringTypes(false)
     setWorkItemTypes(newItemTypes)
   }
+  const handleClearCheckedTypes = (): void => {
+    const newItemTypes = [...workItemTypes]
+    newItemTypes.forEach((item): void => { item.checked = false })
+    setWorkItemTypes(newItemTypes)
+    setFilteringTypes(false)
+  }
   // assigned to fiter control
+  const [filteringAssigned, setFilteringAssigned] = useState(false)
   const [assignedAnchorEl, setAssignedAnchorEl] = useState<null | HTMLElement>(null)
   const [assignedTo, setAssignedTo] = useState(initialAssignedTo)
   const openAssignedMenu = Boolean(assignedAnchorEl)
@@ -382,10 +395,22 @@ export const WorkItemsPage: React.FunctionComponent = () => {
   const handleAssignedCheck = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const newAssignedTo = [...assignedTo]
     const selectedAssigned = newAssignedTo.find((item) => item.key === event.target.name)
-    if (selectedAssigned !== undefined) selectedAssigned.checked = event.target.checked
+    if (selectedAssigned !== undefined) {
+      setFilteringAssigned(true)
+      selectedAssigned.checked = event.target.checked
+    }
+    const canceledAssigned = newAssignedTo.filter((item) => item.checked)
+    if (canceledAssigned.length === 0) setFilteringAssigned(false)
     setAssignedTo(newAssignedTo)
   }
+  const handleClearCheckedAssigned = (): void => {
+    const newAssignedTo = [...assignedTo]
+    newAssignedTo.forEach((item): void => { item.checked = false })
+    setAssignedTo(newAssignedTo)
+    setFilteringAssigned(false)
+  }
   // states filter control
+  const [filteringStates, setFilteringStates] = useState(false)
   const [statesAnchorEl, setStatesAnchorEl] = useState<null | HTMLElement>(null)
   const [states, setStates] = useState(initialStates)
   const openStatesMenu = Boolean(statesAnchorEl)
@@ -394,10 +419,22 @@ export const WorkItemsPage: React.FunctionComponent = () => {
   const handleStatesCheck = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const newStates = [...states]
     const selectedStates = newStates.find((item) => item.key === event.target.name)
-    if (selectedStates !== undefined) selectedStates.checked = event.target.checked
+    if (selectedStates !== undefined) {
+      setFilteringStates(true)
+      selectedStates.checked = event.target.checked
+    }
+    const canceledStates = newStates.filter((item) => item.checked)
+    if (canceledStates.length === 0) setFilteringStates(false)
     setStates(newStates)
   }
+  const handleClearCheckedStates = (): void => {
+    const newStates = [...states]
+    newStates.forEach((item): void => { item.checked = false })
+    setStates(newStates)
+    setFilteringStates(false)
+  }
   // area filter control
+  const [filteringArea, setFilteringArea] = useState(false)
   const [areaAnchorEl, setAreaAnchorEl] = useState<null | HTMLElement>(null)
   const [area, setArea] = useState(initialArea)
   const openAreaMenu = Boolean(areaAnchorEl)
@@ -406,10 +443,22 @@ export const WorkItemsPage: React.FunctionComponent = () => {
   const handleAreaCheck = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const newArea = [...area]
     const selectedArea = newArea.find((item) => item.key === event.target.name)
-    if (selectedArea !== undefined) selectedArea.checked = event.target.checked
+    if (selectedArea !== undefined) {
+      setFilteringArea(true)
+      selectedArea.checked = event.target.checked
+    }
+    const canceledArea = newArea.filter((item) => item.checked)
+    if (canceledArea.length === 0) setFilteringArea(false)
     setArea(newArea)
   }
+  const handleClearCheckedArea = (): void => {
+    const newArea = [...area]
+    newArea.forEach((item): void => { item.checked = false })
+    setArea(newArea)
+    setFilteringArea(false)
+  }
   // tags filter control
+  const [filteringTags, setFilteringTags] = useState(false)
   const [tagsAnchorEl, setTagsAnchorEl] = useState<null | HTMLElement>(null)
   const [tags, setTags] = useState(initialTags)
   const openTagsMenu = Boolean(tagsAnchorEl)
@@ -418,10 +467,21 @@ export const WorkItemsPage: React.FunctionComponent = () => {
   const handleTagsCheck = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const newTags = [...tags]
     const selectedTags = newTags.find((item) => item.id === event.target.name)
-    if (selectedTags !== undefined) selectedTags.checked = event.target.checked
+    if (selectedTags !== undefined) {
+      setFilteringTags(true)
+      selectedTags.checked = event.target.checked
+    }
+    const canceledTags = newTags.filter((item) => item.checked)
+    if (canceledTags.length === 0) setFilteringTags(false)
     setTags(newTags)
   }
-  // close fiters bar
+  const handleClearCheckedTags = (): void => {
+    const newTags = [...tags]
+    newTags.forEach((item): void => { item.checked = false })
+    setTags(newTags)
+    setFilteringTags(false)
+  }
+  // close filters bar
   const [filtersBarShow, setFiltersBarShow] = useState(true)
   const handleCloseFitersBar = (): void => setFiltersBarShow(false)
   return (
@@ -444,7 +504,12 @@ export const WorkItemsPage: React.FunctionComponent = () => {
         Work items
       </Typography>
       {/* option bar */}
-      <ListOptionsBar />
+      <ListOptionsBar
+        filteringTypes={filteringTypes}
+        filteringAssigned={filteringAssigned}
+        filteringStates={filteringStates}
+        filteringArea={filteringArea}
+        filteringTags={filteringTags} />
       {/* filter bar */}
       {
         filtersBarShow && <Stack direction='row' sx={{ marginTop: '.5rem', paddingY: '.5rem', backgroundColor: grey[100], borderRadius: '3px' }}>
@@ -538,7 +603,12 @@ export const WorkItemsPage: React.FunctionComponent = () => {
             }
             <Divider />
             <Stack>
-              <Button variant='text' sx={{ marginLeft: 'auto' }} startIcon={<Clear />} >
+              <Button
+                sx={{ marginLeft: 'auto' }}
+                variant='text'
+                startIcon={<Clear />}
+                onClick={handleClearCheckedTypes}
+                >
                 Clear
               </Button>
             </Stack>
@@ -604,7 +674,12 @@ export const WorkItemsPage: React.FunctionComponent = () => {
             }
             <Divider />
             <Stack>
-              <Button variant='text' sx={{ marginLeft: 'auto' }} startIcon={<Clear />} >
+              <Button
+                variant='text'
+                sx={{ marginLeft: 'auto' }}
+                startIcon={<Clear />}
+                onClick={handleClearCheckedAssigned}
+                >
                 Clear
               </Button>
             </Stack>
@@ -670,7 +745,12 @@ export const WorkItemsPage: React.FunctionComponent = () => {
             }
             <Divider />
             <Stack>
-              <Button variant='text' sx={{ marginLeft: 'auto' }} startIcon={<Clear />} >
+              <Button
+                variant='text'
+                sx={{ marginLeft: 'auto' }}
+                startIcon={<Clear />}
+                onClick={handleClearCheckedStates}
+                >
                 Clear
               </Button>
             </Stack>
@@ -735,12 +815,17 @@ export const WorkItemsPage: React.FunctionComponent = () => {
             }
             <Divider />
             <Stack>
-              <Button variant='text' sx={{ marginLeft: 'auto' }} startIcon={<Clear />} >
+              <Button
+                variant='text'
+                sx={{ marginLeft: 'auto' }}
+                startIcon={<Clear />}
+                onClick={handleClearCheckedArea}
+                >
                 Clear
               </Button>
             </Stack>
           </FilterMenu>
-          {/* area to filter */}
+          {/* tags to filter */}
           <Button
             id="tags-button"
             sx={{
@@ -784,12 +869,23 @@ export const WorkItemsPage: React.FunctionComponent = () => {
               <FormControlLabel
                 sx={{ marginRight: '2rem' }}
                 value='or'
+                checked
                 control={<Radio size='small' />}
-                label={<Typography variant='body2'>Or</Typography>} />
+                label={<Typography sx={{
+                  marginLeft: '.25rem',
+                  fontWeight: 300,
+                  fontSize: '.875rem',
+                  color: grey[700]
+                }}>Or</Typography>} />
               <FormControlLabel
                 value='and'
-                control={<Radio size='small' /> }
-                label={<Typography variant='body2'>And</Typography>} />
+                control={<Radio size='small' />}
+                label={<Typography sx={{
+                  marginLeft: '.25rem',
+                  fontWeight: 300,
+                  fontSize: '.875rem',
+                  color: grey[700]
+                }}>And</Typography>} />
             </RadioGroup>
             {
               tags.map((item) => {
@@ -816,7 +912,12 @@ export const WorkItemsPage: React.FunctionComponent = () => {
             }
             <Divider />
             <Stack>
-              <Button variant='text' sx={{ marginLeft: 'auto' }} startIcon={<Clear />} >
+              <Button
+                variant='text'
+                sx={{ marginLeft: 'auto' }}
+                startIcon={<Clear />}
+                onClick={handleClearCheckedTags}
+                >
                 Clear
               </Button>
             </Stack>

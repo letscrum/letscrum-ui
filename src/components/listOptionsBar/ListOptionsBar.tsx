@@ -2,9 +2,17 @@ import React, { useState, MouseEvent } from 'react'
 import { Box, Stack, MenuItem, Button, MenuProps, styled, Menu, alpha, IconButton, List, ListItem, ListItemText, Typography, Divider } from '@mui/material'
 import {
   Add, KeyboardArrowDown, PestControl, BakeryDining, EmojiEvents, Park, ListAlt,
-  AssignmentTurnedIn, Science, Shortcut, BuildOutlined, VerticalAlignTopOutlined, DeleteOutlined, TuneOutlined, FilterAltOutlined, OpenInFullOutlined
+  AssignmentTurnedIn, Science, Shortcut, BuildOutlined, VerticalAlignTopOutlined, DeleteOutlined, TuneOutlined, FilterAltOutlined, OpenInFullOutlined, FilterAlt
 } from '@mui/icons-material'
 import { amber, blue, deepOrange, deepPurple, grey, purple, red, teal } from '@mui/material/colors'
+
+interface FilterControllerType {
+  filteringTypes: boolean
+  filteringAssigned: boolean
+  filteringStates: boolean
+  filteringArea: boolean
+  filteringTags: boolean
+}
 
 const sortItems = [
   'Assigned to me',
@@ -99,7 +107,7 @@ const NewMenu = styled((props: MenuProps) => (
   }
 }))
 
-export const ListOptionsBar: React.FunctionComponent = () => {
+export const ListOptionsBar: React.FunctionComponent<FilterControllerType> = (props: FilterControllerType) => {
   const [sortAnchorEl, setSortAnchorEl] = useState<null | HTMLElement>(null)
   const [selectedSortIndex, setSelectedSortIndex] = useState(4)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -264,7 +272,16 @@ export const ListOptionsBar: React.FunctionComponent = () => {
           <TuneOutlined sx={{ color: blue[900], fontSize: '1rem' }} />
         </IconButton>
         <IconButton sx={{ marginY: 'auto' }}>
-          <FilterAltOutlined sx={{ color: blue[900], fontSize: '1rem' }} />
+          {(
+            (Boolean(props.filteringTypes)) ||
+            (Boolean(props.filteringAssigned)) ||
+            (Boolean(props.filteringStates)) ||
+            (Boolean(props.filteringArea)) ||
+            (Boolean(props.filteringTags))
+          )
+            ? <FilterAlt sx={{ color: blue[900], fontSize: '1rem' }} />
+            : <FilterAltOutlined sx={{ color: blue[900], fontSize: '1rem' }} />
+          }
         </IconButton>
         <IconButton sx={{ marginY: 'auto' }}>
           <OpenInFullOutlined sx={{ color: blue[900], fontSize: '1rem' }} />
