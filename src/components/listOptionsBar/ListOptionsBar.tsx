@@ -1,5 +1,5 @@
 import React, { useState, MouseEvent } from 'react'
-import { Box, Stack, MenuItem, Button, MenuProps, styled, Menu, alpha, IconButton, List, ListItem, ListItemText, Typography, Divider } from '@mui/material'
+import { Box, Stack, MenuItem, Button, MenuProps, styled, Menu, alpha, IconButton, List, ListItem, ListItemText, Typography, Divider, Tooltip } from '@mui/material'
 import {
   Add, KeyboardArrowDown, PestControl, BakeryDining, EmojiEvents, Park, ListAlt,
   AssignmentTurnedIn, Science, Shortcut, BuildOutlined, VerticalAlignTopOutlined, DeleteOutlined, TuneOutlined, FilterAltOutlined, OpenInFullOutlined, FilterAlt
@@ -12,6 +12,8 @@ interface FilterControllerType {
   filteringStates: boolean
   filteringArea: boolean
   filteringTags: boolean
+  filtersBarShow: boolean
+  handleCloseFitersBar: () => void
 }
 
 const sortItems = [
@@ -268,24 +270,30 @@ export const ListOptionsBar: React.FunctionComponent<FilterControllerType> = (pr
             Recycle Bin
           </Typography>
         </Button>
-        <IconButton sx={{ marginLeft: 'auto', marginY: 'auto' }}>
-          <TuneOutlined sx={{ color: blue[900], fontSize: '1rem' }} />
-        </IconButton>
-        <IconButton sx={{ marginY: 'auto' }}>
-          {(
-            (Boolean(props.filteringTypes)) ||
-            (Boolean(props.filteringAssigned)) ||
-            (Boolean(props.filteringStates)) ||
-            (Boolean(props.filteringArea)) ||
-            (Boolean(props.filteringTags))
-          )
-            ? <FilterAlt sx={{ color: blue[900], fontSize: '1rem' }} />
-            : <FilterAltOutlined sx={{ color: blue[900], fontSize: '1rem' }} />
-          }
-        </IconButton>
-        <IconButton sx={{ marginY: 'auto' }}>
-          <OpenInFullOutlined sx={{ color: blue[900], fontSize: '1rem' }} />
-        </IconButton>
+        <Tooltip title='View options'>
+          <IconButton sx={{ marginLeft: 'auto', marginY: 'auto', borderRadius: 0 }}>
+            <TuneOutlined sx={{ color: blue[900], fontSize: '1rem' }} />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title='Hide filters'>
+          <IconButton sx={{ marginY: 'auto', borderRadius: 0 }} onClick={props.handleCloseFitersBar}>
+            {(
+              (Boolean(props.filteringTypes)) ||
+              (Boolean(props.filteringAssigned)) ||
+              (Boolean(props.filteringStates)) ||
+              (Boolean(props.filteringArea)) ||
+              (Boolean(props.filteringTags))
+            )
+              ? <FilterAlt sx={{ color: blue[900], fontSize: '1rem' }} />
+              : <FilterAltOutlined sx={{ color: blue[900], fontSize: '1rem' }} />
+            }
+          </IconButton>
+        </Tooltip>
+        <Tooltip title='Enter full screen mode'>
+          <IconButton sx={{ marginY: 'auto', borderRadius: 0 }}>
+            <OpenInFullOutlined sx={{ color: blue[900], fontSize: '1rem' }} />
+          </IconButton>
+        </Tooltip>
       </Stack>
       <Divider />
     </Box>

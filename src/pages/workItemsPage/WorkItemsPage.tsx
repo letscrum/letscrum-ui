@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { ChangeEvent, useState, useEffect } from 'react'
 import { Box, Typography, Stack, MenuProps, styled, Menu, Button, MenuItem, alpha, Checkbox, Divider, Theme, Avatar, IconButton, Tooltip, InputAdornment, TextField, RadioGroup, FormControlLabel, Radio } from '@mui/material'
 import {
   AssignmentTurnedIn, BakeryDining, EmojiEvents, FilterAltOutlined, KeyboardArrowDown, ListAlt, Park, PestControl, Science, Clear,
@@ -146,7 +146,7 @@ const initialTags = [
   }
 ]
 
-const rows = [
+const initialRows = [
   { id: 1, type: 'bug', title: 'Shoveling Snow', assign: 'Jon', state: 'open', area: 'Canada', tags: 'Tags', comments: 'Comments', activity: randomUpdatedDate() },
   { id: 3, type: 'test', title: 'Padding', assign: 'Anna', state: 'To Do', area: 'Canada', tags: 'Summer', comments: 'Comments', activity: randomUpdatedDate() }
 ]
@@ -361,6 +361,20 @@ export const WorkItemsPage: React.FunctionComponent = () => {
     ],
     []
   )
+  const [rows, setRows] = useState(initialRows)
+  // keyword search
+  const [keyword, setKeyword] = useState<string>('')
+  const getKeyword = (e: ChangeEvent<HTMLInputElement>): void => setKeyword(e.currentTarget.value)
+  const handleSearch = (): void => {
+    if (keyword === '' || keyword === undefined || keyword === null) setRows(initialRows)
+    const newRows = initialRows.filter((item) => item.title.includes(keyword))
+    setRows(newRows)
+  }
+  // submit search by stop typing
+  useEffect(() => {
+    const delayDebounce = setTimeout(handleSearch, 500)
+    return () => clearTimeout(delayDebounce)
+  }, [keyword])
   // types filter control
   const [filteringTypes, setFilteringTypes] = useState(false)
   const [typesAnchorEl, setTypesAnchorEl] = useState<null | HTMLElement>(null)
@@ -483,7 +497,7 @@ export const WorkItemsPage: React.FunctionComponent = () => {
   }
   // close filters bar
   const [filtersBarShow, setFiltersBarShow] = useState(true)
-  const handleCloseFitersBar = (): void => setFiltersBarShow(false)
+  const handleCloseFitersBar = (): void => setFiltersBarShow(!filtersBarShow)
   return (
     <Box sx={{
       width: '100%',
@@ -509,39 +523,99 @@ export const WorkItemsPage: React.FunctionComponent = () => {
         filteringAssigned={filteringAssigned}
         filteringStates={filteringStates}
         filteringArea={filteringArea}
-        filteringTags={filteringTags} />
+        filteringTags={filteringTags}
+        filtersBarShow={filtersBarShow}
+        handleCloseFitersBar={handleCloseFitersBar}
+      />
       {/* filter bar */}
       {
-        filtersBarShow && <Stack direction='row' sx={{ marginTop: '.5rem', paddingY: '.5rem', backgroundColor: grey[100], borderRadius: '3px' }}>
-          {/* search */}
-          <TextField
-            type='text'
-            placeholder='Filter by keyword'
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position='start'>
-                  <FilterAltOutlined sx={{ color: grey[500] }} />
-                </InputAdornment>
-              )
-            }}
-            sx={{
-              '& .MuiOutlinedInput-input': {
-                height: '36.5px',
-                paddingY: '0'
-              },
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                  border: 'none'
-                },
-                '&:hover fieldset': {
-                  border: 'none'
-                },
-                '&.Mui-focused fieldset': {
-                  border: 'none'
-                }
-              }
-            }}
-          />
+        filtersBarShow &&
+        <Stack direction='row' sx={{ marginTop: '.5rem', paddingY: '.5rem', backgroundColor: grey[100], borderRadius: '3px' }}>
+          {/* keyword search */}
+          {
+            keyword === ''
+              // with input keyword
+              ? <Tooltip title='Filter by keyword'>
+                <TextField
+                  type='search'
+                  placeholder='Filter by keyword'
+                  value={keyword}
+                  onChange={getKeyword}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position='start'>
+                        <FilterAltOutlined sx={{ color: grey[700] }} />
+                      </InputAdornment>
+                    )
+                  }}
+                  sx={{
+                    marginLeft: '.5rem',
+                    '& ::placeholder': {
+                      fontSize: '.875rem'
+                    },
+                    '& .MuiOutlinedInput-input': {
+                      height: '36.5px',
+                      paddingY: '0',
+                      paddingLeft: '.315rem'
+                    },
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                        border: 'none'
+                      },
+                      '&:hover fieldset': {
+                        border: 'none'
+                      },
+                      '&.Mui-focused fieldset': {
+                        border: 'none'
+                      }
+                    }
+                  }}
+                />
+              </Tooltip>
+              // input keyword
+              : <Tooltip title='Filter by keyword'>
+                <TextField
+                  type='search'
+                  placeholder='Filter by keyword'
+                  value={keyword}
+                  onChange={getKeyword}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position='start'>
+                        <FilterAltOutlined sx={{ color: grey[700] }} />
+                      </InputAdornment>
+                    )
+                  }}
+                  sx={{
+                    marginLeft: '.5rem',
+                    '& ::placeholder': {
+                      fontSize: '.875rem'
+                    },
+                    '& .MuiOutlinedInput-input': {
+                      fontSize: '.875rem',
+                      height: '36.5px',
+                      paddingY: '0',
+                      paddingLeft: '.315rem'
+                    },
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                        borderRadius: '2px',
+                        border: 'none'
+                      },
+                      '&:hover fieldset': {
+                        border: 'none'
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderWidth: '1px',
+                        borderStyle: 'solid',
+                        borderColor: grey[700],
+                        boxShadow: '0 0 0 2px #bbdefb'
+                      }
+                    }
+                  }}
+                />
+              </Tooltip>
+          }
           {/* types filter */}
           <Button
             id="types-button"
@@ -608,7 +682,7 @@ export const WorkItemsPage: React.FunctionComponent = () => {
                 variant='text'
                 startIcon={<Clear />}
                 onClick={handleClearCheckedTypes}
-                >
+              >
                 Clear
               </Button>
             </Stack>
@@ -679,7 +753,7 @@ export const WorkItemsPage: React.FunctionComponent = () => {
                 sx={{ marginLeft: 'auto' }}
                 startIcon={<Clear />}
                 onClick={handleClearCheckedAssigned}
-                >
+              >
                 Clear
               </Button>
             </Stack>
@@ -750,7 +824,7 @@ export const WorkItemsPage: React.FunctionComponent = () => {
                 sx={{ marginLeft: 'auto' }}
                 startIcon={<Clear />}
                 onClick={handleClearCheckedStates}
-                >
+              >
                 Clear
               </Button>
             </Stack>
@@ -820,7 +894,7 @@ export const WorkItemsPage: React.FunctionComponent = () => {
                 sx={{ marginLeft: 'auto' }}
                 startIcon={<Clear />}
                 onClick={handleClearCheckedArea}
-                >
+              >
                 Clear
               </Button>
             </Stack>
@@ -917,7 +991,7 @@ export const WorkItemsPage: React.FunctionComponent = () => {
                 sx={{ marginLeft: 'auto' }}
                 startIcon={<Clear />}
                 onClick={handleClearCheckedTags}
-                >
+              >
                 Clear
               </Button>
             </Stack>
