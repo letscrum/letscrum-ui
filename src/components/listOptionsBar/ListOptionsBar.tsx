@@ -1,10 +1,11 @@
 import React, { useState, MouseEvent } from 'react'
-import { Box, Stack, MenuItem, Button, MenuProps, styled, Menu, alpha, IconButton, List, ListItem, ListItemText, Typography, Divider, Tooltip } from '@mui/material'
+import { Box, Stack, MenuItem, Button, MenuProps, styled, Menu, alpha, IconButton, List, ListItem, ListItemText, Typography, Divider, Tooltip, Switch, FormControlLabel } from '@mui/material'
 import {
-  Add, KeyboardArrowDown, PestControl, BakeryDining, EmojiEvents, Park, ListAlt,
+  Add, KeyboardArrowDown, PestControl, BakeryDining, EmojiEvents, Park, ListAlt, CloseFullscreen,
   AssignmentTurnedIn, Science, Shortcut, BuildOutlined, VerticalAlignTopOutlined, DeleteOutlined, TuneOutlined, FilterAltOutlined, OpenInFullOutlined, FilterAlt
 } from '@mui/icons-material'
 import { amber, blue, deepOrange, deepPurple, grey, purple, red, teal } from '@mui/material/colors'
+import { useNavigate } from 'react-router-dom'
 
 interface FilterControllerType {
   filteringTypes: boolean
@@ -17,13 +18,34 @@ interface FilterControllerType {
 }
 
 const sortItems = [
-  'Assigned to me',
-  'Following',
-  'Mentioned',
-  'My activity',
-  'Recently updated',
-  'Recently completed',
-  'Recently created'
+  {
+    title: 'Assigned to me',
+    path: 'assignedtome'
+  },
+  {
+    title: 'Following',
+    path: 'following'
+  },
+  {
+    title: 'Mentioned',
+    path: 'mentioned'
+  },
+  {
+    title: 'My activity',
+    path: 'myactivity'
+  },
+  {
+    title: 'Recently updated',
+    path: 'recentlyupdated'
+  },
+  {
+    title: 'Recently completed',
+    path: 'recentlycompleted'
+  },
+  {
+    title: 'Recently created',
+    path: 'recentlycreated'
+  }
 ]
 
 const itemTypes = [{
@@ -109,7 +131,52 @@ const NewMenu = styled((props: MenuProps) => (
   }
 }))
 
+const CompletedItemsSwitch = styled(Switch)(({ theme }) => ({
+  width: 28,
+  height: 16,
+  padding: 0,
+  marginLeft: '.75rem',
+  marginRight: '.5rem',
+  display: 'flex',
+  '&:active': {
+    '& .MuiSwitch-thumb': {
+      width: 15
+    },
+    '& .MuiSwitch-switchBase.Mui-checked': {
+      transform: 'translateX(9px)'
+    }
+  },
+  '& .MuiSwitch-switchBase': {
+    padding: 2,
+    '&.Mui-checked': {
+      transform: 'translateX(12px)',
+      color: '#fff',
+      '& + .MuiSwitch-track': {
+        opacity: 1,
+        backgroundColor: theme.palette.mode === 'dark' ? '#177ddc' : '#1890ff'
+      }
+    }
+  },
+  '& .MuiSwitch-thumb': {
+    boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    transition: theme.transitions.create(['width'], {
+      duration: 200
+    })
+  },
+  '& .MuiSwitch-track': {
+    borderRadius: 16 / 2,
+    opacity: 1,
+    backgroundColor:
+      theme.palette.mode === 'dark' ? 'rgba(255,255,255,.35)' : 'rgba(0,0,0,.25)',
+    boxSizing: 'border-box'
+  }
+}))
+
 export const ListOptionsBar: React.FunctionComponent<FilterControllerType> = (props: FilterControllerType) => {
+  const navigate = useNavigate()
   const [sortAnchorEl, setSortAnchorEl] = useState<null | HTMLElement>(null)
   const [selectedSortIndex, setSelectedSortIndex] = useState(4)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -117,17 +184,23 @@ export const ListOptionsBar: React.FunctionComponent<FilterControllerType> = (pr
   const openSort = Boolean(sortAnchorEl)
   const handleItemSort = (e: MouseEvent<HTMLElement>): void => setSortAnchorEl(e.currentTarget)
   const handleSortMenuItemClick = (
+    itemPath: string,
     e: MouseEvent<HTMLElement>,
     index: number
   ): void => {
     setSelectedSortIndex(index)
     setSortAnchorEl(null)
-    // console.log('index: ', index)
-    // console.log('seletedSortIndex: ', selectedSortIndex)
+    navigate(itemPath)
   }
   const handleClickNewButton = (e: MouseEvent<HTMLElement>): void => setAnchorEl(e.currentTarget)
   const handleCloseNewMenu = (): void => setAnchorEl(null)
   const handleCloseSortMenu = (): void => setSortAnchorEl(null)
+  const [viewOptionsAnchorEl, setViewOptionsAnchorEl] = React.useState<null | HTMLElement>(null)
+  const openViewOptions = Boolean(viewOptionsAnchorEl)
+  const handleOpenViewOptions = (event: React.MouseEvent<HTMLButtonElement>): void => setViewOptionsAnchorEl(event.currentTarget)
+  const handleViewOptionsClose = (): void => setViewOptionsAnchorEl(null)
+  const [fullScreen, setFullScreen] = useState(false)
+  const handleFullScreen = (): void => setFullScreen(!fullScreen)
   return (
     <Box width='100%'>
       <Stack direction='row' sx={{ margin: '1rem .5rem .125rem .5rem' }}>
@@ -137,15 +210,14 @@ export const ListOptionsBar: React.FunctionComponent<FilterControllerType> = (pr
           sx={{ bgcolor: 'background.paper' }}
         >
           <ListItem
-            sx={{ padding: '0 .5rem' }}
+            sx={{ padding: '0 .5rem', cursor: 'pointer' }}
             aria-haspopup="listbox"
             aria-controls="sort-menu"
             aria-expanded={openSort ? 'true' : undefined}
             onClick={handleItemSort}
           >
             <ListItemText
-              // primary='Recently updated'
-              secondary={sortItems[selectedSortIndex]}
+              secondary={sortItems[selectedSortIndex].title}
               sx={{ marginRight: '.25rem', width: 'auto', '& .MuiTypography-root': { color: grey[700], fontWeight: 'bold', fontSize: '.875rem' } }}
             />
             <KeyboardArrowDown sx={{ fontWeight: 300, color: grey[600] }} />
@@ -164,11 +236,11 @@ export const ListOptionsBar: React.FunctionComponent<FilterControllerType> = (pr
           {sortItems.map((item, index) => (
             <MenuItem
               sx={{ fontSize: '.875rem', fontWeight: 300, color: grey[900] }}
-              key={item}
+              key={item.title}
               selected={index === selectedSortIndex}
-              onClick={(event) => handleSortMenuItemClick(event, index)}
+              onClick={(event) => handleSortMenuItemClick(item.path, event, index)}
             >
-              {item}
+              {item.title}
             </MenuItem>
           ))}
         </Menu>
@@ -271,9 +343,49 @@ export const ListOptionsBar: React.FunctionComponent<FilterControllerType> = (pr
           </Typography>
         </Button>
         <Tooltip title='View options'>
-          <IconButton sx={{ marginLeft: 'auto', marginY: 'auto', borderRadius: 0 }}>
-            <TuneOutlined sx={{ color: blue[900], fontSize: '1rem' }} />
-          </IconButton>
+          <>
+            <IconButton
+              sx={{ marginLeft: 'auto', marginY: 'auto', borderRadius: 0 }}
+              id='viewOptions'
+              aria-controls={openViewOptions ? 'viewOptions-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={openViewOptions ? 'true' : undefined}
+              onClick={handleOpenViewOptions}
+            >
+              <TuneOutlined sx={{ color: blue[900], fontSize: '1rem' }} />
+            </IconButton>
+            <Menu
+              id='viewOptions-menu'
+              sx={{
+                '& .MuiList-padding': {
+                  width: '12rem',
+                  padding: '.875rem .5rem'
+                }
+              }}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right'
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right'
+              }}
+              anchorEl={viewOptionsAnchorEl}
+              open={openViewOptions}
+              onClose={handleViewOptionsClose}
+              MenuListProps={{
+                'aria-labelledby': 'viewOptions'
+              }}
+            >
+              <Typography sx={{ fontSize: '.75rem', fontWeight: 'light', color: grey[500] }}>Completed Work Items</Typography>
+              <FormControlLabel
+                control={<CompletedItemsSwitch defaultChecked />}
+                label={
+                  <Typography sx={{ fontSize: '.75rem', color: grey[700] }}>Hidden</Typography>
+                }
+                />
+            </Menu>
+          </>
         </Tooltip>
         <Tooltip title='Hide filters'>
           <IconButton sx={{ marginY: 'auto', borderRadius: 0 }} onClick={props.handleCloseFitersBar}>
@@ -290,8 +402,12 @@ export const ListOptionsBar: React.FunctionComponent<FilterControllerType> = (pr
           </IconButton>
         </Tooltip>
         <Tooltip title='Enter full screen mode'>
-          <IconButton sx={{ marginY: 'auto', borderRadius: 0 }}>
-            <OpenInFullOutlined sx={{ color: blue[900], fontSize: '1rem' }} />
+          <IconButton sx={{ marginY: 'auto', borderRadius: 0 }} onClick={handleFullScreen}>
+            {
+              fullScreen
+                ? <CloseFullscreen sx={{ color: blue[900], fontSize: '1rem' }} />
+                : <OpenInFullOutlined sx={{ color: blue[900], fontSize: '1rem' }} />
+            }
           </IconButton>
         </Tooltip>
       </Stack>

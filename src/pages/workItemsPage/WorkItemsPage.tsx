@@ -384,10 +384,16 @@ export const WorkItemsPage: React.FunctionComponent = () => {
   const handleTypesMenuClose = (): void => setTypesAnchorEl(null)
   const handleTypesCheck = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const newItemTypes = [...workItemTypes]
+    // every check click
     const selectedTypes = newItemTypes.find((item) => item.key === event.target.name)
+    console.log('selectedTypes: ', selectedTypes)
     if (selectedTypes !== undefined) {
+      console.log('initialRows: ', initialRows)
+      const newRows = initialRows.filter((item) => item.type.includes(selectedTypes?.key))
+      console.log('newRows: ', newRows)
       selectedTypes.checked = event.target.checked
       setFilteringTypes(true)
+      setRows(newRows)
     }
     const canceledTypes = newItemTypes.filter((item) => item.checked)
     if (canceledTypes.length === 0) setFilteringTypes(false)
