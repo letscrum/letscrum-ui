@@ -260,8 +260,15 @@ export const WorkItemsPage: React.FunctionComponent = () => {
         width: 14,
         sortable: false,
         renderCell: (params) => {
-          if (params.value === 'bug') return <PestControl sx={{ color: red[900], fontSize: 'small' }} />
-          return <AssignmentTurnedIn sx={{ color: amber[900], fontSize: 'small' }} />
+          switch (params.value) {
+            case 'bug': return <PestControl sx={{ color: red[900], fontSize: 'small' }} />
+            case 'epic': return <BakeryDining sx={{ color: red[900], fontSize: 'small' }} />
+            case 'feature': return <EmojiEvents sx={{ color: red[900], fontSize: 'small' }} />
+            case 'impediment': return <Park sx={{ color: red[900], fontSize: 'small' }} />
+            case 'backlog': return <ListAlt sx={{ color: red[900], fontSize: 'small' }} />
+            case 'task': return <AssignmentTurnedIn sx={{ color: red[900], fontSize: 'small' }} />
+            case 'test': return <Science sx={{ color: red[900], fontSize: 'small' }} />
+          }
         },
         headerClassName: 'dataGrid--header'
       },
@@ -386,17 +393,27 @@ export const WorkItemsPage: React.FunctionComponent = () => {
     const newItemTypes = [...workItemTypes]
     // every check click
     const selectedTypes = newItemTypes.find((item) => item.key === event.target.name)
-    console.log('selectedTypes: ', selectedTypes)
     if (selectedTypes !== undefined) {
-      console.log('initialRows: ', initialRows)
-      const newRows = initialRows.filter((item) => item.type.includes(selectedTypes?.key))
-      console.log('newRows: ', newRows)
+      // modify selected types checked value
       selectedTypes.checked = event.target.checked
       setFilteringTypes(true)
+    }
+    // all checked types
+    const allSelectedTypes = newItemTypes.filter((item) => item.checked)
+    // cancel all checked
+    if (allSelectedTypes.length === 0) {
+      setFilteringTypes(false)
+      setRows(initialRows)
+    } else {
+      // update rows which include any selected types
+      let newRows: any = []
+      // eslint-disable-next-line no-return-assign
+      allSelectedTypes.forEach((i) => newRows = newRows.concat(initialRows.filter((item) => item.type.includes(i.key))))
+      console.log('newRows: ', newRows)
+      // let newRows = initialRows.filter((item) => item.type.includes(allSelectedTypes[0].key))
+      // newRows = newRows.concat(initialRows.filter((item) => item.type.includes(allSelectedTypes[1].key)))
       setRows(newRows)
     }
-    const canceledTypes = newItemTypes.filter((item) => item.checked)
-    if (canceledTypes.length === 0) setFilteringTypes(false)
     setWorkItemTypes(newItemTypes)
   }
   const handleClearCheckedTypes = (): void => {
