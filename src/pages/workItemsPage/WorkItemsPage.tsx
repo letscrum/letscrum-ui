@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState, useEffect } from 'react'
+import React, { ChangeEvent, useState, useEffect, ReactElement } from 'react'
 import { Box, Typography, Stack, MenuProps, styled, Menu, Button, MenuItem, alpha, Checkbox, Divider, Theme, Avatar, IconButton, Tooltip, InputAdornment, TextField, RadioGroup, FormControlLabel, Radio } from '@mui/material'
 import {
   AssignmentTurnedIn, BakeryDining, EmojiEvents, FilterAltOutlined, KeyboardArrowDown, ListAlt, Park, PestControl, Science, Clear,
@@ -95,32 +95,25 @@ interface AssignedToProps {
   avatar: any
   checked: boolean
 }
-
-const initialStates = [
-  {
-    id: '1',
-    key: 'new',
-    name: 'New',
-    icon: <div style={{ width: '.5rem', height: '.5rem', borderRadius: '50%', backgroundColor: grey[400] }} />,
-    checked: false
-  },
-  {
-    id: '2',
-    key: 'todo',
-    name: 'To Do',
-    icon: <div style={{ width: '.5rem', height: '.5rem', borderRadius: '50%', backgroundColor: grey[400] }} />,
-    checked: false
-  }
-]
-
-const initialArea = [
-  {
-    id: '1',
-    key: 'imoogoo',
-    name: 'imoogoo',
-    checked: false
-  }
-]
+interface StateProps {
+  key: string
+  name: string
+  icon: ReactElement
+  checked: boolean
+}
+interface AreaProps {
+  key: string
+  name: string
+  checked: boolean
+}
+// const initialArea = [
+//   {
+//     id: '1',
+//     key: 'imoogoo',
+//     name: 'imoogoo',
+//     checked: false
+//   }
+// ]
 
 const initialTags = [
   {
@@ -146,11 +139,11 @@ const initialTags = [
 ]
 
 const initialRows: RowsProps[] = [
-  { id: 1, type: 'bug', title: 'Shoveling Snow', assign: 'Jon', state: 'open', area: 'Canada', tags: 'Tags', comments: 'Comments', activity: randomUpdatedDate() },
-  { id: 2, type: 'epic', title: 'Snowing day', assign: 'Will', state: 'open', area: 'China', tags: 'Cold', comments: 'beautiful', activity: randomUpdatedDate() },
+  { id: 1, type: 'bug', title: 'Shoveling Snow', assign: 'Jon', state: 'Open', area: 'Canada', tags: 'Tags', comments: 'Comments', activity: randomUpdatedDate() },
+  { id: 2, type: 'epic', title: 'Snowing day', assign: 'Will', state: 'Open', area: 'China', tags: 'Cold', comments: 'beautiful', activity: randomUpdatedDate() },
   { id: 3, type: 'test', title: 'Padding', assign: 'Anna', state: 'To Do', area: 'Canada', tags: 'Summer', comments: 'Comments', activity: randomUpdatedDate() },
-  { id: 4, type: 'bug', title: 'Swimming', assign: 'Chris', state: 'open', area: 'iMoogoo', tags: 'Sports', comments: 'Working hard', activity: randomUpdatedDate() },
-  { id: 5, type: 'task', title: 'Cooking', assign: 'Lynn', state: 'open', area: 'Home', tags: 'Delicious', comments: 'Yummy', activity: randomUpdatedDate() },
+  { id: 4, type: 'bug', title: 'Swimming', assign: 'Chris', state: 'Open', area: 'iMoogoo', tags: 'Sports', comments: 'Working hard', activity: randomUpdatedDate() },
+  { id: 5, type: 'task', title: 'Cooking', assign: 'Lynn', state: 'New', area: 'Home', tags: 'Delicious', comments: 'Yummy', activity: randomUpdatedDate() },
   { id: 6, type: 'feature', title: 'Skiing', assign: 'admin', state: 'To Do', area: 'Canada', tags: 'Sports', comments: 'Working hard', activity: randomUpdatedDate() },
   { id: 7, type: 'impediment', title: 'Painting', assign: '', state: 'To Do', area: 'Canada', tags: 'Artic', comments: 'Gift', activity: randomUpdatedDate() }
 ]
@@ -402,10 +395,8 @@ export const WorkItemsPage: React.FunctionComponent = () => {
     }
     return allOptions
   }
-  const dynamicStates = deduplication(allStates)
-  const dynamicArea = deduplication(allArea)
   const dynamicTags = deduplication(allTags)
-  console.log('dynamicStates: ', dynamicStates, 'dynamicArea: ', dynamicArea, 'dynamicTags: ', dynamicTags)
+  console.log('dynamicTags: ', dynamicTags)
   // types filter control
   const allTypes = initialRows.map((item) => item.type)
   const dynamicTypes = (): TypesProps[] => {
@@ -470,7 +461,7 @@ export const WorkItemsPage: React.FunctionComponent = () => {
     }
   ]
   const dynamicAssignedTo = deduplication(allAssignedTo)
-  const assignTo = (item: string): AssignedToProps => {
+  const assignToObjective = (item: string): AssignedToProps => {
     const assignItem = {
       key: item,
       name: item,
@@ -483,7 +474,7 @@ export const WorkItemsPage: React.FunctionComponent = () => {
     }
     return assignItem
   }
-  const dynamicAssignedToObjArray = dynamicAssignedTo.map((item: string) => assignTo(item))
+  const dynamicAssignedToObjArray = dynamicAssignedTo.map((item: string) => assignToObjective(item))
   // if concat, there will be 2 item with the same key
   const initialAssignedTo = defaultAssignedTo.concat(dynamicAssignedToObjArray)
   const [assignedTo, setAssignedTo] = useState(initialAssignedTo)
@@ -511,7 +502,6 @@ export const WorkItemsPage: React.FunctionComponent = () => {
       // update rows which include any selected types
       let newRows: RowsProps[] = []
       allSelectedAssigned.forEach((i) => {
-        // ??? unassigned and assign to me need to be completed
         newRows = newRows.concat(initialRows.filter((item) => {
           if (i.key === '') {
             return item.assign === ''
@@ -532,9 +522,20 @@ export const WorkItemsPage: React.FunctionComponent = () => {
     setFilteringAssigned(false)
   }
   // states filter control
+  const stateObjective = (item: string): StateProps => {
+    const stateItem = {
+      key: item,
+      name: item,
+      icon: <div style={{ width: '.5rem', height: '.5rem', borderRadius: '50%', backgroundColor: grey[400] }} />,
+      checked: false
+    }
+    return stateItem
+  }
+  const dynamicStates = deduplication(allStates)
+  const dynamicStateObjArray: StateProps[] = dynamicStates.map((item: string) => stateObjective(item))
+  const [states, setStates] = useState(dynamicStateObjArray)
   const [filteringStates, setFilteringStates] = useState(false)
   const [statesAnchorEl, setStatesAnchorEl] = useState<null | HTMLElement>(null)
-  const [states, setStates] = useState(initialStates)
   const openStatesMenu = Boolean(statesAnchorEl)
   const handleStatesClick = (event: React.MouseEvent<HTMLElement>): void => setStatesAnchorEl(event.currentTarget)
   const handleStatesMenuClose = (): void => setStatesAnchorEl(null)
@@ -545,6 +546,23 @@ export const WorkItemsPage: React.FunctionComponent = () => {
       setFilteringStates(true)
       selectedStates.checked = event.target.checked
     }
+    // all checked types
+    const allSelectedStates = newStates.filter((item) => item.checked)
+    console.log('>>>>>>>>>>>>>>>>>>>>allSelectedStates: ', allSelectedStates)
+    // cancel all checked
+    if (allSelectedStates.length === 0) {
+      setFilteringTypes(false)
+      setRows(initialRows)
+    } else {
+      // update rows which include any selected types
+      let newRows: RowsProps[] = []
+      allSelectedStates.forEach((i) => {
+        newRows = newRows.concat(initialRows.filter((item) => item.state.includes(i.key)))
+      })
+      setRows(newRows)
+    }
+    setStates(newStates)
+    // clear checked
     const canceledStates = newStates.filter((item) => item.checked)
     if (canceledStates.length === 0) setFilteringStates(false)
     setStates(newStates)
@@ -556,9 +574,19 @@ export const WorkItemsPage: React.FunctionComponent = () => {
     setFilteringStates(false)
   }
   // area filter control
+  const areaObjective = (item: string): AreaProps => {
+    const areaItem = {
+      key: item,
+      name: item,
+      checked: false
+    }
+    return areaItem
+  }
+  const dynamicArea = deduplication(allArea)
+  const dynamicAreaObjArray: AreaProps[] = dynamicArea.map((item: string) => areaObjective(item))
   const [filteringArea, setFilteringArea] = useState(false)
   const [areaAnchorEl, setAreaAnchorEl] = useState<null | HTMLElement>(null)
-  const [area, setArea] = useState(initialArea)
+  const [area, setArea] = useState(dynamicAreaObjArray)
   const openAreaMenu = Boolean(areaAnchorEl)
   const handleAreaClick = (event: React.MouseEvent<HTMLElement>): void => setAreaAnchorEl(event.currentTarget)
   const handleAreaMenuClose = (): void => setAreaAnchorEl(null)
