@@ -9,8 +9,29 @@ import { DataGrid, GridActionsCellItem, GridCellParams, GridColumns } from '@mui
 import { randomUpdatedDate } from '@mui/x-data-grid-generator'
 import clsx from 'clsx'
 import { ListOptionsBar } from '../../components'
+import { selectUserName } from '../../redux/reducers/userSlice'
+import { useAppSelector } from '../../redux/hooks'
 
-const initialItemTypes = [
+interface RowsProps {
+  id: number
+  type: string
+  title: string
+  assign: string
+  state: string
+  area: string
+  tags: string
+  comments: string
+  activity: Date
+}
+interface TypesProps {
+  id: string
+  key: string
+  title: string
+  icon: any
+  path: string
+  checked: boolean
+}
+const initialItemTypes: TypesProps[] = [
   {
     id: '1',
     key: 'bug',
@@ -68,34 +89,12 @@ const initialItemTypes = [
     checked: false
   }
 ]
-
-const initialAssignedTo = [
-  {
-    id: '1',
-    key: 'me',
-    name: '@me',
-    avatar: null,
-    checked: false
-  },
-  {
-    id: '2',
-    key: 'unassigned',
-    name: 'Unassigned',
-    avatar: null,
-    checked: false
-  },
-  {
-    id: '3',
-    key: 'wilsonwu',
-    name: 'WilsonWu',
-    avatar: <Avatar sx={{ width: 16, height: 16 }}>
-      <Typography sx={{ fontSize: '.5rem' }}>
-        WW
-      </Typography>
-    </Avatar>,
-    checked: false
-  }
-]
+interface AssignedToProps {
+  key: string
+  name: string
+  avatar: any
+  checked: boolean
+}
 
 const initialStates = [
   {
@@ -146,13 +145,15 @@ const initialTags = [
   }
 ]
 
-const initialRows = [
+const initialRows: RowsProps[] = [
   { id: 1, type: 'bug', title: 'Shoveling Snow', assign: 'Jon', state: 'open', area: 'Canada', tags: 'Tags', comments: 'Comments', activity: randomUpdatedDate() },
-  { id: 3, type: 'test', title: 'Padding', assign: 'Anna', state: 'To Do', area: 'Canada', tags: 'Summer', comments: 'Comments', activity: randomUpdatedDate() }
+  { id: 2, type: 'epic', title: 'Snowing day', assign: 'Will', state: 'open', area: 'China', tags: 'Cold', comments: 'beautiful', activity: randomUpdatedDate() },
+  { id: 3, type: 'test', title: 'Padding', assign: 'Anna', state: 'To Do', area: 'Canada', tags: 'Summer', comments: 'Comments', activity: randomUpdatedDate() },
+  { id: 4, type: 'bug', title: 'Swimming', assign: 'Chris', state: 'open', area: 'iMoogoo', tags: 'Sports', comments: 'Working hard', activity: randomUpdatedDate() },
+  { id: 5, type: 'task', title: 'Cooking', assign: 'Lynn', state: 'open', area: 'Home', tags: 'Delicious', comments: 'Yummy', activity: randomUpdatedDate() },
+  { id: 6, type: 'feature', title: 'Skiing', assign: 'admin', state: 'To Do', area: 'Canada', tags: 'Sports', comments: 'Working hard', activity: randomUpdatedDate() },
+  { id: 7, type: 'impediment', title: 'Painting', assign: '', state: 'To Do', area: 'Canada', tags: 'Artic', comments: 'Gift', activity: randomUpdatedDate() }
 ]
-
-// if use RowType, will be imcampable error
-// type RowType = typeof rows[number]
 
 // eslint-disable-next-line @typescript-eslint/space-before-function-paren
 function customCheckbox(theme: Theme): any {
@@ -262,12 +263,12 @@ export const WorkItemsPage: React.FunctionComponent = () => {
         renderCell: (params) => {
           switch (params.value) {
             case 'bug': return <PestControl sx={{ color: red[900], fontSize: 'small' }} />
-            case 'epic': return <BakeryDining sx={{ color: red[900], fontSize: 'small' }} />
-            case 'feature': return <EmojiEvents sx={{ color: red[900], fontSize: 'small' }} />
-            case 'impediment': return <Park sx={{ color: red[900], fontSize: 'small' }} />
-            case 'backlog': return <ListAlt sx={{ color: red[900], fontSize: 'small' }} />
-            case 'task': return <AssignmentTurnedIn sx={{ color: red[900], fontSize: 'small' }} />
-            case 'test': return <Science sx={{ color: red[900], fontSize: 'small' }} />
+            case 'epic': return <BakeryDining sx={{ color: deepOrange[500], fontSize: 'small' }} />
+            case 'feature': return <EmojiEvents sx={{ color: deepPurple[900], fontSize: 'small' }} />
+            case 'impediment': return <Park sx={{ color: purple[500], fontSize: 'small' }} />
+            case 'backlog': return <ListAlt sx={{ color: blue[700], fontSize: 'small' }} />
+            case 'task': return <AssignmentTurnedIn sx={{ color: amber[900], fontSize: 'small' }} />
+            case 'test': return <Science sx={{ color: teal[700], fontSize: 'small' }} />
           }
         },
         headerClassName: 'dataGrid--header'
@@ -382,10 +383,42 @@ export const WorkItemsPage: React.FunctionComponent = () => {
     const delayDebounce = setTimeout(handleSearch, 500)
     return () => clearTimeout(delayDebounce)
   }, [keyword])
+  // filter options
+  const allAssignedTo = initialRows.map((item) => item.assign)
+  const allStates = initialRows.map((item) => item.state)
+  const allArea = initialRows.map((item) => item.area)
+  const allTags = initialRows.map((item) => item.tags)
+  const firstLetter = (name: string): string => {
+    return name.charAt(0).toUpperCase()
+  }
+  const deduplication = (allOptions: any): any => {
+    for (let i = 0; i < allOptions.length; i++) {
+      for (let j = i + 1; j < allOptions.length; j++) {
+        if (allOptions[j] === allOptions[i]) {
+          allOptions.splice(j, 1)
+          j--
+        }
+      }
+    }
+    return allOptions
+  }
+  const dynamicStates = deduplication(allStates)
+  const dynamicArea = deduplication(allArea)
+  const dynamicTags = deduplication(allTags)
+  console.log('dynamicStates: ', dynamicStates, 'dynamicArea: ', dynamicArea, 'dynamicTags: ', dynamicTags)
   // types filter control
+  const allTypes = initialRows.map((item) => item.type)
+  const dynamicTypes = (): TypesProps[] => {
+    let newTypes: TypesProps[] = []
+    deduplication(allTypes).forEach((type: string) => {
+      newTypes = newTypes.concat(initialItemTypes.filter((item) => item.key === type))
+    })
+    return newTypes
+  }
+  const itemTypes = dynamicTypes()
+  const [workItemTypes, setWorkItemTypes] = useState(itemTypes)
   const [filteringTypes, setFilteringTypes] = useState(false)
   const [typesAnchorEl, setTypesAnchorEl] = useState<null | HTMLElement>(null)
-  const [workItemTypes, setWorkItemTypes] = useState(initialItemTypes)
   const openTypesMenu = Boolean(typesAnchorEl)
   const handleTypesClick = (event: React.MouseEvent<HTMLElement>): void => setTypesAnchorEl(event.currentTarget)
   const handleTypesMenuClose = (): void => setTypesAnchorEl(null)
@@ -406,12 +439,10 @@ export const WorkItemsPage: React.FunctionComponent = () => {
       setRows(initialRows)
     } else {
       // update rows which include any selected types
-      let newRows: any = []
-      // eslint-disable-next-line no-return-assign
-      allSelectedTypes.forEach((i) => newRows = newRows.concat(initialRows.filter((item) => item.type.includes(i.key))))
-      console.log('newRows: ', newRows)
-      // let newRows = initialRows.filter((item) => item.type.includes(allSelectedTypes[0].key))
-      // newRows = newRows.concat(initialRows.filter((item) => item.type.includes(allSelectedTypes[1].key)))
+      let newRows: RowsProps[] = []
+      allSelectedTypes.forEach((i) => {
+        newRows = newRows.concat(initialRows.filter((item) => item.type.includes(i.key)))
+      })
       setRows(newRows)
     }
     setWorkItemTypes(newItemTypes)
@@ -423,21 +454,75 @@ export const WorkItemsPage: React.FunctionComponent = () => {
     setFilteringTypes(false)
   }
   // assigned to fiter control
+  const displayName = useAppSelector(selectUserName) ?? ''
+  const defaultAssignedTo: AssignedToProps[] = [
+    {
+      key: displayName,
+      name: '@me',
+      avatar: null,
+      checked: false
+    },
+    {
+      key: '',
+      name: 'Unassigned',
+      avatar: null,
+      checked: false
+    }
+  ]
+  const dynamicAssignedTo = deduplication(allAssignedTo)
+  const assignTo = (item: string): AssignedToProps => {
+    const assignItem = {
+      key: item,
+      name: item,
+      avatar: <Avatar sx={{ width: 16, height: 16 }}>
+        <Typography sx={{ fontSize: '.5rem' }}>
+          {firstLetter(item)}
+        </Typography>
+      </Avatar>,
+      checked: false
+    }
+    return assignItem
+  }
+  const dynamicAssignedToObjArray = dynamicAssignedTo.map((item: string) => assignTo(item))
+  // if concat, there will be 2 item with the same key
+  const initialAssignedTo = defaultAssignedTo.concat(dynamicAssignedToObjArray)
+  const [assignedTo, setAssignedTo] = useState(initialAssignedTo)
   const [filteringAssigned, setFilteringAssigned] = useState(false)
   const [assignedAnchorEl, setAssignedAnchorEl] = useState<null | HTMLElement>(null)
-  const [assignedTo, setAssignedTo] = useState(initialAssignedTo)
   const openAssignedMenu = Boolean(assignedAnchorEl)
   const handleAssignedClick = (event: React.MouseEvent<HTMLElement>): void => setAssignedAnchorEl(event.currentTarget)
   const handleAssignedMenuClose = (): void => setAssignedAnchorEl(null)
   const handleAssignedCheck = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const newAssignedTo = [...assignedTo]
+    // every check click
     const selectedAssigned = newAssignedTo.find((item) => item.key === event.target.name)
     if (selectedAssigned !== undefined) {
-      setFilteringAssigned(true)
+      // modify selected types checked value
       selectedAssigned.checked = event.target.checked
+      setFilteringTypes(true)
     }
-    const canceledAssigned = newAssignedTo.filter((item) => item.checked)
-    if (canceledAssigned.length === 0) setFilteringAssigned(false)
+    // all checked types
+    const allSelectedAssigned = newAssignedTo.filter((item) => item.checked)
+    // cancel all checked
+    if (allSelectedAssigned.length === 0) {
+      setFilteringTypes(false)
+      setRows(initialRows)
+    } else {
+      // update rows which include any selected types
+      let newRows: RowsProps[] = []
+      allSelectedAssigned.forEach((i) => {
+        // ??? unassigned and assign to me need to be completed
+        newRows = newRows.concat(initialRows.filter((item) => {
+          if (i.key === '') {
+            return item.assign === ''
+          } else {
+            return item.assign.includes(i.key)
+          }
+        }
+        ))
+      })
+      setRows(newRows)
+    }
     setAssignedTo(newAssignedTo)
   }
   const handleClearCheckedAssigned = (): void => {

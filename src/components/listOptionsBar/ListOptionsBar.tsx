@@ -91,6 +91,21 @@ const itemTypes = [{
   path: '/'
 }]
 
+const MenuOptionButton = styled(Button)({
+  padding: '0 1rem',
+  borderRadius: '0',
+  '&:hover': { backgroundColor: grey[200] },
+  '& .MuiButton-startIcon>*:nth-of-type(1)': { color: blue[900], fontSize: '1rem' },
+  '& .MuiButton-endIcon>*:nth-of-type(1)': { color: grey[600], fontSize: '1rem' }
+})
+
+const OptionButton = styled(Button)({
+  padding: '0 1rem',
+  borderRadius: '0',
+  '&:hover': { backgroundColor: grey[200] },
+  '& .MuiButton-startIcon>*:nth-of-type(1)': { color: blue[900], fontSize: '1rem' }
+})
+
 const NewMenu = styled((props: MenuProps) => (
   <Menu
     elevation={0}
@@ -203,7 +218,7 @@ export const ListOptionsBar: React.FunctionComponent<FilterControllerType> = (pr
   const handleFullScreen = (): void => setFullScreen(!fullScreen)
   return (
     <Box width='100%'>
-      <Stack direction='row' sx={{ margin: '1rem .5rem .125rem .5rem' }}>
+      <Stack direction='row' sx={{ margin: '1rem .5rem .125rem .5rem', paddingBottom: '.5rem' }}>
         <List
           component="nav"
           aria-label="Device settings"
@@ -245,13 +260,7 @@ export const ListOptionsBar: React.FunctionComponent<FilterControllerType> = (pr
           ))}
         </Menu>
         <Divider sx={{ marginX: '.5rem', marginY: '.875rem' }} orientation='vertical' variant='middle' flexItem />
-        <Button
-          sx={{
-            padding: '0 1rem',
-            borderRadius: '0',
-            '& .MuiButton-startIcon>*:nth-of-type(1)': { color: blue[900], fontSize: '1rem' },
-            '& .MuiButton-endIcon>*:nth-of-type(1)': { color: grey[600], fontSize: '1rem' }
-          }}
+        <MenuOptionButton
           aria-controls={openNew ? 'new-work-item' : undefined}
           aria-haspopup='true'
           aria-expanded={openNew ? 'true' : undefined}
@@ -263,7 +272,7 @@ export const ListOptionsBar: React.FunctionComponent<FilterControllerType> = (pr
           <Typography variant='body2' color={grey[700]}>
             New Work Item
           </Typography>
-        </Button>
+        </MenuOptionButton>
         <NewMenu
           MenuListProps={{
             'aria-labelledby': 'new-work-item'
@@ -290,58 +299,38 @@ export const ListOptionsBar: React.FunctionComponent<FilterControllerType> = (pr
             )
           })}
         </NewMenu>
-        <Button
-          sx={{
-            padding: '0 1rem',
-            borderRadius: '0',
-            '& .MuiButton-startIcon>*:nth-of-type(1)': { color: blue[900], fontSize: '1rem' }
-          }}
+        <OptionButton
           variant='text'
           startIcon={<Shortcut fontSize='small' />}
         >
           <Typography variant='body2' color={grey[700]}>
             Open in Queries
           </Typography>
-        </Button>
-        <Button
-          sx={{
-            padding: '0 1rem',
-            borderRadius: '0',
-            '& .MuiButton-startIcon>*:nth-of-type(1)': { color: blue[900], fontSize: '1rem' }
-          }}
+        </OptionButton>
+        <OptionButton
           variant='text'
           startIcon={<BuildOutlined fontSize='small' />}
         >
           <Typography variant='body2' color={grey[700]}>
             Column Options
           </Typography>
-        </Button>
-        <Button
-          sx={{
-            padding: '0 1rem',
-            borderRadius: '0',
-            '& .MuiButton-startIcon>*:nth-of-type(1)': { color: blue[900], fontSize: '1rem' }
-          }}
+        </OptionButton>
+        <OptionButton
           variant='text'
           startIcon={<VerticalAlignTopOutlined />}
         >
           <Typography variant='body2' color={grey[700]}>
             Import Work Items
           </Typography>
-        </Button>
-        <Button
-          sx={{
-            padding: '0 1rem',
-            borderRadius: '0',
-            '& .MuiButton-startIcon>*:nth-of-type(1)': { color: blue[900], fontSize: '1rem' }
-          }}
+        </OptionButton>
+        <OptionButton
           variant='text'
           startIcon={<DeleteOutlined fontSize='small' />}
         >
           <Typography variant='body2' color={grey[700]}>
             Recycle Bin
           </Typography>
-        </Button>
+        </OptionButton>
         <Tooltip title='View options'>
           <>
             <IconButton
