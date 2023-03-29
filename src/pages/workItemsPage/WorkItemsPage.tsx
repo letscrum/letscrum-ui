@@ -597,6 +597,22 @@ export const WorkItemsPage: React.FunctionComponent = () => {
       setFilteringArea(true)
       selectedArea.checked = event.target.checked
     }
+    // all checked types
+    const allSelectedAreas = newArea.filter((item) => item.checked)
+    // cancel all checked
+    if (allSelectedAreas.length === 0) {
+      setFilteringTypes(false)
+      setRows(initialRows)
+    } else {
+      // update rows which include any selected types
+      let newRows: RowsProps[] = []
+      allSelectedAreas.forEach((i) => {
+        newRows = newRows.concat(initialRows.filter((item) => item.area.includes(i.key)))
+      })
+      setRows(newRows)
+    }
+    setArea(newArea)
+    // clear checked
     const canceledArea = newArea.filter((item) => item.checked)
     if (canceledArea.length === 0) setFilteringArea(false)
     setArea(newArea)
