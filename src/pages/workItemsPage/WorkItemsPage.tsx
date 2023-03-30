@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useState, useEffect, ReactElement } from 'react'
-import { Box, Typography, Stack, MenuProps, styled, Menu, Button, MenuItem, alpha, Checkbox, Divider, Theme, Avatar, IconButton, Tooltip, InputAdornment, TextField, RadioGroup, FormControlLabel, Radio } from '@mui/material'
+import { Box, Typography, Stack, MenuProps, styled, Menu, Button, MenuItem, alpha, Checkbox, Divider, Theme, Avatar, IconButton, Tooltip, InputAdornment, TextField, RadioGroup, FormControlLabel, Radio, FormControl } from '@mui/material'
 import {
   AssignmentTurnedIn, BakeryDining, EmojiEvents, FilterAltOutlined, KeyboardArrowDown, ListAlt, Park, PestControl, Science, Clear,
   Shortcut, FileCopyOutlined, EmailOutlined, PersonOutlineOutlined, MoreHorizOutlined
@@ -19,8 +19,8 @@ interface RowsProps {
   assign: string
   state: string
   area: string
-  tags: string
-  comments: string
+  tag: string[]
+  comment: string
   activity: Date
 }
 interface TypesProps {
@@ -106,46 +106,19 @@ interface AreaProps {
   name: string
   checked: boolean
 }
-// const initialArea = [
-//   {
-//     id: '1',
-//     key: 'imoogoo',
-//     name: 'imoogoo',
-//     checked: false
-//   }
-// ]
-
-const initialTags = [
-  {
-    id: '1',
-    name: 'imoogoo',
-    checked: false
-  },
-  {
-    id: '2',
-    name: 'azure',
-    checked: false
-  },
-  {
-    id: '3',
-    name: 'devOps',
-    checked: false
-  },
-  {
-    id: '4',
-    name: 'Letscrum',
-    checked: false
-  }
-]
-
+interface TagProps {
+  key: string
+  name: string
+  checked: boolean
+}
 const initialRows: RowsProps[] = [
-  { id: 1, type: 'bug', title: 'Shoveling Snow', assign: 'Jon', state: 'Open', area: 'Canada', tags: 'Tags', comments: 'Comments', activity: randomUpdatedDate() },
-  { id: 2, type: 'epic', title: 'Snowing day', assign: 'Will', state: 'Open', area: 'China', tags: 'Cold', comments: 'beautiful', activity: randomUpdatedDate() },
-  { id: 3, type: 'test', title: 'Padding', assign: 'Anna', state: 'To Do', area: 'Canada', tags: 'Summer', comments: 'Comments', activity: randomUpdatedDate() },
-  { id: 4, type: 'bug', title: 'Swimming', assign: 'Chris', state: 'Open', area: 'iMoogoo', tags: 'Sports', comments: 'Working hard', activity: randomUpdatedDate() },
-  { id: 5, type: 'task', title: 'Cooking', assign: 'Lynn', state: 'New', area: 'Home', tags: 'Delicious', comments: 'Yummy', activity: randomUpdatedDate() },
-  { id: 6, type: 'feature', title: 'Skiing', assign: 'admin', state: 'To Do', area: 'Canada', tags: 'Sports', comments: 'Working hard', activity: randomUpdatedDate() },
-  { id: 7, type: 'impediment', title: 'Painting', assign: '', state: 'To Do', area: 'Canada', tags: 'Artic', comments: 'Gift', activity: randomUpdatedDate() }
+  { id: 1, type: 'bug', title: 'Shoveling Snow', assign: 'Jon', state: 'Open', area: 'Canada', tag: ['Cold'], comment: 'Comments', activity: randomUpdatedDate() },
+  { id: 2, type: 'epic', title: 'Snowing day', assign: 'Will', state: 'Open', area: 'China', tag: ['Cold'], comment: 'beautiful', activity: randomUpdatedDate() },
+  { id: 3, type: 'test', title: 'Padding', assign: 'Anna', state: 'To Do', area: 'Canada', tag: ['Summer'], comment: 'Comments', activity: randomUpdatedDate() },
+  { id: 4, type: 'bug', title: 'Swimming', assign: 'Chris', state: 'Open', area: 'iMoogoo', tag: ['Sports', 'Cold'], comment: 'Working hard', activity: randomUpdatedDate() },
+  { id: 5, type: 'task', title: 'Cooking', assign: 'Lynn', state: 'New', area: 'Home', tag: ['Delicious', 'Summer'], comment: 'Yummy', activity: randomUpdatedDate() },
+  { id: 6, type: 'feature', title: 'Skiing', assign: 'admin', state: 'To Do', area: 'Canada', tag: ['Sports'], comment: 'Working hard', activity: randomUpdatedDate() },
+  { id: 7, type: 'impediment', title: 'Painting', assign: '', state: 'To Do', area: 'Canada', tag: ['Artic', 'Cold', 'Summer'], comment: 'Gift', activity: randomUpdatedDate() }
 ]
 
 // eslint-disable-next-line @typescript-eslint/space-before-function-paren
@@ -356,8 +329,8 @@ export const WorkItemsPage: React.FunctionComponent = () => {
         headerClassName: 'dataGrid--header'
       },
       { field: 'area', headerName: 'Area Path', width: 120, sortable: false, headerClassName: 'dataGrid--header' },
-      { field: 'tags', headerName: 'Tags', width: 120, sortable: false, headerClassName: 'dataGrid--header' },
-      { field: 'comments', headerName: 'Comments', width: 90, sortable: false, headerClassName: 'dataGrid--header' },
+      { field: 'tag', headerName: 'Tags', width: 120, sortable: false, headerClassName: 'dataGrid--header' },
+      { field: 'comment', headerName: 'Comments', width: 90, sortable: false, headerClassName: 'dataGrid--header' },
       { field: 'activity', headerName: 'Activity Date', type: 'dateTime', width: 180, sortable: false, headerClassName: 'dataGrid--header' }
     ],
     []
@@ -378,9 +351,9 @@ export const WorkItemsPage: React.FunctionComponent = () => {
   }, [keyword])
   // filter options
   const allAssignedTo = initialRows.map((item) => item.assign)
-  const allStates = initialRows.map((item) => item.state)
+  const allState = initialRows.map((item) => item.state)
   const allArea = initialRows.map((item) => item.area)
-  const allTags = initialRows.map((item) => item.tags)
+  const allTag = initialRows.map((item) => item.tag)
   const firstLetter = (name: string): string => {
     return name.charAt(0).toUpperCase()
   }
@@ -395,8 +368,6 @@ export const WorkItemsPage: React.FunctionComponent = () => {
     }
     return allOptions
   }
-  const dynamicTags = deduplication(allTags)
-  console.log('dynamicTags: ', dynamicTags)
   // types filter control
   const allTypes = initialRows.map((item) => item.type)
   const dynamicTypes = (): TypesProps[] => {
@@ -531,7 +502,7 @@ export const WorkItemsPage: React.FunctionComponent = () => {
     }
     return stateItem
   }
-  const dynamicStates = deduplication(allStates)
+  const dynamicStates = deduplication(allState)
   const dynamicStateObjArray: StateProps[] = dynamicStates.map((item: string) => stateObjective(item))
   const [states, setStates] = useState(dynamicStateObjArray)
   const [filteringStates, setFilteringStates] = useState(false)
@@ -548,7 +519,6 @@ export const WorkItemsPage: React.FunctionComponent = () => {
     }
     // all checked types
     const allSelectedStates = newStates.filter((item) => item.checked)
-    console.log('>>>>>>>>>>>>>>>>>>>>allSelectedStates: ', allSelectedStates)
     // cancel all checked
     if (allSelectedStates.length === 0) {
       setFilteringTypes(false)
@@ -624,27 +594,61 @@ export const WorkItemsPage: React.FunctionComponent = () => {
     setFilteringArea(false)
   }
   // tags filter control
+  const tagObjective = (item: string): TagProps => {
+    const tagItem = {
+      key: item,
+      name: item,
+      checked: false
+    }
+    return tagItem
+  }
+  const dynamicTags = deduplication(allTag)
+  const dynamicTagObjArray: TagProps[] = dynamicTags.map((item: string) => tagObjective(item))
   const [filteringTags, setFilteringTags] = useState(false)
   const [tagsAnchorEl, setTagsAnchorEl] = useState<null | HTMLElement>(null)
-  const [tags, setTags] = useState(initialTags)
+  const [nand, setNand] = useState<boolean>(true)
+  const [tag, setTag] = useState(dynamicTagObjArray)
   const openTagsMenu = Boolean(tagsAnchorEl)
   const handleTagsClick = (event: React.MouseEvent<HTMLElement>): void => setTagsAnchorEl(event.currentTarget)
   const handleTagsMenuClose = (): void => setTagsAnchorEl(null)
+  const handleNAND = (): void => {
+    setNand(!nand)
+  }
   const handleTagsCheck = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    const newTags = [...tags]
-    const selectedTags = newTags.find((item) => item.id === event.target.name)
+    const newTag = [...tag]
+    const selectedTags = newTag.find((item) => item.key === event.target.name)
     if (selectedTags !== undefined) {
       setFilteringTags(true)
       selectedTags.checked = event.target.checked
     }
-    const canceledTags = newTags.filter((item) => item.checked)
-    if (canceledTags.length === 0) setFilteringTags(false)
-    setTags(newTags)
+    // all checked tags
+    const allSelectedTags = newTag.filter((item) => item.checked)
+    // cancel all checked
+    if (allSelectedTags.length === 0) {
+      setFilteringTags(false)
+      setRows(initialRows)
+    } else {
+      // update rows which include any selected types
+      let newRows: RowsProps[] = []
+      // filter by NAND
+      nand
+        // by or(true)
+        ? allSelectedTags.forEach((i) => {
+          newRows = newRows.concat(initialRows.filter((item) => item.tag.includes(i.key)))
+        })
+        // by and(false), not completed, should connect with API
+        : allSelectedTags.forEach((i) => {
+          newRows = newRows.concat(initialRows.filter((item) => item.tag.forEach((t) => t === i.key)))
+        })
+
+      setRows(newRows)
+    }
+    setTag(newTag)
   }
   const handleClearCheckedTags = (): void => {
-    const newTags = [...tags]
-    newTags.forEach((item): void => { item.checked = false })
-    setTags(newTags)
+    const newTag = [...tag]
+    newTag.forEach((item): void => { item.checked = false })
+    setTag(newTag)
     setFilteringTags(false)
   }
   // close filters bar
@@ -981,7 +985,7 @@ export const WorkItemsPage: React.FunctionComponent = () => {
               </Button>
             </Stack>
           </FilterMenu>
-          {/* area to filter */}
+          {/* area filter */}
           <Button
             id="area-button"
             sx={{
@@ -1086,40 +1090,43 @@ export const WorkItemsPage: React.FunctionComponent = () => {
             open={openTagsMenu}
             onClose={handleTagsMenuClose}
           >
-            <RadioGroup
-              row
-              aria-labelledby='tags-and-or-label'
-              name='tags-and-or'
-              sx={{ marginLeft: '1.125rem' }}
-            >
-              <FormControlLabel
-                sx={{ marginRight: '2rem' }}
-                value='or'
-                checked
-                control={<Radio size='small' />}
-                label={<Typography sx={{
-                  marginLeft: '.25rem',
-                  fontWeight: 300,
-                  fontSize: '.875rem',
-                  color: grey[700]
-                }}>Or</Typography>} />
-              <FormControlLabel
-                value='and'
-                control={<Radio size='small' />}
-                label={<Typography sx={{
-                  marginLeft: '.25rem',
-                  fontWeight: 300,
-                  fontSize: '.875rem',
-                  color: grey[700]
-                }}>And</Typography>} />
-            </RadioGroup>
+            <FormControl>
+              <RadioGroup
+                row
+                aria-labelledby='tags-and-or-label'
+                name='tags-and-or'
+                sx={{ marginLeft: '1.125rem' }}
+                value={nand}
+                onChange={handleNAND}
+              >
+                <FormControlLabel
+                  sx={{ marginRight: '2rem' }}
+                  value={true}
+                  control={<Radio size='small' />}
+                  label={<Typography sx={{
+                    marginLeft: '.25rem',
+                    fontWeight: 300,
+                    fontSize: '.875rem',
+                    color: grey[700]
+                  }}>Or</Typography>} />
+                <FormControlLabel
+                  value={false}
+                  control={<Radio size='small' />}
+                  label={<Typography sx={{
+                    marginLeft: '.25rem',
+                    fontWeight: 300,
+                    fontSize: '.875rem',
+                    color: grey[700]
+                  }}>And</Typography>} />
+              </RadioGroup>
+            </FormControl>
             {
-              tags.map((item) => {
+              tag.map((item) => {
                 return (
-                  <MenuItem component='label' key={item.id} disableRipple>
+                  <MenuItem component='label' key={item.key} disableRipple>
                     <Checkbox
                       sx={{ padding: 0 }}
-                      name={item.id}
+                      name={item.key}
                       checked={item.checked}
                       onChange={handleTagsCheck}
                       inputProps={{ 'aria-label': 'controlled' }}
