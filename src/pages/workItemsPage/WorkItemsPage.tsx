@@ -398,12 +398,14 @@ export const WorkItemsPage: React.FunctionComponent = () => {
     // cancel all checked
     if (allSelectedTypes.length === 0) {
       setFilteringTypes(false)
+      // equal to clear ???????
       setRows(initialRows)
     } else {
       // update rows which include any selected types
       let newRows: RowsProps[] = []
       allSelectedTypes.forEach((i) => {
         newRows = newRows.concat(initialRows.filter((item) => item.type.includes(i.key)))
+        // newRows = newRows.concat(initialRows.filter((item) => item.type.includes(i.key)))
       })
       setRows(newRows)
     }
@@ -413,6 +415,8 @@ export const WorkItemsPage: React.FunctionComponent = () => {
     const newItemTypes = [...workItemTypes]
     newItemTypes.forEach((item): void => { item.checked = false })
     setWorkItemTypes(newItemTypes)
+    // equal to cancel ???????
+    setRows(initialRows)
     setFilteringTypes(false)
   }
   // assigned to fiter control
@@ -490,6 +494,7 @@ export const WorkItemsPage: React.FunctionComponent = () => {
     const newAssignedTo = [...assignedTo]
     newAssignedTo.forEach((item): void => { item.checked = false })
     setAssignedTo(newAssignedTo)
+    setRows(initialRows)
     setFilteringAssigned(false)
   }
   // states filter control
@@ -541,6 +546,7 @@ export const WorkItemsPage: React.FunctionComponent = () => {
     const newStates = [...states]
     newStates.forEach((item): void => { item.checked = false })
     setStates(newStates)
+    setRows(initialRows)
     setFilteringStates(false)
   }
   // area filter control
@@ -591,6 +597,7 @@ export const WorkItemsPage: React.FunctionComponent = () => {
     const newArea = [...area]
     newArea.forEach((item): void => { item.checked = false })
     setArea(newArea)
+    setRows(initialRows)
     setFilteringArea(false)
   }
   // tags filter control
@@ -649,6 +656,7 @@ export const WorkItemsPage: React.FunctionComponent = () => {
     const newTag = [...tag]
     newTag.forEach((item): void => { item.checked = false })
     setTag(newTag)
+    setRows(initialRows)
     setFilteringTags(false)
   }
   // close filters bar
@@ -811,7 +819,7 @@ export const WorkItemsPage: React.FunctionComponent = () => {
             {
               workItemTypes.map((item) => {
                 return (
-                  <MenuItem component='label' key={item.key} disableRipple>
+                  <MenuItem component='label' key={`workItemTypes-${item.key}`} disableRipple>
                     <Checkbox
                       sx={{ padding: 0 }}
                       name={item.key}
@@ -881,7 +889,7 @@ export const WorkItemsPage: React.FunctionComponent = () => {
             {
               assignedTo.map((item) => {
                 return (
-                  <MenuItem component='label' key={item.key} disableRipple>
+                  <MenuItem component='label' key={`assignedTo-${item.key}`} disableRipple>
                     <Checkbox
                       sx={{ padding: 0 }}
                       name={item.key}
@@ -952,7 +960,7 @@ export const WorkItemsPage: React.FunctionComponent = () => {
             {
               states.map((item) => {
                 return (
-                  <MenuItem component='label' key={item.key} disableRipple>
+                  <MenuItem component='label' key={`states-${item.key}`} disableRipple>
                     <Checkbox
                       sx={{ padding: 0 }}
                       name={item.key}
@@ -1023,7 +1031,7 @@ export const WorkItemsPage: React.FunctionComponent = () => {
             {
               area.map((item) => {
                 return (
-                  <MenuItem component='label' key={item.key} disableRipple>
+                  <MenuItem component='label' key={`area-${item.key}`} disableRipple>
                     <Checkbox
                       sx={{ padding: 0 }}
                       name={item.key}
@@ -1123,7 +1131,7 @@ export const WorkItemsPage: React.FunctionComponent = () => {
             {
               tag.map((item) => {
                 return (
-                  <MenuItem component='label' key={item.key} disableRipple>
+                  <MenuItem component='label' key={`tag-${item.key}`} disableRipple>
                     <Checkbox
                       sx={{ padding: 0 }}
                       name={item.key}
