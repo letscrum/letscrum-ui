@@ -15,6 +15,8 @@ interface FilterControllerType {
   filteringTags: boolean
   filtersBarShow: boolean
   handleCloseFitersBar: () => void
+  hidden: boolean
+  handleSwitchHiddenItems: () => void
 }
 
 const sortItems = [
@@ -368,9 +370,11 @@ export const ListOptionsBar: React.FunctionComponent<FilterControllerType> = (pr
             >
               <Typography sx={{ fontSize: '.75rem', fontWeight: 'light', color: grey[500] }}>Completed Work Items</Typography>
               <FormControlLabel
-                control={<CompletedItemsSwitch defaultChecked />}
+                control={<CompletedItemsSwitch defaultChecked onChange={props.handleSwitchHiddenItems}/>}
                 label={
-                  <Typography sx={{ fontSize: '.75rem', color: grey[700] }}>Hidden</Typography>
+                  props.hidden
+                    ? <Typography sx={{ fontSize: '.75rem', color: grey[700] }}>Hidden</Typography>
+                    : <Typography sx={{ fontSize: '.75rem', color: grey[700] }}>Shown</Typography>
                 }
                 />
             </Menu>

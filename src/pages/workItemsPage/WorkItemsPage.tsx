@@ -112,7 +112,7 @@ interface TagProps {
   checked: boolean
 }
 const initialRows: RowsProps[] = [
-  { id: 1, type: 'bug', title: 'Shoveling Snow', assign: 'Jon', state: 'Open', area: 'Canada', tag: ['Cold'], comment: 'Comments', activity: randomUpdatedDate() },
+  { id: 1, type: 'bug', title: 'Shoveling Snow', assign: 'Jon', state: 'Done', area: 'Canada', tag: ['Cold'], comment: 'Comments', activity: randomUpdatedDate() },
   { id: 2, type: 'epic', title: 'Snowing day', assign: 'Will', state: 'Open', area: 'China', tag: ['Cold'], comment: 'beautiful', activity: randomUpdatedDate() },
   { id: 3, type: 'test', title: 'Padding', assign: 'Anna', state: 'To Do', area: 'Canada', tag: ['Summer'], comment: 'Comments', activity: randomUpdatedDate() },
   { id: 4, type: 'bug', title: 'Swimming', assign: 'Chris', state: 'Open', area: 'iMoogoo', tag: ['Sports', 'Cold'], comment: 'Working hard', activity: randomUpdatedDate() },
@@ -335,14 +335,24 @@ export const WorkItemsPage: React.FunctionComponent = () => {
     ],
     []
   )
-  const [rows, setRows] = useState(initialRows)
+  const [hidden, setHidden] = useState<boolean>(true)
+  let filterHiddenRows: RowsProps[] = []
+  hidden
+    ? filterHiddenRows = initialRows.filter((item) => item.state !== 'Done')
+    : filterHiddenRows = [...initialRows]
+  console.log('filterHiddenRows: ', filterHiddenRows)
+  const [rows, setRows] = useState(filterHiddenRows)
+  console.log('rows: ', rows)
   // keyword search
+  const [isFocus, setIsFocus] = useState<boolean>(false)
   const [keyword, setKeyword] = useState<string>('')
   const getKeyword = (e: ChangeEvent<HTMLInputElement>): void => setKeyword(e.currentTarget.value)
   const handleSearch = (): void => {
-    if (keyword === '' || keyword === undefined || keyword === null) setRows(initialRows)
-    const newRows = initialRows.filter((item) => item.title.includes(keyword))
-    setRows(newRows)
+    if (isFocus) {
+      if (keyword === '' || keyword === undefined || keyword === null) setRows(initialRows)
+      const newRows = initialRows.filter((item) => item.title.includes(keyword))
+      setRows(newRows)
+    }
   }
   // submit search by stop typing
   useEffect(() => {
@@ -662,6 +672,17 @@ export const WorkItemsPage: React.FunctionComponent = () => {
   // close filters bar
   const [filtersBarShow, setFiltersBarShow] = useState(true)
   const handleCloseFitersBar = (): void => setFiltersBarShow(!filtersBarShow)
+  // switch hid or show completed items
+  const handleSwitchHiddenItems = (): void => {
+    console.log('switch')
+    let newRows: RowsProps[] = []
+    hidden
+      ? newRows = [...initialRows]
+      : newRows = initialRows.filter((item) => item.state !== 'Done')
+    console.log('newRows: ', newRows)
+    setHidden(!hidden)
+    setRows(newRows)
+  }
   return (
     <Box sx={{
       width: '100%',
@@ -690,6 +711,8 @@ export const WorkItemsPage: React.FunctionComponent = () => {
         filteringTags={filteringTags}
         filtersBarShow={filtersBarShow}
         handleCloseFitersBar={handleCloseFitersBar}
+        hidden={hidden}
+        handleSwitchHiddenItems={handleSwitchHiddenItems}
       />
       {/* filter bar */}
       {
@@ -705,6 +728,8 @@ export const WorkItemsPage: React.FunctionComponent = () => {
                   placeholder='Filter by keyword'
                   value={keyword}
                   onChange={getKeyword}
+                  onFocus={() => setIsFocus(true)}
+                  onBlur={() => setIsFocus(false)}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position='start'>
