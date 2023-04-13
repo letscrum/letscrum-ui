@@ -59,36 +59,36 @@ const router = createBrowserRouter([
           {
             path: '/:projectId/_workitems',
             element: <WorkItemsPage />
+          },
+          {
+            path: '/:projectId/_workitems/create/Bug',
+            element: <CreateBugPage />
+          },
+          {
+            path: '/:projectId/_workitems/create/Epic',
+            element: <CreateBugPage />
+          },
+          {
+            path: '/:projectId/_workitems/create/Feature',
+            element: <CreateBugPage />
+          },
+          {
+            path: '/:projectId/_workitems/create/Impediment',
+            element: <CreateBugPage />
+          },
+          {
+            path: '/:projectId/_workitems/create/Backlog',
+            element: <CreateBugPage />
+          },
+          {
+            path: '/:projectId/_workitems/create/Task',
+            element: <CreateBugPage />
+          },
+          {
+            path: '/:projectId/_workitems/create/Test',
+            element: <CreateBugPage />
           }
         ]
-      },
-      {
-        path: '/:projectId/_workitems/create/Bug',
-        element: <CreateBugPage />
-      },
-      {
-        path: '/:projectId/_workitems/create/Epic',
-        element: <CreateBugPage />
-      },
-      {
-        path: '/:projectId/_workitems/create/Feature',
-        element: <CreateBugPage />
-      },
-      {
-        path: '/:projectId/_workitems/create/Impediment',
-        element: <CreateBugPage />
-      },
-      {
-        path: '/:projectId/_workitems/create/Backlog',
-        element: <CreateBugPage />
-      },
-      {
-        path: '/:projectId/_workitems/create/Task',
-        element: <CreateBugPage />
-      },
-      {
-        path: '/:projectId/_workitems/create/Test',
-        element: <CreateBugPage />
       }
     ]
   },
