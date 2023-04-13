@@ -183,8 +183,6 @@ export const ProjectListPage: React.FunctionComponent = () => {
   const [currentValue, setCurrentValue] = useState(tabPathMap[path])
   const [show, setShow] = useState(false)
   const [keyword, setKeyword] = useState<string>('')
-  const [isEnter, setIsEnter] = useState(false)
-  const [isDone, setIsDone] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [items, setItems] = useState<ProjectProps[]>([])
@@ -197,18 +195,15 @@ export const ProjectListPage: React.FunctionComponent = () => {
   const fetchProjectItems = async (
     params: {
       keyword: string
-      isEnter: boolean
-      isDone: boolean
     }
   ): Promise<ProjectProps[] | string> => {
     try {
-      let response;
-      (params.isDone || params.isEnter)
-        ? response = await axios.get(`/v1/projects?keyword=${params.keyword}&page=1&size=10`)
-        : response = await axios.get('/v1/projects?page=1&size=10')
+      let response
+      params.keyword === ''
+        ? response = await axios.get('/v1/projects?page=1&size=10')
+        : response = await axios.get(`/v1/projects?keyword=${params.keyword}&page=1&size=10`)
       setLoading(false)
       setItems(response.data.items)
-      setIsEnter(false)
       return items
     } catch (e: any) {
       setLoading(false)
@@ -217,9 +212,9 @@ export const ProjectListPage: React.FunctionComponent = () => {
     }
   }
   useEffect(() => {
-    fetchProjectItems({ keyword, isEnter, isDone })
+    fetchProjectItems({ keyword })
       .catch(() => alert(error))
-  }, [isDone, isEnter, show])
+  }, [show])
   if (items.length > 3) {
     itemsHead = items.slice(0, 3)
     itemsTail = items.slice(3)
@@ -255,13 +250,11 @@ export const ProjectListPage: React.FunctionComponent = () => {
   // submit search by pressing Enter
   const handleSubmitSearch = (e: React.KeyboardEvent): void => {
     const value = e.key
-    value === 'Enter' && setIsEnter(true)
+    value === 'Enter' && fetchProjectItems({ keyword })
   }
   // submit search by stop typing
   useEffect(() => {
-    const delayDebounce = setTimeout(() => {
-      if (keyword !== '') setIsDone(true)
-    }, 500)
+    const delayDebounce = setTimeout(() => { void fetchProjectItems({ keyword }) }, 500)
     return () => clearTimeout(delayDebounce)
   }, [keyword])
   return (
@@ -294,7 +287,7 @@ export const ProjectListPage: React.FunctionComponent = () => {
                 </InputAdornment>
               )
             }}
-            onBlur={() => setIsEnter(false)}
+            // onBlur={() => setIsEnter(false)}
             onChange={handleSearch}
             onKeyDown={handleSubmitSearch}
           />

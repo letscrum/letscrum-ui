@@ -1,8 +1,8 @@
 import React, { useState, ReactElement, useEffect } from 'react'
 import { Outlet, useNavigate, useParams } from 'react-router-dom'
-import { Box, Stack, MenuList, MenuItem, ListItemIcon, ListItemText, Avatar, Typography, Button, Drawer, Divider } from '@mui/material'
-import { grey, blue, red } from '@mui/material/colors'
-import { Assessment, Dashboard, FactCheck, Settings, CardGiftcard, Add } from '@mui/icons-material'
+import { Box, Stack, MenuList, MenuItem, ListItemIcon, ListItemText, Avatar, Typography, Button, Drawer, Divider, IconButton } from '@mui/material'
+import { grey, blue, red, teal } from '@mui/material/colors'
+import { Assessment, Dashboard, FactCheck, Settings, CardGiftcard, Add, KeyboardDoubleArrowLeftOutlined } from '@mui/icons-material'
 import { styled } from '@mui/system'
 import { useAppDispatch, useAppSelector } from '../../redux/hooks'
 import { fecthProject, selectProjcetLoading, selectProjectDisplayName, selectProjectError } from '../../redux/reducers/projectSlice'
@@ -115,6 +115,10 @@ export const SideNavInProject: React.FunctionComponent = () => {
     dispatch(fecthProject({ id }))
       .catch(() => alert(error))
   }, [])
+  // extend/shrink sideMenu controller
+  // const [sideMenuOpen, setSetMenuOpen] = useState(true)
+  // const handleSideMenuOpen = (): void => setSetMenuOpen(true)
+  // const handleSideMenuClose = (): void => setSetMenuOpen(false)
   const sideMenuItems = [{
     name: 'Overview',
     path: '',
@@ -135,9 +139,9 @@ export const SideNavInProject: React.FunctionComponent = () => {
   },
   {
     name: 'Boards',
-    path: '',
+    path: '_workitems',
     key: 'boards',
-    icon: <FactCheck sx={{ fontSize: '1.75rem', color: blue[700] }} />,
+    icon: <FactCheck sx={{ fontSize: '1.75rem', color: teal[500] }} />,
     children: []
   }]
   const handleMenuItem = (path: string, index: number): void => {
@@ -180,9 +184,10 @@ export const SideNavInProject: React.FunctionComponent = () => {
             overflowX: 'hidden'
           }
         }}
-        variant="permanent"
-        anchor="left"
+        variant='permanent'
+        anchor='left'
       >
+        {/* menu header */}
         <SideMenuTitle direction='row'>
           <SideMenuIconWrapper sx={{ minWidth: '3rem' }}>
             <Avatar sx={{ width: '1.5rem', height: '1.5rem', bgcolor: PickAvatarColor(id) }} variant="rounded">
@@ -228,7 +233,7 @@ export const SideNavInProject: React.FunctionComponent = () => {
                         selected={index === selectedSubIndex}
                         onClick={() => handleSubMenuItem(item.path, index)}
                       >
-                        <SideSubMenuIconWrapper sx={{}}>
+                        <SideSubMenuIconWrapper>
                           {item.icon}
                         </SideSubMenuIconWrapper>
                         <SideMenuItemText>
@@ -243,9 +248,14 @@ export const SideNavInProject: React.FunctionComponent = () => {
           })}
         </MenuList>
         <SideMenuDivider sx={{ marginTop: 'auto' }} />
-        <SetOrgButton startIcon={<Settings />}>
-          Organization settings
-        </SetOrgButton>
+        <Stack direction='row' sx={{ width: '16rem' }} >
+          <SetOrgButton startIcon={<Settings />}>
+            Organization settings
+          </SetOrgButton>
+          <IconButton sx={{ marginY: 'auto' }}>
+            <KeyboardDoubleArrowLeftOutlined />
+          </IconButton>
+        </Stack>
       </Drawer>
       <Outlet />
     </Box>
