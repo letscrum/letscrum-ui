@@ -19,9 +19,6 @@ import PickAvatarColor from '../../utils/PickAvatarColor'
 import axios from 'axios'
 
 interface UserType {
-  // id: string
-  // name: string
-  // email: string
   createdAt: string
   email: string
   id: string
@@ -540,7 +537,6 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
     console.log('keyword: ', keyword, ' + repos: ', defaultRepos.filter((i) => i.value.match(keyword) !== null))
     console.log('repos: ', repos)
   }
-  // const handleSubmitRepositorySearch = (): any => { }
   const handleSaveProject = (): void => {
     // update project data
     dispatch(updateProject({ id, displayName, newDescription }))
@@ -566,6 +562,7 @@ export const ProjectSummaryPage: React.FunctionComponent = () => {
       const response = await axios.get('v1/users')
       setLoadingUsers(false)
       console.log('response.data.items: ', response.data.items)
+      // add and update invited users, but code failed
       // setUsers([
       //   ...users,
       //   response.data.items

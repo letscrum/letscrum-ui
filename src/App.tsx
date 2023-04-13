@@ -1,7 +1,10 @@
 import React from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { PrivateRoute, SideNav, SideNavInProject, TopNav } from './components'
-import { ProjectListPage, ProjectWorkItemsPage, ProjectPullRequestsPage, ProjectSummaryPage, ProjectDashboardPage, WorkItemsPage, SignInPage, RouteErrorPage } from './pages'
+import {
+  ProjectListPage, ProjectWorkItemsPage, ProjectPullRequestsPage, ProjectSummaryPage, ProjectDashboardPage, WorkItemsPage,
+  CreateBugPage, SignInPage, RouteErrorPage
+} from './pages'
 import axios from 'axios'
 import { useAppSelector } from './redux/hooks'
 import { selectUserAccessToken } from './redux/reducers/userSlice'
@@ -58,6 +61,34 @@ const router = createBrowserRouter([
             element: <WorkItemsPage />
           }
         ]
+      },
+      {
+        path: '/:projectId/_workitems/create/Bug',
+        element: <CreateBugPage />
+      },
+      {
+        path: '/:projectId/_workitems/create/Epic',
+        element: <CreateBugPage />
+      },
+      {
+        path: '/:projectId/_workitems/create/Feature',
+        element: <CreateBugPage />
+      },
+      {
+        path: '/:projectId/_workitems/create/Impediment',
+        element: <CreateBugPage />
+      },
+      {
+        path: '/:projectId/_workitems/create/Backlog',
+        element: <CreateBugPage />
+      },
+      {
+        path: '/:projectId/_workitems/create/Task',
+        element: <CreateBugPage />
+      },
+      {
+        path: '/:projectId/_workitems/create/Test',
+        element: <CreateBugPage />
       }
     ]
   },

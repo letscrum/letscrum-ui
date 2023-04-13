@@ -8,6 +8,7 @@ import { amber, blue, deepOrange, deepPurple, grey, purple, red, teal } from '@m
 import { useNavigate } from 'react-router-dom'
 
 interface FilterControllerType {
+  projectId: string
   filteringTypes: boolean
   filteringAssigned: boolean
   filteringStates: boolean
@@ -49,49 +50,6 @@ const sortItems = [
     path: 'recentlycreated'
   }
 ]
-
-const itemTypes = [{
-  id: '1',
-  title: 'Bug',
-  icon: <PestControl sx={{ color: red[900], fontSize: 'small' }} />,
-  path: '/'
-},
-{
-  id: '2',
-  title: 'Epic',
-  icon: <BakeryDining sx={{ color: deepOrange[500], fontSize: 'small' }} />,
-  path: '/'
-},
-{
-  id: '3',
-  title: 'Feature',
-  icon: <EmojiEvents sx={{ color: deepPurple[900], fontSize: 'small' }} />,
-  path: '/'
-},
-{
-  id: '4',
-  title: 'Impediment',
-  icon: <Park sx={{ color: purple[500], fontSize: 'small' }} />,
-  path: '/'
-},
-{
-  id: '5',
-  title: 'Product Backlog Item',
-  icon: <ListAlt sx={{ color: blue[700], fontSize: 'small' }} />,
-  path: '/'
-},
-{
-  id: '6',
-  title: 'Task',
-  icon: <AssignmentTurnedIn sx={{ color: amber[900], fontSize: 'small' }} />,
-  path: '/'
-},
-{
-  id: '7',
-  title: 'Test Case',
-  icon: <Science sx={{ color: teal[700], fontSize: 'small' }} />,
-  path: '/'
-}]
 
 const MenuOptionButton = styled(Button)({
   padding: '0 1rem',
@@ -193,6 +151,48 @@ const CompletedItemsSwitch = styled(Switch)(({ theme }) => ({
 }))
 
 export const ListOptionsBar: React.FunctionComponent<FilterControllerType> = (props: FilterControllerType) => {
+  const itemTypes = [{
+    id: '1',
+    title: 'Bug',
+    icon: <PestControl sx={{ color: red[900], fontSize: 'small' }} />,
+    path: `/${props.projectId}/_workitems/create/Bug`
+  },
+  {
+    id: '2',
+    title: 'Epic',
+    icon: <BakeryDining sx={{ color: deepOrange[500], fontSize: 'small' }} />,
+    path: `/${props.projectId}/_workitems/create/Epic`
+  },
+  {
+    id: '3',
+    title: 'Feature',
+    icon: <EmojiEvents sx={{ color: deepPurple[900], fontSize: 'small' }} />,
+    path: `/${props.projectId}/_workitems/create/Feature`
+  },
+  {
+    id: '4',
+    title: 'Impediment',
+    icon: <Park sx={{ color: purple[500], fontSize: 'small' }} />,
+    path: `/${props.projectId}/_workitems/create/Impediment`
+  },
+  {
+    id: '5',
+    title: 'Product Backlog Item',
+    icon: <ListAlt sx={{ color: blue[700], fontSize: 'small' }} />,
+    path: `/${props.projectId}/_workitems/create/Backlog`
+  },
+  {
+    id: '6',
+    title: 'Task',
+    icon: <AssignmentTurnedIn sx={{ color: amber[900], fontSize: 'small' }} />,
+    path: `/${props.projectId}/_workitems/create/Task`
+  },
+  {
+    id: '7',
+    title: 'Test Case',
+    icon: <Science sx={{ color: teal[700], fontSize: 'small' }} />,
+    path: `/${props.projectId}/_workitems/create/Test`
+  }]
   const navigate = useNavigate()
   const [sortAnchorEl, setSortAnchorEl] = useState<null | HTMLElement>(null)
   const [selectedSortIndex, setSelectedSortIndex] = useState(4)
@@ -210,6 +210,9 @@ export const ListOptionsBar: React.FunctionComponent<FilterControllerType> = (pr
     navigate(itemPath)
   }
   const handleClickNewButton = (e: MouseEvent<HTMLElement>): void => setAnchorEl(e.currentTarget)
+  const handleCreateItem = (e: MouseEvent<HTMLElement>, itemPath: string): void => {
+    navigate(itemPath)
+  }
   const handleCloseNewMenu = (): void => setAnchorEl(null)
   const handleCloseSortMenu = (): void => setSortAnchorEl(null)
   const [viewOptionsAnchorEl, setViewOptionsAnchorEl] = React.useState<null | HTMLElement>(null)
@@ -292,7 +295,7 @@ export const ListOptionsBar: React.FunctionComponent<FilterControllerType> = (pr
                   color: grey[700]
                 }}
                 key={item.id}
-                onClick={handleCloseNewMenu}
+                onClick={(e) => handleCreateItem(e, item.path)}
                 disableRipple
               >
                 {item.icon}

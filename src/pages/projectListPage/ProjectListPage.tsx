@@ -183,8 +183,6 @@ export const ProjectListPage: React.FunctionComponent = () => {
   const [currentValue, setCurrentValue] = useState(tabPathMap[path])
   const [show, setShow] = useState(false)
   const [keyword, setKeyword] = useState<string>('')
-  // const [isEnter, setIsEnter] = useState(false)
-  // const [isDone, setIsDone] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [items, setItems] = useState<ProjectProps[]>([])
@@ -197,21 +195,15 @@ export const ProjectListPage: React.FunctionComponent = () => {
   const fetchProjectItems = async (
     params: {
       keyword: string
-      // isEnter: boolean
-      // isDone: boolean
     }
   ): Promise<ProjectProps[] | string> => {
     try {
       let response
-      // (params.isDone || params.isEnter)
-      //   ? response = await axios.get(`/v1/projects?keyword=${params.keyword}&page=1&size=10`)
-      //   : response = await axios.get('/v1/projects?page=1&size=10')
       params.keyword === ''
         ? response = await axios.get('/v1/projects?page=1&size=10')
         : response = await axios.get(`/v1/projects?keyword=${params.keyword}&page=1&size=10`)
       setLoading(false)
       setItems(response.data.items)
-      // setIsEnter(false)
       return items
     } catch (e: any) {
       setLoading(false)

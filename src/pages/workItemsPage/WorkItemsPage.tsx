@@ -11,6 +11,7 @@ import clsx from 'clsx'
 import { ListOptionsBar } from '../../components'
 import { selectUserName } from '../../redux/reducers/userSlice'
 import { useAppSelector } from '../../redux/hooks'
+import { useParams } from 'react-router-dom'
 
 interface RowsProps {
   id: number
@@ -335,14 +336,14 @@ export const WorkItemsPage: React.FunctionComponent = () => {
     ],
     []
   )
+  const { projectId } = useParams()
+  const id = projectId ?? ''
   const [hidden, setHidden] = useState<boolean>(true)
   let filterHiddenRows: RowsProps[] = []
   hidden
     ? filterHiddenRows = initialRows.filter((item) => item.state !== 'Done')
     : filterHiddenRows = [...initialRows]
-  console.log('filterHiddenRows: ', filterHiddenRows)
   const [rows, setRows] = useState(filterHiddenRows)
-  console.log('rows: ', rows)
   // keyword search
   const [isFocus, setIsFocus] = useState<boolean>(false)
   const [keyword, setKeyword] = useState<string>('')
@@ -704,6 +705,7 @@ export const WorkItemsPage: React.FunctionComponent = () => {
       </Typography>
       {/* option bar */}
       <ListOptionsBar
+        projectId={id}
         filteringTypes={filteringTypes}
         filteringAssigned={filteringAssigned}
         filteringStates={filteringStates}
