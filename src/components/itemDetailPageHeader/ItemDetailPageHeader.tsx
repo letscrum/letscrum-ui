@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Grid, Divider, Stack, Typography, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material'
 import { KeyboardReturnOutlined } from '@mui/icons-material'
-import { grey, indigo } from '@mui/material/colors'
+import { grey, blue, lightBlue } from '@mui/material/colors'
 import styled from '@emotion/styled'
 
 const BackButton = styled(Button)({
@@ -9,13 +9,25 @@ const BackButton = styled(Button)({
   '&:hover': { backgroundColor: grey[200] }
 })
 
+const LeaveConfirmDialog = styled(Dialog)({
+  '& .MuiPaper-root': {
+    borderRadius: '0'
+  }
+})
+
 const LeaveButton = styled(Button)({
   width: '6.25rem',
   borderRadius: '0',
+  backgroundColor: blue[800],
+  color: 'white',
   '&:hover': {
     width: '6.25rem',
-    backgroundColor: indigo[500],
+    backgroundColor: lightBlue[900],
     fontWeight: 'lighter'
+  },
+  '&:active': {
+    color: 'white',
+    backgroundColor: blue[800]
   }
 })
 
@@ -26,8 +38,12 @@ const StayButton = styled(Button)({
   color: grey[900],
   '&:hover': {
     width: '6.25rem',
-    backgroundColor: grey[100],
+    backgroundColor: grey[300],
     fontWeight: 'lighter'
+  },
+  '&:active': {
+    color: 'white',
+    backgroundColor: blue[800]
   }
 })
 
@@ -43,12 +59,12 @@ export const ItemDetailPageHeader: React.FunctionComponent = () => {
     </Grid>
     <Divider orientation="vertical" variant="middle" flexItem color={ grey[200] } />
     <Grid sx={{ paddingLeft: '.5rem' }}>
-      <BackButton onClick={handleOpenConfirm} startIcon={<KeyboardReturnOutlined sx={{ paddingLeft: '.5rem', color: indigo[800] }} />}>
+      <BackButton onClick={handleOpenConfirm} startIcon={<KeyboardReturnOutlined sx={{ paddingLeft: '.5rem', color: blue[900] }} />}>
         <Typography sx={{ paddingLeft: '.25rem', fontSize: '.875rem', color: grey[800] }}>
           Back to Work Items
         </Typography>
       </BackButton>
-      <Dialog
+      <LeaveConfirmDialog
         open={openCloseConfirm}
         onClose={handleCloseConfirm}
         aria-labelledby="alert-dialog-title"
@@ -64,13 +80,13 @@ export const ItemDetailPageHeader: React.FunctionComponent = () => {
             You can leave to discard your changes, or cancel to continue editing.
           </DialogContentText>
         </DialogContent>
-        <DialogActions sx={{ paddingBottom: '2rem' }} >
-          <LeaveButton variant='contained' onClick={handleCloseConfirm}>Disagree</LeaveButton>
-          <StayButton variant='contained' onClick={handleCloseConfirm} autoFocus>
-            Agree
+        <DialogActions sx={{ paddingRight: '1rem', paddingBottom: '1rem' }}>
+          <LeaveButton variant='text' onClick={handleCloseConfirm}>Leave</LeaveButton>
+          <StayButton variant='text' onClick={handleCloseConfirm} autoFocus>
+            Cancel
           </StayButton>
         </DialogActions>
-      </Dialog>
+      </LeaveConfirmDialog>
     </Grid>
   </Stack>
 }
