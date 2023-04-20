@@ -1,12 +1,14 @@
+import React, { useState } from 'react'
 import { PestControl, ErrorOutlined, AccountCircle, ContactMailOutlined, ClearOutlined } from '@mui/icons-material'
 import { Autocomplete, Avatar, Box, Grid, Stack, TextField, Typography } from '@mui/material'
 import { grey, red } from '@mui/material/colors'
-import React from 'react'
 import { useAppSelector } from '../../redux/hooks'
 import { selectProjectMembers } from '../../redux/reducers/projectSlice'
 
 export const ItemDetailPageTitle: React.FC = () => {
   const members = useAppSelector(selectProjectMembers)
+  const [selectMember, setSelectMember] = useState<any>(null)
+  const [inputMember, setInputMember] = useState('')
   return <Grid>
     <Stack
       direction='row'
@@ -52,7 +54,16 @@ export const ItemDetailPageTitle: React.FC = () => {
         </Grid>
         <Grid item>
           <Autocomplete
+            value={selectMember}
+            onChange = {(e: any, newSelectMember: string) => {
+              setSelectMember(newSelectMember)
+            }}
+            inputValue={inputMember}
+            onInputChange={(e, newInputMember) => {
+              setInputMember(newInputMember)
+            }}
             options={members}
+            getOptionLabel={(option) => option.userName}
             renderOption={(props, option) => (
               <Box component='li' {...props}>
                 <Avatar sx={{ width: '2rem', height: '2rem' }}>A</Avatar>
@@ -75,6 +86,7 @@ export const ItemDetailPageTitle: React.FC = () => {
                   ...params.inputProps
                 }}
                 sx={{ width: '18rem', padding: '0' }}
+                label=''
               />
             )}
           />
