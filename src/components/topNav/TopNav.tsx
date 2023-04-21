@@ -63,11 +63,11 @@ const SearchInput = styled(TextField)({
       borderRadius: 2,
       borderColor: grey[500]
     },
-    '&:hover fieldset': {
-      borderColor: grey[500]
-    },
     '&.Mui-focused fieldset': {
       borderWidth: 1,
+      borderColor: grey[500]
+    },
+    '&:hover fieldset': {
       borderColor: grey[500]
     }
   },
