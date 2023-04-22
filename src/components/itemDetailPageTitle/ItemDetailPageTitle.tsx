@@ -103,9 +103,9 @@ export const ItemDetailPageTitle: React.FC = () => {
               }
             }}
             options={members}
-            getOptionLabel={(option: any) => option.userName ?? option}
+            getOptionLabel={(option: any) => option.userName }
             renderOption={(props, option) => (
-              <Box component='li' {...props}>
+              <Box component='li' {...props} key={option.userId}>
                 <Avatar sx={{ width: '2rem', height: '2rem' }}>
                   {(option.userName != null) ? option.userName[0].toUpperCase() : ''}
                 </Avatar>
