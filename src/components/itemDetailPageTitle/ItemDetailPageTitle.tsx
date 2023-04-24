@@ -60,12 +60,33 @@ const AddTagButton = styled(Button)({
   }
 })
 
+const AddTagInput = styled(TextField)({
+  marginLeft: '.75rem',
+  backgroundColor: blue[50],
+  '& .MuiInputBase-input': {
+    padding: '0 0 0 .125rem'
+  },
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderRadius: '0',
+      borderColor: grey[300]
+    },
+    '&:hover fieldset': {
+      borderColor: grey[300]
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: grey[300]
+    }
+  }
+})
+
 export const ItemDetailPageTitle: React.FC = () => {
   const members = useAppSelector(selectProjectMembers)
   const [countComments, setCountComments] = useState(0)
   console.log(setCountComments)
   const [addFocus, setAddFocus] = useState<Boolean>(false)
   const handleAddFocus = (): void => setAddFocus(true)
+  const handleAddBlur = (): void => setAddFocus(false)
   return <Grid>
     {/* item type */}
     <Stack
@@ -189,7 +210,10 @@ export const ItemDetailPageTitle: React.FC = () => {
           </Tooltip>
           {
             addFocus === true
-              ? <TextField focused/>
+              ? <AddTagInput
+              onBlur={handleAddBlur}
+              autoFocus
+              />
               : <AddTagButton onClick={handleAddFocus}>
                 <Typography sx={{ fontSize: '.75rem', letterSpace: '.125', color: grey[600] }}>
                   Add tag
