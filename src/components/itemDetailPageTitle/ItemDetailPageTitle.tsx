@@ -1,6 +1,6 @@
-import React from 'react'
-import { PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle } from '@mui/icons-material'
-import { Autocomplete, Avatar, Box, Grid, InputAdornment, Stack, TextField, Typography } from '@mui/material'
+import React, { useState } from 'react'
+import { PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined } from '@mui/icons-material'
+import { Autocomplete, Avatar, Box, Button, Grid, InputAdornment, Stack, TextField, Tooltip, Typography } from '@mui/material'
 import { blue, grey, red } from '@mui/material/colors'
 import { useAppSelector } from '../../redux/hooks'
 import { selectProjectMembers } from '../../redux/reducers/projectSlice'
@@ -37,9 +37,37 @@ const TitleInput = styled(TextField)({
   }
 })
 
+const CommentButton = styled(Button)({
+  marginLeft: '.75rem',
+  padding: '0',
+  '&:hover': {
+    backgroundColor: 'white',
+    textDecoration: 'underline',
+    textDecorationColor: grey[800]
+  },
+  '& .MuiButton-startIcon': {
+    margin: '0 .25rem 0 0'
+  }
+})
+
+const AddTagButton = styled(Button)({
+  marginLeft: '.75rem',
+  padding: '.125rem',
+  backgroundColor: blue[50],
+  borderRadius: '0',
+  '&:hover': {
+    backgroundColor: blue[100]
+  }
+})
+
 export const ItemDetailPageTitle: React.FC = () => {
   const members = useAppSelector(selectProjectMembers)
+  const [countComments, setCountComments] = useState(0)
+  console.log(setCountComments)
+  const [addFocus, setAddFocus] = useState<Boolean>(false)
+  const handleAddFocus = (): void => setAddFocus(true)
   return <Grid>
+    {/* item type */}
     <Stack
       direction='row'
       sx={{
@@ -58,6 +86,7 @@ export const ItemDetailPageTitle: React.FC = () => {
         Field &lsquo;Title&lsquo; cannot be empty.
       </Typography>
     </Stack>
+    {/* item title */}
     <Stack
       sx={{
         borderLeftStyle: 'solid',
@@ -69,6 +98,7 @@ export const ItemDetailPageTitle: React.FC = () => {
     >
       <TitleInput hiddenLabel size='small' defaultValue='Enter Title' sx={{ marginLeft: '.75rem' }} />
     </Stack>
+    {/* item general options */}
     <Stack
       sx={{
         borderLeftStyle: 'solid',
@@ -79,6 +109,7 @@ export const ItemDetailPageTitle: React.FC = () => {
       }}
     >
       <Grid container>
+        {/* assign to Selector */}
         <Grid item>
           <Autocomplete
             sx={{
@@ -103,7 +134,7 @@ export const ItemDetailPageTitle: React.FC = () => {
               }
             }}
             options={members}
-            getOptionLabel={(option: any) => option.userName }
+            getOptionLabel={(option: any) => option.userName}
             renderOption={(props, option) => (
               <Box component='li' {...props} key={option.userId}>
                 <Avatar sx={{ width: '2rem', height: '2rem' }}>
@@ -146,6 +177,25 @@ export const ItemDetailPageTitle: React.FC = () => {
               />
             )}
           />
+        </Grid>
+        {/* comments */}
+        <Grid item direction='row' sx={{ display: 'flex', alignItems: 'center' }}>
+          <Tooltip title={`Go to discussion. There are ${countComments} comments available (Ctrl+Shift+D)`}>
+            <CommentButton startIcon={<ForumOutlined sx={{ fontSize: '.75rem', color: blue[700] }} />}>
+              <Typography sx={{ fontSize: '.75rem', letterSpace: '.125', color: grey[800] }}>
+                {countComments} comments
+              </Typography>
+            </CommentButton>
+          </Tooltip>
+          {
+            addFocus === true
+              ? <TextField focused/>
+              : <AddTagButton onClick={handleAddFocus}>
+                <Typography sx={{ fontSize: '.75rem', letterSpace: '.125', color: grey[600] }}>
+                  Add tag
+                </Typography>
+              </AddTagButton>
+          }
         </Grid>
       </Grid>
     </Stack>
