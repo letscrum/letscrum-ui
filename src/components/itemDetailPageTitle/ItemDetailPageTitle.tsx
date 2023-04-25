@@ -60,8 +60,24 @@ const AddTagButton = styled(Button)({
   }
 })
 
+const AddTag = styled(Autocomplete)({
+  width: '10rem',
+  '& .MuiInputBase-input': {
+    padding: '0'
+  },
+  '& .MuiOutlinedInput-root': {
+    '& .MuiAutocomplete-input': {
+      padding: '0'
+    }
+  },
+  '& .Mui-focused': {
+    padding: '0 0 0 .125rem'
+  }
+})
+
 const AddTagInput = styled(TextField)({
   marginLeft: '.75rem',
+  height: '1.315rem',
   backgroundColor: blue[50],
   '& .MuiInputBase-input': {
     padding: '0 0 0 .125rem'
@@ -85,6 +101,17 @@ export const ItemDetailPageTitle: React.FC = () => {
   const [countComments, setCountComments] = useState(0)
   console.log(setCountComments)
   const [addFocus, setAddFocus] = useState<Boolean>(false)
+  const tags = ['sports', 'art', 'math', 'science']
+  // const tagsArray = [
+  //   {
+  //     id: 1,
+  //     name: 'sports'
+  //   },
+  //   {
+  //     id: 2,
+  //     name: 'art'
+  //   }
+  // ]
   const handleAddFocus = (): void => setAddFocus(true)
   const handleAddBlur = (): void => setAddFocus(false)
   return <Grid>
@@ -210,9 +237,23 @@ export const ItemDetailPageTitle: React.FC = () => {
           </Tooltip>
           {
             addFocus === true
-              ? <AddTagInput
-              onBlur={handleAddBlur}
-              autoFocus
+              ? <AddTag
+                freeSolo
+                openOnFocus
+                options={tags}
+                getOptionLabel={(option: any) => option }
+                renderOption={(props, option: any) => (
+                  <Box component='li' {...props}>
+                    <Typography variant='body2'>
+                      {option}
+                    </Typography>
+                  </Box>
+                )}
+                renderInput={(params) => <AddTagInput
+                  {...params}
+                  onBlur={handleAddBlur}
+                  autoFocus
+                />}
               />
               : <AddTagButton onClick={handleAddFocus}>
                 <Typography sx={{ fontSize: '.75rem', letterSpace: '.125', color: grey[600] }}>
