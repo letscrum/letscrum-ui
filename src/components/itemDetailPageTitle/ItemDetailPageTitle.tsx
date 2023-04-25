@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined } from '@mui/icons-material'
-import { Autocomplete, Avatar, Box, Button, Grid, InputAdornment, Stack, TextField, Tooltip, Typography } from '@mui/material'
+import { PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined, Clear, Add } from '@mui/icons-material'
+import { Autocomplete, Avatar, Box, Button, Chip, Grid, IconButton, InputAdornment, Stack, TextField, Tooltip, Typography } from '@mui/material'
 import { blue, grey, red } from '@mui/material/colors'
 import { useAppSelector } from '../../redux/hooks'
 import { selectProjectMembers } from '../../redux/reducers/projectSlice'
@@ -102,18 +102,11 @@ export const ItemDetailPageTitle: React.FC = () => {
   console.log(setCountComments)
   const [addFocus, setAddFocus] = useState<Boolean>(false)
   const tags = ['sports', 'art', 'math', 'science']
-  // const tagsArray = [
-  //   {
-  //     id: 1,
-  //     name: 'sports'
-  //   },
-  //   {
-  //     id: 2,
-  //     name: 'art'
-  //   }
-  // ]
   const handleAddFocus = (): void => setAddFocus(true)
   const handleAddBlur = (): void => setAddFocus(false)
+  const [selectedTag, setSelectedTag] = useState('')
+  // const [selectedTagsArray, setSelectedTagsArray] = useState<string[]>([])
+  const handleDeleteTag = (): void => { }
   return <Grid>
     {/* item type */}
     <Stack
@@ -240,8 +233,13 @@ export const ItemDetailPageTitle: React.FC = () => {
               ? <AddTag
                 freeSolo
                 openOnFocus
+                inputValue={selectedTag}
+                onInputChange={(e, newInputValue) => {
+                  setSelectedTag(newInputValue)
+                  // setSelectedTagsArray(...selectedTagsArray, selectedTag)
+                }}
                 options={tags}
-                getOptionLabel={(option: any) => option }
+                getOptionLabel={(option: any) => option}
                 renderOption={(props, option: any) => (
                   <Box component='li' {...props}>
                     <Typography variant='body2'>
@@ -261,6 +259,36 @@ export const ItemDetailPageTitle: React.FC = () => {
                 </Typography>
               </AddTagButton>
           }
+          <Chip
+            label={selectedTag}
+            deleteIcon={<Clear sx={{ width: '.875rem', height: '.875rem' }} />}
+            onDelete={handleDeleteTag}
+            sx={{
+              marginLeft: '.75rem',
+              height: '1.5rem',
+              backgroundColor: blue[50],
+              borderRadius: '0',
+              fontSize: '.75rem',
+              color: grey[800]
+            }}
+          />
+          <Tooltip title='Add tag'>
+            <IconButton sx={{
+              marginLeft: '.75rem',
+              width: '1.5rem',
+              height: '1.5rem',
+              backgroundColor: blue[50],
+              borderRadius: '0',
+              '&:hover': {
+                backgroundColor: blue[100]
+              },
+              '&:active': {
+                backgroundColor: blue[800]
+              }
+            }}>
+              <Add sx={{ width: '.875rem', height: '.875rem' }} />
+            </IconButton>
+          </Tooltip>
         </Grid>
       </Grid>
     </Stack>
