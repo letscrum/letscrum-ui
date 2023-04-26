@@ -104,9 +104,8 @@ export const ItemDetailPageTitle: React.FC = () => {
   const tags = ['sports', 'art', 'math', 'science']
   const handleAddFocus = (): void => setAddFocus(true)
   const handleAddBlur = (): void => setAddFocus(false)
-  const [selectedTag, setSelectedTag] = useState('')
-  // const [selectedTagsArray, setSelectedTagsArray] = useState<string[]>([])
-  const handleDeleteTag = (): void => { }
+  const [selectedTag, setSelectedTag] = useState<any>('')
+  const [selectedTagsArray, setSelectedTagsArray] = useState<string[]>([])
   return <Grid>
     {/* item type */}
     <Stack
@@ -233,10 +232,15 @@ export const ItemDetailPageTitle: React.FC = () => {
               ? <AddTag
                 freeSolo
                 openOnFocus
-                inputValue={selectedTag}
-                onInputChange={(e, newInputValue) => {
-                  setSelectedTag(newInputValue)
-                  // setSelectedTagsArray(...selectedTagsArray, selectedTag)
+                value={selectedTag}
+                onChange={(e, newValue: any) => {
+                  setSelectedTag(newValue)
+                  setSelectedTagsArray([
+                    ...selectedTagsArray,
+                    newValue
+                  ])
+                  setAddFocus(false)
+                  setSelectedTag('')
                 }}
                 options={tags}
                 getOptionLabel={(option: any) => option}
@@ -259,19 +263,26 @@ export const ItemDetailPageTitle: React.FC = () => {
                 </Typography>
               </AddTagButton>
           }
-          <Chip
-            label={selectedTag}
-            deleteIcon={<Clear sx={{ width: '.875rem', height: '.875rem' }} />}
-            onDelete={handleDeleteTag}
-            sx={{
-              marginLeft: '.75rem',
-              height: '1.5rem',
-              backgroundColor: blue[50],
-              borderRadius: '0',
-              fontSize: '.75rem',
-              color: grey[800]
-            }}
-          />
+          {
+            selectedTagsArray.map((tag, index) => (
+              <Chip
+                key={`${index}+${tag}`}
+                label={tag}
+                deleteIcon={<Clear sx={{ width: '.875rem', height: '.875rem' }} />}
+                onDelete={() => setSelectedTagsArray(
+                  selectedTagsArray.filter((t, i) => i !== index)
+                )}
+                sx={{
+                  marginLeft: '.75rem',
+                  height: '1.5rem',
+                  backgroundColor: blue[50],
+                  borderRadius: '0',
+                  fontSize: '.75rem',
+                  color: grey[800]
+                }}
+              />
+            ))
+          }
           <Tooltip title='Add tag'>
             <IconButton sx={{
               marginLeft: '.75rem',
