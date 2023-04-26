@@ -100,9 +100,9 @@ export const ItemDetailPageTitle: React.FC = () => {
   const members = useAppSelector(selectProjectMembers)
   const [countComments, setCountComments] = useState(0)
   console.log(setCountComments)
-  const [addFocus, setAddFocus] = useState<Boolean>(false)
+  const [addFocus, setAddFocus] = useState(false)
+  // const [addIcon, setAddIcon] = useState(false)
   const tags = ['sports', 'art', 'math', 'science']
-  const handleAddFocus = (): void => setAddFocus(true)
   const handleAddBlur = (): void => setAddFocus(false)
   const [selectedTag, setSelectedTag] = useState<any>('')
   const [selectedTagsArray, setSelectedTagsArray] = useState<string[]>([])
@@ -228,7 +228,27 @@ export const ItemDetailPageTitle: React.FC = () => {
             </CommentButton>
           </Tooltip>
           {
-            addFocus === true
+            selectedTagsArray.map((tag, index) => (
+              <Chip
+                key={`${index}+${tag}`}
+                label={tag}
+                deleteIcon={<Clear sx={{ width: '.875rem', height: '.875rem' }} />}
+                onDelete={() => setSelectedTagsArray(
+                  selectedTagsArray.filter((t, i) => i !== index)
+                )}
+                sx={{
+                  marginLeft: '.75rem',
+                  height: '1.5rem',
+                  backgroundColor: blue[50],
+                  borderRadius: '0',
+                  fontSize: '.75rem',
+                  color: grey[800]
+                }}
+              />
+            ))
+          }
+          {
+            addFocus
               ? <AddTag
                 freeSolo
                 openOnFocus
@@ -257,51 +277,38 @@ export const ItemDetailPageTitle: React.FC = () => {
                   autoFocus
                 />}
               />
-              : <AddTagButton onClick={handleAddFocus}>
-                <Typography sx={{ fontSize: '.75rem', letterSpace: '.125', color: grey[600] }}>
-                  Add tag
-                </Typography>
-              </AddTagButton>
+              : selectedTagsArray.length !== 0
+                ? <Tooltip title='Add tag'>
+                  <IconButton
+                    onClick={() => {
+                      setAddFocus(true)
+                    }}
+                    sx={{
+                      marginLeft: '.75rem',
+                      width: '1.5rem',
+                      height: '1.5rem',
+                      backgroundColor: blue[50],
+                      borderRadius: '0',
+                      '&:hover': {
+                        backgroundColor: blue[100]
+                      },
+                      '&:active': {
+                        backgroundColor: blue[800]
+                      }
+                    }}>
+                    <Add sx={{ width: '.875rem', height: '.875rem' }} />
+                  </IconButton>
+                </Tooltip>
+                : <AddTagButton onClick={() => {
+                  setAddFocus(true)
+                }}>
+                  <Typography sx={{ fontSize: '.75rem', letterSpace: '.125', color: grey[600] }}>
+                    Add tag
+                  </Typography>
+                </AddTagButton>
           }
-          {
-            selectedTagsArray.map((tag, index) => (
-              <Chip
-                key={`${index}+${tag}`}
-                label={tag}
-                deleteIcon={<Clear sx={{ width: '.875rem', height: '.875rem' }} />}
-                onDelete={() => setSelectedTagsArray(
-                  selectedTagsArray.filter((t, i) => i !== index)
-                )}
-                sx={{
-                  marginLeft: '.75rem',
-                  height: '1.5rem',
-                  backgroundColor: blue[50],
-                  borderRadius: '0',
-                  fontSize: '.75rem',
-                  color: grey[800]
-                }}
-              />
-            ))
-          }
-          <Tooltip title='Add tag'>
-            <IconButton sx={{
-              marginLeft: '.75rem',
-              width: '1.5rem',
-              height: '1.5rem',
-              backgroundColor: blue[50],
-              borderRadius: '0',
-              '&:hover': {
-                backgroundColor: blue[100]
-              },
-              '&:active': {
-                backgroundColor: blue[800]
-              }
-            }}>
-              <Add sx={{ width: '.875rem', height: '.875rem' }} />
-            </IconButton>
-          </Tooltip>
         </Grid>
-      </Grid>
-    </Stack>
-  </Grid>
+      </Grid >
+    </Stack >
+  </Grid >
 }
