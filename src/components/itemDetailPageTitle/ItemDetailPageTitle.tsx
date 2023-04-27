@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined, Clear, Add } from '@mui/icons-material'
 import { Autocomplete, Avatar, Box, Button, Chip, Grid, IconButton, InputAdornment, Stack, TextField, Tooltip, Typography } from '@mui/material'
 import { blue, grey, red } from '@mui/material/colors'
 import { useAppSelector } from '../../redux/hooks'
 import { selectProjectMembers } from '../../redux/reducers/projectSlice'
 import styled from '@emotion/styled'
+import axios from 'axios'
 
 const TitleInput = styled(TextField)({
   marginY: '.5rem',
@@ -99,13 +100,15 @@ const AddTagInput = styled(TextField)({
 export const ItemDetailPageTitle: React.FC = () => {
   const members = useAppSelector(selectProjectMembers)
   const [countComments, setCountComments] = useState(0)
-  console.log(setCountComments)
   const [addFocus, setAddFocus] = useState(false)
-  // const [addIcon, setAddIcon] = useState(false)
   const tags = ['sports', 'art', 'math', 'science']
   const handleAddBlur = (): void => setAddFocus(false)
   const [selectedTag, setSelectedTag] = useState<any>('')
   const [selectedTagsArray, setSelectedTagsArray] = useState<string[]>([])
+  useEffect(() => {
+    void axios.get('http://localhost:3001/letscrum/api/project/workItem/comments')
+      .then((value) => setCountComments(value.data.length))
+  }, [])
   return <Grid>
     {/* item type */}
     <Stack
