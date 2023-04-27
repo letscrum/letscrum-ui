@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined, Clear, Add } from '@mui/icons-material'
+import { PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined, Clear, Add, Save } from '@mui/icons-material'
 import { Autocomplete, Avatar, Box, Button, Chip, Grid, IconButton, InputAdornment, Stack, TextField, Tooltip, Typography } from '@mui/material'
 import { blue, grey, red } from '@mui/material/colors'
 import { useAppSelector } from '../../redux/hooks'
@@ -98,7 +98,10 @@ const AddTagInput = styled(TextField)({
 })
 
 export const ItemDetailPageTitle: React.FC = () => {
-  const members = useAppSelector(selectProjectMembers)
+  const [originalTitle, setOriginalTitle] = useState<string>('')
+  const [title, setTitle] = useState<string>('')
+  const handleTitle = (e: any): void => setTitle(e.currentTarget.value)
+  const members: any = useAppSelector(selectProjectMembers)
   const [countComments, setCountComments] = useState(0)
   const [addFocus, setAddFocus] = useState(false)
   const tags = ['sports', 'art', 'math', 'science']
@@ -106,8 +109,12 @@ export const ItemDetailPageTitle: React.FC = () => {
   const [selectedTag, setSelectedTag] = useState<any>('')
   const [selectedTagsArray, setSelectedTagsArray] = useState<string[]>([])
   useEffect(() => {
-    void axios.get('http://localhost:3001/letscrum/api/project/workItem/comments')
-      .then((value) => setCountComments(value.data.length))
+    void axios.get('http://localhost:3001/letscrum/api/project/workItem')
+      .then((value) => {
+        setCountComments(value.data.comments.length)
+        setTitle(value.data.title)
+        setOriginalTitle(value.data.title)
+      })
   }, [])
   return <Grid>
     {/* item type */}
@@ -139,7 +146,14 @@ export const ItemDetailPageTitle: React.FC = () => {
         justifyContent: 'center'
       }}
     >
-      <TitleInput hiddenLabel size='small' defaultValue='Enter Title' sx={{ marginLeft: '.75rem' }} />
+      <TitleInput
+        value={title}
+        onChange={handleTitle}
+        size='small'
+        placeholder='Enter Title'
+        sx={{ marginLeft: '.75rem' }}
+        hiddenLabel
+      />
     </Stack>
     {/* item general options */}
     <Stack
@@ -215,6 +229,7 @@ export const ItemDetailPageTitle: React.FC = () => {
                     color: grey[600]
                   }
                 }}
+                placeholder='Unassigned'
                 hiddenLabel
               />
             )}
@@ -309,6 +324,44 @@ export const ItemDetailPageTitle: React.FC = () => {
                   </Typography>
                 </AddTagButton>
           }
+        </Stack>
+        {/* edit options */}
+        <Stack direction='row' sx={{ display: 'flex', alignItems: 'center' }}>
+          {
+            title === originalTitle
+              ? <Button
+                disabled
+                variant='outlined'
+                sx={{
+                  marginLeft: 'auto',
+                  padding: '.125rem .425rem',
+                  borderRadius: '0',
+                  fontSize: '.75rem',
+                  color: grey[500]
+                }}
+                startIcon={<Save sx={{ color: grey[500] }} />}>
+                Save
+              </Button>
+              : <Button
+                variant='outlined'
+                sx={{
+                  marginLeft: 'auto',
+                  padding: '.125rem .425rem',
+                  backgroundColor: blue[800],
+                  borderRadius: '0',
+                  fontSize: '.75rem',
+                  color: 'white',
+                  '&:hover': {
+                    backgroundColor: blue[900]
+                  }
+                }}
+                startIcon={<Save sx={{ color: 'white' }} />}>
+                Save
+              </Button>
+          }
+          <IconButton />
+          <IconButton />
+          <IconButton />
         </Stack>
       </Grid >
     </Stack >
