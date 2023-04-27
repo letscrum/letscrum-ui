@@ -153,7 +153,7 @@ export const ItemDetailPageTitle: React.FC = () => {
     >
       <Grid container>
         {/* assign to Selector */}
-        <Grid item>
+        <Stack>
           <Autocomplete
             sx={{
               marginLeft: '.75rem',
@@ -216,13 +216,12 @@ export const ItemDetailPageTitle: React.FC = () => {
                   }
                 }}
                 hiddenLabel
-                defaultValue='Unassigned'
               />
             )}
           />
-        </Grid>
+        </Stack>
         {/* comments */}
-        <Grid item direction='row' sx={{ display: 'flex', alignItems: 'center' }}>
+        <Stack direction='row' sx={{ display: 'flex', alignItems: 'center' }}>
           <Tooltip title={`Go to discussion. There are ${countComments} comments available (Ctrl+Shift+D)`}>
             <CommentButton startIcon={<ForumOutlined sx={{ fontSize: '.75rem', color: blue[700] }} />}>
               <Typography sx={{ fontSize: '.75rem', letterSpace: '.125', color: grey[800] }}>
@@ -310,7 +309,7 @@ export const ItemDetailPageTitle: React.FC = () => {
                   </Typography>
                 </AddTagButton>
           }
-        </Grid>
+        </Stack>
       </Grid >
     </Stack >
   </Grid >
