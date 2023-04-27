@@ -1,10 +1,11 @@
-import React from 'react'
-import { PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle } from '@mui/icons-material'
-import { Autocomplete, Avatar, Box, Grid, InputAdornment, Stack, TextField, Typography } from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import { PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined, Clear, Add } from '@mui/icons-material'
+import { Autocomplete, Avatar, Box, Button, Chip, Grid, IconButton, InputAdornment, Stack, TextField, Tooltip, Typography } from '@mui/material'
 import { blue, grey, red } from '@mui/material/colors'
 import { useAppSelector } from '../../redux/hooks'
 import { selectProjectMembers } from '../../redux/reducers/projectSlice'
 import styled from '@emotion/styled'
+import axios from 'axios'
 
 const TitleInput = styled(TextField)({
   marginY: '.5rem',
@@ -37,9 +38,79 @@ const TitleInput = styled(TextField)({
   }
 })
 
+const CommentButton = styled(Button)({
+  marginLeft: '.75rem',
+  padding: '0',
+  '&:hover': {
+    backgroundColor: 'white',
+    textDecoration: 'underline',
+    textDecorationColor: grey[800]
+  },
+  '& .MuiButton-startIcon': {
+    margin: '0 .25rem 0 0'
+  }
+})
+
+const AddTagButton = styled(Button)({
+  marginLeft: '.75rem',
+  padding: '.125rem',
+  backgroundColor: blue[50],
+  borderRadius: '0',
+  '&:hover': {
+    backgroundColor: blue[100]
+  }
+})
+
+const AddTag = styled(Autocomplete)({
+  width: '10rem',
+  '& .MuiInputBase-input': {
+    padding: '0'
+  },
+  '& .MuiOutlinedInput-root': {
+    '& .MuiAutocomplete-input': {
+      padding: '0'
+    }
+  },
+  '& .Mui-focused': {
+    padding: '0 0 0 .125rem'
+  }
+})
+
+const AddTagInput = styled(TextField)({
+  marginLeft: '.75rem',
+  height: '1.315rem',
+  backgroundColor: blue[50],
+  '& .MuiInputBase-input': {
+    padding: '0 0 0 .125rem'
+  },
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderRadius: '0',
+      borderColor: grey[300]
+    },
+    '&:hover fieldset': {
+      borderColor: grey[300]
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: grey[300]
+    }
+  }
+})
+
 export const ItemDetailPageTitle: React.FC = () => {
   const members = useAppSelector(selectProjectMembers)
+  const [countComments, setCountComments] = useState(0)
+  const [addFocus, setAddFocus] = useState(false)
+  const tags = ['sports', 'art', 'math', 'science']
+  const handleAddBlur = (): void => setAddFocus(false)
+  const [selectedTag, setSelectedTag] = useState<any>('')
+  const [selectedTagsArray, setSelectedTagsArray] = useState<string[]>([])
+  useEffect(() => {
+    void axios.get('http://localhost:3001/letscrum/api/project/workItem/comments')
+      .then((value) => setCountComments(value.data.length))
+  }, [])
   return <Grid>
+    {/* item type */}
     <Stack
       direction='row'
       sx={{
@@ -58,6 +129,7 @@ export const ItemDetailPageTitle: React.FC = () => {
         Field &lsquo;Title&lsquo; cannot be empty.
       </Typography>
     </Stack>
+    {/* item title */}
     <Stack
       sx={{
         borderLeftStyle: 'solid',
@@ -69,6 +141,7 @@ export const ItemDetailPageTitle: React.FC = () => {
     >
       <TitleInput hiddenLabel size='small' defaultValue='Enter Title' sx={{ marginLeft: '.75rem' }} />
     </Stack>
+    {/* item general options */}
     <Stack
       sx={{
         borderLeftStyle: 'solid',
@@ -79,7 +152,8 @@ export const ItemDetailPageTitle: React.FC = () => {
       }}
     >
       <Grid container>
-        <Grid item>
+        {/* assign to Selector */}
+        <Stack>
           <Autocomplete
             sx={{
               marginLeft: '.75rem',
@@ -103,9 +177,9 @@ export const ItemDetailPageTitle: React.FC = () => {
               }
             }}
             options={members}
-            getOptionLabel={(option: any) => option.userName ?? option}
+            getOptionLabel={(option: any) => option.userName}
             renderOption={(props, option) => (
-              <Box component='li' {...props}>
+              <Box component='li' {...props} key={option.userId}>
                 <Avatar sx={{ width: '2rem', height: '2rem' }}>
                   {(option.userName != null) ? option.userName[0].toUpperCase() : ''}
                 </Avatar>
@@ -142,12 +216,101 @@ export const ItemDetailPageTitle: React.FC = () => {
                   }
                 }}
                 hiddenLabel
-                defaultValue='Unassigned'
               />
             )}
           />
-        </Grid>
-      </Grid>
-    </Stack>
-  </Grid>
+        </Stack>
+        {/* comments */}
+        <Stack direction='row' sx={{ display: 'flex', alignItems: 'center' }}>
+          <Tooltip title={`Go to discussion. There are ${countComments} comments available (Ctrl+Shift+D)`}>
+            <CommentButton startIcon={<ForumOutlined sx={{ fontSize: '.75rem', color: blue[700] }} />}>
+              <Typography sx={{ fontSize: '.75rem', letterSpace: '.125', color: grey[800] }}>
+                {countComments} comments
+              </Typography>
+            </CommentButton>
+          </Tooltip>
+          {
+            selectedTagsArray.map((tag, index) => (
+              <Chip
+                key={`${index}+${tag}`}
+                label={tag}
+                deleteIcon={<Clear sx={{ width: '.875rem', height: '.875rem' }} />}
+                onDelete={() => setSelectedTagsArray(
+                  selectedTagsArray.filter((t, i) => i !== index)
+                )}
+                sx={{
+                  marginLeft: '.75rem',
+                  height: '1.5rem',
+                  backgroundColor: blue[50],
+                  borderRadius: '0',
+                  fontSize: '.75rem',
+                  color: grey[800]
+                }}
+              />
+            ))
+          }
+          {
+            addFocus
+              ? <AddTag
+                freeSolo
+                openOnFocus
+                value={selectedTag}
+                onChange={(e, newValue: any) => {
+                  setSelectedTag(newValue)
+                  setSelectedTagsArray([
+                    ...selectedTagsArray,
+                    newValue
+                  ])
+                  setAddFocus(false)
+                  setSelectedTag('')
+                }}
+                options={tags}
+                getOptionLabel={(option: any) => option}
+                renderOption={(props, option: any) => (
+                  <Box component='li' {...props}>
+                    <Typography variant='body2'>
+                      {option}
+                    </Typography>
+                  </Box>
+                )}
+                renderInput={(params) => <AddTagInput
+                  {...params}
+                  onBlur={handleAddBlur}
+                  autoFocus
+                />}
+              />
+              : selectedTagsArray.length !== 0
+                ? <Tooltip title='Add tag'>
+                  <IconButton
+                    onClick={() => {
+                      setAddFocus(true)
+                    }}
+                    sx={{
+                      marginLeft: '.75rem',
+                      width: '1.5rem',
+                      height: '1.5rem',
+                      backgroundColor: blue[50],
+                      borderRadius: '0',
+                      '&:hover': {
+                        backgroundColor: blue[100]
+                      },
+                      '&:active': {
+                        backgroundColor: blue[800]
+                      }
+                    }}>
+                    <Add sx={{ width: '.875rem', height: '.875rem' }} />
+                  </IconButton>
+                </Tooltip>
+                : <AddTagButton onClick={() => {
+                  setAddFocus(true)
+                }}>
+                  <Typography sx={{ fontSize: '.75rem', letterSpace: '.125', color: grey[600] }}>
+                    Add tag
+                  </Typography>
+                </AddTagButton>
+          }
+        </Stack>
+      </Grid >
+    </Stack >
+  </Grid >
 }
