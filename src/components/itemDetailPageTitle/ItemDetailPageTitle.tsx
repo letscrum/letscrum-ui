@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined, Clear, Add, Save } from '@mui/icons-material'
+import { PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined, Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom } from '@mui/icons-material'
 import { Autocomplete, Avatar, Box, Button, Chip, Grid, IconButton, InputAdornment, Stack, TextField, Tooltip, Typography } from '@mui/material'
 import { blue, grey, red } from '@mui/material/colors'
 import { useAppSelector } from '../../redux/hooks'
@@ -97,7 +97,15 @@ const AddTagInput = styled(TextField)({
   }
 })
 
+const GeneralDisableOptionButton = styled(IconButton)({
+  margin: '0 .5rem 0 0',
+  borderRadius: '0',
+  padding: '.125rem'
+})
+
 export const ItemDetailPageTitle: React.FC = () => {
+  const [saveLoading, setSaveLoading] = useState(false)
+  const [saveError, setSaveError] = useState<any>(null)
   const [originalTitle, setOriginalTitle] = useState<string>('')
   const [title, setTitle] = useState<string>('')
   const handleTitle = (e: any): void => setTitle(e.currentTarget.value)
@@ -108,6 +116,19 @@ export const ItemDetailPageTitle: React.FC = () => {
   const handleAddBlur = (): void => setAddFocus(false)
   const [selectedTag, setSelectedTag] = useState<any>('')
   const [selectedTagsArray, setSelectedTagsArray] = useState<string[]>([])
+  const handleSave = async (param: { title: string }): Promise<void> => {
+    setSaveLoading(true)
+    try {
+      const response = await axios.put('http://localhost:3001/letscrum/api/project/workItem', {
+        title: param.title
+      })
+      setSaveLoading(false)
+      console.log('response: ', response)
+    } catch (e: any) {
+      setSaveError(e.message)
+      setSaveLoading(false)
+    }
+  }
   useEffect(() => {
     void axios.get('http://localhost:3001/letscrum/api/project/workItem')
       .then((value) => {
@@ -133,7 +154,11 @@ export const ItemDetailPageTitle: React.FC = () => {
       </Typography>
       <ErrorOutlined sx={{ marginLeft: '.5rem', color: red[900], fontSize: 'small' }} />
       <Typography variant='body2' sx={{ marginLeft: '.25rem', color: red[900] }}>
-        Field &lsquo;Title&lsquo; cannot be empty.
+        {
+          saveError !== null
+            ? <span>{saveError}</span>
+            : <span>Field &lsquo;Title&lsquo; cannot be empty.</span>
+        }
       </Typography>
     </Stack>
     {/* item title */}
@@ -167,203 +192,249 @@ export const ItemDetailPageTitle: React.FC = () => {
     >
       <Grid container>
         {/* assign to Selector */}
-        <Stack>
-          <Autocomplete
-            sx={{
-              marginLeft: '.75rem',
-              '& .MuiInputBase-root': {
-                borderRadius: '0'
-              },
-              '& .MuiOutlinedInput-root': {
-                padding: '0',
-                '& .MuiOutlinedInput-notchedOutline': {
-                  borderColor: grey[200]
+        <Grid item xs={4}>
+          <Stack>
+            <Autocomplete
+              sx={{
+                marginLeft: '.75rem',
+                '& .MuiInputBase-root': {
+                  borderRadius: '0'
                 },
-                '&:hover .MuiOutlinedInput-notchedOutline': {
-                  borderColor: blue[600]
-                },
-                '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-                  borderColor: blue[600]
-                },
-                '& .MuiAutocomplete-input': {
-                  padding: '.125rem'
-                }
-              }
-            }}
-            options={members}
-            getOptionLabel={(option: any) => option.userName}
-            renderOption={(props, option) => (
-              <Box component='li' {...props} key={option.userId}>
-                <Avatar sx={{ width: '2rem', height: '2rem' }}>
-                  {(option.userName != null) ? option.userName[0].toUpperCase() : ''}
-                </Avatar>
-                <Stack sx={{ marginLeft: '.25rem' }}>
-                  <Typography sx={{ fontSize: '.75rem' }}>
-                    {option.userName}
-                  </Typography>
-                  <Typography sx={{ fontSize: '.75rem' }}>
-                    {option.userId}
-                  </Typography>
-                </Stack>
-                <ClearOutlined sx={{ marginLeft: 'auto', marginRight: '.25rem', fontSize: '1rem', color: red[700] }} />
-                <ContactMailOutlined sx={{ fontSize: '1rem', color: grey[700] }} />
-              </Box>
-            )}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                InputProps={{
-                  ...params.InputProps,
-                  startAdornment: (
-                    <InputAdornment position='start'>
-                      <AccountCircle />
-                    </InputAdornment>
-                  )
-                }}
-                sx={{
-                  width: '18rem',
+                '& .MuiOutlinedInput-root': {
                   padding: '0',
-                  '& .MuiInputBase-root': {
-                    height: '1.5rem',
-                    fontSize: '.75rem',
-                    color: grey[600]
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: grey[200]
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: blue[600]
+                  },
+                  '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: blue[600]
+                  },
+                  '& .MuiAutocomplete-input': {
+                    padding: '.125rem'
                   }
-                }}
-                placeholder='Unassigned'
-                hiddenLabel
-              />
-            )}
-          />
-        </Stack>
-        {/* comments */}
-        <Stack direction='row' sx={{ display: 'flex', alignItems: 'center' }}>
-          <Tooltip title={`Go to discussion. There are ${countComments} comments available (Ctrl+Shift+D)`}>
-            <CommentButton startIcon={<ForumOutlined sx={{ fontSize: '.75rem', color: blue[700] }} />}>
-              <Typography sx={{ fontSize: '.75rem', letterSpace: '.125', color: grey[800] }}>
-                {countComments} comments
-              </Typography>
-            </CommentButton>
-          </Tooltip>
-          {
-            selectedTagsArray.map((tag, index) => (
-              <Chip
-                key={`${index}+${tag}`}
-                label={tag}
-                deleteIcon={<Clear sx={{ width: '.875rem', height: '.875rem' }} />}
-                onDelete={() => setSelectedTagsArray(
-                  selectedTagsArray.filter((t, i) => i !== index)
-                )}
-                sx={{
-                  marginLeft: '.75rem',
-                  height: '1.5rem',
-                  backgroundColor: blue[50],
-                  borderRadius: '0',
-                  fontSize: '.75rem',
-                  color: grey[800]
-                }}
-              />
-            ))
-          }
-          {
-            addFocus
-              ? <AddTag
-                freeSolo
-                openOnFocus
-                value={selectedTag}
-                onChange={(e, newValue: any) => {
-                  setSelectedTag(newValue)
-                  setSelectedTagsArray([
-                    ...selectedTagsArray,
-                    newValue
-                  ])
-                  setAddFocus(false)
-                  setSelectedTag('')
-                }}
-                options={tags}
-                getOptionLabel={(option: any) => option}
-                renderOption={(props, option: any) => (
-                  <Box component='li' {...props}>
-                    <Typography variant='body2'>
-                      {option}
+                }
+              }}
+              options={members}
+              getOptionLabel={(option: any) => option.userName}
+              renderOption={(props, option) => (
+                <Box component='li' {...props} key={option.userId}>
+                  <Avatar sx={{ width: '2rem', height: '2rem' }}>
+                    {(option.userName != null) ? option.userName[0].toUpperCase() : ''}
+                  </Avatar>
+                  <Stack sx={{ marginLeft: '.25rem' }}>
+                    <Typography sx={{ fontSize: '.75rem' }}>
+                      {option.userName}
                     </Typography>
-                  </Box>
-                )}
-                renderInput={(params) => <AddTagInput
+                    <Typography sx={{ fontSize: '.75rem' }}>
+                      {option.userId}
+                    </Typography>
+                  </Stack>
+                  <ClearOutlined sx={{ marginLeft: 'auto', marginRight: '.25rem', fontSize: '1rem', color: red[700] }} />
+                  <ContactMailOutlined sx={{ fontSize: '1rem', color: grey[700] }} />
+                </Box>
+              )}
+              renderInput={(params) => (
+                <TextField
                   {...params}
-                  onBlur={handleAddBlur}
-                  autoFocus
-                />}
-              />
-              : selectedTagsArray.length !== 0
-                ? <Tooltip title='Add tag'>
-                  <IconButton
-                    onClick={() => {
-                      setAddFocus(true)
-                    }}
-                    sx={{
-                      marginLeft: '.75rem',
-                      width: '1.5rem',
+                  InputProps={{
+                    ...params.InputProps,
+                    startAdornment: (
+                      <InputAdornment position='start'>
+                        <AccountCircle />
+                      </InputAdornment>
+                    )
+                  }}
+                  sx={{
+                    width: '18rem',
+                    padding: '0',
+                    '& .MuiInputBase-root': {
                       height: '1.5rem',
-                      backgroundColor: blue[50],
-                      borderRadius: '0',
-                      '&:hover': {
-                        backgroundColor: blue[100]
-                      },
-                      '&:active': {
-                        backgroundColor: blue[800]
-                      }
-                    }}>
-                    <Add sx={{ width: '.875rem', height: '.875rem' }} />
-                  </IconButton>
-                </Tooltip>
-                : <AddTagButton onClick={() => {
-                  setAddFocus(true)
-                }}>
-                  <Typography sx={{ fontSize: '.75rem', letterSpace: '.125', color: grey[600] }}>
-                    Add tag
-                  </Typography>
-                </AddTagButton>
-          }
-        </Stack>
+                      fontSize: '.75rem',
+                      color: grey[600]
+                    }
+                  }}
+                  placeholder='Unassigned'
+                  hiddenLabel
+                />
+              )}
+            />
+          </Stack>
+        </Grid>
+        {/* comments */}
+        <Grid item xs={4}>
+          <Stack direction='row' sx={{ display: 'flex', alignItems: 'center' }}>
+            <Tooltip title={`Go to discussion. There are ${countComments} comments available (Ctrl+Shift+D)`}>
+              <CommentButton startIcon={<ForumOutlined sx={{ fontSize: '.75rem', color: blue[700] }} />}>
+                <Typography sx={{ fontSize: '.75rem', letterSpace: '.125', color: grey[800] }}>
+                  {countComments} comments
+                </Typography>
+              </CommentButton>
+            </Tooltip>
+            {
+              selectedTagsArray.map((tag, index) => (
+                <Chip
+                  key={`${index}+${tag}`}
+                  label={tag}
+                  deleteIcon={<Clear sx={{ width: '.875rem', height: '.875rem' }} />}
+                  onDelete={() => setSelectedTagsArray(
+                    selectedTagsArray.filter((t, i) => i !== index)
+                  )}
+                  sx={{
+                    marginLeft: '.75rem',
+                    height: '1.5rem',
+                    backgroundColor: blue[50],
+                    borderRadius: '0',
+                    fontSize: '.75rem',
+                    color: grey[800]
+                  }}
+                />
+              ))
+            }
+            {
+              addFocus
+                ? <AddTag
+                  freeSolo
+                  openOnFocus
+                  value={selectedTag}
+                  onChange={(e, newValue: any) => {
+                    setSelectedTag(newValue)
+                    setSelectedTagsArray([
+                      ...selectedTagsArray,
+                      newValue
+                    ])
+                    setAddFocus(false)
+                    setSelectedTag('')
+                  }}
+                  options={tags}
+                  getOptionLabel={(option: any) => option}
+                  renderOption={(props, option: any) => (
+                    <Box component='li' {...props}>
+                      <Typography variant='body2'>
+                        {option}
+                      </Typography>
+                    </Box>
+                  )}
+                  renderInput={(params) => <AddTagInput
+                    {...params}
+                    onBlur={handleAddBlur}
+                    autoFocus
+                  />}
+                />
+                : selectedTagsArray.length !== 0
+                  ? <Tooltip title='Add tag'>
+                    <IconButton
+                      onClick={() => {
+                        setAddFocus(true)
+                      }}
+                      sx={{
+                        marginLeft: '.75rem',
+                        width: '1.5rem',
+                        height: '1.5rem',
+                        backgroundColor: blue[50],
+                        borderRadius: '0',
+                        '&:hover': {
+                          backgroundColor: blue[100]
+                        },
+                        '&:active': {
+                          backgroundColor: blue[800]
+                        }
+                      }}>
+                      <Add sx={{ width: '.875rem', height: '.875rem' }} />
+                    </IconButton>
+                  </Tooltip>
+                  : <AddTagButton onClick={() => {
+                    setAddFocus(true)
+                  }}>
+                    <Typography sx={{ fontSize: '.75rem', letterSpace: '.125', color: grey[600] }}>
+                      Add tag
+                    </Typography>
+                  </AddTagButton>
+            }
+          </Stack>
+        </Grid>
         {/* edit options */}
-        <Stack direction='row' sx={{ display: 'flex', alignItems: 'center' }}>
-          {
-            title === originalTitle
-              ? <Button
-                disabled
-                variant='outlined'
-                sx={{
-                  marginLeft: 'auto',
-                  padding: '.125rem .425rem',
-                  borderRadius: '0',
-                  fontSize: '.75rem',
-                  color: grey[500]
-                }}
-                startIcon={<Save sx={{ color: grey[500] }} />}>
-                Save
-              </Button>
-              : <Button
-                variant='outlined'
-                sx={{
-                  marginLeft: 'auto',
-                  padding: '.125rem .425rem',
-                  backgroundColor: blue[800],
-                  borderRadius: '0',
-                  fontSize: '.75rem',
-                  color: 'white',
-                  '&:hover': {
-                    backgroundColor: blue[900]
-                  }
-                }}
-                startIcon={<Save sx={{ color: 'white' }} />}>
-                Save
-              </Button>
-          }
-          <IconButton />
-          <IconButton />
-          <IconButton />
-        </Stack>
-      </Grid >
+        <Grid item xs={4}>
+          <Stack direction='row' sx={{ alignItems: 'center', justifyContent: 'end' }}>
+            {
+              title === originalTitle
+                ? <Button
+                  disabled
+                  variant='contained'
+                  sx={{
+                    margin: '0 .5rem 0 0',
+                    padding: '.125rem .425rem',
+                    borderRadius: '0',
+                    backgroundColor: grey[300],
+                    fontSize: '.75rem',
+                    color: grey[500]
+                  }}
+                  startIcon={<Save sx={{ color: grey[500] }} />}>
+                  Save
+                </Button>
+                : saveLoading
+                  ? <Button
+                    variant='outlined'
+                    onClick={() => { void handleSave({ title }) }}
+                    sx={{
+                      margin: '0 .5rem 0 0',
+                      padding: '.125rem .425rem',
+                      backgroundColor: blue[800],
+                      borderRadius: '0',
+                      fontSize: '.75rem',
+                      color: 'white',
+                      '&:hover': {
+                        backgroundColor: blue[900]
+                      }
+                    }}
+                    startIcon={<HourglassBottom sx={{ color: 'white' }} />}>
+                    Save
+                  </Button>
+                  : <Button
+                    variant='outlined'
+                    onClick={() => { void handleSave({ title }) }}
+                    sx={{
+                      margin: '0 .5rem 0 0',
+                      padding: '.125rem .425rem',
+                      backgroundColor: blue[800],
+                      borderRadius: '0',
+                      fontSize: '.75rem',
+                      color: 'white',
+                      '&:hover': {
+                        backgroundColor: blue[900]
+                      }
+                    }}
+                    startIcon={<Save sx={{ color: 'white' }} />}>
+                    Save
+                  </Button>
+            }
+            <GeneralDisableOptionButton disabled>
+              <Refresh />
+            </GeneralDisableOptionButton>
+            {/* <GeneralOptionButton>
+              <Refresh />
+            </GeneralOptionButton> */}
+            <GeneralDisableOptionButton disabled>
+              <Undo />
+            </GeneralDisableOptionButton>
+            {/* <GeneralOptionButton>
+              <Undo />
+            </GeneralOptionButton> */}
+            <IconButton sx={{
+              margin: '0 .5rem 0 0',
+              color: grey[900],
+              borderRadius: '0',
+              padding: '.125rem',
+              '&:hover': {
+                backgroundColor: blue[50]
+              }
+            }}>
+              <MoreHoriz />
+            </IconButton>
+          </Stack>
+        </Grid>
+      </Grid>
     </Stack >
   </Grid >
 }
