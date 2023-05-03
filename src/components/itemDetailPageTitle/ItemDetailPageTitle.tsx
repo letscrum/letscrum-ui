@@ -249,166 +249,166 @@ export const ItemDetailPageTitle: React.FC = () => {
       <Grid container>
         {/* assign to Selector */}
         <Grid item xs={12} md={4}>
-          <Stack>
-            <Autocomplete
-              sx={{
-                marginLeft: '.75rem',
-                '& .MuiInputBase-root': {
-                  borderRadius: '0'
+        <Stack>
+          <Autocomplete
+            sx={{
+              marginLeft: '.75rem',
+              '& .MuiInputBase-root': {
+                borderRadius: '0'
+              },
+              '& .MuiOutlinedInput-root': {
+                padding: '0',
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: grey[200]
                 },
-                '& .MuiOutlinedInput-root': {
-                  padding: '0',
-                  '& .MuiOutlinedInput-notchedOutline': {
-                    borderColor: grey[200]
-                  },
-                  '&:hover .MuiOutlinedInput-notchedOutline': {
-                    borderColor: blue[600]
-                  },
-                  '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-                    borderColor: blue[600]
-                  },
-                  '& .MuiAutocomplete-input': {
-                    padding: '.125rem'
-                  }
+                '&:hover .MuiOutlinedInput-notchedOutline': {
+                  borderColor: blue[600]
+                },
+                '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor: blue[600]
+                },
+                '& .MuiAutocomplete-input': {
+                  padding: '.125rem'
                 }
-              }}
-              options={members}
-              getOptionLabel={(option: any) => option.userName}
-              renderOption={(props, option) => (
-                <Box component='li' {...props} key={option.userId}>
-                  <Avatar sx={{ width: '2rem', height: '2rem' }}>
-                    {(option.userName != null) ? option.userName[0].toUpperCase() : ''}
-                  </Avatar>
-                  <Stack sx={{ marginLeft: '.25rem' }}>
-                    <Typography sx={{ fontSize: '.75rem' }}>
-                      {option.userName}
-                    </Typography>
-                    <Typography sx={{ fontSize: '.75rem' }}>
-                      {option.userId}
-                    </Typography>
-                  </Stack>
-                  <ClearOutlined sx={{ marginLeft: 'auto', marginRight: '.25rem', fontSize: '1rem', color: red[700] }} />
-                  <ContactMailOutlined sx={{ fontSize: '1rem', color: grey[700] }} />
-                </Box>
-              )}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  InputProps={{
-                    ...params.InputProps,
-                    startAdornment: (
-                      <InputAdornment position='start'>
-                        <AccountCircle />
-                      </InputAdornment>
-                    )
-                  }}
-                  sx={{
-                    width: '18rem',
-                    padding: '0',
-                    '& .MuiInputBase-root': {
-                      height: '1.5rem',
-                      fontSize: '.75rem',
-                      color: grey[600]
-                    }
-                  }}
+              }
+            }}
+            options={members}
+            getOptionLabel={(option: any) => option.userName}
+            renderOption={(props, option) => (
+              <Box component='li' {...props} key={option.userId}>
+                <Avatar sx={{ width: '2rem', height: '2rem' }}>
+                  {(option.userName != null) ? option.userName[0].toUpperCase() : ''}
+                </Avatar>
+                <Stack sx={{ marginLeft: '.25rem' }}>
+                  <Typography sx={{ fontSize: '.75rem' }}>
+                    {option.userName}
+                  </Typography>
+                  <Typography sx={{ fontSize: '.75rem' }}>
+                    {option.userId}
+                  </Typography>
+                </Stack>
+                <ClearOutlined sx={{ marginLeft: 'auto', marginRight: '.25rem', fontSize: '1rem', color: red[700] }} />
+                <ContactMailOutlined sx={{ fontSize: '1rem', color: grey[700] }} />
+              </Box>
+            )}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                InputProps={{
+                  ...params.InputProps,
+                  startAdornment: (
+                    <InputAdornment position='start'>
+                      <AccountCircle />
+                    </InputAdornment>
+                  )
+                }}
+                sx={{
+                  width: '18rem',
+                  padding: '0',
+                  '& .MuiInputBase-root': {
+                    height: '1.5rem',
+                    fontSize: '.75rem',
+                    color: grey[600]
+                  }
+                }}
                   placeholder='Unassigned'
-                  hiddenLabel
-                />
-              )}
-            />
-          </Stack>
+                hiddenLabel
+              />
+            )}
+          />
+        </Stack>
         </Grid>
         {/* comments */}
         <Grid item xs={12} md={4}>
-          <Stack direction='row' sx={{ display: 'flex', alignItems: 'center' }}>
-            <Tooltip title={`Go to discussion. There are ${countComments} comments available (Ctrl+Shift+D)`}>
-              <CommentButton startIcon={<ForumOutlined sx={{ fontSize: '.75rem', color: blue[700] }} />}>
-                <Typography sx={{ fontSize: '.75rem', letterSpace: '.125', color: grey[800] }}>
-                  {countComments} comments
-                </Typography>
-              </CommentButton>
-            </Tooltip>
-            {
-              selectedTagsArray.map((tag, index) => (
-                <Chip
-                  key={`${index}+${tag}`}
-                  label={tag}
-                  deleteIcon={<Clear sx={{ width: '.875rem', height: '.875rem' }} />}
-                  onDelete={() => setSelectedTagsArray(
-                    selectedTagsArray.filter((t, i) => i !== index)
-                  )}
-                  sx={{
-                    marginLeft: '.75rem',
-                    height: '1.5rem',
-                    backgroundColor: blue[50],
-                    borderRadius: '0',
-                    fontSize: '.75rem',
-                    color: grey[800]
-                  }}
-                />
-              ))
-            }
-            {
-              addFocus
-                ? <AddTag
-                  freeSolo
-                  openOnFocus
-                  value={selectedTag}
-                  onChange={(e, newValue: any) => {
-                    setSelectedTag(newValue)
-                    setSelectedTagsArray([
-                      ...selectedTagsArray,
-                      newValue
-                    ])
-                    setAddFocus(false)
-                    setSelectedTag('')
-                  }}
-                  options={tags}
-                  getOptionLabel={(option: any) => option}
-                  renderOption={(props, option: any) => (
-                    <Box component='li' {...props}>
-                      <Typography variant='body2'>
-                        {option}
-                      </Typography>
-                    </Box>
-                  )}
-                  renderInput={(params) => <AddTagInput
-                    {...params}
-                    onBlur={handleAddBlur}
-                    autoFocus
-                  />}
-                />
-                : selectedTagsArray.length !== 0
-                  ? <Tooltip title='Add tag'>
-                    <IconButton
-                      onClick={() => {
-                        setAddFocus(true)
-                      }}
-                      sx={{
-                        marginLeft: '.75rem',
-                        width: '1.5rem',
-                        height: '1.5rem',
-                        backgroundColor: blue[50],
-                        borderRadius: '0',
-                        '&:hover': {
-                          backgroundColor: blue[100]
-                        },
-                        '&:active': {
-                          backgroundColor: blue[800]
-                        }
-                      }}>
-                      <Add sx={{ width: '.875rem', height: '.875rem' }} />
-                    </IconButton>
-                  </Tooltip>
-                  : <AddTagButton onClick={() => {
-                    setAddFocus(true)
-                  }}>
-                    <Typography sx={{ fontSize: '.75rem', letterSpace: '.125', color: grey[600] }}>
-                      Add tag
+        <Stack direction='row' sx={{ display: 'flex', alignItems: 'center' }}>
+          <Tooltip title={`Go to discussion. There are ${countComments} comments available (Ctrl+Shift+D)`}>
+            <CommentButton startIcon={<ForumOutlined sx={{ fontSize: '.75rem', color: blue[700] }} />}>
+              <Typography sx={{ fontSize: '.75rem', letterSpace: '.125', color: grey[800] }}>
+                {countComments} comments
+              </Typography>
+            </CommentButton>
+          </Tooltip>
+          {
+            selectedTagsArray.map((tag, index) => (
+              <Chip
+                key={`${index}+${tag}`}
+                label={tag}
+                deleteIcon={<Clear sx={{ width: '.875rem', height: '.875rem' }} />}
+                onDelete={() => setSelectedTagsArray(
+                  selectedTagsArray.filter((t, i) => i !== index)
+                )}
+                sx={{
+                  marginLeft: '.75rem',
+                  height: '1.5rem',
+                  backgroundColor: blue[50],
+                  borderRadius: '0',
+                  fontSize: '.75rem',
+                  color: grey[800]
+                }}
+              />
+            ))
+          }
+          {
+            addFocus
+              ? <AddTag
+                freeSolo
+                openOnFocus
+                value={selectedTag}
+                onChange={(e, newValue: any) => {
+                  setSelectedTag(newValue)
+                  setSelectedTagsArray([
+                    ...selectedTagsArray,
+                    newValue
+                  ])
+                  setAddFocus(false)
+                  setSelectedTag('')
+                }}
+                options={tags}
+                getOptionLabel={(option: any) => option}
+                renderOption={(props, option: any) => (
+                  <Box component='li' {...props}>
+                    <Typography variant='body2'>
+                      {option}
                     </Typography>
-                  </AddTagButton>
-            }
-          </Stack>
+                  </Box>
+                )}
+                renderInput={(params) => <AddTagInput
+                  {...params}
+                  onBlur={handleAddBlur}
+                  autoFocus
+                />}
+              />
+              : selectedTagsArray.length !== 0
+                ? <Tooltip title='Add tag'>
+                  <IconButton
+                    onClick={() => {
+                      setAddFocus(true)
+                    }}
+                    sx={{
+                      marginLeft: '.75rem',
+                      width: '1.5rem',
+                      height: '1.5rem',
+                      backgroundColor: blue[50],
+                      borderRadius: '0',
+                      '&:hover': {
+                        backgroundColor: blue[100]
+                      },
+                      '&:active': {
+                        backgroundColor: blue[800]
+                      }
+                    }}>
+                    <Add sx={{ width: '.875rem', height: '.875rem' }} />
+                  </IconButton>
+                </Tooltip>
+                : <AddTagButton onClick={() => {
+                  setAddFocus(true)
+                }}>
+                  <Typography sx={{ fontSize: '.75rem', letterSpace: '.125', color: grey[600] }}>
+                    Add tag
+                  </Typography>
+                </AddTagButton>
+          }
+        </Stack>
         </Grid>
         {/* edit options */}
         <Grid item xs={12} md={4}>
