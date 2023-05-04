@@ -565,22 +565,83 @@ export const ItemDetailPageTitle: React.FC = () => {
           <Divider />
           <TextField />
         </Stack>
+        <Stack>
+          <Typography>
+            System Info
+          </Typography>
+          <Divider />
+          <TextField />
+        </Stack>
+        <Stack>
+          <Typography>
+            Acceptance Criteria
+          </Typography>
+          <Divider />
+          <TextField />
+        </Stack>
+        <Stack>
+          <Typography>
+            Discussion
+          </Typography>
+          <Divider />
+          <Stack direction='row'>
+            <Avatar />
+            <TextField />
+          </Stack>
+        </Stack>
       </Grid>
       {/* middle column */}
       <Grid item md={3}>
-        <Grid>
+        <Stack>
           <Typography>
-            Repro Steps
+            Details
           </Typography>
-        </Grid>
+          <Divider />
+          <Typography>
+            Priority
+          </Typography>
+          <Typography>
+            Severity
+          </Typography>
+          <Typography>
+            Effort
+          </Typography>
+          <Typography>
+            Remaining Work
+          </Typography>
+          <Typography>
+            Activity
+          </Typography>
+        </Stack>
+        <Stack>
+          <Typography>
+            Build
+          </Typography>
+          <Typography>
+            Found in Build
+          </Typography>
+          <Typography>
+            Integrated in Build
+          </Typography>
+        </Stack>
       </Grid>
       {/* right column */}
       <Grid item md={3}>
-        <Grid>
+        <Stack>
           <Typography>
-            Repro Steps
+            Deployment
           </Typography>
-        </Grid>
+        </Stack>
+        <Stack>
+          <Typography>
+            Development
+          </Typography>
+        </Stack>
+        <Stack>
+          <Typography>
+            Related Work
+          </Typography>
+        </Stack>
       </Grid>
     </Grid>
   </Grid >
