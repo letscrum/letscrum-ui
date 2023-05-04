@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {
   PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined,
-  Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1
+  Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1, OpenInFull, ExpandMore
 } from '@mui/icons-material'
 import { Autocomplete, Avatar, Box, Button, Chip, Divider, Grid, IconButton, InputAdornment, InputBase, MenuItem, Select, Stack, TextField, Tooltip, Typography } from '@mui/material'
 import { blue, grey, red } from '@mui/material/colors'
@@ -156,6 +156,27 @@ const StateSuggestion = styled(Box)({
   padding: '0 0 .5rem .25rem',
   fontSize: '.75rem',
   color: blue[700]
+})
+
+const DetailItemContainer = styled(Stack)({
+  padding: '.875rem 1.25rem'
+})
+
+const ItemTitleText = styled(Typography)({
+  paddingBottom: '.25rem',
+  fontWeight: '700'
+})
+
+const ItemTitleOption = styled(Stack)({
+  display: 'flex',
+  alignItems: 'center'
+})
+
+const ItemTitleContainer = styled(Stack)({
+  '&:hover': {
+    color: blue[700],
+    cursor: 'pointer'
+  }
 })
 
 export const ItemDetailPageTitle: React.FC = () => {
@@ -558,13 +579,19 @@ export const ItemDetailPageTitle: React.FC = () => {
       {/* left column */}
       <Grid item md={6}>
         {/* repro steps */}
-        <Stack>
-          <Typography>
-            Repro Steps
-          </Typography>
-          <Divider />
+        <DetailItemContainer>
+          <ItemTitleContainer>
+            <ItemTitleOption direction='row'>
+              <ItemTitleText>
+                Repro Steps
+              </ItemTitleText>
+              <OpenInFull sx={{ marginLeft: 'auto', width: '.875rem', height: '.875rem', color: grey[800] }} />
+              <ExpandMore sx={{ marginLeft: '.125rem', width: '.875rem', height: '.875rem', color: grey[800] }} />
+            </ItemTitleOption>
+            <Divider sx={{ marginBottom: '.25rem' }} />
+          </ItemTitleContainer>
           <TextField />
-        </Stack>
+        </DetailItemContainer>
         <Stack>
           <Typography>
             System Info
