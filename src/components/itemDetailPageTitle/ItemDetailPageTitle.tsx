@@ -219,6 +219,9 @@ export const ItemDetailPageTitle: React.FC = () => {
   const handleAddBlur = (): void => setAddFocus(false)
   const [selectedTag, setSelectedTag] = useState<any>('')
   const [selectedTagsArray, setSelectedTagsArray] = useState<string[]>([])
+  const [bold, setBold] = useState(false)
+  const [italic, setItalic] = useState(false)
+  const [underline, setUnderline] = useState(false)
   const Inline = Quill.import('blots/inline')
   class BoldBlot extends Inline { }
   BoldBlot.blotName = 'bold'
@@ -226,11 +229,25 @@ export const ItemDetailPageTitle: React.FC = () => {
   class ItalicBlot extends Inline { }
   ItalicBlot.blotName = 'italic'
   ItalicBlot.tagName = 'em'
+  class UnderlineBlot extends Inline { }
+  UnderlineBlot.blotName = 'underline'
+  UnderlineBlot.tagName = 'u'
   Quill.register(BoldBlot)
   Quill.register(ItalicBlot)
+  Quill.register(UnderlineBlot)
   const quill = new Quill('#editorContainer')
-  const handleBold = (): any => quill.format('bold', true)
-  const handleItalic = (): any => quill.format('italic', true)
+  const handleBold = (): any => {
+    bold ? quill.format('bold', false) : quill.format('bold', true)
+    setBold(!bold)
+  }
+  const handleItalic = (): any => {
+    italic ? quill.format('italic', false) : quill.format('italic', true)
+    setItalic(!italic)
+  }
+  const handleUnderline = (): any => {
+    underline ? quill.format('underline', false) : quill.format('underline', true)
+    setUnderline(!underline)
+  }
   const handleSave = async (param: { title: string }): Promise<void> => {
     setSaveLoading(true)
     try {
@@ -633,9 +650,15 @@ export const ItemDetailPageTitle: React.FC = () => {
           <Grid container direction='column'>
             <div id='editorContainer'>Hello world</div>
             <Stack direction='row'>
-              <FormatBold onClick={handleBold} sx={{ '&:hover': { cursor: 'pointer' } }} />
-              <FormatItalic onClick={handleItalic} />
-              <FormatUnderlined />
+              <IconButton onClick={handleBold} >
+                <FormatBold />
+              </IconButton>
+              <IconButton onClick={handleItalic}>
+                <FormatItalic />
+              </IconButton>
+              <IconButton onClick={handleUnderline}>
+                <FormatUnderlined />
+              </IconButton>
             </Stack>
           </Grid>
         </DetailItemContainer>
