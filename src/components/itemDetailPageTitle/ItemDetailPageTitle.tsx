@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import {
   PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined,
-  Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1, OpenInFull, ExpandMore
+  Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1, OpenInFull, ExpandMore,
+  FormatBold, FormatItalic, FormatUnderlined
 } from '@mui/icons-material'
 import { Autocomplete, Avatar, Box, Button, Chip, Divider, Grid, IconButton, InputAdornment, InputBase, MenuItem, Select, Stack, TextField, Tooltip, Typography } from '@mui/material'
 import { blue, grey, red } from '@mui/material/colors'
@@ -9,6 +10,32 @@ import { useAppSelector } from '../../redux/hooks'
 import { selectProjectMembers } from '../../redux/reducers/projectSlice'
 import styled from '@emotion/styled'
 import axios from 'axios'
+import Quill from 'quill'
+import './ItemDetailPageTitle.module.css'
+
+// const editorModules = {
+//   toolbar: [
+//     ['bold', 'italic', 'underline', 'strike'],
+//     [{ list: 'ordered' }, { list: 'bullet' }],
+//     [{ background: [] }, { color: [] }],
+//     ['code-block', 'blockquote']
+//   ]
+// }
+
+// const editorOptions = {
+//   theme: 'snow',
+//   formats: [
+//     ['bold', 'italic', 'underline', 'strike'],
+//     [{ list: 'ordered' }, { list: 'bullet' }],
+//     [{ background: [] }, { color: [] }],
+//     ['code-block', 'blockquote']
+//   ],
+//   modules: {
+//     toolbar: {
+//       container: '#toolbar'
+//     }
+//   }
+// }
 
 const TitleInput = styled(TextField)({
   marginY: '.5rem',
@@ -192,6 +219,18 @@ export const ItemDetailPageTitle: React.FC = () => {
   const handleAddBlur = (): void => setAddFocus(false)
   const [selectedTag, setSelectedTag] = useState<any>('')
   const [selectedTagsArray, setSelectedTagsArray] = useState<string[]>([])
+  const Inline = Quill.import('blots/inline')
+  class BoldBlot extends Inline { }
+  BoldBlot.blotName = 'bold'
+  BoldBlot.tagName = 'strong'
+  class ItalicBlot extends Inline { }
+  ItalicBlot.blotName = 'italic'
+  ItalicBlot.tagName = 'em'
+  Quill.register(BoldBlot)
+  Quill.register(ItalicBlot)
+  const quill = new Quill('#editorContainer')
+  const handleBold = (): any => quill.format('bold', true)
+  const handleItalic = (): any => quill.format('italic', true)
   const handleSave = async (param: { title: string }): Promise<void> => {
     setSaveLoading(true)
     try {
@@ -590,7 +629,15 @@ export const ItemDetailPageTitle: React.FC = () => {
             </ItemTitleOption>
             <Divider sx={{ marginBottom: '.25rem' }} />
           </ItemTitleContainer>
-          <TextField />
+          {/* editor container */}
+          <Grid container direction='column'>
+            <div id='editorContainer'>Hello world</div>
+            <Stack direction='row'>
+              <FormatBold onClick={handleBold} sx={{ '&:hover': { cursor: 'pointer' } }} />
+              <FormatItalic onClick={handleItalic} />
+              <FormatUnderlined />
+            </Stack>
+          </Grid>
         </DetailItemContainer>
         <Stack>
           <Typography>
