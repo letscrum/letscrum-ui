@@ -13,28 +13,8 @@ import axios from 'axios'
 import Quill from 'quill'
 import './ItemDetailPageTitle.module.css'
 
-// const editorModules = {
-//   toolbar: [
-//     ['bold', 'italic', 'underline', 'strike'],
-//     [{ list: 'ordered' }, { list: 'bullet' }],
-//     [{ background: [] }, { color: [] }],
-//     ['code-block', 'blockquote']
-//   ]
-// }
-
-// const editorOptions = {
-//   theme: 'snow',
-//   formats: [
-//     ['bold', 'italic', 'underline', 'strike'],
-//     [{ list: 'ordered' }, { list: 'bullet' }],
-//     [{ background: [] }, { color: [] }],
-//     ['code-block', 'blockquote']
-//   ],
-//   modules: {
-//     toolbar: {
-//       container: '#toolbar'
-//     }
-//   }
+// interface EditorContainerProps {
+//   editorfocus: boolean
 // }
 
 const TitleInput = styled(TextField)({
@@ -206,6 +186,14 @@ const ItemTitleContainer = styled(Stack)({
   }
 })
 
+// const EditorContainer = styled(Grid, {
+//   shouldForwardProp: (prop) => prop === 'editorFocus'
+// })<EditorContainerProps>(({ editorfocus }) => ({
+//   '&:focus': {
+//     borderColor: editorfocus ? blue[600] : 'none'
+//   }
+// }))
+
 export const ItemDetailPageTitle: React.FC = () => {
   const [saveLoading, setSaveLoading] = useState(false)
   const [saveError, setSaveError] = useState<any>(null)
@@ -219,6 +207,7 @@ export const ItemDetailPageTitle: React.FC = () => {
   const handleAddBlur = (): void => setAddFocus(false)
   const [selectedTag, setSelectedTag] = useState<any>('')
   const [selectedTagsArray, setSelectedTagsArray] = useState<string[]>([])
+  const [editorFocus, setEditorFocus] = useState(false)
   const [bold, setBold] = useState(false)
   const [italic, setItalic] = useState(false)
   const [underline, setUnderline] = useState(false)
@@ -235,7 +224,16 @@ export const ItemDetailPageTitle: React.FC = () => {
   Quill.register(BoldBlot)
   Quill.register(ItalicBlot)
   Quill.register(UnderlineBlot)
-  const quill = new Quill('#editorContainer')
+  Quill.debug(false)
+  const quill = new Quill('#editor')
+  const handleEditorFocus = (): void => {
+    quill.hasFocus() && setEditorFocus(true)
+    console.log('editorFocus: ', editorFocus)
+  }
+  const handleEditorBlur = (): void => {
+    quill.hasFocus() || setEditorFocus(false)
+    console.log('editorBlur: ', editorFocus)
+  }
   const handleBold = (): any => {
     bold ? quill.format('bold', false) : quill.format('bold', true)
     setBold(!bold)
@@ -648,7 +646,13 @@ export const ItemDetailPageTitle: React.FC = () => {
           </ItemTitleContainer>
           {/* editor container */}
           <Grid container direction='column'>
-            <div id='editorContainer'>Hello world</div>
+            <div
+              id='editor'
+              onFocus={handleEditorFocus}
+              onBlur={handleEditorBlur}
+            >
+              Hello world
+            </div>
             <Stack direction='row'>
               <IconButton onClick={handleBold} >
                 <FormatBold />
