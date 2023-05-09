@@ -194,6 +194,17 @@ const ItemTitleContainer = styled(Stack)({
 //   }
 // }))
 
+// const editorOptions = {
+//   theme: 'snow',
+//   formats: ['bold', 'italic', 'link', 'size'],
+//   modules: {
+//     'link-tooltip': true,
+//     toolbar: {
+//       container: '#toolbar'
+//     }
+//   }
+// }
+
 export const ItemDetailPageTitle: React.FC = () => {
   const [saveLoading, setSaveLoading] = useState(false)
   const [saveError, setSaveError] = useState<any>(null)
@@ -208,6 +219,7 @@ export const ItemDetailPageTitle: React.FC = () => {
   const [selectedTag, setSelectedTag] = useState<any>('')
   const [selectedTagsArray, setSelectedTagsArray] = useState<string[]>([])
   const [editorFocus, setEditorFocus] = useState(false)
+  console.log('editorFocus: ', editorFocus)
   const [bold, setBold] = useState(false)
   const [italic, setItalic] = useState(false)
   const [underline, setUnderline] = useState(false)
@@ -226,14 +238,6 @@ export const ItemDetailPageTitle: React.FC = () => {
   Quill.register(UnderlineBlot)
   Quill.debug(false)
   const quill = new Quill('#editor')
-  const handleEditorFocus = (): void => {
-    quill.hasFocus() && setEditorFocus(true)
-    console.log('editorFocus: ', editorFocus)
-  }
-  const handleEditorBlur = (): void => {
-    quill.hasFocus() || setEditorFocus(false)
-    console.log('editorBlur: ', editorFocus)
-  }
   const handleBold = (): any => {
     bold ? quill.format('bold', false) : quill.format('bold', true)
     setBold(!bold)
@@ -645,11 +649,13 @@ export const ItemDetailPageTitle: React.FC = () => {
             <Divider sx={{ marginBottom: '.25rem' }} />
           </ItemTitleContainer>
           {/* editor container */}
-          <Grid container direction='column'>
+          <div
+            className='editorContainer'
+            style={{ borderColor: 'blue' }}
+          >
             <div
               id='editor'
-              onFocus={handleEditorFocus}
-              onBlur={handleEditorBlur}
+              style={{ borderColor: 'blue' }}
             >
               Hello world
             </div>
@@ -664,7 +670,22 @@ export const ItemDetailPageTitle: React.FC = () => {
                 <FormatUnderlined />
               </IconButton>
             </Stack>
-          </Grid>
+            <Grid
+              onClick={() => setEditorFocus(true)}
+              sx={{
+                padding: '.25rem',
+                height: '3rem',
+                border: '1px solid white',
+                fontSize: '.75rem',
+                fontStyle: 'italic',
+                '&:hover': {
+                  border: `1px solid ${grey[200]}`,
+                  cursor: 'auto'
+                }
+              }}>
+              Click to add Repro Steps
+            </Grid>
+          </div>
         </DetailItemContainer>
         <Stack>
           <Typography>
