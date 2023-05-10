@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {
   PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined,
-  Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1, OpenInFull, ExpandMore,
-  FormatBold, FormatItalic, FormatUnderlined
+  Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1, OpenInFull, ExpandMore
 } from '@mui/icons-material'
 import { Autocomplete, Avatar, Box, Button, Chip, Divider, Grid, IconButton, InputAdornment, InputBase, MenuItem, Select, Stack, TextField, Tooltip, Typography } from '@mui/material'
 import { blue, grey, red } from '@mui/material/colors'
@@ -10,12 +9,9 @@ import { useAppSelector } from '../../redux/hooks'
 import { selectProjectMembers } from '../../redux/reducers/projectSlice'
 import styled from '@emotion/styled'
 import axios from 'axios'
-import Quill from 'quill'
+import ReactQuill from 'react-quill'
+import 'react-quill/dist/quill.snow.css'
 import './ItemDetailPageTitle.module.css'
-
-// interface EditorContainerProps {
-//   editorfocus: boolean
-// }
 
 const TitleInput = styled(TextField)({
   marginY: '.5rem',
@@ -186,24 +182,30 @@ const ItemTitleContainer = styled(Stack)({
   }
 })
 
-// const EditorContainer = styled(Grid, {
-//   shouldForwardProp: (prop) => prop === 'editorFocus'
-// })<EditorContainerProps>(({ editorfocus }) => ({
-//   '&:focus': {
-//     borderColor: editorfocus ? blue[600] : 'none'
-//   }
-// }))
+const formats = [
+  'bold',
+  'italic'
+]
 
-// const editorOptions = {
-//   theme: 'snow',
-//   formats: ['bold', 'italic', 'link', 'size'],
-//   modules: {
-//     'link-tooltip': true,
-//     toolbar: {
-//       container: '#toolbar'
-//     }
-//   }
-// }
+const QuillToolbar = (): JSX.Element => (
+  <div id='toolbar'>
+    <span className="ql-formats">
+      <button className="ql-bold" />
+      <button className="ql-italic" />
+    </span>
+  </div>
+)
+
+const modules = {
+  toolbar: {
+    container: '#toolbar'
+  },
+  history: {
+    delay: 500,
+    maxStack: 100,
+    userOnly: true
+  }
+}
 
 export const ItemDetailPageTitle: React.FC = () => {
   const [saveLoading, setSaveLoading] = useState(false)
@@ -220,36 +222,6 @@ export const ItemDetailPageTitle: React.FC = () => {
   const [selectedTagsArray, setSelectedTagsArray] = useState<string[]>([])
   const [editorFocus, setEditorFocus] = useState(false)
   console.log('editorFocus: ', editorFocus)
-  const [bold, setBold] = useState(false)
-  const [italic, setItalic] = useState(false)
-  const [underline, setUnderline] = useState(false)
-  const Inline = Quill.import('blots/inline')
-  class BoldBlot extends Inline { }
-  BoldBlot.blotName = 'bold'
-  BoldBlot.tagName = 'strong'
-  class ItalicBlot extends Inline { }
-  ItalicBlot.blotName = 'italic'
-  ItalicBlot.tagName = 'em'
-  class UnderlineBlot extends Inline { }
-  UnderlineBlot.blotName = 'underline'
-  UnderlineBlot.tagName = 'u'
-  Quill.register(BoldBlot)
-  Quill.register(ItalicBlot)
-  Quill.register(UnderlineBlot)
-  Quill.debug(false)
-  const quill = new Quill('#editor')
-  const handleBold = (): any => {
-    bold ? quill.format('bold', false) : quill.format('bold', true)
-    setBold(!bold)
-  }
-  const handleItalic = (): any => {
-    italic ? quill.format('italic', false) : quill.format('italic', true)
-    setItalic(!italic)
-  }
-  const handleUnderline = (): any => {
-    underline ? quill.format('underline', false) : quill.format('underline', true)
-    setUnderline(!underline)
-  }
   const handleSave = async (param: { title: string }): Promise<void> => {
     setSaveLoading(true)
     try {
@@ -649,122 +621,108 @@ export const ItemDetailPageTitle: React.FC = () => {
             <Divider sx={{ marginBottom: '.25rem' }} />
           </ItemTitleContainer>
           {/* editor container */}
-          <div
-            className='editorContainer'
-            style={{ borderColor: 'blue' }}
-          >
-            <div
-              id='editor'
-              style={{ borderColor: 'blue' }}
-            >
-              Hello world
-            </div>
-            <Stack direction='row'>
-              <IconButton onClick={handleBold} >
-                <FormatBold />
-              </IconButton>
-              <IconButton onClick={handleItalic}>
-                <FormatItalic />
-              </IconButton>
-              <IconButton onClick={handleUnderline}>
-                <FormatUnderlined />
-              </IconButton>
-            </Stack>
-            <Grid
-              onClick={() => setEditorFocus(true)}
-              sx={{
-                padding: '.25rem',
-                height: '3rem',
-                border: '1px solid white',
-                fontSize: '.75rem',
-                fontStyle: 'italic',
-                '&:hover': {
-                  border: `1px solid ${grey[200]}`,
-                  cursor: 'auto'
-                }
-              }}>
-              Click to add Repro Steps
-            </Grid>
+          <div className="text-editor">
+            <ReactQuill
+              theme='snow'
+              modules={modules}
+              formats={formats}
+            />
+            <QuillToolbar />
           </div>
-        </DetailItemContainer>
-        <Stack>
-          <Typography>
-            System Info
-          </Typography>
-          <Divider />
+          <Grid
+            onClick={() => setEditorFocus(true)}
+            sx={{
+              padding: '.25rem',
+              height: '3rem',
+              border: '1px solid white',
+              fontSize: '.75rem',
+              fontStyle: 'italic',
+              '&:hover': {
+                border: `1px solid ${grey[200]}`,
+                cursor: 'auto'
+              }
+            }}>
+            Click to add Repro Steps
+          </Grid>
+      </DetailItemContainer>
+      <Stack>
+        <Typography>
+          System Info
+        </Typography>
+        <Divider />
+        <TextField />
+      </Stack>
+      <Stack>
+        <Typography>
+          Acceptance Criteria
+        </Typography>
+        <Divider />
+        <TextField />
+      </Stack>
+      <Stack>
+        <Typography>
+          Discussion
+        </Typography>
+        <Divider />
+        <Stack direction='row'>
+          <Avatar />
           <TextField />
         </Stack>
-        <Stack>
-          <Typography>
-            Acceptance Criteria
-          </Typography>
-          <Divider />
-          <TextField />
-        </Stack>
-        <Stack>
-          <Typography>
-            Discussion
-          </Typography>
-          <Divider />
-          <Stack direction='row'>
-            <Avatar />
-            <TextField />
-          </Stack>
-        </Stack>
-      </Grid>
-      {/* middle column */}
-      <Grid item md={3}>
-        <Stack>
-          <Typography>
-            Details
-          </Typography>
-          <Divider />
-          <Typography>
-            Priority
-          </Typography>
-          <Typography>
-            Severity
-          </Typography>
-          <Typography>
-            Effort
-          </Typography>
-          <Typography>
-            Remaining Work
-          </Typography>
-          <Typography>
-            Activity
-          </Typography>
-        </Stack>
-        <Stack>
-          <Typography>
-            Build
-          </Typography>
-          <Typography>
-            Found in Build
-          </Typography>
-          <Typography>
-            Integrated in Build
-          </Typography>
-        </Stack>
-      </Grid>
-      {/* right column */}
-      <Grid item md={3}>
-        <Stack>
-          <Typography>
-            Deployment
-          </Typography>
-        </Stack>
-        <Stack>
-          <Typography>
-            Development
-          </Typography>
-        </Stack>
-        <Stack>
-          <Typography>
-            Related Work
-          </Typography>
-        </Stack>
-      </Grid>
+      </Stack>
     </Grid>
+    {/* middle column */}
+    <Grid item md={3}>
+      <Stack>
+        <Typography>
+          Details
+        </Typography>
+        <Divider />
+        <Typography>
+          Priority
+        </Typography>
+        <Typography>
+          Severity
+        </Typography>
+        <Typography>
+          Effort
+        </Typography>
+        <Typography>
+          Remaining Work
+        </Typography>
+        <Typography>
+          Activity
+        </Typography>
+      </Stack>
+      <Stack>
+        <Typography>
+          Build
+        </Typography>
+        <Typography>
+          Found in Build
+        </Typography>
+        <Typography>
+          Integrated in Build
+        </Typography>
+      </Stack>
+    </Grid>
+    {/* right column */}
+    <Grid item md={3}>
+      <Stack>
+        <Typography>
+          Deployment
+        </Typography>
+      </Stack>
+      <Stack>
+        <Typography>
+          Development
+        </Typography>
+      </Stack>
+      <Stack>
+        <Typography>
+          Related Work
+        </Typography>
+      </Stack>
+    </Grid>
+  </Grid>
   </Grid >
 }
