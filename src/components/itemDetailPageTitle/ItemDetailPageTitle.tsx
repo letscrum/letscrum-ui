@@ -221,9 +221,11 @@ export const ItemDetailPageTitle: React.FC = () => {
   const [selectedTag, setSelectedTag] = useState<any>('')
   const [selectedTagsArray, setSelectedTagsArray] = useState<string[]>([])
   const [editorFocus, setEditorFocus] = useState(false)
+  const [editorValue, setEditorValue] = useState<any>()
   const reactQuill = useRef<any>(null)
   const handleEditorFoucs = (): void => setEditorFocus(true)
   const handleEditorBlur = (): void => setEditorFocus(false)
+  const handleEditorValue = (content: any, delta: any, source: any, editor: any): void => setEditorValue(editor.getHTML())
   const handleSave = async (param: { title: string }): Promise<void> => {
     setSaveLoading(true)
     try {
@@ -655,6 +657,8 @@ export const ItemDetailPageTitle: React.FC = () => {
                     modules={modules}
                     formats={formats}
                     ref={reactQuill}
+                    value={editorValue}
+                    onChange={handleEditorValue}
                     onBlur={handleEditorBlur}
                   />
                   <QuillToolbar />
