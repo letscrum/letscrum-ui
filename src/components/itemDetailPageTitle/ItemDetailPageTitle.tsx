@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined,
   Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1, OpenInFull, ExpandMore
@@ -187,8 +187,13 @@ const formats = [
   'italic'
 ]
 
+// eslint-disable-next-line react/display-name
+// const AutoQuill = forwardRef((props, ref) => {
+//   return <ReactQuill {...props} ref={ref} />
+// })
+
 const QuillToolbar = (): JSX.Element => (
-  <div id='toolbar'>
+  <div id='toolbar' style={{ border: 'none' }}>
     <span className="ql-formats">
       <button className="ql-bold" />
       <button className="ql-italic" />
@@ -221,7 +226,9 @@ export const ItemDetailPageTitle: React.FC = () => {
   const [selectedTag, setSelectedTag] = useState<any>('')
   const [selectedTagsArray, setSelectedTagsArray] = useState<string[]>([])
   const [editorFocus, setEditorFocus] = useState(false)
-  console.log('editorFocus: ', editorFocus)
+  const reactQuill = useRef<any>(null)
+  const handleEditorFoucs = (): void => setEditorFocus(true)
+  const handleEditorBlur = (): void => setEditorFocus(false)
   const handleSave = async (param: { title: string }): Promise<void> => {
     setSaveLoading(true)
     try {
@@ -235,6 +242,7 @@ export const ItemDetailPageTitle: React.FC = () => {
       setSaveLoading(false)
     }
   }
+  // get item info
   useEffect(() => {
     void axios.get('http://localhost:3001/letscrum/api/project/workItem')
       .then((value) => {
@@ -243,6 +251,11 @@ export const ItemDetailPageTitle: React.FC = () => {
         setOriginalTitle(value.data.title)
       })
   }, [])
+  // editor auto focus
+  useEffect(() => {
+    reactQuill.current?.focus()
+  }, [editorFocus])
+
   return <Grid>
     {/* item type */}
     <Stack
@@ -607,7 +620,7 @@ export const ItemDetailPageTitle: React.FC = () => {
     {/* detail section */}
     <Grid container>
       {/* left column */}
-      <Grid item md={6}>
+      <Grid item md={6} xs={12}>
         {/* repro steps */}
         <DetailItemContainer>
           <ItemTitleContainer>
@@ -621,108 +634,115 @@ export const ItemDetailPageTitle: React.FC = () => {
             <Divider sx={{ marginBottom: '.25rem' }} />
           </ItemTitleContainer>
           {/* editor container */}
-          <div className="text-editor">
-            <ReactQuill
-              theme='snow'
-              modules={modules}
-              formats={formats}
-            />
-            <QuillToolbar />
+          <div>
+            {
+              editorFocus
+                ? <div>
+                  <ReactQuill
+                    theme='snow'
+                    modules={modules}
+                    formats={formats}
+                    ref={reactQuill}
+                    onBlur={handleEditorBlur}
+                  />
+                  <QuillToolbar />
+                </div>
+                : <Grid
+                  onClick={handleEditorFoucs}
+                  sx={{
+                    padding: '.25rem',
+                    height: '3rem',
+                    border: '1px solid white',
+                    fontSize: '.75rem',
+                    fontStyle: 'italic',
+                    '&:hover': {
+                      border: `1px solid ${grey[200]}`,
+                      cursor: 'auto'
+                    }
+                  }}>
+                  Click to add Repro Steps
+                </Grid>
+            }
           </div>
-          <Grid
-            onClick={() => setEditorFocus(true)}
-            sx={{
-              padding: '.25rem',
-              height: '3rem',
-              border: '1px solid white',
-              fontSize: '.75rem',
-              fontStyle: 'italic',
-              '&:hover': {
-                border: `1px solid ${grey[200]}`,
-                cursor: 'auto'
-              }
-            }}>
-            Click to add Repro Steps
-          </Grid>
-      </DetailItemContainer>
-      <Stack>
-        <Typography>
-          System Info
-        </Typography>
-        <Divider />
-        <TextField />
-      </Stack>
-      <Stack>
-        <Typography>
-          Acceptance Criteria
-        </Typography>
-        <Divider />
-        <TextField />
-      </Stack>
-      <Stack>
-        <Typography>
-          Discussion
-        </Typography>
-        <Divider />
-        <Stack direction='row'>
-          <Avatar />
+        </DetailItemContainer>
+        <Stack>
+          <Typography>
+            System Info
+          </Typography>
+          <Divider />
           <TextField />
         </Stack>
-      </Stack>
+        <Stack>
+          <Typography>
+            Acceptance Criteria
+          </Typography>
+          <Divider />
+          <TextField />
+        </Stack>
+        <Stack>
+          <Typography>
+            Discussion
+          </Typography>
+          <Divider />
+          <Stack direction='row'>
+            <Avatar />
+            <TextField />
+          </Stack>
+        </Stack>
+      </Grid>
+      {/* middle column */}
+      <Grid item md={3} xs={12}>
+        <Stack>
+          <Typography>
+            Details
+          </Typography>
+          <Divider />
+          <Typography>
+            Priority
+          </Typography>
+          <Typography>
+            Severity
+          </Typography>
+          <Typography>
+            Effort
+          </Typography>
+          <Typography>
+            Remaining Work
+          </Typography>
+          <Typography>
+            Activity
+          </Typography>
+        </Stack>
+        <Stack>
+          <Typography>
+            Build
+          </Typography>
+          <Typography>
+            Found in Build
+          </Typography>
+          <Typography>
+            Integrated in Build
+          </Typography>
+        </Stack>
+      </Grid>
+      {/* right column */}
+      <Grid item md={3} xs={12}>
+        <Stack>
+          <Typography>
+            Deployment
+          </Typography>
+        </Stack>
+        <Stack>
+          <Typography>
+            Development
+          </Typography>
+        </Stack>
+        <Stack>
+          <Typography>
+            Related Work
+          </Typography>
+        </Stack>
+      </Grid>
     </Grid>
-    {/* middle column */}
-    <Grid item md={3}>
-      <Stack>
-        <Typography>
-          Details
-        </Typography>
-        <Divider />
-        <Typography>
-          Priority
-        </Typography>
-        <Typography>
-          Severity
-        </Typography>
-        <Typography>
-          Effort
-        </Typography>
-        <Typography>
-          Remaining Work
-        </Typography>
-        <Typography>
-          Activity
-        </Typography>
-      </Stack>
-      <Stack>
-        <Typography>
-          Build
-        </Typography>
-        <Typography>
-          Found in Build
-        </Typography>
-        <Typography>
-          Integrated in Build
-        </Typography>
-      </Stack>
-    </Grid>
-    {/* right column */}
-    <Grid item md={3}>
-      <Stack>
-        <Typography>
-          Deployment
-        </Typography>
-      </Stack>
-      <Stack>
-        <Typography>
-          Development
-        </Typography>
-      </Stack>
-      <Stack>
-        <Typography>
-          Related Work
-        </Typography>
-      </Stack>
-    </Grid>
-  </Grid>
   </Grid >
 }
