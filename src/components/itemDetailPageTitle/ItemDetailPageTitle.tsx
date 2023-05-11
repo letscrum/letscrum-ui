@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import {
   PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined,
-  Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1, OpenInFull, ExpandMore
+  Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1, OpenInFull, ExpandMore, ExpandLess
 } from '@mui/icons-material'
 import { Autocomplete, Avatar, Box, Button, Chip, Divider, Grid, IconButton, InputAdornment, InputBase, MenuItem, Select, Stack, TextField, Tooltip, Typography } from '@mui/material'
 import { blue, grey, red } from '@mui/material/colors'
@@ -182,6 +182,39 @@ const ItemTitleContainer = styled(Stack)({
   }
 })
 
+const FullScreenIcon = styled(OpenInFull)({
+  marginLeft: 'auto',
+  width: '.875rem',
+  height: '.875rem',
+  color: grey[800],
+  '&:hover': {
+    color: blue[700],
+    cursor: 'pointer'
+  }
+})
+
+const ShowEditorIcon = styled(ExpandLess)({
+  marginLeft: '.125rem',
+  width: '.875rem',
+  height: '.875rem',
+  color: grey[800],
+  '&:hover': {
+    color: blue[700],
+    cursor: 'pointer'
+  }
+})
+
+const CloseEditorIcon = styled(ExpandMore)({
+  marginLeft: '.125rem',
+  width: '.875rem',
+  height: '.875rem',
+  color: grey[800],
+  '&:hover': {
+    color: blue[700],
+    cursor: 'pointer'
+  }
+})
+
 const formats = [
   'bold',
   'italic'
@@ -220,9 +253,11 @@ export const ItemDetailPageTitle: React.FC = () => {
   const handleAddBlur = (): void => setAddFocus(false)
   const [selectedTag, setSelectedTag] = useState<any>('')
   const [selectedTagsArray, setSelectedTagsArray] = useState<string[]>([])
+  const [showEditor, setShowEditor] = useState(true)
+  const handleShowEditor = (): void => setShowEditor(!showEditor)
+  const reactQuill = useRef<any>(null)
   const [editorFocus, setEditorFocus] = useState(false)
   const [editorValue, setEditorValue] = useState<any>()
-  const reactQuill = useRef<any>(null)
   const handleEditorFoucs = (): void => setEditorFocus(true)
   const handleEditorBlur = (): void => setEditorFocus(false)
   const handleEditorValue = (content: any, delta: any, source: any, editor: any): void => setEditorValue(editor.getHTML())
@@ -238,6 +273,35 @@ export const ItemDetailPageTitle: React.FC = () => {
       setSaveError(e.message)
       setSaveLoading(false)
     }
+  }
+  const Editor = (params: { name: string, placeholder: string }): JSX.Element => {
+    return <DetailItemContainer>
+      <ItemTitleContainer>
+        <ItemTitleOption direction='row'>
+          <ItemTitleText>
+            {params.name}
+          </ItemTitleText>
+          <FullScreenIcon />
+          <CloseEditorIcon onClick={handleShowEditor} />
+        </ItemTitleOption>
+        <Divider sx={{ marginBottom: '.25rem' }} />
+      </ItemTitleContainer>
+      <Grid
+        onClick={handleEditorFoucs}
+        sx={{
+          padding: '.25rem',
+          height: '3rem',
+          border: '1px solid white',
+          fontSize: '.75rem',
+          fontStyle: 'italic',
+          '&:hover': {
+            border: `1px solid ${grey[200]}`,
+            cursor: 'auto'
+          }
+        }}>
+          {params.placeholder}
+      </Grid>
+    </DetailItemContainer>
   }
   // get item info
   useEffect(() => {
@@ -642,59 +706,56 @@ export const ItemDetailPageTitle: React.FC = () => {
               <ItemTitleText>
                 Repro Steps
               </ItemTitleText>
-              <OpenInFull sx={{ marginLeft: 'auto', width: '.875rem', height: '.875rem', color: grey[800] }} />
-              <ExpandMore sx={{ marginLeft: '.125rem', width: '.875rem', height: '.875rem', color: grey[800] }} />
+              <FullScreenIcon />
+              {
+                showEditor
+                  ? <ShowEditorIcon onClick={handleShowEditor} />
+                  : <CloseEditorIcon onClick={handleShowEditor} />
+              }
             </ItemTitleOption>
             <Divider sx={{ marginBottom: '.25rem' }} />
           </ItemTitleContainer>
           {/* editor container */}
-          <div>
-            {
-              editorFocus
-                ? <div>
-                  <ReactQuill
-                    theme='snow'
-                    modules={modules}
-                    formats={formats}
-                    ref={reactQuill}
-                    value={editorValue}
-                    onChange={handleEditorValue}
-                    onBlur={handleEditorBlur}
-                  />
-                  <QuillToolbar />
-                </div>
-                : <Grid
-                  onClick={handleEditorFoucs}
-                  sx={{
-                    padding: '.25rem',
-                    height: '3rem',
-                    border: '1px solid white',
-                    fontSize: '.75rem',
-                    fontStyle: 'italic',
-                    '&:hover': {
-                      border: `1px solid ${grey[200]}`,
-                      cursor: 'auto'
-                    }
-                  }}>
-                  Click to add Repro Steps
-                </Grid>
-            }
-          </div>
+          {
+            showEditor &&
+            <div>
+              {
+                editorFocus
+                  ? <div>
+                    <ReactQuill
+                      theme='snow'
+                      modules={modules}
+                      formats={formats}
+                      ref={reactQuill}
+                      value={editorValue}
+                      onChange={handleEditorValue}
+                      onBlur={handleEditorBlur}
+                    />
+                    <QuillToolbar />
+                  </div>
+                  : <Grid
+                    onClick={handleEditorFoucs}
+                    sx={{
+                      padding: '.25rem',
+                      height: '3rem',
+                      border: '1px solid white',
+                      fontSize: '.75rem',
+                      fontStyle: 'italic',
+                      '&:hover': {
+                        border: `1px solid ${grey[200]}`,
+                        cursor: 'auto'
+                      }
+                    }}>
+                    Click to add Repro Steps
+                  </Grid>
+              }
+            </div>
+          }
         </DetailItemContainer>
-        <Stack>
-          <Typography>
-            System Info
-          </Typography>
-          <Divider />
-          <TextField />
-        </Stack>
-        <Stack>
-          <Typography>
-            Acceptance Criteria
-          </Typography>
-          <Divider />
-          <TextField />
-        </Stack>
+        {/* System Info */}
+        <Editor name='System Info' placeholder='Click to add System Info' />
+        {/* Acceptance Criteria */}
+        <Editor name={'Acceptance Criteria'} placeholder={'Click to add Acceptance Criteria'} />
         <Stack>
           <Typography>
             Discussion
