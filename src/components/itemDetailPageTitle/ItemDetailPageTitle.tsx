@@ -163,10 +163,11 @@ const StateSuggestion = styled(Box)({
 })
 
 const DetailItemContainer = styled(Stack)({
-  padding: '.875rem 1.25rem'
+  padding: '.875rem 0 .875rem 1.25rem'
 })
 
 const ItemTitleText = styled(Typography)({
+  marginRight: 'auto',
   paddingBottom: '.25rem',
   fontWeight: '700'
 })
@@ -214,6 +215,11 @@ const CloseEditorIcon = styled(ExpandMore)({
     color: blue[700],
     cursor: 'pointer'
   }
+})
+
+const DetailItemTitle = styled(Typography)({
+  fontSize: '.75rem',
+  color: grey[600]
 })
 
 const formats = [
@@ -264,6 +270,8 @@ export const ItemDetailPageTitle: React.FC = () => {
   const handleEditorFoucs = (): void => setEditorFocus(true)
   const handleEditorBlur = (): void => setEditorFocus(false)
   const handleEditorValue = (content: any, delta: any, source: any, editor: any): void => setEditorValue(editor.getHTML())
+  const [showDetails, setShowDetails] = useState(true)
+  const handleShowDetails = (): void => setShowDetails(!showDetails)
   const handleSave = async (param: { title: string }): Promise<void> => {
     setSaveLoading(true)
     try {
@@ -811,27 +819,44 @@ export const ItemDetailPageTitle: React.FC = () => {
       </Grid>
       {/* middle column */}
       <Grid item md={3} xs={12}>
-        <Stack>
-          <Typography>
-            Details
-          </Typography>
-          <Divider />
-          <Typography>
-            Priority
-          </Typography>
-          <Typography>
-            Severity
-          </Typography>
-          <Typography>
-            Effort
-          </Typography>
-          <Typography>
-            Remaining Work
-          </Typography>
-          <Typography>
-            Activity
-          </Typography>
-        </Stack>
+        {/* details */}
+        <DetailItemContainer>
+          <ItemTitleContainer>
+            <ItemTitleOption direction='row'>
+              <ItemTitleText>
+                Details
+              </ItemTitleText>
+              {
+                showDetails
+                  ? <ShowEditorIcon onClick={handleShowDetails} />
+                  : <CloseEditorIcon onClick={handleShowDetails} />
+              }
+            </ItemTitleOption>
+            <Divider sx={{ marginBottom: '.25rem' }} />
+          </ItemTitleContainer>
+          {
+            showDetails &&
+            <Stack>
+              <Stack>
+                <DetailItemTitle>
+                  Priority
+                </DetailItemTitle>
+              </Stack>
+              <Typography>
+                Severity
+              </Typography>
+              <Typography>
+                Effort
+              </Typography>
+              <Typography>
+                Remaining Work
+              </Typography>
+              <Typography>
+                Activity
+              </Typography>
+            </Stack>
+          }
+        </DetailItemContainer>
         <Stack>
           <Typography>
             Build
