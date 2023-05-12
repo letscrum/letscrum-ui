@@ -12,6 +12,7 @@ import axios from 'axios'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import './ItemDetailPageTitle.module.css'
+import { selectUserName } from '../../redux/reducers/userSlice'
 
 const TitleInput = styled(TextField)({
   marginY: '.5rem',
@@ -241,6 +242,8 @@ const modules = {
 }
 
 export const ItemDetailPageTitle: React.FC = () => {
+  const userName = useAppSelector(selectUserName)
+  const name = userName ?? ''
   const [saveLoading, setSaveLoading] = useState(false)
   const [saveError, setSaveError] = useState<any>(null)
   const [originalTitle, setOriginalTitle] = useState<string>('')
@@ -292,6 +295,7 @@ export const ItemDetailPageTitle: React.FC = () => {
           padding: '.25rem',
           height: '3rem',
           border: '1px solid white',
+          color: grey[600],
           fontSize: '.75rem',
           fontStyle: 'italic',
           '&:hover': {
@@ -299,7 +303,7 @@ export const ItemDetailPageTitle: React.FC = () => {
             cursor: 'auto'
           }
         }}>
-          {params.placeholder}
+        {params.placeholder}
       </Grid>
     </DetailItemContainer>
   }
@@ -739,6 +743,7 @@ export const ItemDetailPageTitle: React.FC = () => {
                       padding: '.25rem',
                       height: '3rem',
                       border: '1px solid white',
+                      color: grey[600],
                       fontSize: '.75rem',
                       fontStyle: 'italic',
                       '&:hover': {
@@ -756,16 +761,53 @@ export const ItemDetailPageTitle: React.FC = () => {
         <Editor name='System Info' placeholder='Click to add System Info' />
         {/* Acceptance Criteria */}
         <Editor name={'Acceptance Criteria'} placeholder={'Click to add Acceptance Criteria'} />
-        <Stack>
-          <Typography>
-            Discussion
-          </Typography>
-          <Divider />
-          <Stack direction='row'>
-            <Avatar />
-            <TextField />
-          </Stack>
-        </Stack>
+        {/* Discussion */}
+        <DetailItemContainer>
+          <ItemTitleContainer>
+            <ItemTitleOption direction='row'>
+              <ItemTitleText>
+                Discussion
+              </ItemTitleText>
+              <FullScreenIcon />
+              {
+                showEditor
+                  ? <ShowEditorIcon onClick={handleShowEditor} />
+                  : <CloseEditorIcon onClick={handleShowEditor} />
+              }
+            </ItemTitleOption>
+            <Divider sx={{ marginBottom: '.25rem' }} />
+          </ItemTitleContainer>
+          {
+            showEditor &&
+            <Stack direction='row'>
+              <Avatar sx={{
+                width: '1.5rem',
+                height: '1.5rem',
+                backgroundColor: blue[600],
+                fontSize: '.75rem'
+              }}>
+                {name?.toLocaleUpperCase().charAt(0)}
+              </Avatar>
+              <Grid
+                sx={{
+                  marginLeft: '.5rem',
+                  padding: '.25rem',
+                  height: '6rem',
+                  border: `1px solid ${grey[200]}`,
+                  borderRadius: '.315rem',
+                  color: grey[600],
+                  fontSize: '.875rem',
+                  fontStyle: 'italic',
+                  '&:hover': {
+                    border: `1px solid ${grey[200]}`,
+                    cursor: 'auto'
+                  }
+                }}>
+                Add a comment. Use # to link a work item, ! to link a pull request, or @ to mention a person
+              </Grid>
+            </Stack>
+          }
+        </DetailItemContainer>
       </Grid>
       {/* middle column */}
       <Grid item md={3} xs={12}>
