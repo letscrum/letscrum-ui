@@ -783,8 +783,8 @@ export const ItemDetailPageTitle: React.FC = () => {
               <Avatar sx={{
                 width: '1.5rem',
                 height: '1.5rem',
-                backgroundColor: blue[600],
-                fontSize: '.75rem'
+                backgroundColor: blue[800],
+                fontSize: '.875rem'
               }}>
                 {name?.toLocaleUpperCase().charAt(0)}
               </Avatar>
