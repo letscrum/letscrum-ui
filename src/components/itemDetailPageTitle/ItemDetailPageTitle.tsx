@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined,
-  Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1
+  Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1, OpenInFull, ExpandMore, ExpandLess
 } from '@mui/icons-material'
 import { Autocomplete, Avatar, Box, Button, Chip, Divider, Grid, IconButton, InputAdornment, InputBase, MenuItem, Select, Stack, TextField, Tooltip, Typography } from '@mui/material'
 import { blue, grey, red } from '@mui/material/colors'
@@ -9,6 +9,10 @@ import { useAppSelector } from '../../redux/hooks'
 import { selectProjectMembers } from '../../redux/reducers/projectSlice'
 import styled from '@emotion/styled'
 import axios from 'axios'
+import ReactQuill from 'react-quill'
+import 'react-quill/dist/quill.snow.css'
+import './ItemDetailPageTitle.module.css'
+import { selectUserName } from '../../redux/reducers/userSlice'
 
 const TitleInput = styled(TextField)({
   marginY: '.5rem',
@@ -158,7 +162,88 @@ const StateSuggestion = styled(Box)({
   color: blue[700]
 })
 
+const DetailItemContainer = styled(Stack)({
+  padding: '.875rem 1.25rem'
+})
+
+const ItemTitleText = styled(Typography)({
+  paddingBottom: '.25rem',
+  fontWeight: '700'
+})
+
+const ItemTitleOption = styled(Stack)({
+  display: 'flex',
+  alignItems: 'center'
+})
+
+const ItemTitleContainer = styled(Stack)({
+  '&:hover': {
+    color: blue[700],
+    cursor: 'pointer'
+  }
+})
+
+const FullScreenIcon = styled(OpenInFull)({
+  marginLeft: 'auto',
+  width: '.875rem',
+  height: '.875rem',
+  color: grey[800],
+  '&:hover': {
+    color: blue[700],
+    cursor: 'pointer'
+  }
+})
+
+const ShowEditorIcon = styled(ExpandLess)({
+  marginLeft: '.125rem',
+  width: '.875rem',
+  height: '.875rem',
+  color: grey[800],
+  '&:hover': {
+    color: blue[700],
+    cursor: 'pointer'
+  }
+})
+
+const CloseEditorIcon = styled(ExpandMore)({
+  marginLeft: '.125rem',
+  width: '.875rem',
+  height: '.875rem',
+  color: grey[800],
+  '&:hover': {
+    color: blue[700],
+    cursor: 'pointer'
+  }
+})
+
+const formats = [
+  'bold',
+  'italic'
+]
+
+const QuillToolbar = (): JSX.Element => (
+  <div id='toolbar' style={{ border: 'none' }}>
+    <span className="ql-formats">
+      <button className="ql-bold" />
+      <button className="ql-italic" />
+    </span>
+  </div>
+)
+
+const modules = {
+  toolbar: {
+    container: '#toolbar'
+  },
+  history: {
+    delay: 500,
+    maxStack: 100,
+    userOnly: true
+  }
+}
+
 export const ItemDetailPageTitle: React.FC = () => {
+  const userName = useAppSelector(selectUserName)
+  const name = userName ?? ''
   const [saveLoading, setSaveLoading] = useState(false)
   const [saveError, setSaveError] = useState<any>(null)
   const [originalTitle, setOriginalTitle] = useState<string>('')
@@ -171,6 +256,14 @@ export const ItemDetailPageTitle: React.FC = () => {
   const handleAddBlur = (): void => setAddFocus(false)
   const [selectedTag, setSelectedTag] = useState<any>('')
   const [selectedTagsArray, setSelectedTagsArray] = useState<string[]>([])
+  const [showEditor, setShowEditor] = useState(true)
+  const handleShowEditor = (): void => setShowEditor(!showEditor)
+  const reactQuill = useRef<any>(null)
+  const [editorFocus, setEditorFocus] = useState(false)
+  const [editorValue, setEditorValue] = useState<any>()
+  const handleEditorFoucs = (): void => setEditorFocus(true)
+  const handleEditorBlur = (): void => setEditorFocus(false)
+  const handleEditorValue = (content: any, delta: any, source: any, editor: any): void => setEditorValue(editor.getHTML())
   const handleSave = async (param: { title: string }): Promise<void> => {
     setSaveLoading(true)
     try {
@@ -184,6 +277,37 @@ export const ItemDetailPageTitle: React.FC = () => {
       setSaveLoading(false)
     }
   }
+  const Editor = (params: { name: string, placeholder: string }): JSX.Element => {
+    return <DetailItemContainer>
+      <ItemTitleContainer>
+        <ItemTitleOption direction='row'>
+          <ItemTitleText>
+            {params.name}
+          </ItemTitleText>
+          <FullScreenIcon />
+          <CloseEditorIcon onClick={handleShowEditor} />
+        </ItemTitleOption>
+        <Divider sx={{ marginBottom: '.25rem' }} />
+      </ItemTitleContainer>
+      <Grid
+        onClick={handleEditorFoucs}
+        sx={{
+          padding: '.25rem',
+          height: '3rem',
+          border: '1px solid white',
+          color: grey[600],
+          fontSize: '.75rem',
+          fontStyle: 'italic',
+          '&:hover': {
+            border: `1px solid ${grey[200]}`,
+            cursor: 'auto'
+          }
+        }}>
+        {params.placeholder}
+      </Grid>
+    </DetailItemContainer>
+  }
+  // get item info
   useEffect(() => {
     void axios.get('http://localhost:3001/letscrum/api/project/workItem')
       .then((value) => {
@@ -192,37 +316,60 @@ export const ItemDetailPageTitle: React.FC = () => {
         setOriginalTitle(value.data.title)
       })
   }, [])
+  // editor auto focus
+  useEffect(() => {
+    reactQuill.current?.focus()
+  }, [editorFocus])
+
   return <Grid>
     {/* item type */}
-    <Stack
+    <Grid
+      container
       direction='row'
       sx={{
         borderLeftStyle: 'solid',
         borderLeftWidth: '10px',
         borderLeftColor: red[900],
-        height: '1.5rem',
+        minHeight: '1.5rem',
         alignItems: 'center'
       }}>
-      <PestControl sx={{ marginLeft: '.75rem', color: red[900], fontSize: 'small' }} />
-      <Typography variant='overline'>
-        NEW BUG *
-      </Typography>
-      <ErrorOutlined sx={{ marginLeft: '.5rem', color: red[900], fontSize: 'small' }} />
-      <Typography variant='body2' sx={{ marginLeft: '.25rem', color: red[900] }}>
-        {
-          saveError !== null
-            ? <span>{saveError}</span>
-            : <span>Field &lsquo;Title&lsquo; cannot be empty.</span>
-        }
-      </Typography>
-    </Stack>
+      <Grid
+        item
+        xs={12}
+        md='auto'
+      >
+        <Stack direction='row' sx={{ alignItems: 'center' }}>
+          <PestControl sx={{ marginLeft: '.75rem', marginRight: '.5rem', color: red[900], fontSize: 'small' }} />
+          <Typography variant='overline'>
+            NEW BUG *
+          </Typography>
+        </Stack>
+      </Grid>
+      <Grid
+        item
+        xs={12}
+        md
+      >
+        <Stack direction='row' sx={{ alignItems: 'center' }}>
+          <ErrorOutlined sx={{ marginLeft: '.75rem', color: red[900], fontSize: 'small' }} />
+          <Typography variant='body2' sx={{ marginLeft: '.25rem', color: red[900] }}>
+            {
+              saveError !== null
+                ? <span>{saveError}</span>
+                : <span>Field &lsquo;Title&lsquo; cannot be empty.</span>
+            }
+          </Typography>
+        </Stack>
+      </Grid>
+    </Grid>
     {/* item title */}
-    <Stack
+    <Grid
       sx={{
+        // padding: '.25rem 0',
         borderLeftStyle: 'solid',
         borderLeftWidth: '10px',
         borderLeftColor: red[900],
-        height: '4rem',
+        height: '3rem',
         justifyContent: 'center'
       }}
     >
@@ -231,267 +378,266 @@ export const ItemDetailPageTitle: React.FC = () => {
         onChange={handleTitle}
         size='small'
         placeholder='Enter Title'
-        sx={{ marginLeft: '.75rem' }}
+        sx={{ marginLeft: '.75rem', marginRight: '.75rem' }}
         hiddenLabel
       />
-    </Stack>
+    </Grid>
     {/* item general options */}
-    <Stack
+    <Grid
+      container
       sx={{
         borderLeftStyle: 'solid',
         borderLeftWidth: '10px',
         borderLeftColor: red[900],
-        height: '3rem',
+        minHeight: '3rem',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'between'
       }}
     >
-      <Grid container>
-        {/* assign to Selector */}
-        <Grid item xs={12} md={4}>
-          <Stack>
-            <Autocomplete
-              sx={{
-                marginLeft: '.75rem',
-                '& .MuiInputBase-root': {
-                  borderRadius: '0'
+      {/* assign to Selector */}
+      <Grid item xs={12} md={4} paddingY='.25rem'>
+        <Stack>
+          <Autocomplete
+            sx={{
+              marginLeft: '.75rem',
+              '& .MuiInputBase-root': {
+                borderRadius: '0'
+              },
+              '& .MuiOutlinedInput-root': {
+                padding: '0',
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: grey[200]
                 },
-                '& .MuiOutlinedInput-root': {
-                  padding: '0',
-                  '& .MuiOutlinedInput-notchedOutline': {
-                    borderColor: grey[200]
-                  },
-                  '&:hover .MuiOutlinedInput-notchedOutline': {
-                    borderColor: blue[600]
-                  },
-                  '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
-                    borderColor: blue[600]
-                  },
-                  '& .MuiAutocomplete-input': {
-                    padding: '.125rem'
-                  }
+                '&:hover .MuiOutlinedInput-notchedOutline': {
+                  borderColor: blue[600]
+                },
+                '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+                  borderColor: blue[600]
+                },
+                '& .MuiAutocomplete-input': {
+                  padding: '.125rem'
                 }
-              }}
-              options={members}
-              getOptionLabel={(option: any) => option.userName}
-              renderOption={(props, option) => (
-                <Box component='li' {...props} key={option.userId}>
-                  <Avatar sx={{ width: '2rem', height: '2rem' }}>
-                    {(option.userName != null) ? option.userName[0].toUpperCase() : ''}
-                  </Avatar>
-                  <Stack sx={{ marginLeft: '.25rem' }}>
-                    <Typography sx={{ fontSize: '.75rem' }}>
-                      {option.userName}
-                    </Typography>
-                    <Typography sx={{ fontSize: '.75rem' }}>
-                      {option.userId}
-                    </Typography>
-                  </Stack>
-                  <ClearOutlined sx={{ marginLeft: 'auto', marginRight: '.25rem', fontSize: '1rem', color: red[700] }} />
-                  <ContactMailOutlined sx={{ fontSize: '1rem', color: grey[700] }} />
-                </Box>
-              )}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  InputProps={{
-                    ...params.InputProps,
-                    startAdornment: (
-                      <InputAdornment position='start'>
-                        <AccountCircle />
-                      </InputAdornment>
-                    )
-                  }}
-                  sx={{
-                    width: '18rem',
-                    padding: '0',
-                    '& .MuiInputBase-root': {
-                      height: '1.5rem',
-                      fontSize: '.75rem',
-                      color: grey[600]
-                    }
-                  }}
-                  placeholder='Unassigned'
-                  hiddenLabel
-                />
-              )}
-            />
-          </Stack>
-        </Grid>
-        {/* comments */}
-        <Grid item xs={12} md={4}>
-          <Stack direction='row' sx={{ display: 'flex', alignItems: 'center' }}>
-            <Tooltip title={`Go to discussion. There are ${countComments} comments available (Ctrl+Shift+D)`}>
-              <CommentButton startIcon={<ForumOutlined sx={{ fontSize: '.75rem', color: blue[700] }} />}>
-                <Typography sx={{ fontSize: '.75rem', letterSpace: '.125', color: grey[800] }}>
-                  {countComments} comments
-                </Typography>
-              </CommentButton>
-            </Tooltip>
-            {
-              selectedTagsArray.map((tag, index) => (
-                <Chip
-                  key={`${index}+${tag}`}
-                  label={tag}
-                  deleteIcon={<Clear sx={{ width: '.875rem', height: '.875rem' }} />}
-                  onDelete={() => setSelectedTagsArray(
-                    selectedTagsArray.filter((t, i) => i !== index)
-                  )}
-                  sx={{
-                    marginLeft: '.75rem',
+              }
+            }}
+            options={members}
+            getOptionLabel={(option: any) => option.userName}
+            renderOption={(props, option) => (
+              <Box component='li' {...props} key={option.userId}>
+                <Avatar sx={{ width: '2rem', height: '2rem' }}>
+                  {(option.userName != null) ? option.userName[0].toUpperCase() : ''}
+                </Avatar>
+                <Stack sx={{ marginLeft: '.25rem' }}>
+                  <Typography sx={{ fontSize: '.75rem' }}>
+                    {option.userName}
+                  </Typography>
+                  <Typography sx={{ fontSize: '.75rem' }}>
+                    {option.userId}
+                  </Typography>
+                </Stack>
+                <ClearOutlined sx={{ marginLeft: 'auto', marginRight: '.25rem', fontSize: '1rem', color: red[700] }} />
+                <ContactMailOutlined sx={{ fontSize: '1rem', color: grey[700] }} />
+              </Box>
+            )}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                InputProps={{
+                  ...params.InputProps,
+                  startAdornment: (
+                    <InputAdornment position='start'>
+                      <AccountCircle />
+                    </InputAdornment>
+                  )
+                }}
+                sx={{
+                  width: '18rem',
+                  padding: '0',
+                  '& .MuiInputBase-root': {
                     height: '1.5rem',
-                    backgroundColor: blue[50],
-                    borderRadius: '0',
                     fontSize: '.75rem',
-                    color: grey[800]
-                  }}
-                />
-              ))
-            }
-            {
-              addFocus
-                ? <AddTag
-                  freeSolo
-                  openOnFocus
-                  value={selectedTag}
-                  onChange={(e, newValue: any) => {
-                    setSelectedTag(newValue)
-                    setSelectedTagsArray([
-                      ...selectedTagsArray,
-                      newValue
-                    ])
-                    setAddFocus(false)
-                    setSelectedTag('')
-                  }}
-                  options={tags}
-                  getOptionLabel={(option: any) => option}
-                  renderOption={(props, option: any) => (
-                    <Box component='li' {...props}>
-                      <Typography variant='body2'>
-                        {option}
-                      </Typography>
-                    </Box>
-                  )}
-                  renderInput={(params) => <AddTagInput
-                    {...params}
-                    onBlur={handleAddBlur}
-                    autoFocus
-                  />}
-                />
-                : selectedTagsArray.length !== 0
-                  ? <Tooltip title='Add tag'>
-                    <IconButton
-                      onClick={() => {
-                        setAddFocus(true)
-                      }}
-                      sx={{
-                        marginLeft: '.75rem',
-                        width: '1.5rem',
-                        height: '1.5rem',
-                        backgroundColor: blue[50],
-                        borderRadius: '0',
-                        '&:hover': {
-                          backgroundColor: blue[100]
-                        },
-                        '&:active': {
-                          backgroundColor: blue[800]
-                        }
-                      }}>
-                      <Add sx={{ width: '.875rem', height: '.875rem' }} />
-                    </IconButton>
-                  </Tooltip>
-                  : <AddTagButton onClick={() => {
-                    setAddFocus(true)
-                  }}>
-                    <Typography sx={{ fontSize: '.75rem', letterSpace: '.125', color: grey[600] }}>
-                      Add tag
+                    color: grey[600]
+                  }
+                }}
+                placeholder='Unassigned'
+                hiddenLabel
+              />
+            )}
+          />
+        </Stack>
+      </Grid>
+      {/* comments */}
+      <Grid item xs={12} md={4} paddingY='.25rem'>
+        <Stack direction='row' sx={{ display: 'flex', alignItems: 'center' }}>
+          <Tooltip title={`Go to discussion. There are ${countComments} comments available (Ctrl+Shift+D)`}>
+            <CommentButton startIcon={<ForumOutlined sx={{ fontSize: '.75rem', color: blue[700] }} />}>
+              <Typography sx={{ fontSize: '.75rem', letterSpace: '.125', color: grey[800] }}>
+                {countComments} comments
+              </Typography>
+            </CommentButton>
+          </Tooltip>
+          {
+            selectedTagsArray.map((tag, index) => (
+              <Chip
+                key={`${index}+${tag}`}
+                label={tag}
+                deleteIcon={<Clear sx={{ width: '.875rem', height: '.875rem' }} />}
+                onDelete={() => setSelectedTagsArray(
+                  selectedTagsArray.filter((t, i) => i !== index)
+                )}
+                sx={{
+                  marginLeft: '.75rem',
+                  height: '1.5rem',
+                  backgroundColor: blue[50],
+                  borderRadius: '0',
+                  fontSize: '.75rem',
+                  color: grey[800]
+                }}
+              />
+            ))
+          }
+          {
+            addFocus
+              ? <AddTag
+                freeSolo
+                openOnFocus
+                value={selectedTag}
+                onChange={(e, newValue: any) => {
+                  setSelectedTag(newValue)
+                  setSelectedTagsArray([
+                    ...selectedTagsArray,
+                    newValue
+                  ])
+                  setAddFocus(false)
+                  setSelectedTag('')
+                }}
+                options={tags}
+                getOptionLabel={(option: any) => option}
+                renderOption={(props, option: any) => (
+                  <Box component='li' {...props}>
+                    <Typography variant='body2'>
+                      {option}
                     </Typography>
-                  </AddTagButton>
-            }
-          </Stack>
-        </Grid>
-        {/* edit options */}
-        <Grid item xs={12} md={4}>
-          <Stack direction='row' sx={{ alignItems: 'center', justifyContent: 'end' }}>
-            {
-              title === originalTitle
+                  </Box>
+                )}
+                renderInput={(params) => <AddTagInput
+                  {...params}
+                  onBlur={handleAddBlur}
+                  autoFocus
+                />}
+              />
+              : selectedTagsArray.length !== 0
+                ? <Tooltip title='Add tag'>
+                  <IconButton
+                    onClick={() => {
+                      setAddFocus(true)
+                    }}
+                    sx={{
+                      marginLeft: '.75rem',
+                      width: '1.5rem',
+                      height: '1.5rem',
+                      backgroundColor: blue[50],
+                      borderRadius: '0',
+                      '&:hover': {
+                        backgroundColor: blue[100]
+                      },
+                      '&:active': {
+                        backgroundColor: blue[800]
+                      }
+                    }}>
+                    <Add sx={{ width: '.875rem', height: '.875rem' }} />
+                  </IconButton>
+                </Tooltip>
+                : <AddTagButton onClick={() => {
+                  setAddFocus(true)
+                }}>
+                  <Typography sx={{ fontSize: '.75rem', letterSpace: '.125', color: grey[600] }}>
+                    Add tag
+                  </Typography>
+                </AddTagButton>
+          }
+        </Stack>
+      </Grid>
+      {/* edit options */}
+      <Grid item xs={12} md={4} paddingY='.25rem'>
+        <Stack direction='row' sx={{ alignItems: 'center', justifyContent: 'end' }}>
+          {
+            title === originalTitle
+              ? <Button
+                disabled
+                variant='contained'
+                sx={{
+                  margin: '0 .5rem 0 0',
+                  padding: '.125rem .425rem',
+                  borderRadius: '0',
+                  backgroundColor: grey[300],
+                  fontSize: '.75rem',
+                  color: grey[500]
+                }}
+                startIcon={<Save sx={{ color: grey[500] }} />}>
+                Save
+              </Button>
+              : saveLoading
                 ? <Button
-                  disabled
-                  variant='contained'
+                  variant='outlined'
+                  onClick={() => { void handleSave({ title }) }}
                   sx={{
                     margin: '0 .5rem 0 0',
                     padding: '.125rem .425rem',
+                    backgroundColor: blue[800],
                     borderRadius: '0',
-                    backgroundColor: grey[300],
                     fontSize: '.75rem',
-                    color: grey[500]
+                    color: 'white',
+                    '&:hover': {
+                      backgroundColor: blue[900]
+                    }
                   }}
-                  startIcon={<Save sx={{ color: grey[500] }} />}>
+                  startIcon={<HourglassBottom sx={{ color: 'white' }} />}>
                   Save
                 </Button>
-                : saveLoading
-                  ? <Button
-                    variant='outlined'
-                    onClick={() => { void handleSave({ title }) }}
-                    sx={{
-                      margin: '0 .5rem 0 0',
-                      padding: '.125rem .425rem',
-                      backgroundColor: blue[800],
-                      borderRadius: '0',
-                      fontSize: '.75rem',
-                      color: 'white',
-                      '&:hover': {
-                        backgroundColor: blue[900]
-                      }
-                    }}
-                    startIcon={<HourglassBottom sx={{ color: 'white' }} />}>
-                    Save
-                  </Button>
-                  : <Button
-                    variant='outlined'
-                    onClick={() => { void handleSave({ title }) }}
-                    sx={{
-                      margin: '0 .5rem 0 0',
-                      padding: '.125rem .425rem',
-                      backgroundColor: blue[800],
-                      borderRadius: '0',
-                      fontSize: '.75rem',
-                      color: 'white',
-                      '&:hover': {
-                        backgroundColor: blue[900]
-                      }
-                    }}
-                    startIcon={<Save sx={{ color: 'white' }} />}>
-                    Save
-                  </Button>
+                : <Button
+                  variant='outlined'
+                  onClick={() => { void handleSave({ title }) }}
+                  sx={{
+                    margin: '0 .5rem 0 0',
+                    padding: '.125rem .425rem',
+                    backgroundColor: blue[800],
+                    borderRadius: '0',
+                    fontSize: '.75rem',
+                    color: 'white',
+                    '&:hover': {
+                      backgroundColor: blue[900]
+                    }
+                  }}
+                  startIcon={<Save sx={{ color: 'white' }} />}>
+                  Save
+                </Button>
+          }
+          <GeneralDisableOptionButton disabled>
+            <Refresh />
+          </GeneralDisableOptionButton>
+          {/* <GeneralOptionButton>
+              <Refresh />
+            </GeneralOptionButton> */}
+          <GeneralDisableOptionButton disabled>
+            <Undo />
+          </GeneralDisableOptionButton>
+          {/* <GeneralOptionButton>
+              <Undo />
+            </GeneralOptionButton> */}
+          <IconButton sx={{
+            margin: '0 .5rem 0 0',
+            color: grey[900],
+            borderRadius: '0',
+            padding: '.125rem',
+            '&:hover': {
+              backgroundColor: blue[50]
             }
-            <GeneralDisableOptionButton disabled>
-              <Refresh />
-            </GeneralDisableOptionButton>
-            {/* <GeneralOptionButton>
-              <Refresh />
-            </GeneralOptionButton> */}
-            <GeneralDisableOptionButton disabled>
-              <Undo />
-            </GeneralDisableOptionButton>
-            {/* <GeneralOptionButton>
-              <Undo />
-            </GeneralOptionButton> */}
-            <IconButton sx={{
-              margin: '0 .5rem 0 0',
-              color: grey[900],
-              borderRadius: '0',
-              padding: '.125rem',
-              '&:hover': {
-                backgroundColor: blue[50]
-              }
-            }}>
-              <MoreHoriz />
-            </IconButton>
-          </Stack>
-        </Grid>
+          }}>
+            <MoreHoriz />
+          </IconButton>
+        </Stack>
       </Grid>
-    </Stack >
+    </Grid >
     {/* item state and location */}
     <Grid container
       direction='row'
@@ -556,42 +702,115 @@ export const ItemDetailPageTitle: React.FC = () => {
     {/* detail section */}
     <Grid container>
       {/* left column */}
-      <Grid item md={6}>
+      <Grid item md={6} xs={12}>
         {/* repro steps */}
-        <Stack>
-          <Typography>
-            Repro Steps
-          </Typography>
-          <Divider />
-          <TextField />
-        </Stack>
-        <Stack>
-          <Typography>
-            System Info
-          </Typography>
-          <Divider />
-          <TextField />
-        </Stack>
-        <Stack>
-          <Typography>
-            Acceptance Criteria
-          </Typography>
-          <Divider />
-          <TextField />
-        </Stack>
-        <Stack>
-          <Typography>
-            Discussion
-          </Typography>
-          <Divider />
-          <Stack direction='row'>
-            <Avatar />
-            <TextField />
-          </Stack>
-        </Stack>
+        <DetailItemContainer>
+          <ItemTitleContainer>
+            <ItemTitleOption direction='row'>
+              <ItemTitleText>
+                Repro Steps
+              </ItemTitleText>
+              <FullScreenIcon />
+              {
+                showEditor
+                  ? <ShowEditorIcon onClick={handleShowEditor} />
+                  : <CloseEditorIcon onClick={handleShowEditor} />
+              }
+            </ItemTitleOption>
+            <Divider sx={{ marginBottom: '.25rem' }} />
+          </ItemTitleContainer>
+          {/* editor container */}
+          {
+            showEditor &&
+            <div>
+              {
+                editorFocus
+                  ? <div>
+                    <ReactQuill
+                      theme='snow'
+                      modules={modules}
+                      formats={formats}
+                      ref={reactQuill}
+                      value={editorValue}
+                      onChange={handleEditorValue}
+                      onBlur={handleEditorBlur}
+                    />
+                    <QuillToolbar />
+                  </div>
+                  : <Grid
+                    onClick={handleEditorFoucs}
+                    sx={{
+                      padding: '.25rem',
+                      height: '3rem',
+                      border: '1px solid white',
+                      color: grey[600],
+                      fontSize: '.75rem',
+                      fontStyle: 'italic',
+                      '&:hover': {
+                        border: `1px solid ${grey[200]}`,
+                        cursor: 'auto'
+                      }
+                    }}>
+                    Click to add Repro Steps
+                  </Grid>
+              }
+            </div>
+          }
+        </DetailItemContainer>
+        {/* System Info */}
+        <Editor name='System Info' placeholder='Click to add System Info' />
+        {/* Acceptance Criteria */}
+        <Editor name={'Acceptance Criteria'} placeholder={'Click to add Acceptance Criteria'} />
+        {/* Discussion */}
+        <DetailItemContainer>
+          <ItemTitleContainer>
+            <ItemTitleOption direction='row'>
+              <ItemTitleText>
+                Discussion
+              </ItemTitleText>
+              <FullScreenIcon />
+              {
+                showEditor
+                  ? <ShowEditorIcon onClick={handleShowEditor} />
+                  : <CloseEditorIcon onClick={handleShowEditor} />
+              }
+            </ItemTitleOption>
+            <Divider sx={{ marginBottom: '.25rem' }} />
+          </ItemTitleContainer>
+          {
+            showEditor &&
+            <Stack direction='row'>
+              <Avatar sx={{
+                width: '1.5rem',
+                height: '1.5rem',
+                backgroundColor: blue[800],
+                fontSize: '.875rem'
+              }}>
+                {name?.toLocaleUpperCase().charAt(0)}
+              </Avatar>
+              <Grid
+                sx={{
+                  marginLeft: '.5rem',
+                  padding: '.25rem',
+                  height: '6rem',
+                  border: `1px solid ${grey[200]}`,
+                  borderRadius: '.315rem',
+                  color: grey[600],
+                  fontSize: '.875rem',
+                  fontStyle: 'italic',
+                  '&:hover': {
+                    border: `1px solid ${grey[200]}`,
+                    cursor: 'auto'
+                  }
+                }}>
+                Add a comment. Use # to link a work item, ! to link a pull request, or @ to mention a person
+              </Grid>
+            </Stack>
+          }
+        </DetailItemContainer>
       </Grid>
       {/* middle column */}
-      <Grid item md={3}>
+      <Grid item md={3} xs={12}>
         <Stack>
           <Typography>
             Details
@@ -626,7 +845,7 @@ export const ItemDetailPageTitle: React.FC = () => {
         </Stack>
       </Grid>
       {/* right column */}
-      <Grid item md={3}>
+      <Grid item md={3} xs={12}>
         <Stack>
           <Typography>
             Deployment
