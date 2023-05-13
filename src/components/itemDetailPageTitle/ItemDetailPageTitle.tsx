@@ -222,6 +222,28 @@ const DetailItemTitle = styled(Typography)({
   color: grey[600]
 })
 
+const DetailItemAutocomplete = styled(Autocomplete)({
+  '& .MuiOutlinedInput-root': {
+    padding: '0',
+    borderRadius: '0',
+    '& .MuiAutocomplete-input': {
+      padding: '0 .125rem'
+    }
+  }
+})
+
+const DetailAutoCompleteInput = styled(InputBase)({
+  '& input': {
+    fontSize: '.75rem',
+    color: grey[600]
+  }
+})
+
+const DetailAutocompleteItem = styled(Typography)({
+  fontSize: '.75rem',
+  color: grey[600]
+})
+
 const formats = [
   'bold',
   'italic'
@@ -246,6 +268,8 @@ const modules = {
     userOnly: true
   }
 }
+
+const priority = ['1', '2', '3', '4']
 
 export const ItemDetailPageTitle: React.FC = () => {
   const userName = useAppSelector(selectUserName)
@@ -841,6 +865,23 @@ export const ItemDetailPageTitle: React.FC = () => {
                 <DetailItemTitle>
                   Priority
                 </DetailItemTitle>
+                <DetailItemAutocomplete
+                  options={priority}
+                  renderInput={
+                    (params) =>
+                      <DetailAutoCompleteInput
+                        ref={params.InputProps.ref}
+                        inputProps={params.inputProps}
+                      />
+                  }
+                  renderOption={(props, option: any) => (
+                    <Box component="li" {...props}>
+                      <DetailAutocompleteItem>
+                        {option}
+                      </DetailAutocompleteItem>
+                    </Box>
+                  )}
+                />
               </Stack>
               <Typography>
                 Severity
