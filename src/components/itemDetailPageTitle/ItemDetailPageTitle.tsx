@@ -222,20 +222,20 @@ const DetailItemTitle = styled(Typography)({
   color: grey[600]
 })
 
-const DetailItemAutocomplete = styled(Autocomplete)({
-  '& .MuiOutlinedInput-root': {
-    padding: '0',
-    borderRadius: '0',
-    '& .MuiAutocomplete-input': {
-      padding: '0 .125rem'
-    }
-  }
-})
-
 const DetailAutoCompleteInput = styled(InputBase)({
+  display: 'inline-block',
+  width: '100%',
   '& input': {
-    fontSize: '.75rem',
-    color: grey[600]
+    padding: '.125rem 0 .125rem  .25rem',
+    fontSize: '.875rem',
+    color: grey[600],
+    border: '1px solid white',
+    '&:hover': {
+      border: '1px solid green'
+    },
+    '&:focus': {
+      border: '1px solid red'
+    }
   }
 })
 
@@ -865,7 +865,7 @@ export const ItemDetailPageTitle: React.FC = () => {
                 <DetailItemTitle>
                   Priority
                 </DetailItemTitle>
-                <DetailItemAutocomplete
+                <Autocomplete
                   options={priority}
                   renderInput={
                     (params) =>
@@ -875,7 +875,7 @@ export const ItemDetailPageTitle: React.FC = () => {
                       />
                   }
                   renderOption={(props, option: any) => (
-                    <Box component="li" {...props}>
+                    <Box component="li" {...props} >
                       <DetailAutocompleteItem>
                         {option}
                       </DetailAutocompleteItem>
