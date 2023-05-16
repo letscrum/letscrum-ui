@@ -3,7 +3,7 @@ import {
   PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined,
   Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1, OpenInFull, ExpandMore, ExpandLess
 } from '@mui/icons-material'
-import { Autocomplete, Avatar, Box, Button, Chip, Divider, Grid, IconButton, InputAdornment, InputBase, MenuItem, Select, Stack, TextField, Tooltip, Typography } from '@mui/material'
+import { Autocomplete, Avatar, Box, Button, Chip, Divider, FormControl, Grid, IconButton, InputAdornment, InputBase, MenuItem, Select, SelectChangeEvent, Stack, TextField, Tooltip, Typography } from '@mui/material'
 import { blue, grey, red } from '@mui/material/colors'
 import { useAppSelector } from '../../redux/hooks'
 import { selectProjectMembers } from '../../redux/reducers/projectSlice'
@@ -231,15 +231,38 @@ const DetailAutoCompleteInput = styled(InputBase)({
     color: grey[600],
     border: '1px solid white',
     '&:hover': {
-      border: '1px solid green'
+      border: `1px solid ${grey[200]}`
     },
     '&:focus': {
-      border: '1px solid red'
+      border: `1px solid ${blue[600]}`
     }
   }
 })
 
 const DetailAutocompleteItem = styled(Typography)({
+  fontSize: '.75rem',
+  color: grey[600]
+})
+
+const SelectSeverity = styled(InputBase)({
+  fontSize: '.875rem',
+  color: grey[600],
+  '& .MuiInputBase-input': {
+    border: '1px solid white',
+    borderRadius: '0',
+    '&:hover': {
+      border: `1px solid ${grey[200]}`
+    },
+    '&:focus': {
+      border: `1px solid ${blue[600]}`
+    }
+  },
+  '& .MuiSelect-select': {
+    padding: '0 0 0 .125rem'
+  }
+})
+
+const SeverityItem = styled(MenuItem)({
   fontSize: '.75rem',
   color: grey[600]
 })
@@ -270,6 +293,7 @@ const modules = {
 }
 
 const priority = ['1', '2', '3', '4']
+const severity = ['1 - Critical', '2 - High', '3 - Medium', '4 - Low']
 
 export const ItemDetailPageTitle: React.FC = () => {
   const userName = useAppSelector(selectUserName)
@@ -296,6 +320,8 @@ export const ItemDetailPageTitle: React.FC = () => {
   const handleEditorValue = (content: any, delta: any, source: any, editor: any): void => setEditorValue(editor.getHTML())
   const [showDetails, setShowDetails] = useState(true)
   const handleShowDetails = (): void => setShowDetails(!showDetails)
+  const [severityValue, setSeverityValue] = useState('')
+  const handleSeverityValue = (e: SelectChangeEvent): void => setSeverityValue(e.target.value)
   const handleSave = async (param: { title: string }): Promise<void> => {
     setSaveLoading(true)
     try {
@@ -438,7 +464,7 @@ export const ItemDetailPageTitle: React.FC = () => {
               '& .MuiOutlinedInput-root': {
                 padding: '0',
                 '& .MuiOutlinedInput-notchedOutline': {
-                  borderColor: grey[200]
+                  borderColor: 'white'
                 },
                 '&:hover .MuiOutlinedInput-notchedOutline': {
                   borderColor: blue[600]
@@ -883,9 +909,25 @@ export const ItemDetailPageTitle: React.FC = () => {
                   )}
                 />
               </Stack>
-              <Typography>
+              <DetailItemTitle>
                 Severity
-              </Typography>
+              </DetailItemTitle>
+              <FormControl>
+                <Select
+                  value={severityValue}
+                  onChange={handleSeverityValue}
+                  input={<SelectSeverity />}
+                >
+                  {
+                    severity.map((item, index) => (
+                      <SeverityItem key={index} value={item}>
+                        {item}
+                      </SeverityItem>
+                    )
+                    )
+                  }
+                </Select>
+              </FormControl>
               <Typography>
                 Effort
               </Typography>
