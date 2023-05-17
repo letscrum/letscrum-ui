@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import {
   PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined,
   Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1, OpenInFull, ExpandMore, ExpandLess
@@ -218,6 +218,8 @@ const CloseEditorIcon = styled(ExpandMore)({
 })
 
 const DetailItemTitle = styled(Typography)({
+  marginTop: '.25rem',
+  marginBottom: '.125rem',
   fontSize: '.75rem',
   color: grey[600]
 })
@@ -226,7 +228,7 @@ const DetailAutoCompleteInput = styled(InputBase)({
   display: 'inline-block',
   width: '100%',
   '& input': {
-    padding: '.125rem 0 .125rem  .25rem',
+    padding: '.125rem 0 .125rem .25rem',
     fontSize: '.875rem',
     color: grey[600],
     border: '1px solid white',
@@ -244,7 +246,7 @@ const DetailAutocompleteItem = styled(Typography)({
   color: grey[600]
 })
 
-const SelectSeverity = styled(InputBase)({
+const DetailSelector = styled(InputBase)({
   fontSize: '.875rem',
   color: grey[600],
   '& .MuiInputBase-input': {
@@ -262,9 +264,32 @@ const SelectSeverity = styled(InputBase)({
   }
 })
 
-const SeverityItem = styled(MenuItem)({
+const DetailSelectorItem = styled(MenuItem)({
   fontSize: '.75rem',
   color: grey[600]
+})
+
+const Input = styled(TextField)({
+  '& .MuiInputBase-input': {
+    padding: '.125rem .25rem',
+    fontSize: '.875rem',
+    color: grey[600]
+  },
+  '& .MuiInput-underline:after': {
+    borderBottomColor: blue[600]
+  },
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderRadius: '0',
+      borderColor: 'white'
+    },
+    '&:hover fieldset': {
+      borderColor: grey[200]
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: blue[600]
+    }
+  }
 })
 
 const formats = [
@@ -294,6 +319,7 @@ const modules = {
 
 const priority = ['1', '2', '3', '4']
 const severity = ['1 - Critical', '2 - High', '3 - Medium', '4 - Low']
+const activities = ['Deployment', 'Design', 'Development', 'Documentation', 'Requirements', 'Testing']
 
 export const ItemDetailPageTitle: React.FC = () => {
   const userName = useAppSelector(selectUserName)
@@ -320,8 +346,14 @@ export const ItemDetailPageTitle: React.FC = () => {
   const handleEditorValue = (content: any, delta: any, source: any, editor: any): void => setEditorValue(editor.getHTML())
   const [showDetails, setShowDetails] = useState(true)
   const handleShowDetails = (): void => setShowDetails(!showDetails)
+  const [priorityValue, setPriorityValue] = useState('')
   const [severityValue, setSeverityValue] = useState('')
+  const [effortValue, setEffortValue] = useState('')
+  const [remainingValue, setRemainingValue] = useState('')
+  const [activityValue, setActivityValue] = useState('')
   const handleSeverityValue = (e: SelectChangeEvent): void => setSeverityValue(e.target.value)
+  const handleEffortValue = (e: ChangeEvent<HTMLInputElement>): void => setEffortValue(e.currentTarget.value)
+  const handleRemainingValue = (e: ChangeEvent<HTMLInputElement>): void => setRemainingValue(e.currentTarget.value)
   const handleSave = async (param: { title: string }): Promise<void> => {
     setSaveLoading(true)
     try {
@@ -892,6 +924,8 @@ export const ItemDetailPageTitle: React.FC = () => {
                   Priority
                 </DetailItemTitle>
                 <Autocomplete
+                  inputValue={priorityValue}
+                  onInputChange={(e, newInputValue) => setPriorityValue(newInputValue)}
                   options={priority}
                   renderInput={
                     (params) =>
@@ -916,27 +950,54 @@ export const ItemDetailPageTitle: React.FC = () => {
                 <Select
                   value={severityValue}
                   onChange={handleSeverityValue}
-                  input={<SelectSeverity />}
+                  input={<DetailSelector />}
                 >
                   {
                     severity.map((item, index) => (
-                      <SeverityItem key={index} value={item}>
+                      <DetailSelectorItem key={index} value={item}>
                         {item}
-                      </SeverityItem>
+                      </DetailSelectorItem>
                     )
                     )
                   }
                 </Select>
               </FormControl>
-              <Typography>
+              <DetailItemTitle>
                 Effort
-              </Typography>
-              <Typography>
+              </DetailItemTitle>
+              <Input
+                value={effortValue}
+                onChange={handleEffortValue}
+              />
+              <DetailItemTitle>
                 Remaining Work
-              </Typography>
-              <Typography>
+              </DetailItemTitle>
+              <Input
+                value={remainingValue}
+                onChange={handleRemainingValue}
+              />
+              <DetailItemTitle>
                 Activity
-              </Typography>
+              </DetailItemTitle>
+              <Autocomplete
+                  inputValue={activityValue}
+                  onInputChange={(e, newInputValue) => setActivityValue(newInputValue)}
+                  options={activities}
+                  renderInput={
+                    (params) =>
+                      <DetailAutoCompleteInput
+                        ref={params.InputProps.ref}
+                        inputProps={params.inputProps}
+                      />
+                  }
+                  renderOption={(props, option: any) => (
+                    <Box component="li" {...props} >
+                      <DetailAutocompleteItem>
+                        {option}
+                      </DetailAutocompleteItem>
+                    </Box>
+                  )}
+                />
             </Stack>
           }
         </DetailItemContainer>
