@@ -1,18 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined,
-  Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1, OpenInFull, ExpandMore, ExpandLess
+  Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1
 } from '@mui/icons-material'
-import { Autocomplete, Avatar, Box, Button, Chip, Divider, Grid, IconButton, InputAdornment, InputBase, MenuItem, Select, Stack, TextField, Tooltip, Typography } from '@mui/material'
+import { Autocomplete, Avatar, Box, Button, Chip, Grid, IconButton, InputAdornment, InputBase, MenuItem, Select, Stack, TextField, Tooltip, Typography } from '@mui/material'
 import { blue, grey, red } from '@mui/material/colors'
 import { useAppSelector } from '../../redux/hooks'
 import { selectProjectMembers } from '../../redux/reducers/projectSlice'
 import styled from '@emotion/styled'
 import axios from 'axios'
-import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import './ItemDetailPageTitle.module.css'
-import { selectUserName } from '../../redux/reducers/userSlice'
 
 const TitleInput = styled(TextField)({
   marginY: '.5rem',
@@ -162,88 +160,7 @@ const StateSuggestion = styled(Box)({
   color: blue[700]
 })
 
-const DetailItemContainer = styled(Stack)({
-  padding: '.875rem 1.25rem'
-})
-
-const ItemTitleText = styled(Typography)({
-  paddingBottom: '.25rem',
-  fontWeight: '700'
-})
-
-const ItemTitleOption = styled(Stack)({
-  display: 'flex',
-  alignItems: 'center'
-})
-
-const ItemTitleContainer = styled(Stack)({
-  '&:hover': {
-    color: blue[700],
-    cursor: 'pointer'
-  }
-})
-
-const FullScreenIcon = styled(OpenInFull)({
-  marginLeft: 'auto',
-  width: '.875rem',
-  height: '.875rem',
-  color: grey[800],
-  '&:hover': {
-    color: blue[700],
-    cursor: 'pointer'
-  }
-})
-
-const ShowEditorIcon = styled(ExpandLess)({
-  marginLeft: '.125rem',
-  width: '.875rem',
-  height: '.875rem',
-  color: grey[800],
-  '&:hover': {
-    color: blue[700],
-    cursor: 'pointer'
-  }
-})
-
-const CloseEditorIcon = styled(ExpandMore)({
-  marginLeft: '.125rem',
-  width: '.875rem',
-  height: '.875rem',
-  color: grey[800],
-  '&:hover': {
-    color: blue[700],
-    cursor: 'pointer'
-  }
-})
-
-const formats = [
-  'bold',
-  'italic'
-]
-
-const QuillToolbar = (): JSX.Element => (
-  <div id='toolbar' style={{ border: 'none' }}>
-    <span className="ql-formats">
-      <button className="ql-bold" />
-      <button className="ql-italic" />
-    </span>
-  </div>
-)
-
-const modules = {
-  toolbar: {
-    container: '#toolbar'
-  },
-  history: {
-    delay: 500,
-    maxStack: 100,
-    userOnly: true
-  }
-}
-
 export const ItemDetailPageTitle: React.FC = () => {
-  const userName = useAppSelector(selectUserName)
-  const name = userName ?? ''
   const [saveLoading, setSaveLoading] = useState(false)
   const [saveError, setSaveError] = useState<any>(null)
   const [originalTitle, setOriginalTitle] = useState<string>('')
@@ -256,14 +173,6 @@ export const ItemDetailPageTitle: React.FC = () => {
   const handleAddBlur = (): void => setAddFocus(false)
   const [selectedTag, setSelectedTag] = useState<any>('')
   const [selectedTagsArray, setSelectedTagsArray] = useState<string[]>([])
-  const [showEditor, setShowEditor] = useState(true)
-  const handleShowEditor = (): void => setShowEditor(!showEditor)
-  const reactQuill = useRef<any>(null)
-  const [editorFocus, setEditorFocus] = useState(false)
-  const [editorValue, setEditorValue] = useState<any>()
-  const handleEditorFoucs = (): void => setEditorFocus(true)
-  const handleEditorBlur = (): void => setEditorFocus(false)
-  const handleEditorValue = (content: any, delta: any, source: any, editor: any): void => setEditorValue(editor.getHTML())
   const handleSave = async (param: { title: string }): Promise<void> => {
     setSaveLoading(true)
     try {
@@ -277,36 +186,7 @@ export const ItemDetailPageTitle: React.FC = () => {
       setSaveLoading(false)
     }
   }
-  const Editor = (params: { name: string, placeholder: string }): JSX.Element => {
-    return <DetailItemContainer>
-      <ItemTitleContainer>
-        <ItemTitleOption direction='row'>
-          <ItemTitleText>
-            {params.name}
-          </ItemTitleText>
-          <FullScreenIcon />
-          <CloseEditorIcon onClick={handleShowEditor} />
-        </ItemTitleOption>
-        <Divider sx={{ marginBottom: '.25rem' }} />
-      </ItemTitleContainer>
-      <Grid
-        onClick={handleEditorFoucs}
-        sx={{
-          padding: '.25rem',
-          height: '3rem',
-          border: '1px solid white',
-          color: grey[600],
-          fontSize: '.75rem',
-          fontStyle: 'italic',
-          '&:hover': {
-            border: `1px solid ${grey[200]}`,
-            cursor: 'auto'
-          }
-        }}>
-        {params.placeholder}
-      </Grid>
-    </DetailItemContainer>
-  }
+
   // get item info
   useEffect(() => {
     void axios.get('http://localhost:3001/letscrum/api/project/workItem')
@@ -316,10 +196,6 @@ export const ItemDetailPageTitle: React.FC = () => {
         setOriginalTitle(value.data.title)
       })
   }, [])
-  // editor auto focus
-  useEffect(() => {
-    reactQuill.current?.focus()
-  }, [editorFocus])
 
   return <Grid>
     {/* item type */}
@@ -406,7 +282,7 @@ export const ItemDetailPageTitle: React.FC = () => {
               '& .MuiOutlinedInput-root': {
                 padding: '0',
                 '& .MuiOutlinedInput-notchedOutline': {
-                  borderColor: grey[200]
+                  borderColor: 'white'
                 },
                 '&:hover .MuiOutlinedInput-notchedOutline': {
                   borderColor: blue[600]
@@ -698,170 +574,6 @@ export const ItemDetailPageTitle: React.FC = () => {
         </SecondRow>
       </Grid>
       <Grid item md={3} />
-    </Grid>
-    {/* detail section */}
-    <Grid container>
-      {/* left column */}
-      <Grid item md={6} xs={12}>
-        {/* repro steps */}
-        <DetailItemContainer>
-          <ItemTitleContainer>
-            <ItemTitleOption direction='row'>
-              <ItemTitleText>
-                Repro Steps
-              </ItemTitleText>
-              <FullScreenIcon />
-              {
-                showEditor
-                  ? <ShowEditorIcon onClick={handleShowEditor} />
-                  : <CloseEditorIcon onClick={handleShowEditor} />
-              }
-            </ItemTitleOption>
-            <Divider sx={{ marginBottom: '.25rem' }} />
-          </ItemTitleContainer>
-          {/* editor container */}
-          {
-            showEditor &&
-            <div>
-              {
-                editorFocus
-                  ? <div>
-                    <ReactQuill
-                      theme='snow'
-                      modules={modules}
-                      formats={formats}
-                      ref={reactQuill}
-                      value={editorValue}
-                      onChange={handleEditorValue}
-                      onBlur={handleEditorBlur}
-                    />
-                    <QuillToolbar />
-                  </div>
-                  : <Grid
-                    onClick={handleEditorFoucs}
-                    sx={{
-                      padding: '.25rem',
-                      height: '3rem',
-                      border: '1px solid white',
-                      color: grey[600],
-                      fontSize: '.75rem',
-                      fontStyle: 'italic',
-                      '&:hover': {
-                        border: `1px solid ${grey[200]}`,
-                        cursor: 'auto'
-                      }
-                    }}>
-                    Click to add Repro Steps
-                  </Grid>
-              }
-            </div>
-          }
-        </DetailItemContainer>
-        {/* System Info */}
-        <Editor name='System Info' placeholder='Click to add System Info' />
-        {/* Acceptance Criteria */}
-        <Editor name={'Acceptance Criteria'} placeholder={'Click to add Acceptance Criteria'} />
-        {/* Discussion */}
-        <DetailItemContainer>
-          <ItemTitleContainer>
-            <ItemTitleOption direction='row'>
-              <ItemTitleText>
-                Discussion
-              </ItemTitleText>
-              <FullScreenIcon />
-              {
-                showEditor
-                  ? <ShowEditorIcon onClick={handleShowEditor} />
-                  : <CloseEditorIcon onClick={handleShowEditor} />
-              }
-            </ItemTitleOption>
-            <Divider sx={{ marginBottom: '.25rem' }} />
-          </ItemTitleContainer>
-          {
-            showEditor &&
-            <Stack direction='row'>
-              <Avatar sx={{
-                width: '1.5rem',
-                height: '1.5rem',
-                backgroundColor: blue[800],
-                fontSize: '.875rem'
-              }}>
-                {name?.toLocaleUpperCase().charAt(0)}
-              </Avatar>
-              <Grid
-                sx={{
-                  marginLeft: '.5rem',
-                  padding: '.25rem',
-                  height: '6rem',
-                  border: `1px solid ${grey[200]}`,
-                  borderRadius: '.315rem',
-                  color: grey[600],
-                  fontSize: '.875rem',
-                  fontStyle: 'italic',
-                  '&:hover': {
-                    border: `1px solid ${grey[200]}`,
-                    cursor: 'auto'
-                  }
-                }}>
-                Add a comment. Use # to link a work item, ! to link a pull request, or @ to mention a person
-              </Grid>
-            </Stack>
-          }
-        </DetailItemContainer>
-      </Grid>
-      {/* middle column */}
-      <Grid item md={3} xs={12}>
-        <Stack>
-          <Typography>
-            Details
-          </Typography>
-          <Divider />
-          <Typography>
-            Priority
-          </Typography>
-          <Typography>
-            Severity
-          </Typography>
-          <Typography>
-            Effort
-          </Typography>
-          <Typography>
-            Remaining Work
-          </Typography>
-          <Typography>
-            Activity
-          </Typography>
-        </Stack>
-        <Stack>
-          <Typography>
-            Build
-          </Typography>
-          <Typography>
-            Found in Build
-          </Typography>
-          <Typography>
-            Integrated in Build
-          </Typography>
-        </Stack>
-      </Grid>
-      {/* right column */}
-      <Grid item md={3} xs={12}>
-        <Stack>
-          <Typography>
-            Deployment
-          </Typography>
-        </Stack>
-        <Stack>
-          <Typography>
-            Development
-          </Typography>
-        </Stack>
-        <Stack>
-          <Typography>
-            Related Work
-          </Typography>
-        </Stack>
-      </Grid>
     </Grid>
   </Grid >
 }
