@@ -6,7 +6,6 @@ import { useAppSelector } from '../../redux/hooks'
 import styled from '@emotion/styled'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-import './ItemDetailPageTitle.module.css'
 import { selectUserName } from '../../redux/reducers/userSlice'
 
 const DetailItemContainer = styled(Stack)({
@@ -189,6 +188,12 @@ export const ItemDetailPageDetail: React.FC = () => {
   const handleSeverityValue = (e: SelectChangeEvent): void => setSeverityValue(e.target.value)
   const handleEffortValue = (e: ChangeEvent<HTMLInputElement>): void => setEffortValue(e.currentTarget.value)
   const handleRemainingValue = (e: ChangeEvent<HTMLInputElement>): void => setRemainingValue(e.currentTarget.value)
+  const [showBuild, setShowBuild] = useState(true)
+  const handleShowBuild = (): void => setShowBuild(!showBuild)
+  const [foundValue, setFoundValue] = useState('')
+  const handleFoundValue = (e: SelectChangeEvent): void => setFoundValue(e.target.value)
+  const [intergratedValue, setIntergratedValue] = useState('')
+  const handleIntergratedValue = (e: SelectChangeEvent): void => setIntergratedValue(e.target.value)
   const Editor = (params: { name: string, placeholder: string }): JSX.Element => {
     return <DetailItemContainer>
       <ItemTitleContainer>
@@ -438,17 +443,45 @@ export const ItemDetailPageDetail: React.FC = () => {
             </Stack>
           }
         </DetailItemContainer>
-        <Stack>
-          <Typography>
-            Build
-          </Typography>
-          <Typography>
+        <DetailItemContainer>
+          <ItemTitleContainer>
+            <ItemTitleOption direction='row'>
+              <ItemTitleText>
+                Build
+              </ItemTitleText>
+              {
+                showDetails
+                  ? <ShowEditorIcon onClick={handleShowBuild} />
+                  : <CloseEditorIcon onClick={handleShowBuild} />
+              }
+            </ItemTitleOption>
+            <Divider sx={{ marginBottom: '.25rem' }} />
+          </ItemTitleContainer>
+          <DetailItemTitle>
             Found in Build
-          </Typography>
-          <Typography>
+          </DetailItemTitle>
+          <Select
+            value={foundValue}
+            onChange={handleFoundValue}
+            input={<DetailSelector />}
+          >
+            <DetailSelectorItem value='none'>
+              None
+            </DetailSelectorItem>
+          </Select>
+          <DetailItemTitle>
             Integrated in Build
-          </Typography>
-        </Stack>
+          </DetailItemTitle>
+          <Select
+            value={intergratedValue}
+            onChange={handleIntergratedValue}
+            input={<DetailSelector />}
+          >
+            <DetailSelectorItem value='none'>
+              None
+            </DetailSelectorItem>
+          </Select>
+        </DetailItemContainer>
       </Grid>
       {/* right column */}
       <Grid item md={3} xs={12}>

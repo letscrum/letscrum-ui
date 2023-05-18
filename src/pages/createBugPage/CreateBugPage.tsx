@@ -1,5 +1,5 @@
 import React from 'react'
-import { ItemDetailPageHeader, ItemDetailPageTitle } from '../../components'
+import { ItemDetailPageDetail, ItemDetailPageHeader, ItemDetailPageTitle } from '../../components'
 import { Box } from '@mui/material'
 
 export const CreateBugPage: React.FunctionComponent = () => {
@@ -7,6 +7,7 @@ export const CreateBugPage: React.FunctionComponent = () => {
     <Box width='100%'>
       <ItemDetailPageHeader />
       <ItemDetailPageTitle />
+      <ItemDetailPageDetail />
     </Box>
   )
 }
