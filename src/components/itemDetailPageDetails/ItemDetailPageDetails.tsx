@@ -194,6 +194,8 @@ export const ItemDetailPageDetail: React.FC = () => {
   const handleFoundValue = (e: SelectChangeEvent): void => setFoundValue(e.target.value)
   const [intergratedValue, setIntergratedValue] = useState('')
   const handleIntergratedValue = (e: SelectChangeEvent): void => setIntergratedValue(e.target.value)
+  const [showDeployment, setShowDeployment] = useState(true)
+  const handleShowDeployment = (): void => setShowDeployment(!showDeployment)
   const Editor = (params: { name: string, placeholder: string }): JSX.Element => {
     return <DetailItemContainer>
       <ItemTitleContainer>
@@ -232,7 +234,7 @@ export const ItemDetailPageDetail: React.FC = () => {
 
   return <Grid>
     {/* detail section */}
-    <Grid container>
+    <Grid container paddingRight='.5rem'>
       {/* left column */}
       <Grid item md={6} xs={12}>
         {/* repro steps */}
@@ -485,11 +487,37 @@ export const ItemDetailPageDetail: React.FC = () => {
       </Grid>
       {/* right column */}
       <Grid item md={3} xs={12}>
-        <Stack>
-          <Typography>
-            Deployment
-          </Typography>
-        </Stack>
+        {/* deployment */}
+        <DetailItemContainer>
+          <ItemTitleContainer direction='row'>
+            <ItemTitleText>
+              Deployment
+            </ItemTitleText>
+            {
+              showDeployment
+                ? <ShowEditorIcon onClick={handleShowDeployment} />
+                : <CloseEditorIcon onClick={handleShowDeployment} />
+            }
+          </ItemTitleContainer>
+          <Divider sx={{ marginBottom: '.25rem' }} />
+          {
+            showDeployment &&
+            <Stack direction='row' sx={{ display: 'flex', padding: '.5rem', backgroundColor: grey[100], alignItems: 'center' }}>
+              <img src='/Nav-Launch.3tiJhd.png' alt='deployment' width='30' height='30' />
+              <Typography sx={{ marginLeft: '.5rem', fontSize: '.75rem', color: grey[700] }}>
+                To track releases associated with this work item, go to
+                <a href='https://google.com' style={{ color: blue[900], textDecoration: 'none' }}>
+                  Releases
+                </a>
+                and turn on deployment status reporting for Boards
+                in your pipelines Options menu.
+                <a href='https://google.com' style={{ color: blue[900], textDecoration: 'none' }}>
+                  Learn more about deployment status reporting
+                </a>
+              </Typography>
+            </Stack>
+          }
+        </DetailItemContainer>
         <Stack>
           <Typography>
             Development
