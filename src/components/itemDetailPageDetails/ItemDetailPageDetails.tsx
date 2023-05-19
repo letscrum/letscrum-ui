@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
-import { OpenInFull, ExpandMore, ExpandLess } from '@mui/icons-material'
-import { Autocomplete, Avatar, Box, Divider, FormControl, Grid, InputBase, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material'
-import { blue, grey } from '@mui/material/colors'
+import { OpenInFull, ExpandMore, ExpandLess, Add, LocationOn } from '@mui/icons-material'
+import { Autocomplete, Avatar, Box, Divider, FormControl, Grid, Button, InputBase, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material'
+import { blue, grey, green, orange } from '@mui/material/colors'
 import { useAppSelector } from '../../redux/hooks'
 import styled from '@emotion/styled'
 import ReactQuill from 'react-quill'
@@ -138,6 +138,49 @@ const Input = styled(TextField)({
   }
 })
 
+const AddLinkButton = styled(Button)({
+  width: '5rem',
+  borderRadius: '0',
+  padding: '.125rem 0',
+  '&:hover': {
+    backgroundColor: blue[50]
+  },
+  '& .MuiButton-startIcon': {
+    margin: '0'
+  }
+})
+
+const AddLinkInput = styled(InputBase)({
+  '& .MuiInputBase-input': {
+    borderRadius: '0',
+    border: `1px solid ${grey[500]}`
+  }
+})
+
+const AddLinkDialog = styled(Dialog)({
+  '& .MuiPaper-root': {
+    padding: '0 1rem 1rem 0',
+    width: '50rem',
+    height: '80vh',
+    borderRadius: '0'
+  }
+})
+
+const CancelButton = styled(Button)({
+  padding: '.315rem 1.25rem',
+  borderRadius: '0',
+  fontWeight: '600',
+  color: grey[900],
+  backgroundColor: grey[100],
+  '&:hover': {
+    backgroundColor: grey[200]
+  },
+  '&:active': {
+    color: 'white',
+    backgroundColor: blue[900]
+  }
+})
+
 const formats = [
   'bold',
   'italic'
@@ -166,9 +209,23 @@ const modules = {
 const priority = ['1', '2', '3', '4']
 const severity = ['1 - Critical', '2 - High', '3 - Medium', '4 - Low']
 const activities = ['Deployment', 'Design', 'Development', 'Documentation', 'Requirements', 'Testing']
+const developmentLink = [
+  {
+    groupName: 'Build',
+    links: ['Build', 'Found in build', 'Integrated in build']
+  },
+  {
+    groupName: 'Code',
+    links: ['Branch', 'Changeset', 'Commit', 'Pull Request', 'Versioned Item']
+  },
+  {
+    groupName: 'GitHub',
+    links: ['GitHub Commit', 'GitHub Pull Request']
+  }
+]
 
 export const ItemDetailPageDetail: React.FC = () => {
-  const userName = useAppSelector(selectUserName)
+  const userName: any = useAppSelector(selectUserName)
   const name = userName ?? ''
   const [showEditor, setShowEditor] = useState(true)
   const handleShowEditor = (): void => setShowEditor(!showEditor)
@@ -196,6 +253,11 @@ export const ItemDetailPageDetail: React.FC = () => {
   const handleIntergratedValue = (e: SelectChangeEvent): void => setIntergratedValue(e.target.value)
   const [showDeployment, setShowDeployment] = useState(true)
   const handleShowDeployment = (): void => setShowDeployment(!showDeployment)
+  const [showDevelopment, setShowDevelopment] = useState(true)
+  const handleShowDevelopment = (): void => setShowDevelopment(!showDevelopment)
+  const [openAddDevelopmenet, setOpenAddDevelopment] = useState(false)
+  const handleAddDevelopment = (): void => setOpenAddDevelopment(true)
+  const handleCloseAddDevelopmenet = (): void => setOpenAddDevelopment(false)
   const Editor = (params: { name: string, placeholder: string }): JSX.Element => {
     return <DetailItemContainer>
       <ItemTitleContainer>
@@ -518,11 +580,89 @@ export const ItemDetailPageDetail: React.FC = () => {
             </Stack>
           }
         </DetailItemContainer>
-        <Stack>
-          <Typography>
-            Development
-          </Typography>
-        </Stack>
+        {/* development */}
+        <DetailItemContainer>
+          <ItemTitleContainer direction='row'>
+            <ItemTitleText>
+              Development
+            </ItemTitleText>
+            {
+              showDevelopment
+                ? <ShowEditorIcon onClick={handleShowDevelopment} />
+                : <CloseEditorIcon onClick={handleShowDevelopment} />
+            }
+          </ItemTitleContainer>
+          <Divider sx={{ marginBottom: '.25rem' }} />
+          {
+            showDevelopment &&
+            <>
+              <AddLinkButton
+                startIcon={<Add sx={{ marginRight: '0', color: green[700] }} />}
+                onClick={handleAddDevelopment}
+              >
+                <Typography sx={{ color: grey[800], fontSize: '.75rem' }}>
+                  add link
+                </Typography>
+              </AddLinkButton>
+              <AddLinkDialog
+                open={openAddDevelopmenet}
+                onClose={handleCloseAddDevelopmenet}
+                >
+                <DialogTitle fontWeight='light'>
+                  Add link
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText sx={{ fontSize: '.875rem', fontWeight: '400', color: grey[900] }}>
+                    You are adding a link from:
+                  </DialogContentText>
+                  <LocationOn sx={{ marginTop: '.5rem', width: '1.25rem', height: '1.25rem', color: blue[900] }} />
+                  <DialogContentText sx={{ marginY: '.5rem', fontSize: '.875rem', fontWeight: 'light' }}>
+                    Link type
+                  </DialogContentText>
+                  <Select
+                    fullWidth
+                    input={<AddLinkInput />}
+                  >
+                    {
+                      developmentLink.map((item, index) =>
+                        <optgroup key={index} label={item.groupName}>
+                          {
+                            item.links.map((item, index) =>
+                              <option key={index}>
+                                {item}
+                              </option>
+                            )
+                          }
+                        </optgroup>
+                      )
+                    }
+                  </Select>
+                  <Stack style={{ marginTop: '.5rem', padding: '.5rem', backgroundColor: orange[50] }}>
+                    <DialogContentText
+                      sx={{ color: grey[700], fontSize: '.75rem' }}
+                    >
+                      No Git repositories were found in this project collection.
+                    </DialogContentText>
+                  </Stack>
+                </DialogContent>
+                <DialogActions>
+                  <Button
+                    disabled
+                    sx={{ color: grey[300] }}
+                    onClick={handleCloseAddDevelopmenet}
+                    >
+                      OK
+                    </Button>
+                  <CancelButton
+                    onClick={handleCloseAddDevelopmenet}
+                    >
+                      Cancel
+                    </CancelButton>
+                </DialogActions>
+              </AddLinkDialog>
+            </>
+          }
+        </DetailItemContainer>
         <Stack>
           <Typography>
             Related Work
