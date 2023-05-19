@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { OpenInFull, ExpandMore, ExpandLess, Add } from '@mui/icons-material'
-import { Autocomplete, Avatar, Box, Divider, FormControl, Grid, Button, InputBase, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material'
+import { Autocomplete, Avatar, Box, Divider, FormControl, Grid, Button, InputBase, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material'
 import { blue, grey, green } from '@mui/material/colors'
 import { useAppSelector } from '../../redux/hooks'
 import styled from '@emotion/styled'
@@ -210,6 +210,9 @@ export const ItemDetailPageDetail: React.FC = () => {
   const handleShowDeployment = (): void => setShowDeployment(!showDeployment)
   const [showDevelopment, setShowDevelopment] = useState(true)
   const handleShowDevelopment = (): void => setShowDevelopment(!showDevelopment)
+  const [openAddDevelopmenet, setOpenAddDevelopment] = useState(false)
+  const handleAddDevelopment = (): void => setOpenAddDevelopment(true)
+  const handleCloseAddDevelopmenet = (): void => setOpenAddDevelopment(false)
   const Editor = (params: { name: string, placeholder: string }): JSX.Element => {
     return <DetailItemContainer>
       <ItemTitleContainer>
@@ -547,13 +550,37 @@ export const ItemDetailPageDetail: React.FC = () => {
           <Divider sx={{ marginBottom: '.25rem' }} />
           {
             showDevelopment &&
-            <AddLinkButton
-              startIcon={<Add sx={{ marginRight: '0', color: green[700] }} />}
-            >
-              <Typography sx={{ color: grey[800], fontSize: '.75rem' }}>
-                add link
-              </Typography>
-            </AddLinkButton>
+            <>
+              <AddLinkButton
+                startIcon={<Add sx={{ marginRight: '0', color: green[700] }} />}
+                onClick={handleAddDevelopment}
+              >
+                <Typography sx={{ color: grey[800], fontSize: '.75rem' }}>
+                  add link
+                </Typography>
+              </AddLinkButton>
+              <Dialog open={openAddDevelopmenet} onClose={handleCloseAddDevelopmenet}>
+                <DialogTitle>Subscribe</DialogTitle>
+                <DialogContent>
+                  <DialogContentText>
+                    To subscribe to this website, please enter your email address here. We
+                    will send updates occasionally.
+                  </DialogContentText>
+                  <TextField
+                    autoFocus
+                    margin='dense'
+                    id='name'
+                    type="email"
+                    fullWidth
+                    variant="standard"
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleCloseAddDevelopmenet}>Cancel</Button>
+                  <Button onClick={handleCloseAddDevelopmenet}>Subscribe</Button>
+                </DialogActions>
+              </Dialog>
+            </>
           }
         </DetailItemContainer>
         <Stack>
