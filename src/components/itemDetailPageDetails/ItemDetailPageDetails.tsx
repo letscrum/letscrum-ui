@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
-import { OpenInFull, ExpandMore, ExpandLess } from '@mui/icons-material'
-import { Autocomplete, Avatar, Box, Divider, FormControl, Grid, InputBase, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material'
-import { blue, grey } from '@mui/material/colors'
+import { OpenInFull, ExpandMore, ExpandLess, Add } from '@mui/icons-material'
+import { Autocomplete, Avatar, Box, Divider, FormControl, Grid, Button, InputBase, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material'
+import { blue, grey, green } from '@mui/material/colors'
 import { useAppSelector } from '../../redux/hooks'
 import styled from '@emotion/styled'
 import ReactQuill from 'react-quill'
@@ -138,6 +138,18 @@ const Input = styled(TextField)({
   }
 })
 
+const AddLinkButton = styled(Button)({
+  width: '5rem',
+  borderRadius: '0',
+  padding: '.125rem 0',
+  '&:hover': {
+    backgroundColor: blue[50]
+  },
+  '& .MuiButton-startIcon': {
+    margin: '0'
+  }
+})
+
 const formats = [
   'bold',
   'italic'
@@ -196,6 +208,8 @@ export const ItemDetailPageDetail: React.FC = () => {
   const handleIntergratedValue = (e: SelectChangeEvent): void => setIntergratedValue(e.target.value)
   const [showDeployment, setShowDeployment] = useState(true)
   const handleShowDeployment = (): void => setShowDeployment(!showDeployment)
+  const [showDevelopment, setShowDevelopment] = useState(true)
+  const handleShowDevelopment = (): void => setShowDevelopment(!showDevelopment)
   const Editor = (params: { name: string, placeholder: string }): JSX.Element => {
     return <DetailItemContainer>
       <ItemTitleContainer>
@@ -518,11 +532,30 @@ export const ItemDetailPageDetail: React.FC = () => {
             </Stack>
           }
         </DetailItemContainer>
-        <Stack>
-          <Typography>
-            Development
-          </Typography>
-        </Stack>
+        {/* development */}
+        <DetailItemContainer>
+          <ItemTitleContainer direction='row'>
+            <ItemTitleText>
+              Development
+            </ItemTitleText>
+            {
+              showDevelopment
+                ? <ShowEditorIcon onClick={handleShowDevelopment} />
+                : <CloseEditorIcon onClick={handleShowDevelopment} />
+            }
+          </ItemTitleContainer>
+          <Divider sx={{ marginBottom: '.25rem' }} />
+          {
+            showDevelopment &&
+            <AddLinkButton
+              startIcon={<Add sx={{ marginRight: '0', color: green[700] }} />}
+            >
+              <Typography sx={{ color: grey[800], fontSize: '.75rem' }}>
+                add link
+              </Typography>
+            </AddLinkButton>
+          }
+        </DetailItemContainer>
         <Stack>
           <Typography>
             Related Work
