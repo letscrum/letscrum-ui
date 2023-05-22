@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
-import { OpenInFull, ExpandMore, ExpandLess, Add, LocationOn } from '@mui/icons-material'
+import { OpenInFull, ExpandMore, ExpandLess, Add, LocationOn, KeyboardArrowDown } from '@mui/icons-material'
 import { Autocomplete, Avatar, Box, Divider, FormControl, Grid, Button, InputBase, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material'
 import { blue, grey, green, orange } from '@mui/material/colors'
 import { useAppSelector } from '../../redux/hooks'
@@ -139,7 +139,6 @@ const Input = styled(TextField)({
 })
 
 const AddLinkButton = styled(Button)({
-  width: '5rem',
   borderRadius: '0',
   padding: '.125rem 0',
   '&:hover': {
@@ -147,6 +146,10 @@ const AddLinkButton = styled(Button)({
   },
   '& .MuiButton-startIcon': {
     margin: '0'
+  },
+  '& .MuiButton-endIcon': {
+    marginLeft: '.25rem',
+    paddingRight: '.25rem'
   }
 })
 
@@ -160,7 +163,6 @@ const AddLinkInput = styled(InputBase)({
 const AddLinkDialog = styled(Dialog)({
   '& .MuiPaper-root': {
     padding: '0 1rem 1rem 0',
-    width: '50rem',
     height: '80vh',
     borderRadius: '0'
   }
@@ -258,6 +260,8 @@ export const ItemDetailPageDetail: React.FC = () => {
   const [openAddDevelopmenet, setOpenAddDevelopment] = useState(false)
   const handleAddDevelopment = (): void => setOpenAddDevelopment(true)
   const handleCloseAddDevelopmenet = (): void => setOpenAddDevelopment(false)
+  const [showRelated, setShowRelated] = useState(true)
+  const handleShowRelated = (): void => setShowRelated(!showRelated)
   const Editor = (params: { name: string, placeholder: string }): JSX.Element => {
     return <DetailItemContainer>
       <ItemTitleContainer>
@@ -298,7 +302,7 @@ export const ItemDetailPageDetail: React.FC = () => {
     {/* detail section */}
     <Grid container paddingRight='.5rem'>
       {/* left column */}
-      <Grid item md={6} xs={12}>
+      <Grid item lg={6} xs={12}>
         {/* repro steps */}
         <DetailItemContainer>
           <ItemTitleContainer>
@@ -406,7 +410,7 @@ export const ItemDetailPageDetail: React.FC = () => {
         </DetailItemContainer>
       </Grid>
       {/* middle column */}
-      <Grid item md={3} xs={12}>
+      <Grid item lg={3} xs={12}>
         {/* details */}
         <DetailItemContainer>
           <ItemTitleContainer>
@@ -548,7 +552,7 @@ export const ItemDetailPageDetail: React.FC = () => {
         </DetailItemContainer>
       </Grid>
       {/* right column */}
-      <Grid item md={3} xs={12}>
+      <Grid item lg={3} xs={12}>
         {/* deployment */}
         <DetailItemContainer>
           <ItemTitleContainer direction='row'>
@@ -597,6 +601,7 @@ export const ItemDetailPageDetail: React.FC = () => {
             showDevelopment &&
             <>
               <AddLinkButton
+                sx={{ width: '5.125rem' }}
                 startIcon={<Add sx={{ marginRight: '0', color: green[700] }} />}
                 onClick={handleAddDevelopment}
               >
@@ -607,7 +612,7 @@ export const ItemDetailPageDetail: React.FC = () => {
               <AddLinkDialog
                 open={openAddDevelopmenet}
                 onClose={handleCloseAddDevelopmenet}
-                >
+              >
                 <DialogTitle fontWeight='light'>
                   Add link
                 </DialogTitle>
@@ -650,24 +655,47 @@ export const ItemDetailPageDetail: React.FC = () => {
                     disabled
                     sx={{ color: grey[300] }}
                     onClick={handleCloseAddDevelopmenet}
-                    >
-                      OK
-                    </Button>
+                  >
+                    OK
+                  </Button>
                   <CancelButton
                     onClick={handleCloseAddDevelopmenet}
-                    >
-                      Cancel
-                    </CancelButton>
+                  >
+                    Cancel
+                  </CancelButton>
                 </DialogActions>
               </AddLinkDialog>
             </>
           }
         </DetailItemContainer>
-        <Stack>
-          <Typography>
-            Related Work
-          </Typography>
-        </Stack>
+        {/* related work */}
+        <DetailItemContainer>
+          <ItemTitleContainer direction='row'>
+            <ItemTitleText>
+              Related Work
+            </ItemTitleText>
+            {
+              showRelated
+                ? <ShowEditorIcon onClick={handleShowRelated} />
+                : <CloseEditorIcon onClick={handleShowRelated} />
+            }
+          </ItemTitleContainer>
+          <Divider sx={{ marginBottom: '.25rem' }} />
+          <AddLinkButton
+            sx={{ width: '5.615rem' }}
+            startIcon={<Add sx={{ marginRight: '0', color: green[700] }} />}
+            endIcon={<KeyboardArrowDown sx={{ width: '.75rem', height: '.75rem', color: grey[700] }} />}
+          >
+            <Typography sx={{ color: grey[800], fontSize: '.75rem' }}>
+              add link
+            </Typography>
+          </AddLinkButton>
+          <Stack sx={{ marginTop: '.125rem', padding: '.615rem', background: grey[100] }}>
+            <Typography sx={{ fontSize: '.75rem', color: grey[800] }}>
+              <a style={{ color: blue[800], textDecoration: 'none', cursor: 'pointer' }}>Add an existing work item</a> as a parent
+            </Typography>
+          </Stack>
+        </DetailItemContainer>
       </Grid>
     </Grid>
   </Grid >
