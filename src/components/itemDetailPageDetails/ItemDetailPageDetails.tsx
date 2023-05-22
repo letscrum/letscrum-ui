@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
-import { OpenInFull, ExpandMore, ExpandLess, Add, LocationOn } from '@mui/icons-material'
-import { Autocomplete, Avatar, Box, Divider, FormControl, Grid, Button, InputBase, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material'
+import { OpenInFull, ExpandMore, ExpandLess, Add, LocationOn, KeyboardArrowDown, InsertLink, TaskOutlined } from '@mui/icons-material'
+import { Autocomplete, Avatar, Box, Divider, FormControl, Grid, Button, InputBase, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Menu, Link } from '@mui/material'
 import { blue, grey, green, orange } from '@mui/material/colors'
 import { useAppSelector } from '../../redux/hooks'
 import styled from '@emotion/styled'
@@ -139,7 +139,6 @@ const Input = styled(TextField)({
 })
 
 const AddLinkButton = styled(Button)({
-  width: '5rem',
   borderRadius: '0',
   padding: '.125rem 0',
   '&:hover': {
@@ -147,6 +146,10 @@ const AddLinkButton = styled(Button)({
   },
   '& .MuiButton-startIcon': {
     margin: '0'
+  },
+  '& .MuiButton-endIcon': {
+    marginLeft: '.25rem',
+    paddingRight: '.25rem'
   }
 })
 
@@ -160,7 +163,6 @@ const AddLinkInput = styled(InputBase)({
 const AddLinkDialog = styled(Dialog)({
   '& .MuiPaper-root': {
     padding: '0 1rem 1rem 0',
-    width: '50rem',
     height: '80vh',
     borderRadius: '0'
   }
@@ -258,6 +260,15 @@ export const ItemDetailPageDetail: React.FC = () => {
   const [openAddDevelopmenet, setOpenAddDevelopment] = useState(false)
   const handleAddDevelopment = (): void => setOpenAddDevelopment(true)
   const handleCloseAddDevelopmenet = (): void => setOpenAddDevelopment(false)
+  const [showRelated, setShowRelated] = useState(true)
+  const handleShowRelated = (): void => setShowRelated(!showRelated)
+  const [anchorElRelatedLink, setAnchorElRelatedLink] = React.useState<null | HTMLElement>(null)
+  const handleShowRelatedLink = (event: React.MouseEvent<HTMLButtonElement>): void => setAnchorElRelatedLink(event.currentTarget)
+  const openRelatedLink = Boolean(anchorElRelatedLink)
+  const handleCloseRelatedLink = (): void => setAnchorElRelatedLink(null)
+  const [addRelatedDialog, setAddRelatedDialog] = useState(false)
+  const handleShowAddRelatedDialog = (): void => setAddRelatedDialog(true)
+  const handleCloseAddRelatedDialog = (): void => setAddRelatedDialog(false)
   const Editor = (params: { name: string, placeholder: string }): JSX.Element => {
     return <DetailItemContainer>
       <ItemTitleContainer>
@@ -298,7 +309,7 @@ export const ItemDetailPageDetail: React.FC = () => {
     {/* detail section */}
     <Grid container paddingRight='.5rem'>
       {/* left column */}
-      <Grid item md={6} xs={12}>
+      <Grid item lg={6} xs={12}>
         {/* repro steps */}
         <DetailItemContainer>
           <ItemTitleContainer>
@@ -406,7 +417,7 @@ export const ItemDetailPageDetail: React.FC = () => {
         </DetailItemContainer>
       </Grid>
       {/* middle column */}
-      <Grid item md={3} xs={12}>
+      <Grid item lg={3} xs={12}>
         {/* details */}
         <DetailItemContainer>
           <ItemTitleContainer>
@@ -548,7 +559,7 @@ export const ItemDetailPageDetail: React.FC = () => {
         </DetailItemContainer>
       </Grid>
       {/* right column */}
-      <Grid item md={3} xs={12}>
+      <Grid item lg={3} xs={12}>
         {/* deployment */}
         <DetailItemContainer>
           <ItemTitleContainer direction='row'>
@@ -597,6 +608,7 @@ export const ItemDetailPageDetail: React.FC = () => {
             showDevelopment &&
             <>
               <AddLinkButton
+                sx={{ width: '5.125rem' }}
                 startIcon={<Add sx={{ marginRight: '0', color: green[700] }} />}
                 onClick={handleAddDevelopment}
               >
@@ -607,7 +619,7 @@ export const ItemDetailPageDetail: React.FC = () => {
               <AddLinkDialog
                 open={openAddDevelopmenet}
                 onClose={handleCloseAddDevelopmenet}
-                >
+              >
                 <DialogTitle fontWeight='light'>
                   Add link
                 </DialogTitle>
@@ -650,24 +662,126 @@ export const ItemDetailPageDetail: React.FC = () => {
                     disabled
                     sx={{ color: grey[300] }}
                     onClick={handleCloseAddDevelopmenet}
-                    >
-                      OK
-                    </Button>
+                  >
+                    OK
+                  </Button>
                   <CancelButton
                     onClick={handleCloseAddDevelopmenet}
-                    >
-                      Cancel
-                    </CancelButton>
+                  >
+                    Cancel
+                  </CancelButton>
                 </DialogActions>
               </AddLinkDialog>
             </>
           }
         </DetailItemContainer>
-        <Stack>
-          <Typography>
-            Related Work
-          </Typography>
-        </Stack>
+        {/* related work */}
+        <DetailItemContainer>
+          <ItemTitleContainer direction='row'>
+            <ItemTitleText>
+              Related Work
+            </ItemTitleText>
+            {
+              showRelated
+                ? <ShowEditorIcon onClick={handleShowRelated} />
+                : <CloseEditorIcon onClick={handleShowRelated} />
+            }
+          </ItemTitleContainer>
+          <Divider sx={{ marginBottom: '.25rem' }} />
+          <AddLinkButton
+            sx={{ width: '5.615rem' }}
+            startIcon={<Add sx={{ marginRight: '0', color: green[700] }} />}
+            endIcon={<KeyboardArrowDown sx={{ width: '.75rem', height: '.75rem', color: grey[700] }} />}
+            onClick={handleShowRelatedLink}
+          >
+            <Typography sx={{ color: grey[800], fontSize: '.75rem' }}>
+              add link
+            </Typography>
+          </AddLinkButton>
+          <Menu
+            anchorEl={anchorElRelatedLink}
+            open={openRelatedLink}
+            onClose={handleCloseRelatedLink}
+            MenuListProps={{
+              'aria-labelledby': 'basic-button'
+            }}
+          >
+            <MenuItem onClick={handleCloseRelatedLink}>
+              <InsertLink sx={{ width: '1.125rem', height: '1.25rem', color: grey[800] }} />
+              <Typography sx={{ marginLeft: '.75rem', fontSize: '.815rem', color: grey[700] }}>
+                Existing item
+              </Typography>
+            </MenuItem>
+            <MenuItem onClick={handleCloseRelatedLink}>
+              <TaskOutlined sx={{ width: '1.125rem', height: '1.25rem', color: grey[800] }} />
+              <Typography sx={{ marginLeft: '.75rem', fontSize: '.815rem', color: grey[500] }}>
+                New item
+              </Typography>
+            </MenuItem>
+          </Menu>
+          <Stack sx={{ marginTop: '.125rem', padding: '.615rem', background: grey[100] }}>
+            <Typography sx={{ fontSize: '.75rem', color: grey[800] }}>
+              <Link href='#' underline='none' onClick={handleShowAddRelatedDialog}>Add an existing work item</Link> as a parent
+            </Typography>
+          </Stack>
+          {/* add Related Work Dialog */}
+          <AddLinkDialog
+            open={addRelatedDialog}
+            onClose={handleCloseAddRelatedDialog}
+          >
+            <DialogTitle fontWeight='light'>
+              Add link
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText sx={{ fontSize: '.875rem', fontWeight: '400', color: grey[900] }}>
+                You are adding a link from:
+              </DialogContentText>
+              <LocationOn sx={{ marginTop: '.5rem', width: '1.25rem', height: '1.25rem', color: blue[900] }} />
+              <DialogContentText sx={{ marginY: '.5rem', fontSize: '.875rem', fontWeight: 'light' }}>
+                Link type
+              </DialogContentText>
+              <Select
+                fullWidth
+                input={<AddLinkInput />}
+              >
+                {
+                  developmentLink.map((item, index) =>
+                    <optgroup key={index} label={item.groupName}>
+                      {
+                        item.links.map((item, index) =>
+                          <option key={index}>
+                            {item}
+                          </option>
+                        )
+                      }
+                    </optgroup>
+                  )
+                }
+              </Select>
+              <Stack style={{ marginTop: '.5rem', padding: '.5rem', backgroundColor: orange[50] }}>
+                <DialogContentText
+                  sx={{ color: grey[700], fontSize: '.75rem' }}
+                >
+                  No Git repositories were found in this project collection.
+                </DialogContentText>
+              </Stack>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                disabled
+                sx={{ color: grey[300] }}
+                onClick={handleCloseAddRelatedDialog}
+              >
+                OK
+              </Button>
+              <CancelButton
+                onClick={handleCloseAddRelatedDialog}
+              >
+                Cancel
+              </CancelButton>
+            </DialogActions>
+          </AddLinkDialog>
+        </DetailItemContainer>
       </Grid>
     </Grid>
   </Grid >
