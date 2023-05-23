@@ -3,14 +3,23 @@ import {
   PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined,
   Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1
 } from '@mui/icons-material'
-import { Autocomplete, Avatar, Box, Button, Chip, Grid, IconButton, InputAdornment, InputBase, MenuItem, Select, Stack, TextField, Tooltip, Typography } from '@mui/material'
+import {
+  Autocomplete, Avatar, Box, Button, Chip, Grid, IconButton, InputAdornment, InputBase, MenuItem, Select, Stack, TextField, Tooltip, Typography,
+  Tabs, Tab
+} from '@mui/material'
 import { blue, grey, red } from '@mui/material/colors'
 import { useAppSelector } from '../../redux/hooks'
 import { selectProjectMembers } from '../../redux/reducers/projectSlice'
 import styled from '@emotion/styled'
 import axios from 'axios'
 import 'react-quill/dist/quill.snow.css'
-import './ItemDetailPageTitle.module.css'
+import { ItemDetailPageDetail } from '../itemDetailPageDetails'
+
+interface TabPanelProps {
+  children?: React.ReactNode
+  index: number
+  value: number
+}
 
 const TitleInput = styled(TextField)({
   marginY: '.5rem',
@@ -186,7 +195,24 @@ export const ItemDetailPageTitle: React.FC = () => {
       setSaveLoading(false)
     }
   }
-
+  const TabPanel = (props: TabPanelProps): JSX.Element => {
+    const { children, value, index, ...other } = props
+    return (
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`simple-tabpanel-${index}`}
+        aria-labelledby={`simple-tab-${index}`}
+        {...other}
+      >
+        {value === index && (
+          <Box>
+            {children}
+          </Box>
+        )}
+      </div>
+    )
+  }
   // get item info
   useEffect(() => {
     void axios.get('http://localhost:3001/letscrum/api/project/workItem')
@@ -573,7 +599,19 @@ export const ItemDetailPageTitle: React.FC = () => {
           </Select>
         </SecondRow>
       </Grid>
-      <Grid item md={3} />
+      {/* detail tabs */}
+      <Grid item md={3}>
+        <Tabs>
+          <Tab label='details' />
+          <Tab label='history' />
+        </Tabs>
+      </Grid>
     </Grid>
+    <TabPanel value={1} index={1}>
+      <ItemDetailPageDetail />
+    </TabPanel>
+    <TabPanel value={2} index={2}>
+      history
+    </TabPanel>
   </Grid >
 }
