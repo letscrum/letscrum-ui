@@ -305,9 +305,9 @@ export const ItemDetailPageDetail: React.FC = () => {
     reactQuill.current?.focus()
   }, [editorFocus])
 
-  return <Grid>
+  return <Box paddingRight='.5rem'>
     {/* detail section */}
-    <Grid container paddingRight='.5rem'>
+    <Grid container>
       {/* left column */}
       <Grid item lg={6} xs={12}>
         {/* repro steps */}
@@ -784,5 +784,5 @@ export const ItemDetailPageDetail: React.FC = () => {
         </DetailItemContainer>
       </Grid>
     </Grid>
-  </Grid >
+  </Box>
 }

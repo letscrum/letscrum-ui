@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {
   PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined,
-  Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1
+  Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1, AccessTime
 } from '@mui/icons-material'
 import {
   Autocomplete, Avatar, Box, Button, Chip, Grid, IconButton, InputAdornment, InputBase, MenuItem, Select, Stack, TextField, Tooltip, Typography,
@@ -15,6 +15,12 @@ import axios from 'axios'
 import 'react-quill/dist/quill.snow.css'
 import { ItemDetailPageDetail } from '../itemDetailPageDetails'
 import { ItemDetailPageHistory } from '../itemDetailPageHistory'
+
+interface StyledTabsProps {
+  children?: React.ReactNode
+  value: number
+  onChange: (event: React.SyntheticEvent, newValue: number) => void
+}
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -198,6 +204,24 @@ export const ItemDetailPageTitle: React.FC = () => {
   }
   const [tab, setTab] = useState(0)
   const handleSwitchTab = (event: React.SyntheticEvent, newValue: number): void => setTab(newValue)
+  const StyledTabs = styled((props: StyledTabsProps) => (
+    <Tabs
+      {...props}
+      TabIndicatorProps={{ children: <span className='MuiTabs-indicatorSpan' /> }}
+    />
+  ))({
+    '& .MuiTabs-indicator': {
+      display: 'flex',
+      width: '5rem',
+      justifyContent: 'center',
+      backgroundColor: 'white'
+    },
+    '& .MuiTabs-indicatorSpan': {
+      maxWidth: 40,
+      width: '100%',
+      backgroundColor: '#635ee7'
+    }
+  })
   const TabPanel = (props: TabPanelProps): JSX.Element => {
     const { children, value, index, ...other } = props
     return (
@@ -604,10 +628,10 @@ export const ItemDetailPageTitle: React.FC = () => {
       </Grid>
       {/* detail tabs */}
       <Grid item md={3}>
-        <Tabs value={tab} onChange={handleSwitchTab}>
+        <StyledTabs value={tab} onChange={handleSwitchTab}>
           <Tab label='details' />
-          <Tab label='history' />
-        </Tabs>
+          <Tab label={<AccessTime />} />
+        </StyledTabs>
       </Grid>
     </Grid>
     <TabPanel value={tab} index={0}>
