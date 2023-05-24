@@ -1,1 +1,1 @@
-export * from './itemDetailPageHistory'
+export * from './ItemDetailPageHistory'

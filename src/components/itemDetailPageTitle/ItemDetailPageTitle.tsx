@@ -14,6 +14,7 @@ import styled from '@emotion/styled'
 import axios from 'axios'
 import 'react-quill/dist/quill.snow.css'
 import { ItemDetailPageDetail } from '../itemDetailPageDetails'
+import { ItemDetailPageHistory } from '../itemDetailPageHistory'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -611,7 +612,7 @@ export const ItemDetailPageTitle: React.FC = () => {
       <ItemDetailPageDetail />
     </TabPanel>
     <TabPanel value={2} index={2}>
-      history
+      <ItemDetailPageHistory />
     </TabPanel>
   </Grid >
 }
