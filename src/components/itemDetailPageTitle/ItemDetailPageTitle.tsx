@@ -196,6 +196,8 @@ export const ItemDetailPageTitle: React.FC = () => {
       setSaveLoading(false)
     }
   }
+  const [tab, setTab] = useState(0)
+  const handleSwitchTab = (event: React.SyntheticEvent, newValue: number): void => setTab(newValue)
   const TabPanel = (props: TabPanelProps): JSX.Element => {
     const { children, value, index, ...other } = props
     return (
@@ -602,16 +604,16 @@ export const ItemDetailPageTitle: React.FC = () => {
       </Grid>
       {/* detail tabs */}
       <Grid item md={3}>
-        <Tabs>
+        <Tabs value={tab} onChange={handleSwitchTab}>
           <Tab label='details' />
           <Tab label='history' />
         </Tabs>
       </Grid>
     </Grid>
-    <TabPanel value={1} index={1}>
+    <TabPanel value={tab} index={0}>
       <ItemDetailPageDetail />
     </TabPanel>
-    <TabPanel value={2} index={2}>
+    <TabPanel value={tab} index={1}>
       <ItemDetailPageHistory />
     </TabPanel>
   </Grid >
