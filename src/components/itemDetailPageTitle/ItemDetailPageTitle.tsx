@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {
   PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined,
-  Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1, AccessTime
+  Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1, Restore
 } from '@mui/icons-material'
 import {
   Autocomplete, Avatar, Box, Button, Chip, Grid, IconButton, InputAdornment, InputBase, MenuItem, Select, Stack, TextField, Tooltip, Typography,
@@ -210,16 +210,33 @@ export const ItemDetailPageTitle: React.FC = () => {
       TabIndicatorProps={{ children: <span className='MuiTabs-indicatorSpan' /> }}
     />
   ))({
+    marginTop: '.5rem',
+    marginRight: '.5rem',
+    '& .MuiButtonBase-root': {
+      padding: '0 .75rem'
+    },
+    '& .MuiTab-root': {
+      minWidth: '0',
+      borderTop: `1px solid ${grey[300]}`,
+      borderLeft: `1px solid ${grey[300]}`,
+      borderRight: `1px solid ${grey[300]}`,
+      borderBottom: '1px solid white',
+      backgroundColor: grey[200],
+      fontSize: '.615rem',
+      minHeight: '2.125rem'
+    },
+    '& .Mui-selected': {
+      backgroundColor: 'white'
+    },
     '& .MuiTabs-indicator': {
       display: 'flex',
-      width: '5rem',
+      width: '4rem',
       justifyContent: 'center',
       backgroundColor: 'white'
     },
     '& .MuiTabs-indicatorSpan': {
-      maxWidth: 40,
       width: '100%',
-      backgroundColor: '#635ee7'
+      backgroundColor: 'white'
     }
   })
   const TabPanel = (props: TabPanelProps): JSX.Element => {
@@ -580,7 +597,7 @@ export const ItemDetailPageTitle: React.FC = () => {
         backgroundColor: grey[100]
       }}>
       {/* first line */}
-      <Grid item md={3}>
+      <Grid item md={3} xs={12}>
         <Stack direction='row' sx={{ padding: '1rem', alignItems: 'center' }}>
           <StateText>
             State
@@ -591,7 +608,7 @@ export const ItemDetailPageTitle: React.FC = () => {
           </Select>
         </Stack>
       </Grid>
-      <Grid item md={6}>
+      <Grid item md={6} xs={12}>
         <Stack direction='row' sx={{ padding: '1rem', alignItems: 'center' }}>
           <StateText>
             Area
@@ -602,10 +619,10 @@ export const ItemDetailPageTitle: React.FC = () => {
           </Select>
         </Stack>
       </Grid>
-      <Grid item md={3} />
+      <Grid item md={3} xs={12} />
       {/* second line */}
-      <Grid item md={3}>
-        <SecondRow direction='row' sx={{ padding: '0 1rem 1rem 1rem', alignItems: 'center' }}>
+      <Grid item md={3} xs={12}>
+        <SecondRow direction='row'>
           <StateText>
             Reason
           </StateText>
@@ -615,8 +632,8 @@ export const ItemDetailPageTitle: React.FC = () => {
           </Select>
         </SecondRow>
       </Grid>
-      <Grid item md={6}>
-        <SecondRow direction='row' sx={{ padding: '0 1rem 1rem 1rem', alignItems: 'center' }}>
+      <Grid item md={6} xs={12}>
+        <SecondRow direction='row'>
           <StateText>
             Iteration
           </StateText>
@@ -627,10 +644,10 @@ export const ItemDetailPageTitle: React.FC = () => {
         </SecondRow>
       </Grid>
       {/* detail tabs */}
-      <Grid item md={3}>
+      <Grid item md={3} xs={12} sx={{ display: 'flex', height: '1rem', justifyContent: 'end' }}>
         <StyledTabs value={tab} onChange={handleSwitchTab}>
           <Tab label='details' />
-          <Tab label={<AccessTime />} />
+          <Tab label={<Restore sx={{ fontSize: '1.125rem' }} />} />
         </StyledTabs>
       </Grid>
     </Grid>

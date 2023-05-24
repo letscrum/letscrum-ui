@@ -305,7 +305,7 @@ export const ItemDetailPageDetail: React.FC = () => {
     reactQuill.current?.focus()
   }, [editorFocus])
 
-  return <Box paddingRight='.5rem' height='21rem' sx={{ overflowY: 'scroll' }}>
+  return <Box paddingRight='.5rem' height='21rem' sx={{ overflowY: 'auto' }}>
     {/* detail section */}
     <Grid container>
       {/* left column */}
