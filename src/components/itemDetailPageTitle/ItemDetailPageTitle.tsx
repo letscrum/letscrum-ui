@@ -16,6 +16,7 @@ import 'react-quill/dist/quill.snow.css'
 import { ItemDetailPageDetail } from '../itemDetailPageDetails'
 import { ItemDetailPageHistory } from '../itemDetailPageHistory'
 import { ItemDetailPageLink } from '../itemDetailPageLink'
+import { ItemDetailPageAttachment } from '../itemDetailPageAttachment'
 
 interface StyledTabsProps {
   children?: React.ReactNode
@@ -664,7 +665,7 @@ export const ItemDetailPageTitle: React.FC = () => {
       <ItemDetailPageLink />
     </TabPanel>
     <TabPanel value={tab} index={3}>
-      Attachment
+      <ItemDetailPageAttachment />
     </TabPanel>
   </Grid >
 }
