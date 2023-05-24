@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {
   PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined,
-  Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1, Restore
+  Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1, Restore, LinkOutlined, AttachFileOutlined
 } from '@mui/icons-material'
 import {
   Autocomplete, Avatar, Box, Button, Chip, Grid, IconButton, InputAdornment, InputBase, MenuItem, Select, Stack, TextField, Tooltip, Typography,
@@ -15,6 +15,7 @@ import axios from 'axios'
 import 'react-quill/dist/quill.snow.css'
 import { ItemDetailPageDetail } from '../itemDetailPageDetails'
 import { ItemDetailPageHistory } from '../itemDetailPageHistory'
+import { ItemDetailPageLink } from '../itemDetailPageLink'
 
 interface StyledTabsProps {
   children?: React.ReactNode
@@ -648,6 +649,8 @@ export const ItemDetailPageTitle: React.FC = () => {
         <StyledTabs value={tab} onChange={handleSwitchTab}>
           <Tab label='details' />
           <Tab label={<Restore sx={{ fontSize: '1.125rem' }} />} />
+          <Tab label={<LinkOutlined sx={{ fontSize: '1.125rem' }} />} />
+          <Tab label={<AttachFileOutlined sx={{ fontSize: '1.125rem' }} />} />
         </StyledTabs>
       </Grid>
     </Grid>
@@ -656,6 +659,12 @@ export const ItemDetailPageTitle: React.FC = () => {
     </TabPanel>
     <TabPanel value={tab} index={1}>
       <ItemDetailPageHistory />
+    </TabPanel>
+    <TabPanel value={tab} index={2}>
+      <ItemDetailPageLink />
+    </TabPanel>
+    <TabPanel value={tab} index={3}>
+      Attachment
     </TabPanel>
   </Grid >
 }
