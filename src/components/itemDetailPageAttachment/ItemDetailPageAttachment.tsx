@@ -1,6 +1,7 @@
 import React from 'react'
-import { Box, Stack, Typography, Grid, Divider } from '@mui/material'
-import { blue } from '@mui/material/colors'
+import { Box, Stack, Typography, Grid, Divider, Button } from '@mui/material'
+import { Add, AttachFileOutlined } from '@mui/icons-material'
+import { blue, grey } from '@mui/material/colors'
 import styled from '@emotion/styled'
 
 const DetailItemContainer = styled(Stack)({
@@ -26,10 +27,10 @@ const ItemTitleContainer = styled(Stack)({
 })
 
 export const ItemDetailPageAttachment = (): JSX.Element => {
+  const handleAddAttachment = (): void => {}
   return <Box paddingRight='.5rem' height='21rem' sx={{ overflowY: 'auto' }}>
-  <Grid container>
-    {/* links */}
-    <Grid item xs={12}>
+    {/* attachment title */}
+    <Stack>
       <DetailItemContainer>
         <ItemTitleContainer direction='row' >
           <ItemTitleText>
@@ -40,7 +41,22 @@ export const ItemDetailPageAttachment = (): JSX.Element => {
         </ItemTitleContainer>
         <Divider sx={{ marginBottom: '.25rem' }} />
       </DetailItemContainer>
+    </Stack>
+    {/* attachments */}
+    <Grid container direction='column' sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <AttachFileOutlined sx={{ width: '6rem', height: '6rem', color: grey[500] }} />
+      <Typography sx={{ paddingBottom: '1rem', fontSize: '.875rem', color: grey[700] }}>
+        No attachments have been added
+      </Typography>
+      <Button
+        variant='contained'
+        disableElevation
+        onClick={handleAddAttachment}
+        startIcon={<Add />}
+        sx={{ borderRadius: '0' }}
+      >
+        Add attachment
+      </Button>
     </Grid>
-  </Grid>
-</Box>
+  </Box>
 }
