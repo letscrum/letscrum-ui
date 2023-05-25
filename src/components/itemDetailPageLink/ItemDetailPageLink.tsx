@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Stack, Typography, Grid, Divider, MenuItem, Button, Menu, MenuProps } from '@mui/material'
+import { Box, Grid, Stack, Typography, Divider, MenuItem, Button, Menu, MenuProps } from '@mui/material'
 import { OpenInFull, KeyboardArrowDown, Add, Link, AssignmentTurnedInOutlined } from '@mui/icons-material'
 import { blue, grey } from '@mui/material/colors'
 // import styled from '@emotion/styled'
@@ -87,7 +87,7 @@ export const ItemDetailPageLink = (): JSX.Element => {
   const handleCloseAddLink = (): void => setAnchorElAddLink(null)
   return <Box paddingRight='.5rem' height='21rem' sx={{ overflowY: 'auto' }}>
     {/* links title */}
-    <Grid xs={12}>
+    <Stack>
       <DetailItemContainer>
         <ItemTitleContainer direction='row' >
           <ItemTitleText>
@@ -99,9 +99,13 @@ export const ItemDetailPageLink = (): JSX.Element => {
         </ItemTitleContainer>
         <Divider sx={{ marginBottom: '.25rem' }} />
       </DetailItemContainer>
-    </Grid>
+    </Stack>
     {/* links */}
-    <Grid>
+    <Grid container direction='column' sx={{ display: 'flex', alignItems: 'center' }}>
+      <Link sx={{ width: '8rem', height: '8rem', color: grey[500] }} />
+      <Typography sx={{ paddingBottom: '1rem', fontSize: '.875rem', color: grey[700] }}>
+        No links have been added
+      </Typography>
       <Button
         id="demo-customized-button"
         aria-controls={openAddLink ? 'demo-customized-menu' : undefined}
