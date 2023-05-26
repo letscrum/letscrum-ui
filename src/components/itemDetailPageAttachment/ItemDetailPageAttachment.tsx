@@ -27,7 +27,7 @@ const ItemTitleContainer = styled(Stack)({
 })
 
 export const ItemDetailPageAttachment = (): JSX.Element => {
-  const handleAddAttachment = (): void => {}
+  const handleAddAttachment = (): void => { }
   return <Box paddingRight='.5rem' height='21rem' sx={{ overflowY: 'auto' }}>
     {/* attachment title */}
     <Stack>
@@ -48,15 +48,24 @@ export const ItemDetailPageAttachment = (): JSX.Element => {
       <Typography sx={{ paddingBottom: '1rem', fontSize: '.875rem', color: grey[700] }}>
         No attachments have been added
       </Typography>
-      <Button
-        variant='contained'
-        disableElevation
-        onClick={handleAddAttachment}
-        startIcon={<Add />}
-        sx={{ borderRadius: '0' }}
-      >
-        Add attachment
-      </Button>
+      <label htmlFor='upload-attachment'>
+        <input
+          style={{ display: 'none' }}
+          id='upload-attachment'
+          name='upload-attachment'
+          type='file'
+        />
+        <Button
+          variant='contained'
+          component='span'
+          disableElevation
+          onClick={handleAddAttachment}
+          startIcon={<Add />}
+          sx={{ borderRadius: '0' }}
+        >
+          Add attachment
+        </Button>
+      </label>
     </Grid>
   </Box>
 }
