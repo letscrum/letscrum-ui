@@ -7,6 +7,7 @@ import styled from '@emotion/styled'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import { selectUserName } from '../../redux/reducers/userSlice'
+import { ItemDetailPageAddExistItem } from '../itemDetailPageAddExistItem'
 
 const DetailItemContainer = styled(Stack)({
   padding: '.875rem 0 .875rem 1.25rem'
@@ -267,7 +268,10 @@ export const ItemDetailPageDetail: React.FC = () => {
   const openRelatedLink = Boolean(anchorElRelatedLink)
   const handleCloseRelatedLink = (): void => setAnchorElRelatedLink(null)
   const [addRelatedDialog, setAddRelatedDialog] = useState(false)
-  const handleShowAddRelatedDialog = (): void => setAddRelatedDialog(true)
+  const handleShowAddRelatedDialog = (): void => {
+    handleCloseRelatedLink()
+    setAddRelatedDialog(true)
+  }
   const handleCloseAddRelatedDialog = (): void => setAddRelatedDialog(false)
   const Editor = (params: { name: string, placeholder: string }): JSX.Element => {
     return <DetailItemContainer>
@@ -706,7 +710,7 @@ export const ItemDetailPageDetail: React.FC = () => {
               'aria-labelledby': 'basic-button'
             }}
           >
-            <MenuItem onClick={handleCloseRelatedLink}>
+            <MenuItem onClick={handleShowAddRelatedDialog}>
               <InsertLink sx={{ width: '1.125rem', height: '1.25rem', color: grey[800] }} />
               <Typography sx={{ marginLeft: '.75rem', fontSize: '.815rem', color: grey[700] }}>
                 Existing item
@@ -725,62 +729,10 @@ export const ItemDetailPageDetail: React.FC = () => {
             </Typography>
           </Stack>
           {/* add Related Work Dialog */}
-          <AddLinkDialog
-            open={addRelatedDialog}
-            onClose={handleCloseAddRelatedDialog}
-          >
-            <DialogTitle fontWeight='light'>
-              Add link
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText sx={{ fontSize: '.875rem', fontWeight: '400', color: grey[900] }}>
-                You are adding a link from:
-              </DialogContentText>
-              <LocationOn sx={{ marginTop: '.5rem', width: '1.25rem', height: '1.25rem', color: blue[900] }} />
-              <DialogContentText sx={{ marginY: '.5rem', fontSize: '.875rem', fontWeight: 'light' }}>
-                Link type
-              </DialogContentText>
-              <Select
-                fullWidth
-                input={<AddLinkInput />}
-              >
-                {
-                  developmentLink.map((item, index) =>
-                    <optgroup key={index} label={item.groupName}>
-                      {
-                        item.links.map((item, index) =>
-                          <option key={index}>
-                            {item}
-                          </option>
-                        )
-                      }
-                    </optgroup>
-                  )
-                }
-              </Select>
-              <Stack style={{ marginTop: '.5rem', padding: '.5rem', backgroundColor: orange[50] }}>
-                <DialogContentText
-                  sx={{ color: grey[700], fontSize: '.75rem' }}
-                >
-                  No Git repositories were found in this project collection.
-                </DialogContentText>
-              </Stack>
-            </DialogContent>
-            <DialogActions>
-              <Button
-                disabled
-                sx={{ color: grey[300] }}
-                onClick={handleCloseAddRelatedDialog}
-              >
-                OK
-              </Button>
-              <CancelButton
-                onClick={handleCloseAddRelatedDialog}
-              >
-                Cancel
-              </CancelButton>
-            </DialogActions>
-          </AddLinkDialog>
+          <ItemDetailPageAddExistItem
+            addRelatedDialog={addRelatedDialog}
+            handleCloseAddRelatedDialog={handleCloseAddRelatedDialog}
+            />
         </DetailItemContainer>
       </Grid>
     </Grid>

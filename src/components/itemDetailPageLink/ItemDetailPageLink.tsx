@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Box, Grid, Stack, Typography, Divider, MenuItem, Button, Menu, MenuProps } from '@mui/material'
 import { OpenInFull, KeyboardArrowDown, Add, Link, AssignmentTurnedInOutlined } from '@mui/icons-material'
 import { blue, grey } from '@mui/material/colors'
 // import styled from '@emotion/styled'
 import { styled, alpha } from '@mui/material/styles'
+import { ItemDetailPageAddExistItem } from '../itemDetailPageAddExistItem'
 
 const DetailItemContainer = styled(Stack)({
   padding: '.875rem 0 .875rem 1.25rem'
@@ -83,8 +84,14 @@ const AddLinkMenu = styled((props: MenuProps) => (
 export const ItemDetailPageLink = (): JSX.Element => {
   const [anchorElAddLink, setAnchorElAddLink] = React.useState<null | HTMLElement>(null)
   const openAddLink = Boolean(anchorElAddLink)
+  const [addRelatedDialog, setAddRelatedDialog] = useState(false)
+  const handleCloseAddRelatedDialog = (): void => setAddRelatedDialog(false)
   const handleClickAddLink = (event: React.MouseEvent<HTMLElement>): void => setAnchorElAddLink(event.currentTarget)
   const handleCloseAddLink = (): void => setAnchorElAddLink(null)
+  const handleShowAddRelatedDialog = (): void => {
+    handleCloseAddLink()
+    setAddRelatedDialog(true)
+  }
   return <Box paddingRight='.5rem' height='21rem' sx={{ overflowY: 'auto' }}>
     {/* links title */}
     <Stack>
@@ -118,7 +125,7 @@ export const ItemDetailPageLink = (): JSX.Element => {
         endIcon={<KeyboardArrowDown />}
         sx={{ borderRadius: '0' }}
       >
-        Options
+        Add link
       </Button>
       <AddLinkMenu
         id="demo-customized-menu"
@@ -129,7 +136,7 @@ export const ItemDetailPageLink = (): JSX.Element => {
         open={openAddLink}
         onClose={handleCloseAddLink}
       >
-        <MenuItem onClick={handleCloseAddLink} disableRipple>
+        <MenuItem onClick={handleShowAddRelatedDialog} disableRipple>
           <Link />
           Edit
         </MenuItem>
@@ -138,6 +145,11 @@ export const ItemDetailPageLink = (): JSX.Element => {
           Duplicate
         </MenuItem>
       </AddLinkMenu>
+      {/* add existing link dialog */}
+      <ItemDetailPageAddExistItem
+        addRelatedDialog={addRelatedDialog}
+        handleCloseAddRelatedDialog={handleCloseAddRelatedDialog}
+        />
     </Grid>
   </Box>
 }
