@@ -51,7 +51,7 @@ const CloseEditorIcon = styled(ExpandMore)({
 export const ItemDetailPageHistory = (): JSX.Element => {
   const [showState, setShowState] = useState(true)
   const handleShowState = (): void => setShowState(!showState)
-  return <Box paddingRight='.5rem'>
+  return <Box paddingRight='.5rem' height='21rem' sx={{ overflowY: 'auto' }}>
     <Grid container>
       {/* state grahpy */}
       <Grid item xs={12}>
