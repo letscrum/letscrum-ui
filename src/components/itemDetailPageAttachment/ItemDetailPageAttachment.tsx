@@ -3,7 +3,7 @@ import { Box, Stack, Typography, Grid, Divider, Button } from '@mui/material'
 import { Add, AttachFileOutlined, ReorderOutlined, GridOnOutlined } from '@mui/icons-material'
 import { blue, green, grey } from '@mui/material/colors'
 import styled from '@emotion/styled'
-import { DataGrid, GridRowsProp, GridColDef } from '@mui/x-data-grid'
+import { DataGrid, GridRowsProp, GridColDef, GridColumnHeaderParams } from '@mui/x-data-grid'
 
 const DetailItemContainer = styled(Stack)({
   padding: '.875rem 0 .875rem 1.25rem'
@@ -27,15 +27,44 @@ const ItemTitleContainer = styled(Stack)({
   }
 })
 
+const HeaderText = styled(Typography)({
+  fontSize: '.75rem',
+  color: grey[500]
+})
+
 const rows: GridRowsProp = [
   { id: 1, name: '1.jpg', size: '147k', date: '27/5', comments: '' }
 ]
 
 const columns: GridColDef[] = [
-  { field: 'name', headerName: 'Name', width: 150 },
-  { field: 'size', headerName: 'Size', width: 150 },
-  { field: 'date', headerName: 'Date Attached', width: 150 },
-  { field: 'comments', headerName: 'Comments', width: 150 }
+  {
+    field: 'name',
+    width: 150,
+    renderHeader: (params: GridColumnHeaderParams) => (
+      <HeaderText>{'Name'}</HeaderText>
+    )
+  },
+  {
+    field: 'size',
+    width: 150,
+    renderHeader: (params: GridColumnHeaderParams) => (
+      <HeaderText>{'Size'}</HeaderText>
+    )
+  },
+  {
+    field: 'date',
+    width: 150,
+    renderHeader: (params: GridColumnHeaderParams) => (
+      <HeaderText>{'Date Attached'}</HeaderText>
+    )
+  },
+  {
+    field: 'comments',
+    width: 150,
+    renderHeader: (params: GridColumnHeaderParams) => (
+      <HeaderText>{'Comments'}</HeaderText>
+    )
+  }
 ]
 
 export const ItemDetailPageAttachment = (): JSX.Element => {
