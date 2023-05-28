@@ -1,16 +1,34 @@
 import React, { useEffect, useState } from 'react'
 import {
   PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined,
-  Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1
+  Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1, Restore, LinkOutlined, AttachFileOutlined
 } from '@mui/icons-material'
-import { Autocomplete, Avatar, Box, Button, Chip, Grid, IconButton, InputAdornment, InputBase, MenuItem, Select, Stack, TextField, Tooltip, Typography } from '@mui/material'
+import {
+  Autocomplete, Avatar, Box, Button, Chip, Grid, IconButton, InputAdornment, InputBase, MenuItem, Select, Stack, TextField, Tooltip, Typography,
+  Tabs, Tab
+} from '@mui/material'
 import { blue, grey, red } from '@mui/material/colors'
 import { useAppSelector } from '../../redux/hooks'
 import { selectProjectMembers } from '../../redux/reducers/projectSlice'
 import styled from '@emotion/styled'
 import axios from 'axios'
 import 'react-quill/dist/quill.snow.css'
-import './ItemDetailPageTitle.module.css'
+import { ItemDetailPageDetail } from '../itemDetailPageDetails'
+import { ItemDetailPageHistory } from '../itemDetailPageHistory'
+import { ItemDetailPageLink } from '../itemDetailPageLink'
+import { ItemDetailPageAttachment } from '../itemDetailPageAttachment'
+
+interface StyledTabsProps {
+  children?: React.ReactNode
+  value: number
+  onChange: (event: React.SyntheticEvent, newValue: number) => void
+}
+
+interface TabPanelProps {
+  children?: React.ReactNode
+  index: number
+  value: number
+}
 
 const TitleInput = styled(TextField)({
   marginY: '.5rem',
@@ -186,7 +204,61 @@ export const ItemDetailPageTitle: React.FC = () => {
       setSaveLoading(false)
     }
   }
-
+  const [tab, setTab] = useState(0)
+  const handleSwitchTab = (event: React.SyntheticEvent, newValue: number): void => setTab(newValue)
+  const StyledTabs = styled((props: StyledTabsProps) => (
+    <Tabs
+      {...props}
+      TabIndicatorProps={{ children: <span className='MuiTabs-indicatorSpan' /> }}
+    />
+  ))({
+    marginTop: '.5rem',
+    marginRight: '.5rem',
+    '& .MuiButtonBase-root': {
+      padding: '0 .75rem'
+    },
+    '& .MuiTab-root': {
+      minWidth: '0',
+      borderTop: `1px solid ${grey[300]}`,
+      borderLeft: `1px solid ${grey[300]}`,
+      borderRight: `1px solid ${grey[300]}`,
+      borderBottom: '1px solid white',
+      backgroundColor: grey[200],
+      fontSize: '.615rem',
+      minHeight: '2.125rem'
+    },
+    '& .Mui-selected': {
+      backgroundColor: 'white'
+    },
+    '& .MuiTabs-indicator': {
+      display: 'flex',
+      width: '4rem',
+      justifyContent: 'center',
+      backgroundColor: 'white'
+    },
+    '& .MuiTabs-indicatorSpan': {
+      width: '100%',
+      backgroundColor: 'white'
+    }
+  })
+  const TabPanel = (props: TabPanelProps): JSX.Element => {
+    const { children, value, index, ...other } = props
+    return (
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`simple-tabpanel-${index}`}
+        aria-labelledby={`simple-tab-${index}`}
+        {...other}
+      >
+        {value === index && (
+          <Box>
+            {children}
+          </Box>
+        )}
+      </div>
+    )
+  }
   // get item info
   useEffect(() => {
     void axios.get('http://localhost:3001/letscrum/api/project/workItem')
@@ -527,7 +599,7 @@ export const ItemDetailPageTitle: React.FC = () => {
         backgroundColor: grey[100]
       }}>
       {/* first line */}
-      <Grid item md={3}>
+      <Grid item md={3} xs={12}>
         <Stack direction='row' sx={{ padding: '1rem', alignItems: 'center' }}>
           <StateText>
             State
@@ -538,7 +610,7 @@ export const ItemDetailPageTitle: React.FC = () => {
           </Select>
         </Stack>
       </Grid>
-      <Grid item md={6}>
+      <Grid item md={6} xs={12}>
         <Stack direction='row' sx={{ padding: '1rem', alignItems: 'center' }}>
           <StateText>
             Area
@@ -549,10 +621,10 @@ export const ItemDetailPageTitle: React.FC = () => {
           </Select>
         </Stack>
       </Grid>
-      <Grid item md={3} />
+      <Grid item md={3} xs={12} />
       {/* second line */}
-      <Grid item md={3}>
-        <SecondRow direction='row' sx={{ padding: '0 1rem 1rem 1rem', alignItems: 'center' }}>
+      <Grid item md={3} xs={12}>
+        <SecondRow direction='row'>
           <StateText>
             Reason
           </StateText>
@@ -562,8 +634,8 @@ export const ItemDetailPageTitle: React.FC = () => {
           </Select>
         </SecondRow>
       </Grid>
-      <Grid item md={6}>
-        <SecondRow direction='row' sx={{ padding: '0 1rem 1rem 1rem', alignItems: 'center' }}>
+      <Grid item md={6} xs={12}>
+        <SecondRow direction='row'>
           <StateText>
             Iteration
           </StateText>
@@ -573,7 +645,27 @@ export const ItemDetailPageTitle: React.FC = () => {
           </Select>
         </SecondRow>
       </Grid>
-      <Grid item md={3} />
+      {/* detail tabs */}
+      <Grid item md={3} xs={12} sx={{ display: 'flex', height: '1rem', justifyContent: 'end' }}>
+        <StyledTabs value={tab} onChange={handleSwitchTab}>
+          <Tab label='details' />
+          <Tab label={<Restore sx={{ fontSize: '1.125rem' }} />} />
+          <Tab label={<LinkOutlined sx={{ fontSize: '1.125rem' }} />} />
+          <Tab label={<AttachFileOutlined sx={{ fontSize: '1.125rem' }} />} />
+        </StyledTabs>
+      </Grid>
     </Grid>
+    <TabPanel value={tab} index={0}>
+      <ItemDetailPageDetail />
+    </TabPanel>
+    <TabPanel value={tab} index={1}>
+      <ItemDetailPageHistory />
+    </TabPanel>
+    <TabPanel value={tab} index={2}>
+      <ItemDetailPageLink />
+    </TabPanel>
+    <TabPanel value={tab} index={3}>
+      <ItemDetailPageAttachment />
+    </TabPanel>
   </Grid >
 }
