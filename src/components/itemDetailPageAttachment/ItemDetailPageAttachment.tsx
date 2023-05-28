@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { Box, Stack, Typography, Grid, Divider, Button } from '@mui/material'
-import { Add, AttachFileOutlined, ReorderOutlined, GridOnOutlined } from '@mui/icons-material'
+import { Add, AttachFileOutlined, ReorderOutlined, GridOnOutlined, EditOutlined, FindInPageOutlined, FileDownloadOutlined, ClearOutlined } from '@mui/icons-material'
 import { blue, green, grey } from '@mui/material/colors'
 import styled from '@emotion/styled'
-import { DataGrid, GridRowsProp, GridColDef, GridColumnHeaderParams } from '@mui/x-data-grid'
+import { DataGrid, GridRowsProp, GridColDef, GridColumnHeaderParams, GridActionsCellItem } from '@mui/x-data-grid'
 
 const DetailItemContainer = styled(Stack)({
   padding: '.875rem 0 .875rem 1.25rem'
@@ -36,40 +36,84 @@ const rows: GridRowsProp = [
   { id: 1, name: '1.jpg', size: '147k', date: '27/5', comments: '' }
 ]
 
-const columns: GridColDef[] = [
-  {
-    field: 'name',
-    width: 150,
-    renderHeader: (params: GridColumnHeaderParams) => (
-      <HeaderText>{'Name'}</HeaderText>
-    )
-  },
-  {
-    field: 'size',
-    width: 150,
-    renderHeader: (params: GridColumnHeaderParams) => (
-      <HeaderText>{'Size'}</HeaderText>
-    )
-  },
-  {
-    field: 'date',
-    width: 150,
-    renderHeader: (params: GridColumnHeaderParams) => (
-      <HeaderText>{'Date Attached'}</HeaderText>
-    )
-  },
-  {
-    field: 'comments',
-    width: 150,
-    renderHeader: (params: GridColumnHeaderParams) => (
-      <HeaderText>{'Comments'}</HeaderText>
-    )
+type Row = (typeof rows)[number]
+
+const AttachmentGrid = styled(DataGrid)({
+  border: 'none',
+  '& .attachment-list': {
+    backgroundColor: blue[50],
+    color: grey[700],
+    fontSize: '.75rem'
   }
-]
+})
 
 export const ItemDetailPageAttachment = (): JSX.Element => {
   const [hasAttachment, setHasAttachment] = useState(false)
   const handleAddAttachment = (): void => setHasAttachment(true)
+  const columns = React.useMemo<Array<GridColDef<Row>>>(
+    () => [
+      {
+        field: 'name',
+        width: 150,
+        renderHeader: (params: GridColumnHeaderParams) => (
+          <HeaderText>{'Name'}</HeaderText>
+        )
+      },
+      {
+        field: 'actions',
+        type: 'actions',
+        width: 80,
+        getActions: (params: any) => [
+          <GridActionsCellItem
+            key={params.id}
+            icon={<EditOutlined sx={{ fontSize: '1rem', color: grey[700] }} />}
+            label='Edit comment'
+            showInMenu
+          />,
+          <GridActionsCellItem
+            key={params.id}
+            icon={<FindInPageOutlined sx={{ fontSize: '1rem', color: grey[700] }}/>}
+            label='search'
+            showInMenu
+          />,
+          <GridActionsCellItem
+            key={params.id}
+            icon={<FileDownloadOutlined sx={{ fontSize: '1rem', color: grey[700] }}/>}
+            label='download'
+            showInMenu
+          />,
+          <GridActionsCellItem
+            key={params.id}
+            icon={<ClearOutlined sx={{ fontSize: '1rem', color: grey[700] }}/>}
+            label='delete'
+            showInMenu
+          />
+        ]
+      },
+      {
+        field: 'size',
+        width: 150,
+        renderHeader: (params: GridColumnHeaderParams) => (
+          <HeaderText>{'Size'}</HeaderText>
+        )
+      },
+      {
+        field: 'date',
+        width: 150,
+        renderHeader: (params: GridColumnHeaderParams) => (
+          <HeaderText>{'Date Attached'}</HeaderText>
+        )
+      },
+      {
+        field: 'comments',
+        width: 150,
+        renderHeader: (params: GridColumnHeaderParams) => (
+          <HeaderText>{'Comments'}</HeaderText>
+        )
+      }
+    ],
+    []
+  )
 
   return <Box paddingRight='.5rem' height='21rem' sx={{ overflowY: 'auto' }}>
     {/* attachment title */}
@@ -125,12 +169,14 @@ export const ItemDetailPageAttachment = (): JSX.Element => {
             <ReorderOutlined sx={{ marginLeft: 'auto', color: blue[900] }} />
             <GridOnOutlined sx={{ marginLeft: '.5rem', color: grey[500] }} />
           </Stack>
-          <div style={{ height: 400, width: '100%' }}>
-            <DataGrid
+          <Box sx={{ height: '20rem', width: '100%' }}>
+            <AttachmentGrid
               rows={rows}
               columns={columns}
+              rowHeight={30}
+              getRowClassName={() => 'attachment-list'}
             />
-          </div>
+          </Box>
         </Stack>
         // empty attachment list
         : <Grid container direction='column' sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
