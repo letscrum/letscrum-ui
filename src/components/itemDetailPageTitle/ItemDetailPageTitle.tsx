@@ -287,7 +287,7 @@ export const ItemDetailPageTitle: React.FC = () => {
         md='auto'
       >
         <Stack direction='row' sx={{ alignItems: 'center' }}>
-          <PestControl sx={{ marginLeft: '.75rem', marginRight: '.5rem', color: red[900], fontSize: 'small' }} />
+          <PestControl sx={{ marginLeft: '.75rem', marginRight: '.25rem', color: red[900], fontSize: 'small' }} />
           <Typography variant='overline'>
             NEW BUG *
           </Typography>
@@ -298,16 +298,17 @@ export const ItemDetailPageTitle: React.FC = () => {
         xs={12}
         md
       >
-        <Stack direction='row' sx={{ alignItems: 'center' }}>
-          <ErrorOutlined sx={{ marginLeft: '.75rem', color: red[900], fontSize: 'small' }} />
-          <Typography variant='body2' sx={{ marginLeft: '.25rem', color: red[900] }}>
-            {
-              saveError !== null
-                ? <span>{saveError}</span>
-                : <span>Field &lsquo;Title&lsquo; cannot be empty.</span>
-            }
-          </Typography>
-        </Stack>
+        {
+          title === ''
+            ? <Stack direction='row' sx={{ alignItems: 'center' }}>
+              <ErrorOutlined sx={{ marginLeft: '.75rem', marginRight: '.25rem', color: red[900], fontSize: 'small' }} />
+              <Typography variant='body2' sx={{ marginLeft: '.25rem', color: red[900] }}>Field &lsquo;Title&lsquo; cannot be empty.</Typography>
+            </Stack>
+            : saveError !== null && <Stack direction='row' sx={{ alignItems: 'center' }}>
+              <ErrorOutlined sx={{ marginLeft: '.75rem', marginRight: '.25rem', color: red[900], fontSize: 'small' }} />
+              <Typography variant='body2' sx={{ marginLeft: '.25rem', color: red[900] }}>{saveError}</Typography>
+            </Stack>
+        }
       </Grid>
     </Grid>
     {/* item title */}
