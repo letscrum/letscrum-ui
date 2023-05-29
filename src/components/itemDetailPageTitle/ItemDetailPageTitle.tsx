@@ -5,7 +5,7 @@ import {
 } from '@mui/icons-material'
 import {
   Autocomplete, Avatar, Box, Button, Chip, Grid, IconButton, InputAdornment, InputBase, MenuItem, Select, Stack, TextField, Tooltip, Typography,
-  Tabs, Tab
+  Tabs, Tab, SelectChangeEvent
 } from '@mui/material'
 import { blue, grey, red } from '@mui/material/colors'
 import { useAppSelector } from '../../redux/hooks'
@@ -185,12 +185,15 @@ export const ItemDetailPageTitle: React.FC = () => {
   const [title, setTitle] = useState<string>('')
   const handleTitle = (e: any): void => setTitle(e.currentTarget.value)
   const members: any = useAppSelector(selectProjectMembers)
+  const [assignValue, setAssignValue] = useState('')
   const [countComments, setCountComments] = useState(0)
   const [addFocus, setAddFocus] = useState(false)
   const tags = ['sports', 'art', 'math', 'science']
   const handleAddBlur = (): void => setAddFocus(false)
   const [selectedTag, setSelectedTag] = useState<any>('')
   const [selectedTagsArray, setSelectedTagsArray] = useState<string[]>([])
+  const [stateValue, setStateValue] = useState('new')
+  const handleStateValue = (e: SelectChangeEvent<string>): void => setStateValue(e.target.value)
   const handleSave = async (param: { title: string }): Promise<void> => {
     setSaveLoading(true)
     try {
@@ -368,6 +371,8 @@ export const ItemDetailPageTitle: React.FC = () => {
                 }
               }
             }}
+            inputValue={assignValue}
+            onInputChange={(e: any, newInputValue: any): void => setAssignValue(newInputValue) }
             options={members}
             getOptionLabel={(option: any) => option.userName}
             renderOption={(props, option) => (
@@ -606,7 +611,11 @@ export const ItemDetailPageTitle: React.FC = () => {
             State
           </StateText>
           <Brightness1 sx={{ marginRight: '.315rem', fontSize: '.875rem', color: grey[500] }} />
-          <Select value='new' input={<StateInput />}>
+          <Select
+            value={stateValue}
+            onChange={handleStateValue}
+            input={<StateInput />}
+            >
             <StateItem value='new'>New</StateItem>
           </Select>
         </Stack>
