@@ -1,6 +1,9 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { OpenInFull, ExpandMore, ExpandLess, Add, LocationOn, KeyboardArrowDown, InsertLink, TaskOutlined } from '@mui/icons-material'
-import { Autocomplete, Avatar, Box, Divider, FormControl, Grid, Button, InputBase, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Menu, Link } from '@mui/material'
+import {
+  Autocomplete, Avatar, Box, Divider, FormControl, Grid, Button, InputBase, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography,
+  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Menu, Link, ListSubheader, ListSubheaderProps
+} from '@mui/material'
 import { blue, grey, green, orange } from '@mui/material/colors'
 import { useAppSelector } from '../../redux/hooks'
 import styled from '@emotion/styled'
@@ -164,6 +167,7 @@ const AddLinkInput = styled(InputBase)({
 const AddLinkDialog = styled(Dialog)({
   '& .MuiPaper-root': {
     padding: '0 1rem 1rem 0',
+    width: '32rem',
     height: '80vh',
     borderRadius: '0'
   }
@@ -227,6 +231,14 @@ const developmentLink = [
   }
 ]
 
+const DevLinkSubheader = (props: ListSubheaderProps): JSX.Element => <ListSubheader
+  {...props}
+  sx={{ color: blue[800], fontSize: '.875rem', borderBottom: `1px solid ${grey[200]}` }}
+/>
+
+DevLinkSubheader.muiSkipListHighlight = true
+export default DevLinkSubheader
+
 export const ItemDetailPageDetail: React.FC = () => {
   const userName: any = useAppSelector(selectUserName)
   const name = userName ?? ''
@@ -234,9 +246,9 @@ export const ItemDetailPageDetail: React.FC = () => {
   const handleShowEditor = (): void => setShowEditor(!showEditor)
   const reactQuill = useRef<any>(null)
   const [editorFocus, setEditorFocus] = useState(false)
-  const [editorValue, setEditorValue] = useState<any>()
   const handleEditorFoucs = (): void => setEditorFocus(true)
   const handleEditorBlur = (): void => setEditorFocus(false)
+  const [editorValue, setEditorValue] = useState<any>()
   const handleEditorValue = (content: any, delta: any, source: any, editor: any): void => setEditorValue(editor.getHTML())
   const [showDetails, setShowDetails] = useState(true)
   const handleShowDetails = (): void => setShowDetails(!showDetails)
@@ -261,6 +273,8 @@ export const ItemDetailPageDetail: React.FC = () => {
   const [openAddDevelopmenet, setOpenAddDevelopment] = useState(false)
   const handleAddDevelopment = (): void => setOpenAddDevelopment(true)
   const handleCloseAddDevelopmenet = (): void => setOpenAddDevelopment(false)
+  const [devLinkValue, setDevLinkValue] = useState('Branch')
+  const handleDevLinkValue = (e: SelectChangeEvent<string>): void => setDevLinkValue(e.target.value)
   const [showRelated, setShowRelated] = useState(true)
   const handleShowRelated = (): void => setShowRelated(!showRelated)
   const [anchorElRelatedLink, setAnchorElRelatedLink] = React.useState<null | HTMLElement>(null)
@@ -309,7 +323,7 @@ export const ItemDetailPageDetail: React.FC = () => {
     reactQuill.current?.focus()
   }, [editorFocus])
 
-  return <Box paddingRight='.5rem' height='21rem' sx={{ overflowY: 'auto' }}>
+  return <Box paddingRight='.5rem' height='26rem' sx={{ overflowY: 'auto' }}>
     {/* detail section */}
     <Grid container>
       {/* left column */}
@@ -637,19 +651,23 @@ export const ItemDetailPageDetail: React.FC = () => {
                   </DialogContentText>
                   <Select
                     fullWidth
+                    value={devLinkValue}
+                    onChange={handleDevLinkValue}
                     input={<AddLinkInput />}
                   >
                     {
                       developmentLink.map((item, index) =>
-                        <optgroup key={index} label={item.groupName}>
+                        <>
+                          <DevLinkSubheader key={index}>
+                            {item.groupName}
+                          </DevLinkSubheader>
                           {
                             item.links.map((item, index) =>
-                              <option key={index}>
+                              <MenuItem key={index} value={item} sx={{ fontSize: '.875rem' }}>
                                 {item}
-                              </option>
-                            )
+                              </MenuItem>)
                           }
-                        </optgroup>
+                        </>
                       )
                     }
                   </Select>
@@ -732,7 +750,7 @@ export const ItemDetailPageDetail: React.FC = () => {
           <ItemDetailPageAddExistItem
             addRelatedDialog={addRelatedDialog}
             handleCloseAddRelatedDialog={handleCloseAddRelatedDialog}
-            />
+          />
         </DetailItemContainer>
       </Grid>
     </Grid>

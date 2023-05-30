@@ -194,6 +194,12 @@ export const ItemDetailPageTitle: React.FC = () => {
   const [selectedTagsArray, setSelectedTagsArray] = useState<string[]>([])
   const [stateValue, setStateValue] = useState('new')
   const handleStateValue = (e: SelectChangeEvent<string>): void => setStateValue(e.target.value)
+  const [areaValue, setAreaValue] = useState('imoogoo')
+  const handleAreaValue = (e: SelectChangeEvent<string>): void => setAreaValue(e.target.value)
+  const [reasonValue, setReasonValue] = useState('defect')
+  const handleReasonValue = (e: SelectChangeEvent<string>): void => setReasonValue(e.target.value)
+  const [iterationValue, setIterationValue] = useState('imre1sp1')
+  const handleIterationValue = (e: SelectChangeEvent<string>): void => setIterationValue(e.target.value)
   const handleSave = async (param: { title: string }): Promise<void> => {
     setSaveLoading(true)
     try {
@@ -605,6 +611,7 @@ export const ItemDetailPageTitle: React.FC = () => {
         backgroundColor: grey[100]
       }}>
       {/* first line */}
+      {/* state */}
       <Grid item md={3} xs={12}>
         <Stack direction='row' sx={{ padding: '1rem', alignItems: 'center' }}>
           <StateText>
@@ -620,12 +627,17 @@ export const ItemDetailPageTitle: React.FC = () => {
           </Select>
         </Stack>
       </Grid>
+      {/* area */}
       <Grid item md={6} xs={12}>
         <Stack direction='row' sx={{ padding: '1rem', alignItems: 'center' }}>
           <StateText>
             Area
           </StateText>
-          <Select value='imoogoo' input={<StateInput />}>
+          <Select
+            value={areaValue}
+            onChange={handleAreaValue}
+            input={<StateInput />}
+            >
             <StateSuggestion component='li'>Suggestions</StateSuggestion>
             <StateItem value='imoogoo'>iMooGoo</StateItem>
           </Select>
@@ -633,25 +645,34 @@ export const ItemDetailPageTitle: React.FC = () => {
       </Grid>
       <Grid item md={3} xs={12} />
       {/* second line */}
+      {/* reason */}
       <Grid item md={3} xs={12}>
         <SecondRow direction='row'>
           <StateText>
             Reason
           </StateText>
-          <Select value='defect' input={<StateInput />}>
+          <Select
+            value={reasonValue}
+            onChange={handleReasonValue}
+            input={<StateInput />}
+            >
             <StateItem value='failure'>Build Failure</StateItem>
             <StateItem value='defect'>New defect reported</StateItem>
           </Select>
         </SecondRow>
       </Grid>
+      {/* iteration */}
       <Grid item md={6} xs={12}>
         <SecondRow direction='row'>
           <StateText>
             Iteration
           </StateText>
-          <Select value='imoogoo' input={<StateInput />}>
+          <Select
+            value={iterationValue}
+            onChange={handleIterationValue}
+            input={<StateInput />}>
             <StateSuggestion component='li'>Suggestions</StateSuggestion>
-            <StateItem value='imoogoo'>iMooGoo</StateItem>
+            <StateItem value='imre1sp1'>iMooGoo\Release 1\Sprint 1</StateItem>
           </Select>
         </SecondRow>
       </Grid>
