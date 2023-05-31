@@ -268,8 +268,12 @@ export const ItemDetailPageTitle: React.FC = () => {
       </div>
     )
   }
+  // passing parameters
+  const [editorValue, setEditorValue] = useState<any>()
+  // const handleEditorValue = (content: any, delta: any, source: any, editor: any): void => setEditorValue(editor.getHTML())
   // get item info
   useEffect(() => {
+    console.log('renderingTitle')
     void axios.get('http://localhost:3001/letscrum/api/project/workItem')
       .then((value) => {
         setCountComments(value.data.comments.length)
@@ -687,7 +691,11 @@ export const ItemDetailPageTitle: React.FC = () => {
       </Grid>
     </Grid>
     <TabPanel value={tab} index={0}>
-      <ItemDetailPageDetail />
+      <ItemDetailPageDetail
+        editorValue={editorValue}
+        setEditorValue={setEditorValue}
+        // handleEditorValue={handleEditorValue}
+      />
     </TabPanel>
     <TabPanel value={tab} index={1}>
       <ItemDetailPageHistory />

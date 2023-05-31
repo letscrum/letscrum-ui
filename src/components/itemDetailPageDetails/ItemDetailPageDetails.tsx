@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState, useRef, Dispatch, SetStateAction } from 'react'
 import { OpenInFull, ExpandMore, ExpandLess, Add, LocationOn, KeyboardArrowDown, InsertLink, TaskOutlined } from '@mui/icons-material'
 import {
   Autocomplete, Avatar, Box, Divider, FormControl, Grid, Button, InputBase, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography,
@@ -119,7 +119,7 @@ const DetailSelectorItem = styled(MenuItem)({
   color: grey[600]
 })
 
-const Input = styled(TextField)({
+const TextInput = styled(TextField)({
   '& .MuiInputBase-input': {
     padding: '.125rem .25rem',
     fontSize: '.875rem',
@@ -239,7 +239,15 @@ const DevLinkSubheader = (props: ListSubheaderProps): JSX.Element => <ListSubhea
 DevLinkSubheader.muiSkipListHighlight = true
 export default DevLinkSubheader
 
-export const ItemDetailPageDetail: React.FC = () => {
+export const ItemDetailPageDetail = (
+  props: {
+  //   editorFocus: boolean
+  //   setEditorFocus: Dispatch<SetStateAction<boolean>>
+  //   handleEditorValue: (content: any, delta: any, source: any, editor: any) => void
+    editorValue: any
+    setEditorValue: Dispatch<SetStateAction<boolean>>
+  }
+): React.ReactElement => {
   const userName: any = useAppSelector(selectUserName)
   const name = userName ?? ''
   const [showEditor, setShowEditor] = useState(true)
@@ -500,14 +508,14 @@ export const ItemDetailPageDetail: React.FC = () => {
               <DetailItemTitle>
                 Effort
               </DetailItemTitle>
-              <Input
+              <TextInput
                 value={effortValue}
                 onChange={handleEffortValue}
               />
               <DetailItemTitle>
                 Remaining Work
               </DetailItemTitle>
-              <Input
+              <TextInput
                 value={remainingValue}
                 onChange={handleRemainingValue}
               />
@@ -657,7 +665,7 @@ export const ItemDetailPageDetail: React.FC = () => {
                   >
                     {
                       developmentLink.map((item, index) =>
-                        <>
+                        <Stack key={index}>
                           <DevLinkSubheader key={index}>
                             {item.groupName}
                           </DevLinkSubheader>
@@ -667,7 +675,7 @@ export const ItemDetailPageDetail: React.FC = () => {
                                 {item}
                               </MenuItem>)
                           }
-                        </>
+                        </Stack>
                       )
                     }
                   </Select>

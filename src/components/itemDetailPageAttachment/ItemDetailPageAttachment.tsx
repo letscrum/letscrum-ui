@@ -47,7 +47,7 @@ const AttachmentGrid = styled(DataGrid)({
   }
 })
 
-export const ItemDetailPageAttachment = (): JSX.Element => {
+export const ItemDetailPageAttachment = (): React.ReactElement => {
   const [hasAttachment, setHasAttachment] = useState(false)
   const handleAddAttachment = (): void => setHasAttachment(true)
   const columns = React.useMemo<Array<GridColDef<Row>>>(

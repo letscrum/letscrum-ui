@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import {
-  Dialog, DialogTitle, DialogContent, DialogContentText, Select, DialogActions, Button, InputBase,
+  Stack, Dialog, DialogTitle, DialogContent, DialogContentText, Select, DialogActions, Button, InputBase,
   SelectChangeEvent, ListSubheader, ListSubheaderProps, MenuItem
 } from '@mui/material'
 import { LocationOn } from '@mui/icons-material'
@@ -105,7 +105,7 @@ export const ItemDetailPageAddExistItem = (
       >
         {
           existedItem.map((item, index) =>
-            <>
+            <Stack key={index}>
               <ExistedWorkSubheader key={index}>
                 {item.groupName}
               </ExistedWorkSubheader>
@@ -116,7 +116,7 @@ export const ItemDetailPageAddExistItem = (
                   </MenuItem>
                 )
               }
-            </>
+            </Stack>
           )
         }
       </Select>
