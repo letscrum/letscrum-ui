@@ -240,13 +240,10 @@ DevLinkSubheader.muiSkipListHighlight = true
 export default DevLinkSubheader
 
 export const ItemDetailPageDetail = (
-  props: {
-  //   editorFocus: boolean
-  //   setEditorFocus: Dispatch<SetStateAction<boolean>>
-  //   handleEditorValue: (content: any, delta: any, source: any, editor: any) => void
-    editorValue: any
-    setEditorValue: Dispatch<SetStateAction<boolean>>
-  }
+  editorValue: any,
+  setEditorValue: Dispatch<SetStateAction<any>>,
+  priorityValue: string,
+  setPriorityValue: Dispatch<SetStateAction<string>>
 ): React.ReactElement => {
   const userName: any = useAppSelector(selectUserName)
   const name = userName ?? ''
@@ -256,11 +253,11 @@ export const ItemDetailPageDetail = (
   const [editorFocus, setEditorFocus] = useState(false)
   const handleEditorFoucs = (): void => setEditorFocus(true)
   const handleEditorBlur = (): void => setEditorFocus(false)
-  const [editorValue, setEditorValue] = useState<any>()
+  // const [editorValue, setEditorValue] = useState<any>()
   const handleEditorValue = (content: any, delta: any, source: any, editor: any): void => setEditorValue(editor.getHTML())
   const [showDetails, setShowDetails] = useState(true)
   const handleShowDetails = (): void => setShowDetails(!showDetails)
-  const [priorityValue, setPriorityValue] = useState('')
+  // const [priorityValue, setPriorityValue] = useState('')
   const [severityValue, setSeverityValue] = useState('')
   const [effortValue, setEffortValue] = useState('')
   const [remainingValue, setRemainingValue] = useState('')
@@ -330,6 +327,10 @@ export const ItemDetailPageDetail = (
   useEffect(() => {
     reactQuill.current?.focus()
   }, [editorFocus])
+
+  useEffect(() => {
+    console.log('rendering')
+  })
 
   return <Box paddingRight='.5rem' height='26rem' sx={{ overflowY: 'auto' }}>
     {/* detail section */}
@@ -467,8 +468,13 @@ export const ItemDetailPageDetail = (
                   Priority
                 </DetailItemTitle>
                 <Autocomplete
+                  // value={props.priorityValue}
                   inputValue={priorityValue}
-                  onInputChange={(e, newInputValue) => setPriorityValue(newInputValue)}
+                  onInputChange={(e, newInputValue) => {
+                    setPriorityValue(newInputValue)
+                    console.log('newInputValue: ', newInputValue)
+                    console.log('props.priorityValue: ', priorityValue)
+                  }}
                   options={priority}
                   renderInput={
                     (params) =>

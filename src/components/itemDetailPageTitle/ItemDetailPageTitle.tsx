@@ -270,10 +270,9 @@ export const ItemDetailPageTitle: React.FC = () => {
   }
   // passing parameters
   const [editorValue, setEditorValue] = useState<any>()
-  // const handleEditorValue = (content: any, delta: any, source: any, editor: any): void => setEditorValue(editor.getHTML())
+  const [priorityValue, setPriorityValue] = useState('4')
   // get item info
   useEffect(() => {
-    console.log('renderingTitle')
     void axios.get('http://localhost:3001/letscrum/api/project/workItem')
       .then((value) => {
         setCountComments(value.data.comments.length)
@@ -694,7 +693,8 @@ export const ItemDetailPageTitle: React.FC = () => {
       <ItemDetailPageDetail
         editorValue={editorValue}
         setEditorValue={setEditorValue}
-        // handleEditorValue={handleEditorValue}
+        priorityValue={priorityValue}
+        setPriorityValue={setPriorityValue}
       />
     </TabPanel>
     <TabPanel value={tab} index={1}>
