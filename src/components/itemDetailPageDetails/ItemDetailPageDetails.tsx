@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState, useRef, Dispatch, SetStateAction } from 'react'
+import React, { ChangeEvent, useEffect, useState, useRef } from 'react'
 import { OpenInFull, ExpandMore, ExpandLess, Add, LocationOn, KeyboardArrowDown, InsertLink, TaskOutlined } from '@mui/icons-material'
 import {
   Autocomplete, Avatar, Box, Divider, FormControl, Grid, Button, InputBase, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography,
@@ -11,6 +11,13 @@ import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import { selectUserName } from '../../redux/reducers/userSlice'
 import { ItemDetailPageAddExistItem } from '../itemDetailPageAddExistItem'
+
+interface DetailPropsType {
+  editorValue: any
+  priorityValue: string
+  handleEditorValue: any
+  handlePriorityValue: any
+}
 
 const DetailItemContainer = styled(Stack)({
   padding: '.875rem 0 .875rem 1.25rem'
@@ -239,12 +246,7 @@ const DevLinkSubheader = (props: ListSubheaderProps): JSX.Element => <ListSubhea
 DevLinkSubheader.muiSkipListHighlight = true
 export default DevLinkSubheader
 
-export const ItemDetailPageDetail = (
-  editorValue: any,
-  setEditorValue: Dispatch<SetStateAction<any>>,
-  priorityValue: string,
-  setPriorityValue: Dispatch<SetStateAction<string>>
-): React.ReactElement => {
+export const ItemDetailPageDetail = (props: DetailPropsType): JSX.Element => {
   const userName: any = useAppSelector(selectUserName)
   const name = userName ?? ''
   const [showEditor, setShowEditor] = useState(true)
@@ -254,10 +256,11 @@ export const ItemDetailPageDetail = (
   const handleEditorFoucs = (): void => setEditorFocus(true)
   const handleEditorBlur = (): void => setEditorFocus(false)
   // const [editorValue, setEditorValue] = useState<any>()
-  const handleEditorValue = (content: any, delta: any, source: any, editor: any): void => setEditorValue(editor.getHTML())
+  // const handleEditorValue = (content: any, delta: any, source: any, editor: any): void => props.setEditorValue(editor.getHTML())
   const [showDetails, setShowDetails] = useState(true)
   const handleShowDetails = (): void => setShowDetails(!showDetails)
   // const [priorityValue, setPriorityValue] = useState('')
+  // const handlePriorityValue = (e: SelectChangeEvent<string>, newInputValue: string): void => props.setPriorityValue(newInputValue)
   const [severityValue, setSeverityValue] = useState('')
   const [effortValue, setEffortValue] = useState('')
   const [remainingValue, setRemainingValue] = useState('')
@@ -322,15 +325,11 @@ export const ItemDetailPageDetail = (
       </Grid>
     </DetailItemContainer>
   }
-
   // editor auto focus
   useEffect(() => {
+    console.log('......... Detail rendering')
     reactQuill.current?.focus()
   }, [editorFocus])
-
-  useEffect(() => {
-    console.log('rendering')
-  })
 
   return <Box paddingRight='.5rem' height='26rem' sx={{ overflowY: 'auto' }}>
     {/* detail section */}
@@ -365,8 +364,8 @@ export const ItemDetailPageDetail = (
                       modules={modules}
                       formats={formats}
                       ref={reactQuill}
-                      value={editorValue}
-                      onChange={handleEditorValue}
+                      value={props.editorValue}
+                      onChange={props.handleEditorValue}
                       onBlur={handleEditorBlur}
                     />
                     <QuillToolbar />
@@ -469,12 +468,8 @@ export const ItemDetailPageDetail = (
                 </DetailItemTitle>
                 <Autocomplete
                   // value={props.priorityValue}
-                  inputValue={priorityValue}
-                  onInputChange={(e, newInputValue) => {
-                    setPriorityValue(newInputValue)
-                    console.log('newInputValue: ', newInputValue)
-                    console.log('props.priorityValue: ', priorityValue)
-                  }}
+                  inputValue={props.priorityValue}
+                  onInputChange={props.handlePriorityValue}
                   options={priority}
                   renderInput={
                     (params) =>

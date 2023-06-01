@@ -109,13 +109,13 @@ export const ProjectListTable = (props: { keyword: string, isEnter: boolean, isD
   ): Promise<ProjectProps[] | string> => {
     try {
       let response
-      setLoading(true)
-      console.log('requesting API: loading: ', loading, 'isDone', params.isDone, 'isEnter', params.isEnter);
+      setLoading(true);
+      // console.log('requesting API: loading: ', loading, 'isDone', params.isDone, 'isEnter', params.isEnter);
       (params.isDone || params.isEnter)
         ? response = await axios.get(`/v1/projects?keyword=${params.keyword}&page=1&size=10`)
         : response = await axios.get('/v1/projects?page=1&size=10')
       setLoading(false)
-      console.log('list: ', response.data.items)
+      // console.log('list: ', response.data.items)
       setItems(response.data.items)
       return items
     } catch (e: any) {
@@ -125,7 +125,7 @@ export const ProjectListTable = (props: { keyword: string, isEnter: boolean, isD
     }
   }
   useEffect(() => {
-    console.log('in the useEffect: ', loading)
+    // console.log('in the useEffect: ', loading)
     fetchProjectItems({ keyword, isEnter, isDone })
       .catch(() => alert(error))
   }, [isDone, isEnter])
