@@ -13,9 +13,9 @@ import { selectUserName } from '../../redux/reducers/userSlice'
 import { ItemDetailPageAddExistItem } from '../itemDetailPageAddExistItem'
 
 interface DetailPropsType {
-  editorValue: any
+  // editorValue: any
   priorityValue: string
-  handleEditorValue: any
+  // handleEditorValue: any
   handlePriorityValue: any
 }
 
@@ -255,12 +255,12 @@ export const ItemDetailPageDetail = (props: DetailPropsType): JSX.Element => {
   const [editorFocus, setEditorFocus] = useState(false)
   const handleEditorFoucs = (): void => setEditorFocus(true)
   const handleEditorBlur = (): void => setEditorFocus(false)
-  // const [editorValue, setEditorValue] = useState<any>()
-  // const handleEditorValue = (content: any, delta: any, source: any, editor: any): void => props.setEditorValue(editor.getHTML())
+  const [editorValue, setEditorValue] = useState<any>(null)
+  const handleEditorValue = (content: any, delta: any, source: any, editor: any): void => setEditorValue(editor.getHTML())
   const [showDetails, setShowDetails] = useState(true)
   const handleShowDetails = (): void => setShowDetails(!showDetails)
   // const [priorityValue, setPriorityValue] = useState('')
-  // const handlePriorityValue = (e: SelectChangeEvent<string>, newInputValue: string): void => props.setPriorityValue(newInputValue)
+  // const handlePriorityValue = (e: any, newInputValue: string): void => setPriorityValue(newInputValue)
   const [severityValue, setSeverityValue] = useState('')
   const [effortValue, setEffortValue] = useState('')
   const [remainingValue, setRemainingValue] = useState('')
@@ -329,7 +329,7 @@ export const ItemDetailPageDetail = (props: DetailPropsType): JSX.Element => {
   useEffect(() => {
     console.log('......... Detail rendering')
     reactQuill.current?.focus()
-  }, [editorFocus])
+  }, [])
 
   return <Box paddingRight='.5rem' height='26rem' sx={{ overflowY: 'auto' }}>
     {/* detail section */}
@@ -358,18 +358,20 @@ export const ItemDetailPageDetail = (props: DetailPropsType): JSX.Element => {
             <div>
               {
                 editorFocus
+                  // onFocus
                   ? <div>
                     <ReactQuill
                       theme='snow'
                       modules={modules}
                       formats={formats}
                       ref={reactQuill}
-                      value={props.editorValue}
-                      onChange={props.handleEditorValue}
+                      value={editorValue}
+                      onChange={handleEditorValue}
                       onBlur={handleEditorBlur}
                     />
                     <QuillToolbar />
                   </div>
+                  // onBlur
                   : <Grid
                     onClick={handleEditorFoucs}
                     sx={{
