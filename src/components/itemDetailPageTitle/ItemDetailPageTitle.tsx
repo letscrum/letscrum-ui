@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { ChangeEvent, useEffect, useMemo, useState } from 'react'
 import {
   PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined,
   Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1, Restore, LinkOutlined, AttachFileOutlined
@@ -269,11 +269,42 @@ export const ItemDetailPageTitle: React.FC = () => {
   const [tab, setTab] = useState(0)
   const handleSwitchTab = (event: React.SyntheticEvent, newValue: number): void => setTab(newValue)
   // passing parameters
-  // const [editorValue, setEditorValue] = useState<any>()
-  // const handleEditorValue = (content: any, delta: any, source: any, editor: any): void => setEditorValue(editor.getHTML())
+  const [editorValue, setEditorValue] = useState<any>()
+  const handleEditorValue = (content: any, delta: any, source: any, editor: any): void => setEditorValue(editor.getHTML())
   const [priorityValue, setPriorityValue] = useState('')
   const handlePriorityValue = (e: SelectChangeEvent<string>, newInputValue: string): void => setPriorityValue(newInputValue)
-  const ItemDetailPageDetailMemo = useMemo(() => <ItemDetailPageDetail priorityValue={priorityValue} handlePriorityValue={handlePriorityValue} />, [priorityValue])
+  const [severityValue, setSeverityValue] = useState('')
+  const handleSeverityValue = (e: SelectChangeEvent): void => setSeverityValue(e.target.value)
+  const [effortValue, setEffortValue] = useState('')
+  const handleEffortValue = (e: ChangeEvent<HTMLInputElement>): void => setEffortValue(e.currentTarget.value)
+  const [remainingValue, setRemainingValue] = useState('')
+  const handleRemainingValue = (e: ChangeEvent<HTMLInputElement>): void => setRemainingValue(e.currentTarget.value)
+  const [activityValue, setActivityValue] = useState('')
+  const handleActivityValue = (e: SelectChangeEvent<string>, newInputValue: string): void => setActivityValue(newInputValue)
+  const [foundValue, setFoundValue] = useState('')
+  const handleFoundValue = (e: SelectChangeEvent): void => setFoundValue(e.target.value)
+  const [intergratedValue, setIntergratedValue] = useState('')
+  const handleIntergratedValue = (e: SelectChangeEvent): void => setIntergratedValue(e.target.value)
+  const ItemDetailPageDetailMemo = useMemo(
+    () => <ItemDetailPageDetail
+      editorValue={editorValue}
+      handleEditorValue={handleEditorValue}
+      priorityValue={priorityValue}
+      handlePriorityValue={handlePriorityValue}
+      severityValue={severityValue}
+      handleSeverityValue={handleSeverityValue}
+      effortValue={effortValue}
+      handleEffortValue={handleEffortValue}
+      remainingValue={remainingValue}
+      handleRemainingValue={handleRemainingValue}
+      activityValue={activityValue}
+      handleActivityValue={handleActivityValue}
+      foundValue={foundValue}
+      handleFoundValue={handleFoundValue}
+      intergratedValue={intergratedValue}
+      handleIntergratedValue={handleIntergratedValue}
+    />, [editorValue, priorityValue, severityValue, effortValue, remainingValue, activityValue, foundValue, intergratedValue]
+  )
   const handleSubmit = (e: any): void => e.preventDefault()
   // get item info
   useEffect(() => {

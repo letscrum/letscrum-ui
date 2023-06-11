@@ -13,10 +13,22 @@ import { selectUserName } from '../../redux/reducers/userSlice'
 import { ItemDetailPageAddExistItem } from '../itemDetailPageAddExistItem'
 
 interface DetailPropsType {
-  // editorValue: any
+  editorValue: any
   priorityValue: string
-  // handleEditorValue: any
+  handleEditorValue: (content: any, delta: any, source: any, editor: any) => void
   handlePriorityValue: any
+  severityValue: string
+  handleSeverityValue: (e: SelectChangeEvent) => void
+  effortValue: string
+  handleEffortValue: (e: ChangeEvent<HTMLInputElement>) => void
+  remainingValue: string
+  handleRemainingValue: (e: ChangeEvent<HTMLInputElement>) => void
+  activityValue: string
+  handleActivityValue: any
+  foundValue: string
+  handleFoundValue: (e: SelectChangeEvent) => void
+  intergratedValue: string
+  handleIntergratedValue: (e: SelectChangeEvent) => void
 }
 
 const DetailItemContainer = styled(Stack)({
@@ -255,25 +267,10 @@ export const ItemDetailPageDetail = (props: DetailPropsType): JSX.Element => {
   const [editorFocus, setEditorFocus] = useState(false)
   const handleEditorFoucs = (): void => setEditorFocus(true)
   const handleEditorBlur = (): void => setEditorFocus(false)
-  const [editorValue, setEditorValue] = useState<any>(null)
-  const handleEditorValue = (content: any, delta: any, source: any, editor: any): void => setEditorValue(editor.getHTML())
   const [showDetails, setShowDetails] = useState(true)
   const handleShowDetails = (): void => setShowDetails(!showDetails)
-  // const [priorityValue, setPriorityValue] = useState('')
-  // const handlePriorityValue = (e: any, newInputValue: string): void => setPriorityValue(newInputValue)
-  const [severityValue, setSeverityValue] = useState('')
-  const [effortValue, setEffortValue] = useState('')
-  const [remainingValue, setRemainingValue] = useState('')
-  const [activityValue, setActivityValue] = useState('')
-  const handleSeverityValue = (e: SelectChangeEvent): void => setSeverityValue(e.target.value)
-  const handleEffortValue = (e: ChangeEvent<HTMLInputElement>): void => setEffortValue(e.currentTarget.value)
-  const handleRemainingValue = (e: ChangeEvent<HTMLInputElement>): void => setRemainingValue(e.currentTarget.value)
   const [showBuild, setShowBuild] = useState(true)
   const handleShowBuild = (): void => setShowBuild(!showBuild)
-  const [foundValue, setFoundValue] = useState('')
-  const handleFoundValue = (e: SelectChangeEvent): void => setFoundValue(e.target.value)
-  const [intergratedValue, setIntergratedValue] = useState('')
-  const handleIntergratedValue = (e: SelectChangeEvent): void => setIntergratedValue(e.target.value)
   const [showDeployment, setShowDeployment] = useState(true)
   const handleShowDeployment = (): void => setShowDeployment(!showDeployment)
   const [showDevelopment, setShowDevelopment] = useState(true)
@@ -365,8 +362,8 @@ export const ItemDetailPageDetail = (props: DetailPropsType): JSX.Element => {
                       modules={modules}
                       formats={formats}
                       ref={reactQuill}
-                      value={editorValue}
-                      onChange={handleEditorValue}
+                      value={props.editorValue}
+                      onChange={props.handleEditorValue}
                       onBlur={handleEditorBlur}
                     />
                     <QuillToolbar />
@@ -494,8 +491,8 @@ export const ItemDetailPageDetail = (props: DetailPropsType): JSX.Element => {
               </DetailItemTitle>
               <FormControl>
                 <Select
-                  value={severityValue}
-                  onChange={handleSeverityValue}
+                  value={props.severityValue}
+                  onChange={props.handleSeverityValue}
                   input={<DetailSelector />}
                 >
                   {
@@ -512,22 +509,22 @@ export const ItemDetailPageDetail = (props: DetailPropsType): JSX.Element => {
                 Effort
               </DetailItemTitle>
               <TextInput
-                value={effortValue}
-                onChange={handleEffortValue}
+                value={props.effortValue}
+                onChange={props.handleEffortValue}
               />
               <DetailItemTitle>
                 Remaining Work
               </DetailItemTitle>
               <TextInput
-                value={remainingValue}
-                onChange={handleRemainingValue}
+                value={props.remainingValue}
+                onChange={props.handleRemainingValue}
               />
               <DetailItemTitle>
                 Activity
               </DetailItemTitle>
               <Autocomplete
-                inputValue={activityValue}
-                onInputChange={(e, newInputValue) => setActivityValue(newInputValue)}
+                inputValue={props.activityValue}
+                onInputChange={props.handleActivityValue}
                 options={activities}
                 renderInput={
                   (params) =>
@@ -565,8 +562,8 @@ export const ItemDetailPageDetail = (props: DetailPropsType): JSX.Element => {
             Found in Build
           </DetailItemTitle>
           <Select
-            value={foundValue}
-            onChange={handleFoundValue}
+            value={props.foundValue}
+            onChange={props.handleFoundValue}
             input={<DetailSelector />}
           >
             <DetailSelectorItem value='none'>
@@ -577,8 +574,8 @@ export const ItemDetailPageDetail = (props: DetailPropsType): JSX.Element => {
             Integrated in Build
           </DetailItemTitle>
           <Select
-            value={intergratedValue}
-            onChange={handleIntergratedValue}
+            value={props.intergratedValue}
+            onChange={props.handleIntergratedValue}
             input={<DetailSelector />}
           >
             <DetailSelectorItem value='none'>
