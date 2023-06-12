@@ -1,17 +1,18 @@
-import React, { useState } from 'react'
+import React, { useContext } from 'react'
 import {
   Dialog, DialogTitle, DialogContent, DialogContentText, Select, DialogActions, Button, InputBase,
-  SelectChangeEvent, ListSubheader, ListSubheaderProps, MenuItem
+  ListSubheader, ListSubheaderProps, MenuItem, SelectChangeEvent
 } from '@mui/material'
 import { LocationOn } from '@mui/icons-material'
 import { grey, blue } from '@mui/material/colors'
 import styled from '@emotion/styled'
+import { ExistedWorkContext } from '../../components/itemDetailPageTitle/ItemDetailPageTitle'
 
 const AddLinkInput = styled(InputBase)({
   fontSize: '.875rem',
   color: grey[900],
   '& .MuiInputBase-input': {
-    paddingLeft: '.125rem',
+    paddingLeft: '.25rem',
     borderRadius: '0',
     border: `1px solid ${grey[500]}`
   }
@@ -77,12 +78,19 @@ export const ItemDetailPageAddExistItem = (
 ): JSX.Element => {
   const addRelatedDialog = props.addRelatedDialog
   const handleCloseAddRelatedDialog = props.handleCloseAddRelatedDialog
-  const [existedWorkValue, setExistedWorkValue] = useState('')
+  const useExistedWorkContext = (): any => {
+    const existedWorkContext = useContext(ExistedWorkContext)
+    if (existedWorkContext === undefined) {
+      throw new Error('useContex Error')
+    }
+    return existedWorkContext
+  }
+  const { existedWorkValue, setExistedWorkValue } = useExistedWorkContext()
+  const handleExistedWorkValue = (e: SelectChangeEvent<string>): void => setExistedWorkValue(e.target.value)
   const selectItem = (item: string): JSX.Element => <MenuItem
     key={item} value={item} sx={{ fontSize: '.875rem' }}>
     {item}
   </MenuItem>
-  const handleExistedWorkValue = (e: SelectChangeEvent<string>): void => setExistedWorkValue(e.target.value)
 
   return <AddLinkDialog
     sx={{ '& .MuiPaper-root': { width: '120rem' } }}

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useMemo, useState } from 'react'
+import React, { ChangeEvent, createContext, useEffect, useMemo, useState } from 'react'
 import {
   PestControl, ErrorOutlined, ContactMailOutlined, ClearOutlined, AccountCircle, ForumOutlined,
   Clear, Add, Save, Undo, Refresh, MoreHoriz, HourglassBottom, Brightness1, Restore, LinkOutlined, AttachFileOutlined
@@ -28,6 +28,11 @@ interface TabPanelProps {
   children?: React.ReactNode
   index: number
   value: number
+}
+
+interface ExistedWorkContextType {
+  existedWorkValue: string | null
+  setExistedWorkValue: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 const TitleInput = styled(TextField)({
@@ -212,6 +217,7 @@ const StyledTabs = styled((props: StyledTabsProps) => (
     backgroundColor: 'white'
   }
 })
+
 const TabPanel = (props: TabPanelProps): JSX.Element => {
   const { children, value, index, ...other } = props
   return (
@@ -230,6 +236,8 @@ const TabPanel = (props: TabPanelProps): JSX.Element => {
     </div>
   )
 }
+
+export const ExistedWorkContext = createContext<ExistedWorkContextType | undefined>(undefined)
 
 export const ItemDetailPageTitle: React.FC = () => {
   const [saveLoading, setSaveLoading] = useState(false)
@@ -285,6 +293,11 @@ export const ItemDetailPageTitle: React.FC = () => {
   const handleFoundValue = (e: SelectChangeEvent): void => setFoundValue(e.target.value)
   const [intergratedValue, setIntergratedValue] = useState('')
   const handleIntergratedValue = (e: SelectChangeEvent): void => setIntergratedValue(e.target.value)
+  const [devLinkValue, setDevLinkValue] = useState('')
+  const handleDevLinkValue = (e: SelectChangeEvent<string>): void => setDevLinkValue(e.target.value)
+  const [existedWorkValue, setExistedWorkValue] = useState<string | null>(null)
+  console.log('existedWorkValue: ', existedWorkValue)
+  // const handleExistedWorkValue = (e: SelectChangeEvent<string>): void => setExistedWorkValue(e.target.value)
   const ItemDetailPageDetailMemo = useMemo(
     () => <ItemDetailPageDetail
       editorValue={editorValue}
@@ -303,7 +316,11 @@ export const ItemDetailPageTitle: React.FC = () => {
       handleFoundValue={handleFoundValue}
       intergratedValue={intergratedValue}
       handleIntergratedValue={handleIntergratedValue}
-    />, [editorValue, priorityValue, severityValue, effortValue, remainingValue, activityValue, foundValue, intergratedValue]
+      devLinkValue={devLinkValue}
+      handleDevLinkValue={handleDevLinkValue}
+      existedWorkValue={existedWorkValue}
+      // handleExistedWorkValue={handleExistedWorkValue}
+    />, [editorValue, priorityValue, severityValue, effortValue, remainingValue, activityValue, foundValue, intergratedValue, devLinkValue, existedWorkValue]
   )
   const handleSubmit = (e: any): void => e.preventDefault()
   // get item info
@@ -726,7 +743,9 @@ export const ItemDetailPageTitle: React.FC = () => {
         </Grid>
       </Grid>
       <TabPanel value={tab} index={0}>
-        {ItemDetailPageDetailMemo}
+        <ExistedWorkContext.Provider value={{ existedWorkValue, setExistedWorkValue }}>
+          {ItemDetailPageDetailMemo}
+        </ExistedWorkContext.Provider>
       </TabPanel>
       <TabPanel value={tab} index={1}>
         <ItemDetailPageHistory />

@@ -29,6 +29,10 @@ interface DetailPropsType {
   handleFoundValue: (e: SelectChangeEvent) => void
   intergratedValue: string
   handleIntergratedValue: (e: SelectChangeEvent) => void
+  devLinkValue: string
+  handleDevLinkValue: (e: SelectChangeEvent) => void
+  existedWorkValue: string | null
+  // handleExistedWorkValue: (e: SelectChangeEvent) => void
 }
 
 const DetailItemContainer = styled(Stack)({
@@ -180,7 +184,7 @@ const AddLinkInput = styled(InputBase)({
   fontSize: '.875rem',
   color: grey[900],
   '& .MuiInputBase-input': {
-    paddingLeft: '.125rem',
+    paddingLeft: '.25rem',
     borderRadius: '0',
     border: `1px solid ${grey[500]}`
   }
@@ -192,6 +196,21 @@ const AddLinkDialog = styled(Dialog)({
     width: '32rem',
     height: '80vh',
     borderRadius: '0'
+  }
+})
+const SubmitButton = styled(Button)({
+  padding: '.315rem 1.25rem',
+  borderRadius: '0',
+  fontWeight: '600',
+  color: 'white',
+  backgroundColor: blue[900],
+  '&:hover': {
+    color: 'white',
+    backgroundColor: blue[900]
+  },
+  '&:active': {
+    color: 'white',
+    backgroundColor: blue[900]
   }
 })
 
@@ -282,11 +301,11 @@ export const ItemDetailPageDetail = (props: DetailPropsType): JSX.Element => {
   const handleAddDevelopment = (): void => setOpenAddDevelopment(true)
   const handleCloseAddDevelopmenet = (): void => setOpenAddDevelopment(false)
   const [devLinkValue, setDevLinkValue] = useState('')
+  const handleDevLinkValue = (e: SelectChangeEvent<string>): void => setDevLinkValue(e.target.value)
   const selectItem = (item: string): JSX.Element => <MenuItem
     key={item} value={item} sx={{ fontSize: '.875rem' }}>
     {item}
   </MenuItem>
-  const handleDevLinkValue = (e: SelectChangeEvent<string>): void => setDevLinkValue(e.target.value)
   const [showRelated, setShowRelated] = useState(true)
   const handleShowRelated = (): void => setShowRelated(!showRelated)
   const [anchorElRelatedLink, setAnchorElRelatedLink] = React.useState<null | HTMLElement>(null)
@@ -691,13 +710,19 @@ export const ItemDetailPageDetail = (props: DetailPropsType): JSX.Element => {
                   </Stack>
                 </DialogContent>
                 <DialogActions>
-                  <Button
-                    disabled
-                    sx={{ color: grey[300] }}
-                    onClick={handleCloseAddDevelopmenet}
-                  >
-                    OK
-                  </Button>
+                  {
+                    devLinkValue === ''
+                      ? <Button
+                        disabled
+                        sx={{ color: grey[300] }}
+                        onClick={handleCloseAddDevelopmenet}
+                      >
+                        OK
+                      </Button>
+                      : <SubmitButton onClick={handleCloseAddDevelopmenet}>
+                        OK
+                      </SubmitButton>
+                  }
                   <CancelButton
                     onClick={handleCloseAddDevelopmenet}
                   >
