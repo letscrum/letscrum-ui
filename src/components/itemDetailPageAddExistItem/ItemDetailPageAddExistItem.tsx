@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import {
-  Stack, Dialog, DialogTitle, DialogContent, DialogContentText, Select, DialogActions, Button, InputBase,
+  Dialog, DialogTitle, DialogContent, DialogContentText, Select, DialogActions, Button, InputBase,
   SelectChangeEvent, ListSubheader, ListSubheaderProps, MenuItem
 } from '@mui/material'
 import { LocationOn } from '@mui/icons-material'
@@ -8,7 +8,10 @@ import { grey, blue } from '@mui/material/colors'
 import styled from '@emotion/styled'
 
 const AddLinkInput = styled(InputBase)({
+  fontSize: '.875rem',
+  color: grey[900],
   '& .MuiInputBase-input': {
+    paddingLeft: '.125rem',
     borderRadius: '0',
     border: `1px solid ${grey[500]}`
   }
@@ -55,10 +58,6 @@ const existedItem = [
       'Tested By',
       'Tests'
     ]
-  },
-  {
-    groupName: 'GitHub',
-    links: ['GitHub Commit', 'GitHub Pull Request']
   }
 ]
 
@@ -78,7 +77,11 @@ export const ItemDetailPageAddExistItem = (
 ): JSX.Element => {
   const addRelatedDialog = props.addRelatedDialog
   const handleCloseAddRelatedDialog = props.handleCloseAddRelatedDialog
-  const [existedWorkValue, setExistedWorkValue] = useState('Child')
+  const [existedWorkValue, setExistedWorkValue] = useState('')
+  const selectItem = (item: string): JSX.Element => <MenuItem
+    key={item} value={item} sx={{ fontSize: '.875rem' }}>
+    {item}
+  </MenuItem>
   const handleExistedWorkValue = (e: SelectChangeEvent<string>): void => setExistedWorkValue(e.target.value)
 
   return <AddLinkDialog
@@ -103,21 +106,13 @@ export const ItemDetailPageAddExistItem = (
         onChange={handleExistedWorkValue}
         input={<AddLinkInput />}
       >
+        <ExistedWorkSubheader>GitHub</ExistedWorkSubheader>
         {
-          existedItem.map((item, index) =>
-            <Stack key={index}>
-              <ExistedWorkSubheader key={index}>
-                {item.groupName}
-              </ExistedWorkSubheader>
-              {
-                item.links.map((item, index) =>
-                  <MenuItem key={index} sx={{ fontSize: '.875rem' }}>
-                    {item}
-                  </MenuItem>
-                )
-              }
-            </Stack>
-          )
+          existedItem[0].links.map((item) => selectItem(item))
+        }
+        <ExistedWorkSubheader>Work</ExistedWorkSubheader>
+        {
+          existedItem[1].links.map((item) => selectItem(item))
         }
       </Select>
     </DialogContent>

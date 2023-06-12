@@ -308,7 +308,6 @@ export const ItemDetailPageTitle: React.FC = () => {
   const handleSubmit = (e: any): void => e.preventDefault()
   // get item info
   useEffect(() => {
-    console.log('---------- Title rendering')
     void axios.get('http://localhost:3001/letscrum/api/project/workItem')
       .then((value) => {
         setCountComments(value.data.comments.length)

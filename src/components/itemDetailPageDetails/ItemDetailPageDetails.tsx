@@ -177,7 +177,10 @@ const AddLinkButton = styled(Button)({
 })
 
 const AddLinkInput = styled(InputBase)({
+  fontSize: '.875rem',
+  color: grey[900],
   '& .MuiInputBase-input': {
+    paddingLeft: '.125rem',
     borderRadius: '0',
     border: `1px solid ${grey[500]}`
   }
@@ -278,7 +281,11 @@ export const ItemDetailPageDetail = (props: DetailPropsType): JSX.Element => {
   const [openAddDevelopmenet, setOpenAddDevelopment] = useState(false)
   const handleAddDevelopment = (): void => setOpenAddDevelopment(true)
   const handleCloseAddDevelopmenet = (): void => setOpenAddDevelopment(false)
-  const [devLinkValue, setDevLinkValue] = useState('Branch')
+  const [devLinkValue, setDevLinkValue] = useState('')
+  const selectItem = (item: string): JSX.Element => <MenuItem
+    key={item} value={item} sx={{ fontSize: '.875rem' }}>
+    {item}
+  </MenuItem>
   const handleDevLinkValue = (e: SelectChangeEvent<string>): void => setDevLinkValue(e.target.value)
   const [showRelated, setShowRelated] = useState(true)
   const handleShowRelated = (): void => setShowRelated(!showRelated)
@@ -324,7 +331,6 @@ export const ItemDetailPageDetail = (props: DetailPropsType): JSX.Element => {
   }
   // editor auto focus
   useEffect(() => {
-    console.log('......... Detail rendering')
     reactQuill.current?.focus()
   }, [])
 
@@ -663,20 +669,17 @@ export const ItemDetailPageDetail = (props: DetailPropsType): JSX.Element => {
                     onChange={handleDevLinkValue}
                     input={<AddLinkInput />}
                   >
+                    <DevLinkSubheader>Build</DevLinkSubheader>
                     {
-                      developmentLink.map((item, index) =>
-                        <Stack key={index}>
-                          <DevLinkSubheader key={index}>
-                            {item.groupName}
-                          </DevLinkSubheader>
-                          {
-                            item.links.map((item, index) =>
-                              <MenuItem key={index} value={item} sx={{ fontSize: '.875rem' }}>
-                                {item}
-                              </MenuItem>)
-                          }
-                        </Stack>
-                      )
+                      developmentLink[0].links.map((item) => selectItem(item))
+                    }
+                    <DevLinkSubheader>Code</DevLinkSubheader>
+                    {
+                      developmentLink[1].links.map((item) => selectItem(item))
+                    }
+                    <DevLinkSubheader>GitHub</DevLinkSubheader>
+                    {
+                      developmentLink[2].links.map((item) => selectItem(item))
                     }
                   </Select>
                   <Stack style={{ marginTop: '.5rem', padding: '.5rem', backgroundColor: orange[50] }}>
