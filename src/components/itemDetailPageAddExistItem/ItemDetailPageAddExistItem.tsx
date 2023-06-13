@@ -80,9 +80,6 @@ export const ItemDetailPageAddExistItem = (
   const handleCloseAddRelatedDialog = props.handleCloseAddRelatedDialog
   const useExistedWorkContext = (): any => {
     const existedWorkContext = useContext(ExistedWorkContext)
-    if (existedWorkContext === undefined) {
-      throw new Error('useContex Error')
-    }
     return existedWorkContext
   }
   const { existedWorkValue, setExistedWorkValue } = useExistedWorkContext()

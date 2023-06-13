@@ -30,7 +30,7 @@ interface TabPanelProps {
   value: number
 }
 
-interface ExistedWorkContextType {
+export interface ExistedWorkContextType {
   existedWorkValue: string | null
   setExistedWorkValue: React.Dispatch<React.SetStateAction<string | null>>
 }
@@ -237,7 +237,7 @@ const TabPanel = (props: TabPanelProps): JSX.Element => {
   )
 }
 
-export const ExistedWorkContext = createContext<ExistedWorkContextType | undefined>(undefined)
+export const ExistedWorkContext = createContext<ExistedWorkContextType>({ existedWorkValue: '', setExistedWorkValue: () => {} })
 
 export const ItemDetailPageTitle: React.FC = () => {
   const [saveLoading, setSaveLoading] = useState(false)
@@ -295,9 +295,7 @@ export const ItemDetailPageTitle: React.FC = () => {
   const handleIntergratedValue = (e: SelectChangeEvent): void => setIntergratedValue(e.target.value)
   const [devLinkValue, setDevLinkValue] = useState('')
   const handleDevLinkValue = (e: SelectChangeEvent<string>): void => setDevLinkValue(e.target.value)
-  const [existedWorkValue, setExistedWorkValue] = useState<string | null>(null)
-  console.log('existedWorkValue: ', existedWorkValue)
-  // const handleExistedWorkValue = (e: SelectChangeEvent<string>): void => setExistedWorkValue(e.target.value)
+  const [existedWorkValue, setExistedWorkValue] = useState<string | null>('')
   const ItemDetailPageDetailMemo = useMemo(
     () => <ItemDetailPageDetail
       editorValue={editorValue}
@@ -319,7 +317,6 @@ export const ItemDetailPageTitle: React.FC = () => {
       devLinkValue={devLinkValue}
       handleDevLinkValue={handleDevLinkValue}
       existedWorkValue={existedWorkValue}
-      // handleExistedWorkValue={handleExistedWorkValue}
     />, [editorValue, priorityValue, severityValue, effortValue, remainingValue, activityValue, foundValue, intergratedValue, devLinkValue, existedWorkValue]
   )
   const handleSubmit = (e: any): void => e.preventDefault()
