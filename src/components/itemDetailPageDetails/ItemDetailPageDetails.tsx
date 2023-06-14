@@ -1,6 +1,9 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState, useRef } from 'react'
 import { OpenInFull, ExpandMore, ExpandLess, Add, LocationOn, KeyboardArrowDown, InsertLink, TaskOutlined } from '@mui/icons-material'
-import { Autocomplete, Avatar, Box, Divider, FormControl, Grid, Button, InputBase, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Menu, Link } from '@mui/material'
+import {
+  Autocomplete, Avatar, Box, Divider, FormControl, Grid, Button, InputBase, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography,
+  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Menu, Link, ListSubheader, ListSubheaderProps
+} from '@mui/material'
 import { blue, grey, green, orange } from '@mui/material/colors'
 import { useAppSelector } from '../../redux/hooks'
 import styled from '@emotion/styled'
@@ -8,6 +11,29 @@ import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import { selectUserName } from '../../redux/reducers/userSlice'
 import { ItemDetailPageAddExistItem } from '../itemDetailPageAddExistItem'
+
+interface DetailPropsType {
+  editorValue: any
+  priorityValue: string
+  handleEditorValue: (content: any, delta: any, source: any, editor: any) => void
+  handlePriorityValue: any
+  severityValue: string
+  handleSeverityValue: (e: SelectChangeEvent) => void
+  effortValue: string
+  handleEffortValue: (e: ChangeEvent<HTMLInputElement>) => void
+  remainingValue: string
+  handleRemainingValue: (e: ChangeEvent<HTMLInputElement>) => void
+  activityValue: string
+  handleActivityValue: any
+  foundValue: string
+  handleFoundValue: (e: SelectChangeEvent) => void
+  intergratedValue: string
+  handleIntergratedValue: (e: SelectChangeEvent) => void
+  devLinkValue: string
+  handleDevLinkValue: (e: SelectChangeEvent) => void
+  existedWorkValue: string | null
+  // handleExistedWorkValue: (e: SelectChangeEvent) => void
+}
 
 const DetailItemContainer = styled(Stack)({
   padding: '.875rem 0 .875rem 1.25rem'
@@ -116,7 +142,7 @@ const DetailSelectorItem = styled(MenuItem)({
   color: grey[600]
 })
 
-const Input = styled(TextField)({
+const TextInput = styled(TextField)({
   '& .MuiInputBase-input': {
     padding: '.125rem .25rem',
     fontSize: '.875rem',
@@ -155,7 +181,10 @@ const AddLinkButton = styled(Button)({
 })
 
 const AddLinkInput = styled(InputBase)({
+  fontSize: '.875rem',
+  color: grey[900],
   '& .MuiInputBase-input': {
+    paddingLeft: '.25rem',
     borderRadius: '0',
     border: `1px solid ${grey[500]}`
   }
@@ -164,8 +193,24 @@ const AddLinkInput = styled(InputBase)({
 const AddLinkDialog = styled(Dialog)({
   '& .MuiPaper-root': {
     padding: '0 1rem 1rem 0',
+    width: '32rem',
     height: '80vh',
     borderRadius: '0'
+  }
+})
+const SubmitButton = styled(Button)({
+  padding: '.315rem 1.25rem',
+  borderRadius: '0',
+  fontWeight: '600',
+  color: 'white',
+  backgroundColor: blue[900],
+  '&:hover': {
+    color: 'white',
+    backgroundColor: blue[900]
+  },
+  '&:active': {
+    color: 'white',
+    backgroundColor: blue[900]
   }
 })
 
@@ -227,33 +272,27 @@ const developmentLink = [
   }
 ]
 
-export const ItemDetailPageDetail: React.FC = () => {
+const DevLinkSubheader = (props: ListSubheaderProps): JSX.Element => <ListSubheader
+  {...props}
+  sx={{ color: blue[800], fontSize: '.875rem', borderBottom: `1px solid ${grey[200]}` }}
+/>
+
+DevLinkSubheader.muiSkipListHighlight = true
+export default DevLinkSubheader
+
+export const ItemDetailPageDetail = (props: DetailPropsType): JSX.Element => {
   const userName: any = useAppSelector(selectUserName)
   const name = userName ?? ''
   const [showEditor, setShowEditor] = useState(true)
   const handleShowEditor = (): void => setShowEditor(!showEditor)
   const reactQuill = useRef<any>(null)
   const [editorFocus, setEditorFocus] = useState(false)
-  const [editorValue, setEditorValue] = useState<any>()
   const handleEditorFoucs = (): void => setEditorFocus(true)
   const handleEditorBlur = (): void => setEditorFocus(false)
-  const handleEditorValue = (content: any, delta: any, source: any, editor: any): void => setEditorValue(editor.getHTML())
   const [showDetails, setShowDetails] = useState(true)
   const handleShowDetails = (): void => setShowDetails(!showDetails)
-  const [priorityValue, setPriorityValue] = useState('')
-  const [severityValue, setSeverityValue] = useState('')
-  const [effortValue, setEffortValue] = useState('')
-  const [remainingValue, setRemainingValue] = useState('')
-  const [activityValue, setActivityValue] = useState('')
-  const handleSeverityValue = (e: SelectChangeEvent): void => setSeverityValue(e.target.value)
-  const handleEffortValue = (e: ChangeEvent<HTMLInputElement>): void => setEffortValue(e.currentTarget.value)
-  const handleRemainingValue = (e: ChangeEvent<HTMLInputElement>): void => setRemainingValue(e.currentTarget.value)
   const [showBuild, setShowBuild] = useState(true)
   const handleShowBuild = (): void => setShowBuild(!showBuild)
-  const [foundValue, setFoundValue] = useState('')
-  const handleFoundValue = (e: SelectChangeEvent): void => setFoundValue(e.target.value)
-  const [intergratedValue, setIntergratedValue] = useState('')
-  const handleIntergratedValue = (e: SelectChangeEvent): void => setIntergratedValue(e.target.value)
   const [showDeployment, setShowDeployment] = useState(true)
   const handleShowDeployment = (): void => setShowDeployment(!showDeployment)
   const [showDevelopment, setShowDevelopment] = useState(true)
@@ -261,6 +300,12 @@ export const ItemDetailPageDetail: React.FC = () => {
   const [openAddDevelopmenet, setOpenAddDevelopment] = useState(false)
   const handleAddDevelopment = (): void => setOpenAddDevelopment(true)
   const handleCloseAddDevelopmenet = (): void => setOpenAddDevelopment(false)
+  const [devLinkValue, setDevLinkValue] = useState('')
+  const handleDevLinkValue = (e: SelectChangeEvent<string>): void => setDevLinkValue(e.target.value)
+  const selectItem = (item: string): JSX.Element => <MenuItem
+    key={item} value={item} sx={{ fontSize: '.875rem' }}>
+    {item}
+  </MenuItem>
   const [showRelated, setShowRelated] = useState(true)
   const handleShowRelated = (): void => setShowRelated(!showRelated)
   const [anchorElRelatedLink, setAnchorElRelatedLink] = React.useState<null | HTMLElement>(null)
@@ -303,13 +348,12 @@ export const ItemDetailPageDetail: React.FC = () => {
       </Grid>
     </DetailItemContainer>
   }
-
   // editor auto focus
   useEffect(() => {
     reactQuill.current?.focus()
-  }, [editorFocus])
+  }, [])
 
-  return <Box paddingRight='.5rem' height='21rem' sx={{ overflowY: 'auto' }}>
+  return <Box paddingRight='.5rem' height='26rem' sx={{ overflowY: 'auto' }}>
     {/* detail section */}
     <Grid container>
       {/* left column */}
@@ -336,18 +380,20 @@ export const ItemDetailPageDetail: React.FC = () => {
             <div>
               {
                 editorFocus
+                  // onFocus
                   ? <div>
                     <ReactQuill
                       theme='snow'
                       modules={modules}
                       formats={formats}
                       ref={reactQuill}
-                      value={editorValue}
-                      onChange={handleEditorValue}
+                      value={props.editorValue}
+                      onChange={props.handleEditorValue}
                       onBlur={handleEditorBlur}
                     />
                     <QuillToolbar />
                   </div>
+                  // onBlur
                   : <Grid
                     onClick={handleEditorFoucs}
                     sx={{
@@ -445,8 +491,9 @@ export const ItemDetailPageDetail: React.FC = () => {
                   Priority
                 </DetailItemTitle>
                 <Autocomplete
-                  inputValue={priorityValue}
-                  onInputChange={(e, newInputValue) => setPriorityValue(newInputValue)}
+                  // value={props.priorityValue}
+                  inputValue={props.priorityValue}
+                  onInputChange={props.handlePriorityValue}
                   options={priority}
                   renderInput={
                     (params) =>
@@ -469,8 +516,8 @@ export const ItemDetailPageDetail: React.FC = () => {
               </DetailItemTitle>
               <FormControl>
                 <Select
-                  value={severityValue}
-                  onChange={handleSeverityValue}
+                  value={props.severityValue}
+                  onChange={props.handleSeverityValue}
                   input={<DetailSelector />}
                 >
                   {
@@ -486,23 +533,23 @@ export const ItemDetailPageDetail: React.FC = () => {
               <DetailItemTitle>
                 Effort
               </DetailItemTitle>
-              <Input
-                value={effortValue}
-                onChange={handleEffortValue}
+              <TextInput
+                value={props.effortValue}
+                onChange={props.handleEffortValue}
               />
               <DetailItemTitle>
                 Remaining Work
               </DetailItemTitle>
-              <Input
-                value={remainingValue}
-                onChange={handleRemainingValue}
+              <TextInput
+                value={props.remainingValue}
+                onChange={props.handleRemainingValue}
               />
               <DetailItemTitle>
                 Activity
               </DetailItemTitle>
               <Autocomplete
-                inputValue={activityValue}
-                onInputChange={(e, newInputValue) => setActivityValue(newInputValue)}
+                inputValue={props.activityValue}
+                onInputChange={props.handleActivityValue}
                 options={activities}
                 renderInput={
                   (params) =>
@@ -540,8 +587,8 @@ export const ItemDetailPageDetail: React.FC = () => {
             Found in Build
           </DetailItemTitle>
           <Select
-            value={foundValue}
-            onChange={handleFoundValue}
+            value={props.foundValue}
+            onChange={props.handleFoundValue}
             input={<DetailSelector />}
           >
             <DetailSelectorItem value='none'>
@@ -552,8 +599,8 @@ export const ItemDetailPageDetail: React.FC = () => {
             Integrated in Build
           </DetailItemTitle>
           <Select
-            value={intergratedValue}
-            onChange={handleIntergratedValue}
+            value={props.intergratedValue}
+            onChange={props.handleIntergratedValue}
             input={<DetailSelector />}
           >
             <DetailSelectorItem value='none'>
@@ -637,20 +684,21 @@ export const ItemDetailPageDetail: React.FC = () => {
                   </DialogContentText>
                   <Select
                     fullWidth
+                    value={devLinkValue}
+                    onChange={handleDevLinkValue}
                     input={<AddLinkInput />}
                   >
+                    <DevLinkSubheader>Build</DevLinkSubheader>
                     {
-                      developmentLink.map((item, index) =>
-                        <optgroup key={index} label={item.groupName}>
-                          {
-                            item.links.map((item, index) =>
-                              <option key={index}>
-                                {item}
-                              </option>
-                            )
-                          }
-                        </optgroup>
-                      )
+                      developmentLink[0].links.map((item) => selectItem(item))
+                    }
+                    <DevLinkSubheader>Code</DevLinkSubheader>
+                    {
+                      developmentLink[1].links.map((item) => selectItem(item))
+                    }
+                    <DevLinkSubheader>GitHub</DevLinkSubheader>
+                    {
+                      developmentLink[2].links.map((item) => selectItem(item))
                     }
                   </Select>
                   <Stack style={{ marginTop: '.5rem', padding: '.5rem', backgroundColor: orange[50] }}>
@@ -662,13 +710,19 @@ export const ItemDetailPageDetail: React.FC = () => {
                   </Stack>
                 </DialogContent>
                 <DialogActions>
-                  <Button
-                    disabled
-                    sx={{ color: grey[300] }}
-                    onClick={handleCloseAddDevelopmenet}
-                  >
-                    OK
-                  </Button>
+                  {
+                    devLinkValue === ''
+                      ? <Button
+                        disabled
+                        sx={{ color: grey[300] }}
+                        onClick={handleCloseAddDevelopmenet}
+                      >
+                        OK
+                      </Button>
+                      : <SubmitButton onClick={handleCloseAddDevelopmenet}>
+                        OK
+                      </SubmitButton>
+                  }
                   <CancelButton
                     onClick={handleCloseAddDevelopmenet}
                   >
@@ -732,7 +786,7 @@ export const ItemDetailPageDetail: React.FC = () => {
           <ItemDetailPageAddExistItem
             addRelatedDialog={addRelatedDialog}
             handleCloseAddRelatedDialog={handleCloseAddRelatedDialog}
-            />
+          />
         </DetailItemContainer>
       </Grid>
     </Grid>
