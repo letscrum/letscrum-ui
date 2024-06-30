@@ -8,8 +8,8 @@ import UserMenu from '@/assets/user/menu.json';
 export const useAppStore = defineStore('app', {
   state: () => ({
     language: localStorage.language || window.navigator.language.toLowerCase() || 'cn',
-    drawer: false,
-    dark: null,
+    rail: false,
+    theme: null,
     logoUrl: '/assets/images/logo.png',
     menus: Menu,
     links: Link,
@@ -39,43 +39,29 @@ export const useAppStore = defineStore('app', {
     },
   }),
   getters: {
-    isSignedIn: (state) => (!((state.token.accessToken === undefined || state.token.accessToken === null || state.token.accessToken === ''))),
-    accessToken: (state) => (state.token.accessToken || ''),
-    accounts: (state) => state.accounts,
-    userMenus: (state) => state.userMenus,
-    user: (state) => state.user,
-    token: (state) => state.token,
-    project: (state) => state.project,
-    sprint: (state) => state.sprint,
-    links: (state) => state.links,
-    menus: (state) => state.menus,
-    logoUrl: (state) => state.logoUrl,
-    dark: (state) => state.dark,
-    drawer: (state) => state.drawer,
-    language: (state) => state.language,
-    breadcrumbs: (state) => state.breadcrumbs
+    isSignedIn: (state) => (state.user.id > 0),
   },
   actions: {
-    refresh(state, payload) {
+    refresh(payload) {
       if (payload.accessToken && payload.refreshToken) {
         localStorage.tokenAccessToken = payload.accessToken;
         localStorage.tokenRefreshToken = payload.refreshToken;
-        state.user.id = localStorage.userId;
-        state.user.name = localStorage.userName;
-        state.user.email = localStorage.userEmail;
-        state.user.isSuperAdmin = localStorage.userIsSuperAdmin;
-        state.token.accessToken = localStorage.tokenAccessToken;
-        state.token.refreshToken = localStorage.tokenRefreshToken;
-        state.project.id = localStorage.projectId;
-        state.project.name = localStorage.projectName;
-        state.project.displayName = localStorage.projectDisplayName;
-        state.sprint.id = localStorage.sprintId;
-        state.sprint.name = localStorage.sprintName;
-        state.sprint.startDate = localStorage.sprintStartDate;
-        state.sprint.endDate = localStorage.sprintEndDate;
+        this.user.id = localStorage.userId;
+        this.user.name = localStorage.userName;
+        this.user.email = localStorage.userEmail;
+        this.user.isSuperAdmin = localStorage.userIsSuperAdmin;
+        this.token.accessToken = localStorage.tokenAccessToken;
+        this.token.refreshToken = localStorage.tokenRefreshToken;
+        this.project.id = localStorage.projectId;
+        this.project.name = localStorage.projectName;
+        this.project.displayName = localStorage.projectDisplayName;
+        this.sprint.id = localStorage.sprintId;
+        this.sprint.name = localStorage.sprintName;
+        this.sprint.startDate = localStorage.sprintStartDate;
+        this.sprint.endDate = localStorage.sprintEndDate;
       }
     },
-    signIn(state, payload) {
+    signIn(payload) {
       const {
         id,
         name,
@@ -90,18 +76,18 @@ export const useAppStore = defineStore('app', {
       localStorage.userIsSuperAdmin = isSuperAdmin;
       localStorage.tokenAccessToken = accessToken;
       localStorage.tokenRefreshToken = refreshToken;
-      state.user = {
+      this.user = {
         id,
         name,
         email,
         isSuperAdmin
       };
-      state.token = {
+      this.token = {
         accessToken,
         refreshToken
       };
     },
-    signOut(state) {
+    signOut() {
       localStorage.removeItem('userId');
       localStorage.removeItem('userName');
       localStorage.removeItem('userEmail');
@@ -111,18 +97,18 @@ export const useAppStore = defineStore('app', {
       localStorage.removeItem('projectId');
       localStorage.removeItem('projectName');
       localStorage.removeItem('projectDisplayName');
-      state.user.id = 0;
-      state.user.name = null;
-      state.user.email = null;
-      state.user.isSuperAdmin = null;
-      state.token.accessToken = null;
-      state.token.refreshToken = null;
-      state.project.id = 0;
-      state.project.name = null;
-      state.project.displayName = null;
-      state.breadcrumbs = [];
+      this.user.id = 0;
+      this.user.name = null;
+      this.user.email = null;
+      this.user.isSuperAdmin = null;
+      this.token.accessToken = null;
+      this.token.refreshToken = null;
+      this.project.id = 0;
+      this.project.name = null;
+      this.project.displayName = null;
+      this.breadcrumbs = [];
     },
-    setProject(state, payload) {
+    setProject(payload) {
       const {
         id,
         name,
@@ -131,13 +117,13 @@ export const useAppStore = defineStore('app', {
       localStorage.projectId = id;
       localStorage.projectName = name;
       localStorage.projectDisplayName = displayName;
-      state.project = {
+      this.project = {
         id,
         name,
         displayName
       };
     },
-    setSprint(state, payload) {
+    setSprint(payload) {
       const {
         id,
         name,
@@ -148,50 +134,46 @@ export const useAppStore = defineStore('app', {
       localStorage.sprintName = name;
       localStorage.sprintStartDate = startDate;
       localStorage.sprintEndDate = endDate;
-      state.sprint = {
+      this.sprint = {
         id,
         name,
         startDate,
         endDate
       };
     },
-    clearProject(state) {
+    clearProject() {
       localStorage.removeItem('projectId');
       localStorage.removeItem('projectName');
       localStorage.removeItem('projectDisplayName');
-      state.project.id = 0;
-      state.project.name = null;
-      state.project.displayName = null;
+      this.project.id = 0;
+      this.project.name = null;
+      this.project.displayName = null;
     },
-    setDrawer(state, payload) {
-      localStorage.drawer = payload;
-      state.drawer = payload;
+    setRail(payload) {
+      localStorage.rail = Boolean(payload);
+      this.rail = Boolean(payload);
     },
-    toggleDrawer(state) {
-      localStorage.drawer = !state.drawer;
-      state.drawer = !state.drawer;
-    },
-    setTheme(state, payload) {
-      localStorage.dark = payload;
+    changeTheme(payload) {
+      localStorage.theme = payload;
       localStorage.logoUrl = payload ? '/assets/images/logo-dark.png' : '/assets/images/logo.png';
-      state.dark = payload;
-      state.logoUrl = state.dark ? '/assets/images/logo-dark.png' : '/assets/images/logo.png';
+      this.theme = payload;
+      this.logoUrl = this.theme ? '/assets/images/logo-dark.png' : '/assets/images/logo.png';
     },
-    setLanguage(state, payload) {
+    setLanguage(payload) {
       localStorage.language = payload;
-      state.language = payload;
+      this.language = payload;
     },
-    pushBreadcrumbs(state, payload) {
-      state.breadcrumbs.push(payload);
+    pushBreadcrumbs(payload) {
+      this.breadcrumbs.push(payload);
     },
-    popBreadcrumbs(state) {
-      state.breadcrumbs.slice(0, state.breadcrumbs.length - 1);
+    popBreadcrumbs() {
+      this.breadcrumbs.slice(0, this.breadcrumbs.length - 1);
     },
-    setBreadcrumbs(state, payload) {
-      state.breadcrumbs = [...payload];
+    setBreadcrumbs(payload) {
+      this.breadcrumbs = [...payload];
     },
-    clearBreadcrumbs(state) {
-      state.breadcrumbs = [];
+    clearBreadcrumbs() {
+      this.breadcrumbs = [];
     }
   },
 })

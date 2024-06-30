@@ -6,17 +6,85 @@
 
 // Composables
 import { createRouter, createWebHistory } from 'vue-router/auto'
-import { setupLayouts } from 'virtual:generated-layouts'
+import { useAppStore } from '@/stores/app'
 
 const routes = [
-  { path: '/', component: () => import('@/pages/index.vue') },
-  { path: '/123', component: () => import('@/pages/index.vue') },
+  {
+    path: '/projects',
+    name: 'Home',
+    component: () => import('@/pages/index.vue'),
+  },
+  {
+    path: '/about',
+    name: 'About',
+    component: () => import('@/pages/index.vue')
+  },
+  {
+    path: '/join',
+    name: 'Join',
+    component: () => import('@/pages/EmptyPage.vue')
+  },
+  {
+    path: '/contact',
+    name: 'Contact',
+    component: () => import('@/pages/EmptyPage.vue')
+  },
+  {
+    path: '/others',
+    name: 'Others',
+    component: () => import('@/pages/EmptyPage.vue')
+  },
+  {
+    path: '/user',
+    redirect: '/user/profile',
+    name: 'User',
+    component: () => import('@/pages/EmptyPage.vue'),
+    children: [
+      {
+        path: 'profile',
+        component: () => import('@/pages/EmptyPage.vue')
+      },
+      {
+        path: 'orgs',
+        component: () => import('@/pages/EmptyPage.vue')
+      },
+      {
+        path: 'changepassword',
+        component: () => import('@/pages/EmptyPage.vue')
+      },
+      {
+        path: 'setting',
+        component: () => import('@/pages/EmptyPage.vue')
+      }
+    ],
+  },
+  {
+    path: '/',
+    name: 'SignIn',
+    component: () => import('@/pages/SignIn.vue'),
+  }
 ]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  extendRoutes: setupLayouts,
   routes,
+})
+
+router.beforeEach((to, from, next) => {
+  const store = useAppStore()
+  if (to.name !== 'SignIn') {
+    if (!store.isSignedIn) {
+      next({ name: 'SignIn' })
+    } else {
+      next()
+    }
+  } else {
+    if (store.isSignedIn) {
+      next({ name: 'Home' })
+    } else {
+      next()
+    }
+  }
 })
 
 export default router

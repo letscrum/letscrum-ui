@@ -1,6 +1,6 @@
 <template>
   <UserLayout>
-    <HelloWorld />
+    Empty
   </UserLayout>
 </template>
 

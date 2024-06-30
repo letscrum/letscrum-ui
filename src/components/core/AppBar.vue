@@ -1,16 +1,21 @@
 <template>
   <v-app-bar app dense flat>
     <v-img
-      :src="logoUrl"
+      :src="appStore.logoUrl"
       contain
       class="mr-5"
       width="110"
       max-width="110"
     />
     <v-toolbar-items class="hidden-sm-and-down">
-      <v-btn>TEST</v-btn>
+      <v-btn
+        text
+        v-for="(menu, i) in appStore.menus"
+        :key="i"
+        :to="menu.path"
+      >{{ $t('core.menus.' + menu.name + '.text') }}</v-btn>
     </v-toolbar-items>
-    <v-breadcrumbs :items="breadcrumbs">
+    <v-breadcrumbs :items="appStore.breadcrumbs">
       <template v-slot:item="{ item }">
         <v-breadcrumbs-item>
           <v-btn plain small tile :to="item.href" :disabled="item.disabled">
@@ -34,8 +39,8 @@
       inset
       class="mx-1"
     ></v-divider> -->
-    <v-btn text="" rounded>TEST</v-btn>
-    <v-btn icon>
+    <v-btn text="" rounded @click="changeLanguage">{{ $t('core.toLanguage') }}</v-btn>
+    <v-btn icon @click="changeTheme">
       <v-icon>mdi-theme-light-dark</v-icon>
     </v-btn>
     <v-divider
@@ -43,11 +48,11 @@
       inset
       class="mx-1"
     ></v-divider>
-    <Account />
-    <Menu></Menu>
-    <div>
+    <Account :accounts="appStore.accounts" v-if="appStore.isSignedIn"></Account>
+    <Menu :userMenus="appStore.userMenus" :user="appStore.user" v-else></Menu>
+    <div v-if="appStore.isSignedIn">
       <v-btn
-        v-for="(account, i) in accounts"
+        v-for="(account, i) in appStore.accounts"
         :key="i"
         :to="account.path"
         depressed
@@ -58,8 +63,40 @@
 </template>
 
 <script setup>
+
 import { useAppStore } from '@/stores/app'
+import { useTheme } from 'vuetify'
 
-const app = useAppStore()
+const appStore = useAppStore()
 
+const theme = useTheme()
+
+function changeTheme() {
+  theme.global.name.value = appStore.theme === 'light' ? 'dark' : 'light'
+  appStore.changeTheme(theme.global.name.value)
+}
+
+function changeLanguage() {
+  if (appStore.language === 'cn') {
+    appStore.setLanguage('en');
+  }
+  else {
+    appStore.setLanguage('cn');
+  }
+  location.reload();
+}
+
+
+</script>
+
+<script>
+
+
+export default {
+  props: ['menus', 'logoUrl', 'accounts', 'userMenus', 'user', 'theme', 'language'],
+
+  methods: {
+
+  }
+};
 </script>
