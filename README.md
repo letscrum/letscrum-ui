@@ -1,114 +1,79 @@
-# TailAdmin Next.js - Free Next.js Tailwind Admin Dashboard Template
+# Vuetify (Default)
 
-TailAdmin is a free and open-source admin dashboard template built on **Next.js and Tailwind CSS** providing developers with everything they need to create a feature-rich and data-driven: back-end, dashboard, or admin panel solution for any sort of web project.
+This is the official scaffolding tool for Vuetify, designed to give you a head start in building your new Vuetify application. It sets up a base template with all the necessary configurations and standard directory structure, enabling you to begin development without the hassle of setting up the project from scratch.
 
-[![tailwind nextjs admin template](https://github.com/TailAdmin/free-nextjs-admin-dashboard/blob/main/tailadmin-nextjs.jpg)](https://nextjs-demo.tailadmin.com/)
+## ❗️ Important Links
 
-With TailAdmin Next.js, you get access to all the necessary dashboard UI components, elements, and pages required to build a high-quality and complete dashboard or admin panel. Whether you're building a dashboard or admin panel for a complex web application or a simple website. 
+- 📄 [Docs](https://vuetifyjs.com/)
+- 🚨 [Issues](https://issues.vuetifyjs.com/)
+- 🏬 [Store](https://store.vuetifyjs.com/)
+- 🎮 [Playground](https://play.vuetifyjs.com/)
+- 💬 [Discord](https://community.vuetifyjs.com)
 
-TailAdmin utilizes the powerful features of **Next.js 14** and common features of Next.js such as server-side rendering (SSR), static site generation (SSG), and seamless API route integration. Combined with the advancements of **React 18** and the robustness of **TypeScript**, TailAdmin is the perfect solution to help get your project up and running quickly.
+## 💿 Install
 
-### [✨ Visit Website](https://tailadmin.com/)
-### [🚀 PRO Demo](https://nextjs-demo.tailadmin.com/)
-### [🚀 FREE Demo](https://nextjs-free-demo.tailadmin.com/)
+Set up your project using your preferred package manager. Use the corresponding command to install the dependencies:
 
-### TailAdmin Next.js PRO vs TailAdmin Next.js FREE Comparison 📊
+| Package Manager                                                | Command        |
+|---------------------------------------------------------------|----------------|
+| [yarn](https://yarnpkg.com/getting-started)                   | `yarn install` |
+| [npm](https://docs.npmjs.com/cli/v7/commands/npm-install)     | `npm install`  |
+| [pnpm](https://pnpm.io/installation)                          | `pnpm install` |
+| [bun](https://bun.sh/#getting-started)                        | `bun install`  |
 
-#### [TailAdmin Next.js PRO](https://nextjs-demo.tailadmin.com/)
-- 5 Unique Dashboards: Analytics, Ecommerce, Marketing, and CRM (More will be added)
-- 150+ Dashboard UI Components
-- 200+ Total UI Elements
-- 45+ HTML Files
-- All Essential Elements and Files
-- Full Figma Design Source - As Shown on Demo
-___
+After completing the installation, your environment is ready for Vuetify development.
 
-#### [TailAdmin Next.js FREE](https://free-nextjs-demo.tailadmin.com/)
-- 1 Unique Dashboard
-- 30+ Dashboard UI Components
-- 50+ Total UI Elements 
-- 10+ HTML Files
-- TypeScript Support
-- Basic UI Kit Elements and Files
-- Figma Design Source - Free Sample
-___
+## ✨ Features
 
-### [⬇️ Download Now](https://tailadmin.com/download)
+- 🖼️ **Optimized Front-End Stack**: Leverage the latest Vue 3 and Vuetify 3 for a modern, reactive UI development experience. [Vue 3](https://v3.vuejs.org/) | [Vuetify 3](https://vuetifyjs.com/en/)
+- 🗃️ **State Management**: Integrated with [Pinia](https://pinia.vuejs.org/), the intuitive, modular state management solution for Vue.
+- 🚦 **Routing and Layouts**: Utilizes Vue Router for SPA navigation and vite-plugin-vue-layouts for organizing Vue file layouts. [Vue Router](https://router.vuejs.org/) | [vite-plugin-vue-layouts](https://github.com/JohnCampionJr/vite-plugin-vue-layouts)
+- ⚡ **Next-Gen Tooling**: Powered by Vite, experience fast cold starts and instant HMR (Hot Module Replacement). [Vite](https://vitejs.dev/)
+- 🧩 **Automated Component Importing**: Streamline your workflow with unplugin-vue-components, automatically importing components as you use them. [unplugin-vue-components](https://github.com/antfu/unplugin-vue-components)
 
-### [⚡ Get PRO Version](https://tailadmin.com/pricing)
+These features are curated to provide a seamless development experience from setup to deployment, ensuring that your Vuetify application is both powerful and maintainable.
 
-### [📄 Documentation/Installation](https://tailadmin.com/docs)
+## 💡 Usage
 
-### [🖌️ TailAdmin Figma Free Sample](https://www.figma.com/community/file/1214477970819985778)
+This section covers how to start the development server and build your project for production.
 
-### [👉 TailAdmin HTML Version](https://github.com/TailAdmin/tailadmin-free-tailwind-dashboard-template)
+### Starting the Development Server
 
+To start the development server with hot-reload, run the following command. The server will be accessible at [http://localhost:3000](http://localhost:3000):
 
-## Installation
-Here are the steps you need to follow to install the dependencies.
-
-1. Download and extract the template from Next.js Templates.
-
-2. After that **cd** into the template directory then run this command to install all the dependencies
-
-```
-npm install
-```
-or
-
-```
-yarn install
-```
-
-3. Now run this command to start the developement server
-
-```
-npm run dev
-```
-
-or 
-
-```
+```bash
 yarn dev
 ```
 
+(Repeat for npm, pnpm, and bun with respective commands.)
 
-## Free Admin Dashboard Template for Next.js Built-with Tailwind CSS, React 18 and TypeScript
-TailAdmin Next.js is a free dashboard template, which uses Tailwind CSS, is a great starting point for dashboard UI. This template uses the Next.js JavaScript framework and the easy-to-use Tailwind CSS framework. The Tailwind CSS and Next.js Dashboard Template comes with ready-made components like navigation menus, charts, tables, and forms. These components can be easily adjusted and added to any Next.js web application.
+> Add NODE_OPTIONS='--no-warnings' to suppress the JSON import warnings that happen as part of the Vuetify import mapping. If you are on Node [v21.3.0](https://nodejs.org/en/blog/release/v21.3.0) or higher, you can change this to NODE_OPTIONS='--disable-warning=5401'. If you don't mind the warning, you can remove this from your package.json dev script.
 
-TailAdmin for Next.js provides all essential Next.js + Tailwind CSS UI components that can be copied and pasted directly into your dashboard projects. The range of components includes charts, graphs, navbars, tabs, buttons, cards, tables, profiles, forms, modals, app pages, calendars, web app example templates, and more, all coded for Next.js React and styled using Tailwind CSS.
+### Building for Production
 
-If you're on the hunt for a top-quality Next.js-Tailwind Dashboard, Admin Panel Template, or UI Kit, TailAdmin is the perfect choice for you!
+To build your project for production, use:
 
-### 📄 License
-TailAdmin Next.js Free is 100% free and open-source; feel free to use it with your personal and commercial projects.
+```bash
+yarn build
+```
 
-### 💜 Support
-If you like the template, please star this repository to inspire the team to create more stuff like this and reach more users like you!
+(Repeat for npm, pnpm, and bun with respective commands.)
 
+Once the build process is completed, your application will be ready for deployment in a production environment.
 
-## Update Logs
+## 💪 Support Vuetify Development
 
-### Version 1.3.1 - [Feb 12, 2024]
+This project is built with [Vuetify](https://vuetifyjs.com/en/), a UI Library with a comprehensive collection of Vue components. Vuetify is an MIT licensed Open Source project that has been made possible due to the generous contributions by our [sponsors and backers](https://vuetifyjs.com/introduction/sponsors-and-backers/). If you are interested in supporting this project, please consider:
 
-#### Issues
+- [Requesting Enterprise Support](https://support.vuetifyjs.com/)
+- [Sponsoring John on Github](https://github.com/users/johnleider/sponsorship)
+- [Sponsoring Kael on Github](https://github.com/users/kaelwd/sponsorship)
+- [Supporting the team on Open Collective](https://opencollective.com/vuetify)
+- [Becoming a sponsor on Patreon](https://www.patreon.com/vuetify)
+- [Becoming a subscriber on Tidelift](https://tidelift.com/subscription/npm/vuetify)
+- [Making a one-time donation with Paypal](https://paypal.me/vuetify)
 
-- **Issues 02:** Fix Misspelling issue [Default Layout/Layouts].
+## 📑 License
+[MIT](http://opensource.org/licenses/MIT)
 
-#### Enhancements
-- **Enhancement 01:** Update style.css
-
-### Version 1.3.0 - [Feb 05, 2024]
-
-#### Enhancements
-
-- **Enhancement 01:** Update Next.js into version 14
-- **Enhancement 02:** Integrate flatpickr in [Date Picker/Form Elements]
-- **Enhancement 03:** Change color after select an option [Select Element/Form Elements].
-- **Enhancement 04:** Make it functional [Multiselect Dropdown/Form Elements].
-- **Enhancement 05:** Make best value editable [Pricing Table One/Pricing Table].
-- **Enhancement 06:** Add Default Layout Component and make App/Layout more clean and use it in every pages.
-
-### Version 0.1.0 - Initial Release - [Aug 3, 2023]
-
-- Initial release of TailAdmin Next.
+Copyright (c) 2016-present Vuetify, LLC

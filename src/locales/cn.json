@@ -1,0 +1,64 @@
+{
+  "core": {
+    "accounts": {
+      "signIn": {
+        "text": "登录"
+      },
+      "signUp": {
+        "text": "创建账号"
+      }
+    },
+    "links": {
+      "aboutUs": "关于我们",
+      "contactUs": "联系我们",
+      "joinUs": "加入我们"
+    },
+    "menus": {
+      "home": {
+        "text": "首页"
+      },
+      "first": {
+        "text": "第一"
+      }
+    },
+    "toLanguage": "English"
+  },
+  "meta": {
+    "description": "基于Vuetify的Vue站点模板！",
+    "keywords": "vue,vuetify"
+  },
+  "signIn": {
+    "emailLabel": "",
+    "emailRuleFormat": "2",
+    "emailRuleRequired": "1",
+    "formTitle": "",
+    "passwordLabel": "",
+    "passwordRuleRequired": "",
+    "signInBtn": "登录"
+  },
+  "signUp": {
+    "emailLabel": "",
+    "emailRuleFormat": "2",
+    "emailRuleRequired": "1",
+    "formTitle": "",
+    "passwordLabel": "",
+    "passwordRuleRequired": "",
+    "rePasswordLabel": "",
+    "rePasswordRuleRequired": "",
+    "signUpBtn": "创建账号"
+  },
+  "user": {
+    "userMenus": {
+      "setting": {
+        "text": "账号设置"
+      },
+      "profile": {
+        "text": "个人信息"
+      },
+      "signOut": {
+        "text": "退出登录"
+      },
+      "text": "用户中心"
+    }
+  }
+}

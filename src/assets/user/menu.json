@@ -1,0 +1,12 @@
+[
+  {
+    "name": "profile",
+    "icon": "mdi-face-profile",
+    "path": "/user/profile"
+  },
+  {
+    "name": "setting",
+    "icon": "mdi-face-profile",
+    "path": "/user/setting"
+  }
+]

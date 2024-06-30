@@ -1,0 +1,73 @@
+{
+  "core": {
+    "accounts": {
+      "signIn": {
+        "text": "Sign In"
+      },
+      "signUp": {
+        "text": "Sign Up"
+      }
+    },
+    "links": {
+      "aboutUs": "About Us",
+      "contactUs": "Contact Us",
+      "joinUs": "Join Us"
+    },
+    "menus": {
+      "home": {
+        "text": "Home"
+      },
+      "first": {
+        "text": "First"
+      }
+    },
+    "toLanguage": "中文"
+  },
+  "help": {
+    "title": "Help",
+    "q1": "How to get Chia?",
+    "a1": "Go to: https://chia.net/, and download the latest version of Chia Blockchain Tool.",
+    "q2": "Why my status is unsync?",
+    "a2": "Maybe you can get the correct node or your network is not good.",
+    "q3": "How to add node?",
+    "a3": "In the 'Full Node' page, click 'Connect to Other Peers' on you Chia Blockchain Tool, copy and paste the IP / Host and Port from this website home page to the popup dialog, then click 'Connect'."
+  },
+  "meta": {
+    "description": "A Vue project template with Vuetify!",
+    "keywords": "vue,vuetify"
+  },
+  "signIn": {
+    "emailLabel": "",
+    "emailRuleFormat": "2",
+    "emailRuleRequired": "1",
+    "formTitle": "",
+    "passwordLabel": "",
+    "passwordRuleRequired": "",
+    "signInBtn": "Sign In"
+  },
+  "signUp": {
+    "emailLabel": "",
+    "emailRuleFormat": "2",
+    "emailRuleRequired": "1",
+    "formTitle": "",
+    "passwordLabel": "",
+    "passwordRuleRequired": "",
+    "rePasswordLabel": "",
+    "rePasswordRuleRequired": "",
+    "signUpBtn": "Sign Up"
+  },
+  "user": {
+    "userMenus": {
+      "setting": {
+        "text": "Account Settings"
+      },
+      "profile": {
+        "text": "User Profile"
+      },
+      "signOut": {
+        "text": "Sign Out"
+      },
+      "text": "User Center"
+    }
+  }
+}
