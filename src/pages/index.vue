@@ -1,9 +1,9 @@
 <template>
-  <UserLayout>
+  <DefaultLayout>
     <HelloWorld />
-  </UserLayout>
+  </DefaultLayout>
 </template>
 
 <script setup>
-  import UserLayout from '@/layouts/UserLayout.vue'
+  import DefaultLayout from '@/layouts/DefaultLayout.vue';
 </script>

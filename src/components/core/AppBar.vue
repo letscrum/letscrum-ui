@@ -48,9 +48,9 @@
       inset
       class="mx-1"
     ></v-divider>
-    <Account :accounts="appStore.accounts" v-if="appStore.isSignedIn"></Account>
+    <Account :accounts="appStore.accounts" v-if="!appStore.isSignedIn"></Account>
     <Menu :userMenus="appStore.userMenus" :user="appStore.user" v-else></Menu>
-    <div v-if="appStore.isSignedIn">
+    <div v-if="!appStore.isSignedIn">
       <v-btn
         v-for="(account, i) in appStore.accounts"
         :key="i"
@@ -65,15 +65,17 @@
 <script setup>
 
 import { useAppStore } from '@/stores/app'
-import { useTheme } from 'vuetify'
+defineProps(['menus', 'logoUrl', 'accounts', 'userMenus', 'user', 'theme', 'language'])
 
 const appStore = useAppStore()
+import { useTheme } from 'vuetify'
 
-const theme = useTheme()
+const vuetifyTheme = useTheme()
+
 
 function changeTheme() {
-  theme.global.name.value = appStore.theme === 'light' ? 'dark' : 'light'
-  appStore.changeTheme(theme.global.name.value)
+  vuetifyTheme.global.name.value = appStore.theme === 'light' ? 'dark' : 'light'
+  appStore.changeTheme(vuetifyTheme.global.name.value)
 }
 
 function changeLanguage() {
@@ -87,16 +89,4 @@ function changeLanguage() {
 }
 
 
-</script>
-
-<script>
-
-
-export default {
-  props: ['menus', 'logoUrl', 'accounts', 'userMenus', 'user', 'theme', 'language'],
-
-  methods: {
-
-  }
-};
 </script>

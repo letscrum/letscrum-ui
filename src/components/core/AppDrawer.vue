@@ -31,7 +31,7 @@
 import { computed } from 'vue'
 import { useAppStore } from '@/stores/app'
 
-const props = defineProps(['menus', 'logoUrl'])
+defineProps(['menus', 'logoUrl'])
 
 const appStore = useAppStore()
 
@@ -43,14 +43,4 @@ const rail = computed({
     appStore.setRail(val);
   }
 })
-
-function onClick(e, item) {
-  e.stopPropagation();
-  if (item.to === '/') {
-    this.$vuetify.goTo(0);
-    return;
-  }
-  if (item.to || !item.href) return;
-  this.$vuetify.goTo(item.href);
-}
 </script>

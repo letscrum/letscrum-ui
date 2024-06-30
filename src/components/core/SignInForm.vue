@@ -36,10 +36,13 @@
 </template>
 
 <script setup>
-
 import { useAppStore } from '@/stores/app'
+import { useRouter } from 'vue-router'
+
+defineProps(['isDialog'])
 
 const appStore = useAppStore()
+const router = useRouter()
 
 function SingIn() {
   appStore.signIn({
@@ -50,13 +53,6 @@ function SingIn() {
     accessToken: 'token',
     refreshToken: 'refreshToken',
   })
+  router.push({ path: '/projects' })
 }
-
-
-</script>
-
-<script>
-export default {
-  props: ['isDialog'],
-};
 </script>
