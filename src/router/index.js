@@ -12,7 +12,11 @@ const routes = [
   {
     path: '/projects',
     name: 'Home',
-    component: () => import('@/pages/index.vue'),
+    component: () => import('@/pages/project/ProjectList.vue'),
+  },
+  {
+    path: '/projects/:projectId',
+    component: () => import('@/pages/project/ProjectOverview.vue')
   },
   {
     path: '/about',

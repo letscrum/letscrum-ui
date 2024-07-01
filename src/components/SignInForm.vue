@@ -41,11 +41,11 @@ import { useRouter } from 'vue-router'
 
 defineProps(['isDialog'])
 
-const appStore = useAppStore()
+const store = useAppStore()
 const router = useRouter()
 
 function SingIn() {
-  appStore.signIn({
+  store.signIn({
     id: 1,
     name: 'John Doe',
     email: 'whfill@163.com',

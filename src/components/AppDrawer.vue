@@ -31,7 +31,7 @@
 import { computed } from 'vue'
 import { useAppStore } from '@/stores/app'
 
-defineProps(['menus', 'logoUrl'])
+defineProps(['menus'])
 
 const store = useAppStore()
 

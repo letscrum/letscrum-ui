@@ -1,0 +1,55 @@
+<template>
+  <v-card
+    class="mx-auto"
+    outlined
+    tile
+    @click="onLoadProject"
+  >
+    <v-list-item three-line>
+      <v-list-item-avatar
+        tile
+        size="80"
+        color="grey"
+      ></v-list-item-avatar>
+      <v-list-item-content>
+        <div class="text-overline mb-4">
+          {{ project.members.length }} Members
+        </div>
+        <v-list-item-title class="text-h5 mb-1">
+          {{ project.displayName }}
+        </v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
+  </v-card>
+</template>
+
+<script setup>
+import { getGetProject } from '@/apis/project'
+import { useAppStore } from '@/stores/app'
+import { useRouter } from 'vue-router'
+
+const store = useAppStore()
+const router = useRouter()
+
+defineProps(['project'])
+
+function onLoadProject() {
+  getGetProject(1).then((res) => {
+    console.log(res);
+    if (res.status === 200) {
+      store.setProject({
+        id: res.data.item.id,
+        name: res.data.item.name,
+        displayName: res.data.item.displayName
+      })
+      store.setSprint({
+        id: res.data.item.currentSprint.id,
+        name: res.data.item.currentSprint.name,
+        startDate: res.data.item.currentSprint.startDate,
+        endDate: res.data.item.currentSprint.endDate
+      });
+      router.push(`/projects/1`);
+    }
+  });
+}
+</script>

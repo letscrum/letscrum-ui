@@ -1,13 +1,11 @@
 <template>
   <AppBar
-    :menus="appStore.menus"
-    :accounts="appStore.accounts"
-    :userMenus="appStore.userMenus"
-    :user="appStore.user"
-    :dark="appStore.theme"
-    :language="appStore.language"
-    :logoUrl="appStore.logoUrl" />
-  <AppDrawer :menus="appStore.menus" v-if="appStore.isSignedIn" />
+    :menus="store.menus"
+    :accounts="store.accounts"
+    :userMenus="store.userMenus"
+    :user="store.user"
+    :logoUrl="store.logoUrl" />
+  <AppDrawer :menus="store.menus" v-if="store.isSignedIn" />
   <v-container>
     <slot></slot>
   </v-container>
@@ -16,6 +14,6 @@
 <script setup>
 import { useAppStore } from '@/stores/app'
 
-const appStore = useAppStore()
+const store = useAppStore()
 
 </script>

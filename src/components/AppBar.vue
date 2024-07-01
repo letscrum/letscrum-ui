@@ -1,7 +1,7 @@
 <template>
   <v-app-bar app dense flat>
     <v-img
-      :src="appStore.logoUrl"
+      :src="store.logoUrl"
       contain
       class="mr-5"
       width="110"
@@ -10,12 +10,12 @@
     <v-toolbar-items class="hidden-sm-and-down">
       <v-btn
         text
-        v-for="(menu, i) in appStore.menus"
+        v-for="(menu, i) in store.menus"
         :key="i"
         :to="menu.path"
       >{{ $t('core.menus.' + menu.name + '.text') }}</v-btn>
     </v-toolbar-items>
-    <v-breadcrumbs :items="appStore.breadcrumbs">
+    <v-breadcrumbs :items="store.breadcrumbs">
       <template v-slot:item="{ item }">
         <v-breadcrumbs-item>
           <v-btn plain small tile :to="item.href" :disabled="item.disabled">
@@ -48,11 +48,11 @@
       inset
       class="mx-1"
     ></v-divider>
-    <AnonymousMenu :accounts="appStore.accounts" v-if="!appStore.isSignedIn"></AnonymousMenu>
-    <UserMenu :userMenus="appStore.userMenus" :user="appStore.user" v-else></UserMenu>
-    <div v-if="!appStore.isSignedIn">
+    <MenuAnonymous :accounts="store.accounts" v-if="!store.isSignedIn"></MenuAnonymous>
+    <MenuUser :userMenus="store.userMenus" :user="store.user" v-else></MenuUser>
+    <div v-if="!store.isSignedIn">
       <v-btn
-        v-for="(account, i) in appStore.accounts"
+        v-for="(account, i) in store.accounts"
         :key="i"
         :to="account.path"
         depressed
@@ -65,25 +65,25 @@
 <script setup>
 
 import { useAppStore } from '@/stores/app'
-defineProps(['menus', 'logoUrl', 'accounts', 'userMenus', 'user', 'theme', 'language'])
+defineProps(['menus', 'logoUrl', 'accounts', 'userMenus', 'user'])
 
-const appStore = useAppStore()
+const store = useAppStore()
 import { useTheme } from 'vuetify'
 
-const vuetifyTheme = useTheme()
+const theme = useTheme()
 
 
 function changeTheme() {
-  vuetifyTheme.global.name.value = appStore.theme === 'light' ? 'dark' : 'light'
-  appStore.changeTheme(vuetifyTheme.global.name.value)
+  theme.global.name.value = store.theme === 'light' ? 'dark' : 'light'
+  store.changeTheme(theme.global.name.value)
 }
 
 function changeLanguage() {
-  if (appStore.language === 'cn') {
-    appStore.setLanguage('en');
+  if (store.language === 'cn') {
+    store.setLanguage('en');
   }
   else {
-    appStore.setLanguage('cn');
+    store.setLanguage('cn');
   }
   location.reload();
 }

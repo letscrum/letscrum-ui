@@ -14,14 +14,7 @@
     </v-list>
   </v-menu>
 </template>
-<script>
-// Utilities
-export default {
-  name: 'UserMenu',
-  data: () => ({}),
-  props: ['accounts'],
-  components: {},
-  computed: {},
-  methods: {}
-};
+
+<script setup>
+defineProps(['accounts'])
 </script>
