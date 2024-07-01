@@ -35,7 +35,8 @@ function onLoadProject() {
       store.setProject({
         id: res.data.item.id,
         name: res.data.item.name,
-        displayName: res.data.item.displayName
+        displayName: res.data.item.displayName,
+        description: res.data.item.description,
       })
       store.setSprint({
         id: res.data.item.currentSprint.id,
