@@ -33,14 +33,14 @@ import { useAppStore } from '@/stores/app'
 
 defineProps(['menus', 'logoUrl'])
 
-const appStore = useAppStore()
+const store = useAppStore()
 
 const rail = computed({
   get() {
-    return appStore.rail;
+    return store.rail;
   },
   set(val) {
-    appStore.setRail(val);
+    store.setRail(val);
   }
 })
 </script>

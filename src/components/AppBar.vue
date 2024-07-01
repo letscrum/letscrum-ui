@@ -48,8 +48,8 @@
       inset
       class="mx-1"
     ></v-divider>
-    <Account :accounts="appStore.accounts" v-if="!appStore.isSignedIn"></Account>
-    <Menu :userMenus="appStore.userMenus" :user="appStore.user" v-else></Menu>
+    <AnonymousMenu :accounts="appStore.accounts" v-if="!appStore.isSignedIn"></AnonymousMenu>
+    <UserMenu :userMenus="appStore.userMenus" :user="appStore.user" v-else></UserMenu>
     <div v-if="!appStore.isSignedIn">
       <v-btn
         v-for="(account, i) in appStore.accounts"
