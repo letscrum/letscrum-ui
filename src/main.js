@@ -44,6 +44,6 @@ import axios from 'axios'
 
 axios.defaults.baseURL = 'http://127.0.0.1:8081/api'
 // axios.defaults.baseURL = 'https://imoogoo.com/api'
-axios.defaults.headers.Authorization = `Bearer ${localStorage.tokenAccessToken}`
+axios.defaults.headers.Authorization = `Bearer ${store.token.accessToken}`
 
 app.mount('#app')

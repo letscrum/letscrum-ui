@@ -38,21 +38,36 @@
 <script setup>
 import { useAppStore } from '@/stores/app'
 import { useRouter } from 'vue-router'
+import { ref } from 'vue'
+import { postSignIn } from '@/apis/index'
 
 defineProps(['isDialog'])
 
 const store = useAppStore()
 const router = useRouter()
 
+const loading = ref(false)
+
 function SingIn() {
-  store.signIn({
-    id: 1,
-    name: 'John Doe',
-    email: 'whfill@163.com',
-    isSuperAdmin: true,
-    accessToken: 'token',
-    refreshToken: 'refreshToken',
+  loading.value = true
+  postSignIn({
+    name: 'admin',
+    password: 'aaaaaa'
+  }).then((res) => {
+    if (res.status === 200) {
+      store.signIn({
+        id: res.data.item.id,
+        name: res.data.item.name,
+        email: res.data.item.email,
+        isSuperAdmin: res.data.item.isSuperAdmin,
+        accessToken: res.data.item.token.accessToken,
+        refreshToken: res.data.item.token.refreshToken
+      });
+      router.push({ path: '/projects' })
+      loading.value = false
+    }
+  }).catch(() => {
+    loading.value = false
   })
-  router.push({ path: '/projects' })
 }
 </script>

@@ -20,19 +20,17 @@
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 
 import { useAppStore } from '@/stores/app'
-import { onMounted, computed, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { getGetProject } from '@/apis/project'
 
 const project = ref({})
 
 const store = useAppStore()
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
 
 onMounted(() => {
-  getGetProject(1).then((res) => {
-    console.log(res);
-    if (res.status === 200) {
-      project.value = res.data.item
-    }
-  });
+  project.value = store.project
 })
 </script>

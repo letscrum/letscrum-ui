@@ -3,13 +3,13 @@
     <div class="ma-2">
       <v-row no-gutters>
         <v-col>
-          <h2 class="pa-1">Project List</h2>
+          <h2>Project List</h2>
         </v-col>
         <v-col>
 
         </v-col>
       </v-row>
-      <v-divider class="my-1"></v-divider>
+      <v-divider class="my-2"></v-divider>
       <v-row no-gutters>
         <v-col cols="12" md="4" class="pa-1" v-for="(project, i) in projects" :key="i">
           <ProjectCard :project="project"></ProjectCard>
@@ -39,7 +39,6 @@ onMounted(() => {
     console.log(res);
     if (res.status === 200) {
       projects.value = res.data.items;
-      console.log(projects);
     }
   });
 })

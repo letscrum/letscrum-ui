@@ -29,7 +29,8 @@ export const useAppStore = defineStore('app', {
     project: {
       id: 0,
       name: null,
-      displayName: null
+      displayName: null,
+      description: null
     },
     sprint: {
       id: 0,
@@ -112,15 +113,18 @@ export const useAppStore = defineStore('app', {
       const {
         id,
         name,
-        displayName
+        displayName,
+        description
       } = payload;
       localStorage.projectId = id;
       localStorage.projectName = name;
       localStorage.projectDisplayName = displayName;
+      localStorage.projectDescription = description;
       this.project = {
         id,
         name,
-        displayName
+        displayName,
+        description
       };
     },
     setSprint(payload) {
@@ -145,9 +149,11 @@ export const useAppStore = defineStore('app', {
       localStorage.removeItem('projectId');
       localStorage.removeItem('projectName');
       localStorage.removeItem('projectDisplayName');
+      localStorage.removeItem('projectDescription');
       this.project.id = 0;
       this.project.name = null;
       this.project.displayName = null;
+      this.project.description = null;
     },
     setRail(payload) {
       localStorage.rail = Boolean(payload);
