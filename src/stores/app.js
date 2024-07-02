@@ -56,6 +56,7 @@ export const useAppStore = defineStore('app', {
         this.project.id = localStorage.projectId;
         this.project.name = localStorage.projectName;
         this.project.displayName = localStorage.projectDisplayName;
+        this.project.description = localStorage.projectDescription;
         this.sprint.id = localStorage.sprintId;
         this.sprint.name = localStorage.sprintName;
         this.sprint.startDate = localStorage.sprintStartDate;

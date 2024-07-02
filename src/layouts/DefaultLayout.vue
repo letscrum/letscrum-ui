@@ -6,7 +6,7 @@
     :user="store.user"
     :logoUrl="store.logoUrl" />
   <AppDrawer :menus="store.menus" v-if="store.isSignedIn" />
-  <v-container>
+  <v-container fluid>
     <slot></slot>
   </v-container>
 </template>
