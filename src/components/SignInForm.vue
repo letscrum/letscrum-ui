@@ -52,7 +52,7 @@ function SingIn() {
   loading.value = true
   postSignIn({
     name: 'admin',
-    password: 'aaaaaa'
+    password: 'admin'
   }).then((res) => {
     if (res.status === 200) {
       store.signIn({
