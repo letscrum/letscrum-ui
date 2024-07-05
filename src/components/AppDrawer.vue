@@ -18,12 +18,16 @@
     </v-list-item>
 
     <v-divider></v-divider>
-
     <v-list density="compact" nav>
-      <v-list-item prepend-icon="mdi-home-city" title="Home" value="home"></v-list-item>
-      <v-list-item prepend-icon="mdi-account" title="My Account" value="account"></v-list-item>
+      <v-list-item prepend-icon="mdi-home-city" title="Home" value="home" to="/projects"></v-list-item>
+    </v-list>
+    <v-list density="compact" nav v-if="store.project.id > 0">
+      <v-list-item prepend-icon="mdi-home-city" title="Overview" value="overview" :to="'/projects/' + store.project.id"></v-list-item>
+      <v-list-item prepend-icon="mdi-account" title="Sprints" value="sprints" :to="'/projects/' + store.project.id + '/sprints'"></v-list-item>
       <v-list-item prepend-icon="mdi-account-group-outline" title="Users" value="users"></v-list-item>
     </v-list>
+
+
   </v-navigation-drawer>
 </template>
 

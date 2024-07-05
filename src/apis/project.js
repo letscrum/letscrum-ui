@@ -7,3 +7,7 @@ export const getGetProjects = (params) => axios.get(`${version}/projects`, { par
 export const getGetProject = (projectId) => axios.get(`${version}/projects/${projectId}`)
 
 export const postCreateProject = (params) => axios.post(`${version}/projects`, params)
+
+export const putUpdateProject = (projectId, params) => axios.put(`${version}/projects/${projectId}`, params)
+
+export const deleteDeleteProject = (projectId) => axios.delete(`${version}/projects/${projectId}`)

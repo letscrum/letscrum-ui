@@ -3,16 +3,45 @@
   <div class="ma-2">
   <v-row no-gutters>
     <v-col>
-      <h2>{{ project.name }}</h2>
+      <h2>{{ store.project.displayName }}</h2>
     </v-col>
     <v-col>
       <v-dialog
-        width="50%"
+        v-model="dialogDelete"
+        max-width="400"
         persistent
-        v-model="dialog"
       >
         <template v-slot:activator="{ props: activatorProps }">
-          <v-btn outlined class="float-right" tile prepend-icon="mdi-pencil" v-bind="activatorProps" @click="getProject()">
+          <v-btn outlined class="float-right ml-2" color="red" density="comfortable" icon="mdi-delete" v-bind="activatorProps">
+          </v-btn>
+        </template>
+
+        <v-card
+          prepend-icon="mdi-map-marker"
+          text="Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running."
+          title="Use Google's location service?"
+        >
+          <template v-slot:actions>
+            <v-spacer></v-spacer>
+
+            <v-btn @click="dialogDelete = false">
+              Disagree
+            </v-btn>
+
+            <v-btn @click="onDeleteProject()">
+              Agree
+            </v-btn>
+          </template>
+        </v-card>
+      </v-dialog>
+
+      <v-dialog
+        width="50%"
+        persistent
+        v-model="dialogUpdate"
+      >
+        <template v-slot:activator="{ props: activatorProps }">
+          <v-btn outlined class="float-right" tile prepend-icon="mdi-pencil" v-bind="activatorProps" @click="onGetProject()">
             Edit
           </v-btn>
         </template>
@@ -69,12 +98,13 @@
                 color="surface-variant"
                 text="Save"
                 variant="flat"
-                @click="saveProject()"
+                @click="onUpdateProject()"
               ></v-btn>
             </v-card-actions>
           </v-card>
         </template>
       </v-dialog>
+
     </v-col>
   </v-row>
   <v-divider class="my-2"></v-divider>
@@ -87,9 +117,11 @@ import DefaultLayout from '@/layouts/DefaultLayout.vue'
 
 import { useAppStore } from '@/stores/app'
 import { onMounted, ref } from 'vue';
-import { getGetProject } from '@/apis/project'
+import { getGetProject, putUpdateProject, deleteDeleteProject } from '@/apis/project'
 import { getUsers } from '@/apis/user'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const store = useAppStore()
 import { useRoute } from 'vue-router'
 
@@ -99,7 +131,8 @@ const project = ref({})
 const members = ref([])
 const users = ref([])
 const search = ref()
-const dialog = ref(false)
+const dialogUpdate = ref(false)
+const dialogDelete = ref(false)
 
 const searchUsers = val => {
   if (!val) {
@@ -118,7 +151,7 @@ const searchUsers = val => {
   })
 }
 
-function getProject() {
+function onGetProject() {
   getGetProject(route.params.projectId).then((res) => {
     console.log(res)
     if (res.status === 200) {
@@ -145,10 +178,46 @@ function getProject() {
   });
 }
 
-function saveProject() {
+function onUpdateProject() {
+  putUpdateProject(route.params.projectId, {
+    displayName: project.value.displayName,
+    description: project.value.displayName,
+    members: members.value.map((member) => {
+      return {
+        userId: member.id,
+        userName: member.name,
+        isAdmin: member.isAdmin,
+      }
+    })
+  }).then((res) => {
+    console.log(res)
+    if (res.status === 200) {
+      if (res.data.success) {
+        store.setProject({
+          id: res.data.id,
+          displayName: project.value.displayName,
+          description: project.value.displayName,
+        })
+      }
+    }
+  })
   console.log(project.value)
   console.log(members.value)
-  dialog.value = false
+  dialogUpdate.value = false
+}
+
+function onDeleteProject() {
+  deleteDeleteProject(route.params.projectId).then((res) => {
+    console.log(res)
+    if (res.status === 200) {
+      if (res.data.success) {
+        store.setProject({})
+        store.setSprint({})
+        dialogDelete.value = false
+        router.push(`/projects`);
+      }
+    }
+  })
 }
 
 
