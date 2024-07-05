@@ -40,6 +40,7 @@ import { useAppStore } from '@/stores/app'
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 import { postSignIn } from '@/apis/index'
+import axios from 'axios'
 
 defineProps(['isDialog'])
 
@@ -55,6 +56,7 @@ function SingIn() {
     password: 'admin'
   }).then((res) => {
     if (res.status === 200) {
+      axios.defaults.headers.Authorization = `Bearer ${res.data.item.token.accessToken}`
       store.signIn({
         id: res.data.item.id,
         name: res.data.item.name,
