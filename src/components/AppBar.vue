@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app dense flat>
+  <v-toolbar outline>
     <v-img
       :src="store.logoUrl"
       contain
@@ -59,7 +59,7 @@
         class="hidden-sm-and-down ml-2"
       >{{ $t('core.accounts.' + account.name + '.text') }}</v-btn>
     </div>
-  </v-app-bar>
+  </v-toolbar>
 </template>
 
 <script setup>
