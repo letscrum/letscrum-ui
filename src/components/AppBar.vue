@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar outline>
+  <v-toolbar>
     <v-img
       :src="store.logoUrl"
       contain
@@ -60,6 +60,7 @@
       >{{ $t('core.accounts.' + account.name + '.text') }}</v-btn>
     </div>
   </v-toolbar>
+  <v-divider></v-divider>
 </template>
 
 <script setup>

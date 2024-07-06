@@ -24,30 +24,44 @@ const routes = [
   },
   {
     path: '/projects/:projectId/sprints/:sprintId',
-    name: 'Sprint',
-    component: () => import('@/pages/sprint/Taskboard.vue'),
-    // children: [
-    //   {
-    //     path: 'taskboard',
-    //     component: () => import('@/pages/sprint/Taskboard.vue')
-    //   },
-    //   {
-    //     path: 'backlog',
-    //     component: () => import('@/pages/sprint/Backlog.vue')
-    //   },
-    //   {
-    //     path: 'capacity',
-    //     component: () => import('@/pages/sprint/Capacity.vue')
-    //   }
-    // ],
+    component: () => import('@/pages/sprint/Sprint.vue'),
+    children: [
+      {
+        path: '',
+        components: {
+          default: () => import('@/pages/sprint/Taskboard.vue'),
+          menu: () => import('@/components/MenuTaskboard.vue')
+        }
+      },
+      {
+        path: 'backlog',
+        components: {
+          default: () => import('@/pages/sprint/Backlog.vue'),
+          menu: () => import('@/components/MenuBacklog.vue')
+        }
+      },
+      {
+        path: 'capacity',
+        components: {
+          default: () => import('@/pages/sprint/Capacity.vue'),
+          menu: () => import('@/components/MenuCapacity.vue')
+        }
+      }
+    ],
   },
   {
-    path: '/projects/:projectId/sprints/:sprintId/backlog',
-    component: () => import('@/pages/sprint/Backlog.vue'),
-  },
-  {
-    path: '/projects/:projectId/sprints/:sprintId/capacity',
-    component: () => import('@/pages/sprint/Capacity.vue'),
+    path: '/test/:tid',
+    component: () => import('@/pages/test/TestMain.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('@/pages/test/TestSub.vue')
+      },
+      {
+        path: 'sub',
+        component: () => import('@/pages/test/TestSub.vue')
+      }
+    ],
   },
   {
     path: '/about',

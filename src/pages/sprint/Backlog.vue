@@ -1,17 +1,5 @@
 <template>
   <div>
-    <v-tabs>
-      <v-tab to="taskboard">Taskboard</v-tab>
-      <v-tab to="backlog">Backlog</v-tab>
-      <v-tab to="capacity">Capacity</v-tab>
-      <v-divider
-        vertical
-        inset
-        class="mx-2"
-      ></v-divider>
-
-    </v-tabs>
-    <v-divider></v-divider>
     <v-data-table
       :headers="dessertHeaders"
       :items="desserts"
