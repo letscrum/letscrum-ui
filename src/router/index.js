@@ -20,7 +20,34 @@ const routes = [
   },
   {
     path: '/projects/:projectId/sprints',
-    component: () => import('@/pages/project/Sprints.vue')
+    component: () => import('@/pages/project/Sprints.vue'),
+  },
+  {
+    path: '/projects/:projectId/sprints/:sprintId',
+    name: 'Sprint',
+    component: () => import('@/pages/sprint/Taskboard.vue'),
+    // children: [
+    //   {
+    //     path: 'taskboard',
+    //     component: () => import('@/pages/sprint/Taskboard.vue')
+    //   },
+    //   {
+    //     path: 'backlog',
+    //     component: () => import('@/pages/sprint/Backlog.vue')
+    //   },
+    //   {
+    //     path: 'capacity',
+    //     component: () => import('@/pages/sprint/Capacity.vue')
+    //   }
+    // ],
+  },
+  {
+    path: '/projects/:projectId/sprints/:sprintId/backlog',
+    component: () => import('@/pages/sprint/Backlog.vue'),
+  },
+  {
+    path: '/projects/:projectId/sprints/:sprintId/capacity',
+    component: () => import('@/pages/sprint/Capacity.vue'),
   },
   {
     path: '/about',

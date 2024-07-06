@@ -3,10 +3,59 @@
     <div class="ma-2">
       <v-row no-gutters>
         <v-col>
-          <h2>{{ store.sprint.name }}</h2>
+          <h2>Sprints</h2>
         </v-col>
         <v-col>
-          <v-menu offset-y bottom left min-width="300">
+          <v-dialog
+            width="50%"
+            persistent
+            v-model="dialog"
+          >
+            <template v-slot:activator="{ props: activatorProps }">
+              <v-btn outlined class="float-right" tile prepend-icon="mdi-pencil" v-bind="activatorProps" @click="onOpenCreate()">
+                Create
+              </v-btn>
+            </template>
+
+            <template v-slot:default="{ isActive }">
+              <v-card
+                prepend-icon="mdi-earth"
+                title="Select Country"
+              >
+                <v-divider class="my-1"></v-divider>
+
+                <v-card-text class="px-4">
+                  <v-text-field label="Label" v-model="sprint.name"></v-text-field>
+
+                  <v-text-field label="Label" v-model="sprint.startDate"></v-text-field>
+
+                  <v-text-field label="Label" v-model="sprint.endDate"></v-text-field>
+
+                  <v-date-picker show-adjacent-months multiple="range" v-model="dates"></v-date-picker>
+
+                </v-card-text>
+
+                <v-divider></v-divider>
+
+                <v-card-actions>
+                  <v-btn
+                    text="Close"
+                    @click="isActive.value = false"
+                  ></v-btn>
+
+                  <v-spacer></v-spacer>
+
+                  <v-btn
+                    color="surface-variant"
+                    text="Create"
+                    variant="flat"
+                    @click="onCreateSprint()"
+                  ></v-btn>
+                </v-card-actions>
+              </v-card>
+            </template>
+          </v-dialog>
+          <!-- <v-menu offset-y bottom left min-width="300">
             <template v-slot:activator="{ on, attrs }">
               <v-btn v-bind="attrs" v-on="on" plain tile large class="float-right">
                 {{ store.sprint.name }}
@@ -112,10 +161,15 @@
                 </v-card>
               </v-dialog>
             </v-list>
-          </v-menu>
+          </v-menu> -->
         </v-col>
       </v-row>
-      <router-view></router-view>
+      <v-divider class="my-2"></v-divider>
+      <v-row no-gutters>
+        <v-col cols="12" md="4" class="pa-1" v-for="(sprint, i) in sprints" :key="i">
+          {{ sprint }}
+        </v-col>
+      </v-row>
     </div>
   </DefaultLayout>
 </template>
@@ -131,6 +185,10 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 
 const store = useAppStore();
+
+const sprint = ref({})
+
+const dates = ref([])
 
 const date = ref([null, null])
 const sprintName = ref('')
@@ -151,23 +209,32 @@ watch(date, (date, preDate) => {
   rangeDate.value = `${startDate.value} - ${endDate.value}`;
 })
 
+function onOpenCreate() {
+  sprint.value = {}
+  dialog.value = true
+}
 
 function onCreateSprint() {
-  postCreateSprint(this.project.id, {
-    name: this.sprintName,
-    start_date: Math.floor(new Date(this.startDate).getTime() / 1000),
-    end_date: Math.floor(new Date(this.endDate).getTime() / 1000)
+  console.log(dates.value)
+  postCreateSprint(route.params.projectId, {
+    name: sprint.value.name,
+    startDate: Math.floor(new Date(dates.value[0]).getTime() / 1000),
+    endDate: Math.floor(new Date(dates.value[dates.value.length - 1]).getTime() / 1000)
   }).then((res) => {
-    console.log(res);
+    console.log(res)
     if (res.status === 200) {
-      console.log(res.data);
-      this.onLoadSprints();
-      this.dialog = false;
+      console.log(res.data)
+      LoadSprints()
+      dialog.value = false
     }
-  });
+  })
 }
 
 onMounted(() => {
+  LoadSprints()
+})
+
+function LoadSprints() {
   getGetSprints(route.params.projectId, {
     page: 1,
     size: 999
@@ -175,9 +242,21 @@ onMounted(() => {
     console.log(res);
     if (res.status === 200) {
       sprints.value = res.data.items;
+      // get sprints status 'CURRENT' item and set to store
+      if (store.sprint.id === 0) {
+        const currentSprint = sprints.value.find((item) => item.status === 'CURRENT')
+        if (currentSprint) {
+          store.setSprint({
+            id: currentSprint.id,
+            name: currentSprint.name,
+            startDate: currentSprint.startDate,
+            endDate: currentSprint.endDate
+          })
+        }
+      }
     }
   })
-})
+}
 
 function onSetSprint(id, name, startDate, endDate) {
   store.setSprint({

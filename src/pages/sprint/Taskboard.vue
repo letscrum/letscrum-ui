@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <DefaultLayout>
     <v-tabs>
       <v-tab to="taskboard">Taskboard</v-tab>
       <v-tab to="backlog">Backlog</v-tab>
@@ -203,9 +203,15 @@
         </v-card>
       </v-col>
     </v-row>
-  </div>
+  </DefaultLayout>
 </template>
+
+<script setup>
+import DefaultLayout from '@/layouts/DefaultLayout.vue';
+
+</script>
 <script>
+
 export default {
   data: () => ({
     workDetail: false,
