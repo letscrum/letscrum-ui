@@ -26,10 +26,6 @@
               <v-card-text class="px-4">
                 <v-text-field label="Label" v-model="sprint.name"></v-text-field>
 
-                <v-text-field label="Label" v-model="sprint.startDate"></v-text-field>
-
-                <v-text-field label="Label" v-model="sprint.endDate"></v-text-field>
-
                 <v-date-picker show-adjacent-months multiple="range" v-model="dates"></v-date-picker>
 
               </v-card-text>
@@ -167,6 +163,12 @@
     <v-row no-gutters>
       <v-col cols="12" md="4" class="pa-1" v-for="(sprint, i) in sprints" :key="i">
         {{ sprint }}
+        <v-btn
+          outlined
+          color="primary"
+          @click="onSetSprint(sprint.id, sprint.name, sprint.startDate, sprint.endDate)">
+          {{ sprint.name }}
+        </v-btn>
       </v-col>
     </v-row>
   </DefaultLayout>
@@ -179,8 +181,10 @@ import { getGetSprints, postCreateSprint } from '@/apis/sprint';
 import { useAppStore } from '@/stores/app'
 import { ref, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 const route = useRoute()
+const router = useRouter()
 
 const store = useAppStore();
 
@@ -209,6 +213,7 @@ watch(date, (date, preDate) => {
 
 function onOpenCreate() {
   sprint.value = {}
+  dates.value = []
   dialog.value = true
 }
 
@@ -240,9 +245,9 @@ function LoadSprints() {
     console.log(res);
     if (res.status === 200) {
       sprints.value = res.data.items;
-      // get sprints status 'CURRENT' item and set to store
+      // get sprints status 'Current' item and set to store
       if (store.sprint.id === 0) {
-        const currentSprint = sprints.value.find((item) => item.status === 'CURRENT')
+        const currentSprint = sprints.value.find((item) => item.status === 'Current')
         if (currentSprint) {
           store.setSprint({
             id: currentSprint.id,
@@ -263,5 +268,6 @@ function onSetSprint(id, name, startDate, endDate) {
     startDate: startDate,
     endDate: endDate
   })
+  router.push(`/projects/${route.params.projectId}/sprints/${id}`)
 }
 </script>

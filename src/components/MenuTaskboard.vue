@@ -1,11 +1,8 @@
 <template>
   <v-spacer></v-spacer>
-  <v-menu offset-y bottom right>
-    <template v-slot:activator="{ on, attrs }">
-      <v-btn v-bind="attrs" v-on="on" tile icon small style="margin-top: 10px;">
-        <v-icon>
-          mdi-dots-horizontal
-        </v-icon>
+  <v-menu bottom left offset-y :close-on-content-click="false">
+    <template v-slot:activator="{ props }">
+      <v-btn v-bind="props" icon="mdi-dots-horizontal" variant="text" density="comfortable">
       </v-btn>
     </template>
     <v-list>
@@ -32,27 +29,17 @@
     </v-list>
   </v-menu>
   <v-spacer></v-spacer>
-  <v-menu offset-y bottom left>
-    <template v-slot:activator="{ on, attrs }">
-      <v-btn v-bind="attrs" v-on="on" tile icon small style="margin-top: 10px;">
-        <v-icon>
-          mdi-order-bool-ascending
-        </v-icon>
+  <v-menu bottom left offset-y :close-on-content-click="false">
+    <template v-slot:activator="{ props }">
+      <v-btn v-bind="props" icon="mdi-order-bool-ascending" variant="text" density="comfortable">
       </v-btn>
     </template>
-    <v-list>
-      <v-list-item dense>
-        <v-list-item-subtitle>Side Panel</v-list-item-subtitle>
-      </v-list-item>
-      <v-list-item dense @click="workDetail = !workDetail">
-        <v-list-item-icon class="mr-2">
-          <v-icon>
-            mdi-briefcase
-          </v-icon>
-        </v-list-item-icon>
-        <v-list-item-content>
-          <v-list-item-title>Work details</v-list-item-title>
-        </v-list-item-content>
+    <v-list density="compact">
+      <v-list-subheader>用户中心</v-list-subheader>
+
+      <v-list-item @click="workDetail = !workDetail">
+
+        <v-list-item-title>Work details</v-list-item-title>
       </v-list-item>
     </v-list>
   </v-menu>

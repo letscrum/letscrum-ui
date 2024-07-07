@@ -11,16 +11,10 @@
           <template v-slot:header>
             <v-row no-gutters>
               <v-col cols="2">
-                <v-btn tile text small v-if="singleExpand">
-                  <v-icon left>
-                    mdi-arrow-expand-vertical
-                  </v-icon>
+                <v-btn variant="plain" prepend-icon="mdi-arrow-expand-vertical" density="compact" v-if="singleExpand">
                   Expand all
                 </v-btn>
-                <v-btn tile text small v-else>
-                  <v-icon left>
-                    mdi-arrow-collapse-vertical
-                  </v-icon>
+                <v-btn variant="plain" prepend-icon="mdi-arrow-collapse-vertical" density="compact" v-else>
                   Collapse all
                 </v-btn>
               </v-col>
@@ -43,11 +37,8 @@
             <div v-for="item in items" :key="item.id">
               <v-row no-gutters v-if="!isExpanded(item)">
                 <v-col cols="2">
-                  <v-btn tile icon x-small class="float-left"
+                  <v-btn variant="plain" icon="mdi-menu-down" density="compact" class="float-left"
                     @click="expand(item, true)">
-                    <v-icon>
-                      mdi-menu-down
-                    </v-icon>
                   </v-btn>
                   <v-sheet tile outlined class="mb-2 mr-2 float-left"
                     style="border-left-color: rgba(0, 103, 181, 1); border-left-width: 8px;"
@@ -68,10 +59,7 @@
                             Test
                         </v-sheet>
                       </div>
-                      <v-btn tile text small class="mr-2">
-                        <v-icon left>
-                          mdi-plus
-                        </v-icon>
+                      <v-btn variant="plain" prepend-icon="mdi-plus" density="compact" class="mr-2">
                         New task
                       </v-btn>
                     </v-col>
@@ -104,7 +92,7 @@
               </v-row>
               <v-row no-gutters v-else>
                 <v-col>
-                  <v-btn tile icon x-small class="float-left"
+                  <v-btn variant="plain" icon="mdi-menu-down" density="compact" class="float-left"
                     @click="expand(item, false)">
                     <v-icon>
                       mdi-menu-right
@@ -118,12 +106,12 @@
         </v-data-iterator>
       </v-col>
       <v-divider vertical />
-      <v-col v-if="workDetail" cols="3">
+      <v-col v-if="!workDetail" cols="3">
         <v-card flat tile>
           <v-card-title>
             <span class="text-h5">Work Details</span>
             <v-spacer></v-spacer>
-            <v-btn icon @click="workDetail = false">
+            <v-btn icon="mdi-close" @click="workDetail = false">
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </v-card-title>

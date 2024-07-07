@@ -47,17 +47,17 @@ export const useAppStore = defineStore('app', {
       if (payload.accessToken && payload.refreshToken) {
         localStorage.tokenAccessToken = payload.accessToken;
         localStorage.tokenRefreshToken = payload.refreshToken;
-        this.user.id = localStorage.userId;
+        this.user.id = Number(localStorage.userId);
         this.user.name = localStorage.userName;
         this.user.email = localStorage.userEmail;
         this.user.isSuperAdmin = localStorage.userIsSuperAdmin;
         this.token.accessToken = localStorage.tokenAccessToken;
         this.token.refreshToken = localStorage.tokenRefreshToken;
-        this.project.id = localStorage.projectId;
+        this.project.id = Number(localStorage.projectId);
         this.project.name = localStorage.projectName;
         this.project.displayName = localStorage.projectDisplayName;
         this.project.description = localStorage.projectDescription;
-        this.sprint.id = localStorage.sprintId;
+        this.sprint.id = Number(localStorage.sprintId);
         this.sprint.name = localStorage.sprintName;
         this.sprint.startDate = localStorage.sprintStartDate;
         this.sprint.endDate = localStorage.sprintEndDate;
@@ -79,7 +79,7 @@ export const useAppStore = defineStore('app', {
       localStorage.tokenAccessToken = accessToken;
       localStorage.tokenRefreshToken = refreshToken;
       this.user = {
-        id,
+        id: Number(id),
         name,
         email,
         isSuperAdmin
@@ -122,7 +122,7 @@ export const useAppStore = defineStore('app', {
       localStorage.projectDisplayName = displayName;
       localStorage.projectDescription = description;
       this.project = {
-        id,
+        id: Number(id),
         name,
         displayName,
         description
@@ -140,7 +140,7 @@ export const useAppStore = defineStore('app', {
       localStorage.sprintStartDate = startDate;
       localStorage.sprintEndDate = endDate;
       this.sprint = {
-        id,
+        id: Number(id),
         name,
         startDate,
         endDate
