@@ -108,9 +108,9 @@
     </v-row>
     <v-divider class="my-2"></v-divider>
     <v-row no-gutters>
-      <v-col cols="12" md="4" class="pa-1" v-for="(project, i) in projects" :key="i">
+      <!-- <v-col cols="12" md="4" class="pa-1" v-for="(project, i) in projects" :key="i">
         <ProjectCard :project="project"></ProjectCard>
-      </v-col>
+      </v-col> -->
     </v-row>
   </DefaultLayout>
 </template>

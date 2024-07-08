@@ -5,51 +5,7 @@
         <h2>Sprints</h2>
       </v-col>
       <v-col>
-        <v-dialog
-          width="50%"
-          persistent
-          v-model="dialog"
-        >
-          <template v-slot:activator="{ props: activatorProps }">
-            <v-btn outlined class="float-right" tile prepend-icon="mdi-pencil" v-bind="activatorProps" @click="onOpenCreate()">
-              Create
-            </v-btn>
-          </template>
-
-          <template v-slot:default="{ isActive }">
-            <v-card
-              prepend-icon="mdi-earth"
-              title="Select Country"
-            >
-              <v-divider class="my-1"></v-divider>
-
-              <v-card-text class="px-4">
-                <v-text-field label="Label" v-model="sprint.name"></v-text-field>
-
-                <v-date-picker show-adjacent-months multiple="range" v-model="dates"></v-date-picker>
-
-              </v-card-text>
-
-              <v-divider></v-divider>
-
-              <v-card-actions>
-                <v-btn
-                  text="Close"
-                  @click="isActive.value = false"
-                ></v-btn>
-
-                <v-spacer></v-spacer>
-
-                <v-btn
-                  color="surface-variant"
-                  text="Create"
-                  variant="flat"
-                  @click="onCreateSprint()"
-                ></v-btn>
-              </v-card-actions>
-            </v-card>
-          </template>
-        </v-dialog>
+        <SprintCreate></SprintCreate>
         <!-- <v-menu offset-y bottom left min-width="300">
           <template v-slot:activator="{ on, attrs }">
             <v-btn v-bind="attrs" v-on="on" plain tile large class="float-right">
@@ -169,6 +125,12 @@
           @click="onSetSprint(sprint.id, sprint.name, sprint.startDate, sprint.endDate)">
           {{ sprint.name }}
         </v-btn>
+        <v-btn
+          outlined
+          color="primary"
+          @click="onDeleteSprint(sprint.projectId, sprint.id)">
+          Delete
+        </v-btn>
       </v-col>
     </v-row>
   </DefaultLayout>
@@ -177,7 +139,7 @@
 <script setup>
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 
-import { getGetSprints, postCreateSprint } from '@/apis/sprint';
+import { getGetSprints, deleteDeleteSprint } from '@/apis/sprint';
 import { useAppStore } from '@/stores/app'
 import { ref, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router'
@@ -211,27 +173,6 @@ watch(date, (date, preDate) => {
   rangeDate.value = `${startDate.value} - ${endDate.value}`;
 })
 
-function onOpenCreate() {
-  sprint.value = {}
-  dates.value = []
-  dialog.value = true
-}
-
-function onCreateSprint() {
-  console.log(dates.value)
-  postCreateSprint(route.params.projectId, {
-    name: sprint.value.name,
-    startDate: Math.floor(new Date(dates.value[0]).getTime() / 1000),
-    endDate: Math.floor(new Date(dates.value[dates.value.length - 1]).getTime() / 1000)
-  }).then((res) => {
-    console.log(res)
-    if (res.status === 200) {
-      console.log(res.data)
-      LoadSprints()
-      dialog.value = false
-    }
-  })
-}
 
 onMounted(() => {
   LoadSprints()
@@ -269,5 +210,14 @@ function onSetSprint(id, name, startDate, endDate) {
     endDate: endDate
   })
   router.push(`/projects/${route.params.projectId}/sprints/${id}`)
+}
+
+function onDeleteSprint(projectId, id) {
+  deleteDeleteSprint(projectId, id).then((res) => {
+    console.log(res)
+    if (res.status === 200) {
+      LoadSprints()
+    }
+  })
 }
 </script>
