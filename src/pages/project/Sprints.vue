@@ -5,7 +5,11 @@
         <h2>Sprints</h2>
       </v-col>
       <v-col>
-        <SprintCreate></SprintCreate>
+        <SprintCreate @afterCreate="LoadSprints()">
+          <v-btn outlined class="float-right" tile prepend-icon="mdi-pencil">
+            Create
+          </v-btn>
+        </SprintCreate>
         <!-- <v-menu offset-y bottom left min-width="300">
           <template v-slot:activator="{ on, attrs }">
             <v-btn v-bind="attrs" v-on="on" plain tile large class="float-right">

@@ -5,109 +5,65 @@
         <h2>{{ store.sprint.name }}</h2>
       </v-col>
       <v-col>
-        {{ store.sprint.startDate }} - {{ store.sprint.endDate }}
-        <v-menu offset-y bottom left min-width="300">
+        <!-- <v-select
+          density="compact"
+          width="100"
+          :items="['All', ...sprint.members.map((item) => item.userName)]"
+        ></v-select> -->
+        <v-menu offset-y bottom left width="400">
           <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" prepend-icon="mdi-chevron-down" variant="text" class="float-right">
+            <v-btn v-bind="props" append-icon="mdi-chevron-down" size="large" variant="text" class="float-right">
               {{ store.sprint.name }}
             </v-btn>
           </template>
           <v-list>
-            <v-virtual-scroll height="350" item-height="64" :items="sprints">
+            <v-virtual-scroll height="320" item-height="64" :items="sprints">
               <template v-slot:default="{ item }">
                 <v-list-item
                   :to="'/projects/' + item.projectId + '/sprints/' + item.id"
-                  two-line
+                  lines="two"
                   @click="onSetSprint(item.id, item.name, item.startDate, item.endDate)"
+                  :title="item.name"
+                  :subtitle="new Date(item.startDate * 1000).toISOString().substring(0, 10) + ' - ' + new Date(item.endDate * 1000).toISOString().substring(0, 10)"
                 >
-                  <v-list-item-content>
-                    <v-list-item-title>{{ item.name }}</v-list-item-title>
-                    <v-list-item-subtitle>
-                      {{ new Date(item.startDate * 1000).toISOString().substr(0, 10) }}
-                      - {{ new Date(item.endDate * 1000).toISOString().substr(0, 10) }}
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
-                  <v-list-item-action>
-                    <v-list-item-action-text>
-                      <v-chip
-                        :color="item.status === 'CURRENT' ? 'primary' : ''"
-                        small
-                      >
-                        {{ item.status }}
-                      </v-chip>
-                    </v-list-item-action-text>
-                  </v-list-item-action>
+                  <template v-slot:append>
+                    <v-chip
+                      :color="item.status === 'Current' ? 'primary' : ''"
+                      :variant="item.status === 'Current' ? 'flat' : 'tonal'"
+                    >
+                      {{ item.status }}
+                    </v-chip>
+                  </template>
                 </v-list-item>
               </template>
             </v-virtual-scroll>
+            <v-divider class="my-2"></v-divider>
+            <SprintCreate @afterCreate="LoadSprints()">
+              <v-list-item title="New Sprint" @click="console.log()">
+                <template v-slot:prepend>
+                  <v-icon>mdi-plus</v-icon>
+                </template>
+              </v-list-item>
+            </SprintCreate>
           </v-list>
+        </v-menu>
+
+        <v-menu>
+          <template v-slot:activator="{ props }">
+            <v-btn v-bind="props" append-icon="mdi-chevron-down" size="large" variant="text" class="float-right">
+              {{ member.userName }}
+            </v-btn>
+          </template>
           <v-list>
-            <v-dialog v-model="dialog" persistent max-width="600">
-              <template v-slot:activator="{ on, attrs }">
-                <v-list-item v-bind="attrs" v-on="on">
-                  <v-list-item-icon>
-                    <v-icon>mdi-plus</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title>New Sprint</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </template>
-              <v-card>
-                <v-card-title>
-                  <span class="text-h5">Create Sprint</span>
-                </v-card-title>
-                <v-card-text>
-                  <v-container>
-                    <v-row>
-                      <v-col cols="12">
-                        <v-text-field
-                          label="Name"
-                          required
-                          v-model="sprintName"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12">
-                        <v-menu
-                          v-model="menu"
-                          :close-on-content-click="false"
-                          :nudge-right="40"
-                          transition="scale-transition"
-                          offset-y
-                          min-width="auto"
-                        >
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-text-field
-                              v-model="rangeDate"
-                              label="Picker without buttons"
-                              readonly
-                              v-bind="attrs"
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-date-picker
-                            v-model="date"
-                            no-title
-                            range
-                          ></v-date-picker>
-                        </v-menu>
-                      </v-col>
-                      <v-col cols="12">
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn text @click="dialog = false">
-                    Close
-                  </v-btn>
-                  <v-btn text @click="onCreateSprint">
-                    Create
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
+            <v-list-item @click="setMember(0, 'All')" title="All"></v-list-item>
+
+            <v-list-item
+              @click="setMember(item.userId, item.userName)"
+              v-for="(item, i) in sprint.members"
+              :key="i"
+              :title="item.userName"
+            >
+            </v-list-item>
           </v-list>
         </v-menu>
       </v-col>
@@ -134,7 +90,7 @@ import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import { useRoute } from 'vue-router'
 import { useAppStore } from '@/stores/app'
 import { onMounted, ref } from 'vue';
-import { getGetSprints, postCreateSprint } from '@/apis/sprint';
+import { getGetSprints } from '@/apis/sprint';
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -144,6 +100,10 @@ const store = useAppStore()
 const route = useRoute()
 
 const sprints = ref([])
+
+const sprint = ref({})
+
+const member = ref({})
 
 
 function LoadSprints() {
@@ -165,8 +125,13 @@ function LoadSprints() {
             startDate: currentSprint.startDate,
             endDate: currentSprint.endDate
           })
+          sprint.value = currentSprint
         }
+      } else {
+        const currentSprint = sprints.value.find((item) => item.id === route.params.sprintId)
+        sprint.value = currentSprint
       }
+      console.log(sprint.value)
     }
   })
 }
@@ -178,6 +143,11 @@ function onSetSprint(id, name, startDate, endDate) {
     startDate: startDate,
     endDate: endDate
   })
+}
+
+function setMember(userId, userName) {
+  member.value.userId = userId
+  member.value.userName = userName
 }
 
 onMounted(() => {

@@ -5,9 +5,12 @@
     v-model="dialog"
   >
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn outlined class="float-right" tile prepend-icon="mdi-pencil" v-bind="activatorProps" @click="onOpenCreate()">
+      <div v-bind="activatorProps" @click="onOpenCreate()">
+        <slot></slot>
+      </div>
+      <!-- <v-btn outlined class="float-right" tile prepend-icon="mdi-pencil" v-bind="activatorProps" @click="onOpenCreate()">
         Create
-      </v-btn>
+      </v-btn> -->
     </template>
 
     <template v-slot:default="{ isActive }">
@@ -47,7 +50,8 @@
 </template>
 
 <script setup>
-import { postCreateSprint } from '@/apis/sprint';
+import { postCreateSprint } from '@/apis/sprint'
+const emit = defineEmits(['afterCreate'])
 
 import { ref } from 'vue';
 
@@ -75,6 +79,7 @@ function onCreateSprint() {
     if (res.status === 200) {
       console.log(res.data)
       dialog.value = false
+      emit('afterCreate')
     }
   })
 }
