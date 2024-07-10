@@ -55,7 +55,8 @@
             </v-btn>
           </template>
           <v-list>
-            <v-list-item @click="setMember(0, 'All')" title="All"></v-list-item>
+            <v-list-item @click="setMember(-1, 'All')" title="All"></v-list-item>
+            <v-list-item @click="setMember(0, '@Me')" title="@Me"></v-list-item>
 
             <v-list-item
               @click="setMember(item.userId, item.userName)"
@@ -103,7 +104,10 @@ const sprints = ref([])
 
 const sprint = ref({})
 
-const member = ref({})
+const member = ref({
+  userId: 0,
+  userName: 'All'
+})
 
 
 function LoadSprints() {

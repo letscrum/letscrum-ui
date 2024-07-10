@@ -5,11 +5,7 @@
     @click="rail = false"
   >
     <v-toolbar>
-      <v-btn
-        :icon="rail ? 'mdi-chevron-right' : 'mdi-chevron-left'"
-        variant="text"
-        @click.stop="rail = !rail"
-      ></v-btn>
+
     </v-toolbar>
     <v-divider></v-divider>
     <v-list density="compact" nav>
@@ -22,7 +18,23 @@
     <v-list density="compact" nav v-if="store.sprint.id > 0">
       <v-list-item prepend-icon="mdi-home-city" title="Current Sprint" value="current_sprint" :to="'/projects/' + store.project.id + '/sprints/' + store.sprint.id"></v-list-item>
     </v-list>
+    <template v-slot:append>
 
+      <v-list>
+        <!-- <v-list-item :prepend-icon="rail ? 'mdi-chevron-right' : ''" @click="rail = !rail" v-if="rail">
+
+        </v-list-item> -->
+        <v-list-item>
+          <template v-slot:append>
+            <v-btn
+              :icon="rail ? 'mdi-chevron-right' : 'mdi-chevron-left'"
+              variant="text"
+              :style="rail ? 'margin-left: -12px; margin-right: 12px;' : ''"
+              @click.stop="rail = !rail"></v-btn>
+          </template>
+        </v-list-item>
+      </v-list>
+    </template>
   </v-navigation-drawer>
 </template>
 
