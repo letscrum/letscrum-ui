@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar>
+  <v-app-bar scroll-behavior="elevate">
     <v-img
       :src="store.logoUrl"
       contain
@@ -59,7 +59,7 @@
         class="hidden-sm-and-down ml-2"
       >{{ $t('core.accounts.' + account.name + '.text') }}</v-btn>
     </div>
-  </v-toolbar>
+  </v-app-bar>
   <v-divider></v-divider>
 </template>
 

@@ -4,9 +4,9 @@
     permanent
     @click="rail = false"
   >
-    <v-toolbar>
+    <!-- <v-toolbar>
 
-    </v-toolbar>
+    </v-toolbar> -->
     <v-divider></v-divider>
     <v-list density="compact" nav>
       <v-list-item prepend-icon="mdi-home-city" title="Home" value="home" to="/projects"></v-list-item>

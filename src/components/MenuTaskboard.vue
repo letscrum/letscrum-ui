@@ -5,10 +5,10 @@
       </v-btn>
     </template>
     <v-list density="compact">
-      <v-list-item>
+      <v-list-item @click="onCreateWorkItem('Bug')">
         <v-list-item-title>Bug</v-list-item-title>
       </v-list-item>
-      <v-list-item>
+      <v-list-item @click="onCreateWorkItem('Backlog')">
         <v-list-item-title>Backlog</v-list-item-title>
       </v-list-item>
     </v-list>

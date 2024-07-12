@@ -82,7 +82,9 @@
       <router-view name="menu" />
     </v-tabs>
     <v-divider class="my-2"></v-divider>
-    <router-view />
+    <router-view v-slot="{ Component }">
+      <component :is="Component" ref="mainContent" />
+    </router-view>
   </DefaultLayout>
 </template>
 
@@ -109,6 +111,7 @@ const member = ref({
   userName: 'All'
 })
 
+const mainContent = ref()
 
 function LoadSprints() {
   getGetSprints(route.params.projectId, {
@@ -152,6 +155,7 @@ function onSetSprint(id, name, startDate, endDate) {
 function setMember(userId, userName) {
   member.value.userId = userId
   member.value.userName = userName
+  mainContent.value.filterTasks(userId)
 }
 
 onMounted(() => {
