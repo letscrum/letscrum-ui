@@ -35,8 +35,25 @@
             </v-row>
           </template>
           <template v-slot:default="{ items, isExpanded, toggleExpand }">
+            <div v-if="creating">
+              <v-row no-gutters>
+                <v-col cols="2">
+                  <v-icon icon="mdi-menu-down" size="x-small" width="10%" class="float-left"></v-icon>
+                  <v-sheet tile outlined class="mb-2 mr-2 float-left"
+                    style="border-left-color: rgb(0, 156, 204); border-width: 1px; border-left-width: 3px;"
+                    width="85%" min-width="160" height="100">
+                      <input
+                      ref="createTitle"
+                      @focusout="FinishCreating()"
+                      style="border-width: 1px; border-style: solid; border-color: gray; margin: 2px 2px 2px 2px;" type="textarea" />
+                  </v-sheet>
+                </v-col>
+                <v-col cols="10">
+                </v-col>
+              </v-row>
+            </div>
             <div v-for="item in items" :key="item.raw.id">
-              <v-expand-transition v-if="item.raw.id > 0">
+              <v-expand-transition>
                 <v-row no-gutters v-if="!isExpanded(item)">
                   <v-col cols="2">
                     <v-icon icon="mdi-menu-down" size="x-small" width="10%" class="float-left" @click="() => toggleExpand(item)"></v-icon>
@@ -101,20 +118,6 @@
                   </v-col>
                 </v-row>
               </v-expand-transition>
-              <div v-else>
-                <v-row no-gutters v-if="!isExpanded(item)">
-                  <v-col cols="2">
-                    <v-icon icon="mdi-menu-down" size="x-small" width="10%" class="float-left"></v-icon>
-                    <v-sheet tile outlined class="mb-2 mr-2 float-left"
-                      style="border-left-color: rgb(0, 156, 204); border-width: 1px; border-left-width: 3px;"
-                      width="85%" min-width="160" height="100">
-                        <input style="border-width: 1px; border-style: solid; border-color: gray; margin: 2px 2px 2px 2px;" type="textarea" />
-                    </v-sheet>
-                  </v-col>
-                  <v-col cols="10">
-                  </v-col>
-                </v-row>
-              </div>
             </div>
           </template>
         </v-data-iterator>
@@ -145,7 +148,7 @@
 
 import { onMounted, ref } from 'vue'
 
-import { getGetWorkItems } from '@/apis/workitem';
+import { getGetWorkItems, postCreateWorkItem } from '@/apis/workitem';
 
 import { useRoute } from 'vue-router'
 
@@ -157,6 +160,8 @@ const route = useRoute()
 
 const workItems = ref([])
 const allWorkItems = ref([])
+const creating = ref(false)
+const createTitle = ref(null)
 
 const workDetail = ref(false)
 const expanded = ref([])
@@ -172,9 +177,17 @@ function LoadWorkItems() {
 }
 
 function AddWorkItem() {
-  console.log('expanded', expanded.value)
-  // remove last item from expanded list
-  expanded.value.pop()
+  creating.value = !creating.value
+  console.log('createTitle', createTitle.value)
+
+  setTimeout(() => {
+    createTitle.value.focus()
+  }, 100);
+
+}
+
+function FinishCreating() {
+  creating.value = false
 }
 
 function filterTasks(userId) {
