@@ -1,5 +1,5 @@
 <template>
-  <v-menu bottom left offset-y :close-on-content-click="false">
+  <v-menu bottom left offset-y>
     <template v-slot:activator="{ props }">
       <v-btn v-bind="props" icon="mdi-plus" variant="text" density="comfortable">
       </v-btn>
@@ -14,7 +14,7 @@
     </v-list>
   </v-menu>
   <v-spacer></v-spacer>
-  <v-menu bottom left offset-y :close-on-content-click="false">
+  <v-menu bottom left offset-y>
     <template v-slot:activator="{ props }">
       <v-btn v-bind="props" icon="mdi-order-bool-ascending" variant="text" density="comfortable">
       </v-btn>
@@ -31,5 +31,10 @@
 </template>
 
 <script setup>
+const emit = defineEmits(['createWorkItem'])
+
+function onCreateWorkItem(type) {
+  emit('createWorkItem', type)
+}
 
 </script>

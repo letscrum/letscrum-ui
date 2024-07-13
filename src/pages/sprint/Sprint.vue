@@ -79,7 +79,8 @@
         inset
         class="mx-2"
       ></v-divider>
-      <router-view name="menu" />
+      <router-view name="menu" @createWorkItem="onCreateWorkItem">
+      </router-view>
     </v-tabs>
     <v-divider class="my-2"></v-divider>
     <router-view v-slot="{ Component }">
@@ -156,6 +157,11 @@ function setMember(userId, userName) {
   member.value.userId = userId
   member.value.userName = userName
   mainContent.value.filterTasks(userId)
+}
+
+function onCreateWorkItem(workItemType) {
+  console.log('create work item', workItemType)
+  mainContent.value.AddWorkItem(workItemType)
 }
 
 onMounted(() => {
