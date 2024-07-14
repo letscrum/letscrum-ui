@@ -9,3 +9,7 @@ export const postCreateTask = (projectId, workItemId, params) => axios.post(`${v
 export const putUpdateTask = (projectId, workItemId, taskId, params) => axios.put(`${version}/projects/${projectId}/workitems/${workItemId}/tasks//${taskId}`, params)
 
 export const deleteDeleteTask = (projectId, workItemId, taskId) => axios.delete(`${version}/projects/${projectId}/workitems/${workItemId}/tasks/${taskId}`)
+
+export const putUpdateTaskStatus = (projectId, workItemId, taskId, params) => axios.put(`${version}/projects/${projectId}/workitems/${workItemId}/tasks/${taskId}/status`, params)
+
+export const putAssignTask = (projectId, workItemId, taskId, params) => axios.put(`${version}/projects/${projectId}/workitems/${workItemId}/tasks/${taskId}/assign`, params)

@@ -9,3 +9,7 @@ export const postCreateWorkItem = (projectId, params) => axios.post(`${version}/
 export const putUpdateWorkItem = (projectId, params) => axios.put(`${version}/projects/${projectId}/workitems`, params)
 
 export const deleteDeleteWorkItem = (projectId, workItemId) => axios.delete(`${version}/projects/${projectId}/workitems/${workItemId}`)
+
+export const putUpdateWorkItemStatus = (projectId, workItemId, params) => axios.put(`${version}/projects/${projectId}/workitems/${workItemId}/status`, params)
+
+export const putAssignWorkItem = (projectId, workItemId, params) => axios.put(`${version}/projects/${projectId}/workitems/${workItemId}/assign`, params)

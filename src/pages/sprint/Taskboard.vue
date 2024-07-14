@@ -67,13 +67,56 @@
                   <v-col cols="10">
                     <v-row no-gutters>
                       <v-col cols="4">
+
                         <v-row no-gutters>
                           <v-col>
-                            <v-sheet tile outlined class="mb-2 mr-2 float-left" v-for="task in item.raw.tasks" :key="task.id"
-                              style="border-left-color: rgb(242, 203, 29); border-width: 1px; border-left-width: 3px;"
-                              width="185" height="100">
-                                {{ task.id }}
-                            </v-sheet>
+                            <!-- <drop-list
+                              :items="item.raw.tasks.filter(t => t.status == 'ToDo')">
+                              <template v-slot:item="{item}">
+                                <drag :key="item.id" :data="item">
+                                  <v-sheet tile outlined class="mb-2 mr-2 float-left"
+                                    style="border-left-color: rgb(242, 203, 29); border-width: 1px; border-left-width: 3px;"
+                                    width="185" height="100">
+                                      {{ item.id }}
+                                  </v-sheet>
+                                </drag>
+                              </template>
+                              <template v-slot:feedback="{data}">
+                                <v-sheet tile outlined class="mb-2 mr-2 float-left"
+                                  style="border-width: 1px; border-style: dotted;"
+                                  width="185" height="100">
+                                    {{ data.id }}
+                                </v-sheet>
+                              </template>
+
+                            </drop-list> -->
+                            <!-- <drop @drop="onDrop" style="background-color: aquamarine; width: 100%; height: 100%;">
+                              <drag v-for="task in item.raw.tasks.filter(t => t.status == 'ToDo')" :key="task.id" :data="task">
+                                <v-sheet tile outlined class="mb-2 mr-2 float-left"
+                                  style="border-left-color: rgb(242, 203, 29); border-width: 1px; border-left-width: 3px;"
+                                  width="185" height="100">
+                                    {{ task.id }}
+                                </v-sheet>
+                              </drag>
+                            </drop> -->
+                            <VueDraggable
+                              @update="onUpdate"
+                              @add="onAdd"
+                              @remove="remove"
+                              group="people"
+                              style="background-color: aquamarine; width: 100%; height: 100%;"
+                            >
+                              <div
+                                v-for="item in item.raw.tasks.filter(t => t.status == 'ToDo')"
+                                :key="item.id"
+                              >
+                                <v-sheet tile outlined class="mb-2 mr-2 float-left"
+                                  style="border-left-color: rgb(242, 203, 29); border-width: 1px; border-left-width: 3px;"
+                                  width="185" height="100">
+                                    {{ item.id }}
+                                </v-sheet>
+                              </div>
+                            </VueDraggable>
                           </v-col>
                         </v-row>
                         <v-spacer></v-spacer>
@@ -86,28 +129,102 @@
                         </v-row>
                       </v-col>
                       <v-col cols="4">
-                        <div v-for="task in item.tasks" :key="task.id">
-                          <v-sheet tile outlined class="mb-2 mr-2 float-left"
-                            v-if="task.name === '2'"
-                            style="border-left-color: rgb(242, 203, 29); border-left-width: 8px;"
-                            min-width="185"
-                            min-height="120"
-                            max-width="185">
-                              Test
-                          </v-sheet>
-                        </div>
+                        <!-- <drop-list
+                              :items="item.raw.tasks.filter(t => t.status == 'InProgress')">
+                              <template v-slot:item="{item}">
+                                <drag :key="item.id" :data="item">
+                                  <v-sheet tile outlined class="mb-2 mr-2 float-left"
+                                    style="border-left-color: rgb(242, 203, 29); border-width: 1px; border-left-width: 3px;"
+                                    width="185" height="100">
+                                      {{ item.id }}
+                                  </v-sheet>
+                                </drag>
+                              </template>
+                              <template v-slot:feedback="{data}">
+                                <v-sheet tile outlined class="mb-2 mr-2 float-left"
+                                  style="border-width: 1px; border-style: dotted;"
+                                  width="185" height="100">
+                                    {{ data.id }}
+                                </v-sheet>
+                              </template>
+
+                            </drop-list> -->
+                            <!-- <drop @drop="onDrop" style="background-color: aquamarine; width: 100%; height: 100%;">
+                              <drag v-for="task in item.raw.tasks.filter(t => t.status == 'InProgress')" :key="task.id" :data="task">
+                                <v-sheet tile outlined class="mb-2 mr-2 float-left"
+                                  style="border-left-color: rgb(242, 203, 29); border-width: 1px; border-left-width: 3px;"
+                                  width="185" height="100">
+                                    {{ task.id }}
+                                </v-sheet>
+                              </drag>
+                            </drop> -->
+                            <VueDraggable
+                              @update="onUpdate"
+                              @add="onAdd"
+                              @remove="remove"
+                              group="people"
+                              style="background-color: aquamarine; width: 100%; height: 100%;"
+                            >
+                              <div
+                                v-for="item in item.raw.tasks.filter(t => t.status == 'InProgress')"
+                                :key="item.id"
+                              >
+                                <v-sheet tile outlined class="mb-2 mr-2 float-left"
+                                  style="border-left-color: rgb(242, 203, 29); border-width: 1px; border-left-width: 3px;"
+                                  width="185" height="100">
+                                    {{ item.id }}
+                                </v-sheet>
+                              </div>
+                            </VueDraggable>
                       </v-col>
                       <v-col cols="4">
-                        <div v-for="task in item.tasks" :key="task.id">
-                          <v-sheet tile outlined class="mb-2 mr-2 float-left"
-                            v-if="task.name === '3'"
-                            style="border-left-color: rgb(242, 203, 29); border-left-width: 8px;"
-                            min-width="185"
-                            min-height="120"
-                            max-width="185">
-                              Test
-                          </v-sheet>
-                        </div>
+                        <!-- <drop-list
+                              :items="item.raw.tasks.filter(t => t.status == 'Done')">
+                              <template v-slot:item="{item}">
+                                <drag :key="item.id" :data="item">
+                                  <v-sheet tile outlined class="mb-2 mr-2 float-left"
+                                    style="border-left-color: rgb(242, 203, 29); border-width: 1px; border-left-width: 3px;"
+                                    width="185" height="100">
+                                      {{ item.id }}
+                                  </v-sheet>
+                                </drag>
+                              </template>
+                              <template v-slot:feedback="{data}">
+                                <v-sheet tile outlined class="mb-2 mr-2 float-left"
+                                  style="border-width: 1px; border-style: dotted;"
+                                  width="185" height="100">
+                                    {{ data.id }}
+                                </v-sheet>
+                              </template>
+                            </drop-list> -->
+                            <!-- <drop @drop="onDrop" style="background-color: aquamarine; width: 100%; height: 100%;">
+                              <drag v-for="task in item.raw.tasks.filter(t => t.status == 'Done')" :key="task.id" :data="task">
+                                <v-sheet tile outlined class="mb-2 mr-2 float-left"
+                                  style="border-left-color: rgb(242, 203, 29); border-width: 1px; border-left-width: 3px;"
+                                  width="185" height="100">
+                                    {{ task.id }}
+                                </v-sheet>
+                              </drag>
+                            </drop> -->
+
+                            <VueDraggable
+                              @update="onUpdate"
+                              @add="onAdd"
+                              @remove="remove"
+                              group="people"
+                              style="background-color: aquamarine; width: 100%; height: 100%;"
+                            >
+                              <div
+                                v-for="item in item.raw.tasks.filter(t => t.status == 'Done')"
+                                :key="item.id"
+                              >
+                                <v-sheet tile outlined class="mb-2 mr-2 float-left"
+                                  style="border-left-color: rgb(242, 203, 29); border-width: 1px; border-left-width: 3px;"
+                                  width="185" height="100">
+                                    {{ item.id }}
+                                </v-sheet>
+                              </div>
+                            </VueDraggable>
                       </v-col>
                     </v-row>
                   </v-col>
@@ -157,6 +274,9 @@ import { useRoute } from 'vue-router'
 
 import { useAppStore } from '@/stores/app'
 
+import { DropList, Drag, Drop } from 'vue-easy-dnd';
+import { VueDraggable } from 'vue-draggable-plus'
+
 const store = useAppStore()
 
 const route = useRoute()
@@ -178,6 +298,10 @@ function LoadWorkItems() {
     workItems.value = res.data.items
     console.log('workItems', workItems.value)
   })
+}
+
+function onDrop(event) {
+  console.log('onDrop', event)
 }
 
 function AddWorkItem(type) {
@@ -266,6 +390,15 @@ function collapseAll() {
   console.log('expanded', expanded.value)
 }
 
+function onUpdate() {
+  console.log('update')
+}
+function onAdd() {
+  console.log('add')
+}
+function remove() {
+  console.log('remove')
+}
 
 onMounted(() => {
   LoadWorkItems()
