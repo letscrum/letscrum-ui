@@ -11,7 +11,7 @@
           <template v-slot:header>
             <v-row no-gutters>
               <v-col cols="2">
-                <v-btn variant="plain" prepend-icon="mdi-arrow-expand-vertical" size="x-small" @click="expanded = []" v-if="expanded.length > 0">
+                <v-btn variant="plain" prepend-icon="mdi-arrow-expand-vertical" size="x-small" @click="collapseAll()" v-if="expanded.length > 0">
                   Expand all
                 </v-btn>
                 <v-btn variant="plain" prepend-icon="mdi-arrow-collapse-vertical" size="x-small" @click="collapseAll()" v-else>
@@ -162,7 +162,6 @@ const store = useAppStore()
 const route = useRoute()
 
 const workItems = ref([])
-const allWorkItems = ref([])
 const creating = ref(false)
 const createTitle = ref(null)
 
@@ -170,10 +169,12 @@ const workDetail = ref(false)
 const expanded = ref([])
 
 function LoadWorkItems() {
+  expanded.value = []
   getGetWorkItems(route.params.projectId, {
-    sprintId: route.params.sprintId
+    sprintId: store.sprint.id,
+    page: 1,
+    size: -1
   }).then(res => {
-    allWorkItems.value = res.data.items
     workItems.value = res.data.items
     console.log('workItems', workItems.value)
   })
@@ -211,8 +212,8 @@ function FinishCreating() {
       sprintId: route.params.sprintId
     }).then(res => {
       // insert res.data to allWorkItems at the beginning
-      allWorkItems.value.unshift(res.data.item)
-      console.log('allWorkItems', allWorkItems.value)
+      workItems.value.unshift(res.data.item)
+      console.log('workItems', workItems.value)
     })
   }
   creating.value = false
@@ -223,7 +224,7 @@ function filterTasks(userId) {
   let myItems = []
   if (userId > 0) {
     // if allWorkItems assignUser.id or any tasks assignUser.id is equal to userId, add to myItems
-    myItems = allWorkItems.value.filter(item => {
+    myItems = workItems.value.filter(item => {
       if (item.assignUser.id === userId.toString()) {
         return item
       }
@@ -234,39 +235,33 @@ function filterTasks(userId) {
       }
     })
   }
-  if (userId === 0) {
-    myItems = allWorkItems.value.filter(item => {
-      if (item.assignUser.id === store.user.id.toString()) {
-        return item
-      }
-      for (let i = 0; i < item.tasks.length; i++) {
-        if (item.tasks[i].assignUser.id === store.user.id.toString()) {
-          return item
-        }
-      }
-    })
-  }
   if (userId === -1) {
-    myItems = allWorkItems.value
+    myItems = workItems.value
   }
   expanded.value = []
   // if in allWorkItems, but not in myItems, add to expanded
-  for (let i = 0; i < allWorkItems.value.length; i++) {
-    if (!myItems.includes(allWorkItems.value[i])) {
-      expanded.value.push((i+1).toString())
+  workItems.value.forEach(item => {
+    if (!myItems.includes(item)) {
+      expanded.value.push(item.id.toString())
     }
-  }
+  })
 }
 
 defineExpose({
   filterTasks,
-  AddWorkItem
+  AddWorkItem,
+  LoadWorkItems
 })
 
 function collapseAll() {
-  expanded.value = []
-  for (let i = 0; i < workItems.value.length; i++) {
-    expanded.value.push((i+1).toString())
+  console.log('workItems', workItems.value)
+  if (expanded.value.length > 0) {
+    expanded.value = []
+  } else {
+    expanded.value = []
+    workItems.value.forEach(item => {
+      expanded.value.push(item.id.toString())
+    })
   }
   console.log('expanded', expanded.value)
 }

@@ -56,7 +56,7 @@
           </template>
           <v-list>
             <v-list-item @click="setMember(-1, 'All')" title="All"></v-list-item>
-            <v-list-item @click="setMember(0, '@Me')" title="@Me"></v-list-item>
+            <v-list-item @click="setMember(store.user.id, '@Me')" title="@Me"></v-list-item>
 
             <v-list-item
               @click="setMember(item.userId, item.userName)"
@@ -151,6 +151,9 @@ function onSetSprint(id, name, startDate, endDate) {
     startDate: startDate,
     endDate: endDate
   })
+  mainContent.value.LoadWorkItems()
+
+  router.push(`/projects/${route.params.projectId}/sprints/${id}`)
 }
 
 function setMember(userId, userName) {
