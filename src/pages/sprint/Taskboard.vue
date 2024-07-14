@@ -103,6 +103,7 @@
                               @update="onUpdate"
                               @add="onAdd"
                               @remove="remove"
+                              v-model="item.raw.tasks"
                               group="people"
                               style="background-color: aquamarine; width: 100%; height: 100%;"
                             >
@@ -119,7 +120,6 @@
                             </VueDraggable>
                           </v-col>
                         </v-row>
-                        <v-spacer></v-spacer>
                         <v-row no-gutters>
                           <v-col>
                             <v-btn variant="plain" prepend-icon="mdi-plus" size="small" class="mr-2" @click="onCreateTask(item.raw.id)">
@@ -162,6 +162,7 @@
                               @update="onUpdate"
                               @add="onAdd"
                               @remove="remove"
+                              v-model="item.raw.tasks"
                               group="people"
                               style="background-color: aquamarine; width: 100%; height: 100%;"
                             >
@@ -210,6 +211,7 @@
                             <VueDraggable
                               @update="onUpdate"
                               @add="onAdd"
+                              v-model="item.raw.tasks"
                               @remove="remove"
                               group="people"
                               style="background-color: aquamarine; width: 100%; height: 100%;"
@@ -390,14 +392,14 @@ function collapseAll() {
   console.log('expanded', expanded.value)
 }
 
-function onUpdate() {
-  console.log('update')
+function onUpdate(item) {
+  console.log('update', item)
 }
-function onAdd() {
-  console.log('add')
+function onAdd(item) {
+  console.log('add', item)
 }
-function remove() {
-  console.log('remove')
+function remove(item) {
+  console.log('remove', item)
 }
 
 onMounted(() => {
