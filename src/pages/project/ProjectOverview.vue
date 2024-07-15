@@ -108,9 +108,19 @@
     </v-row>
     <v-divider class="my-2"></v-divider>
     <v-row no-gutters>
-      <!-- <v-col cols="12" md="4" class="pa-1" v-for="(project, i) in projects" :key="i">
-        <ProjectCard :project="project"></ProjectCard>
-      </v-col> -->
+      <v-col>
+        {{ project.description }}
+      </v-col>
+    </v-row>
+    <v-row no-gutters v-for="(member, i) in members" :key="i">
+      <v-col>
+        <v-chip
+          close
+          @click:close="members.splice(i, 1)"
+        >
+          {{ member.name }}
+        </v-chip>
+      </v-col>
     </v-row>
   </DefaultLayout>
 </template>

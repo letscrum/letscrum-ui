@@ -38,14 +38,8 @@
               </v-col>
               <v-col cols="10">
                 <v-row no-gutters>
-                  <v-col cols="4">
-                    To Do
-                  </v-col>
-                  <v-col cols="4">
-                    In Progress
-                  </v-col>
-                  <v-col cols="4">
-                    Done
+                  <v-col cols="4" v-for="i in ['ToDo', 'InProgress', 'Done']" :key="i">
+                    {{ i }}
                   </v-col>
                 </v-row>
               </v-col>
@@ -77,7 +71,7 @@
                             <VueDraggable
                               @add="onAdd"
                               v-model="item.raw['tasks' + i]"
-                              group="people"
+                              group="task"
                               :id="item.raw.id + '-' + i"
                               style="background-color: aquamarine; width: 100%; height: 100%;"
                               >
@@ -107,8 +101,16 @@
                 </v-row>
                 <v-row no-gutters v-else>
                   <v-col>
-                    <v-icon icon="mdi-menu-right" size="x-small" class="float-left" @click="() => toggleExpand(item)"></v-icon>
-                    {{ item.raw.title }}
+                    <VueDraggable
+                      @add="onAdd"
+                      v-model="item.raw['tasksToDo']"
+                      group="task"
+                      :id="item.raw.id + '-ToDo'"
+                      style="background-color: aquamarine; width: 100%; height: 100%;"
+                      >
+                      <v-icon icon="mdi-menu-right" size="x-small" class="float-left" @click="() => toggleExpand(item)"></v-icon>
+                      {{ item.raw.title }}
+                    </VueDraggable>
                   </v-col>
                 </v-row>
               </v-expand-transition>
