@@ -38,17 +38,6 @@
               </v-col>
               <v-col cols="10">
                 <v-row no-gutters>
-                  <div v-if="creatingTask">
-                  <v-sheet tile outlined class="mb-2 mr-2 float-left"
-                    style="border-left-color: rgb(242, 203, 29); border-width: 1px; border-left-width: 3px;"
-                    width="185" height="100">
-                    <input
-                        ref="createTaskTitle" width="160"
-                        @focusout="onCreateTask()"
-                        @keyup.enter="onCreateTask()"
-                        style="border-width: 1px; border-style: solid; border-color: gray; margin: 2px 2px 2px 2px;" type="textarea" />
-                  </v-sheet>
-                </div>
                   <v-col cols="4" v-for="i in ['To Do', 'In Progress', 'Done']" :key="i">
                     {{ i }}
                   </v-col>
@@ -102,6 +91,18 @@
                             <v-btn variant="plain" prepend-icon="mdi-plus" size="small" class="mr-2" @click="AddTask(item.raw.id)" v-if="!creatingTask">
                               New task
                             </v-btn>
+                            <div v-show="creatingTask && item.raw.id === createTaskWorkItemId">
+                              <v-sheet tile outlined class="mb-2 mr-2 float-left"
+                                style="border-left-color: rgb(242, 203, 29); border-width: 1px; border-left-width: 3px;"
+                                width="185" height="100">
+                                <input
+                                    :id="item.raw.id + '-createTaskTitle'"
+                                    ref="createTaskTitle" width="160"
+                                    @focusout="onCreateTask()"
+                                    @keyup.enter="onCreateTask()"
+                                    style="border-width: 1px; border-style: solid; border-color: gray; margin: 2px 2px 2px 2px;" type="textarea" />
+                              </v-sheet>
+                            </div>
                           </v-col>
                         </v-row>
                       </v-col>
@@ -172,6 +173,7 @@ const creatingWorkItem = ref(false)
 const creatingTask = ref(false)
 const createWorkItemTitle = ref(null)
 const createTaskTitle = ref(null)
+const rightTaskTitle = ref(null)
 const createTaskWorkItemId = ref(0)
 
 const workDetail = ref(false)
@@ -206,23 +208,31 @@ function AddTask(workItemId) {
   creatingTask.value = !creatingTask.value
   console.log('createTaskTitle', createTaskTitle.value)
   createTaskWorkItemId.value = workItemId
-  setTimeout(() => {
-    createTaskTitle.value.focus()
-  }, 100);
+  let id = workItemId + '-createTaskTitle'
+  createTaskTitle.value.forEach(item => {
+    if (item.id === id) {
+      rightTaskTitle.value = item
+      rightTaskTitle.value.value = ''
+      setTimeout(() => {
+        rightTaskTitle.value.focus()
+      }, 100);
+    }
+  })
+
 }
 
 function onCreateTask() {
-  if (creatingTask.value === true && createTaskTitle.value.value && createTaskWorkItemId.value > 0) {
+  if (creatingTask.value === true && rightTaskTitle.value.value && createTaskWorkItemId.value > 0) {
     postCreateTask(route.params.projectId, createTaskWorkItemId.value, {
       sprintId: route.params.sprintId,
-      title: createTaskTitle.value.value
+      title: rightTaskTitle.value.value
     }).then(res => {
       console.log('res', res)
       // add res.data to workItems tasks which id is equal to workItemId
       for (let i = 0; i < workItems.value.length; i++) {
         if (workItems.value[i].id === createTaskWorkItemId.value) {
-          workItems.value[i].tasksAll.unshift(res.data.item)
-          workItems.value[i].tasksToDo.unshift(res.data.item)
+          workItems.value[i].tasksAll.push(res.data.item)
+          workItems.value[i].tasksToDo.push(res.data.item)
         }
       }
     })
