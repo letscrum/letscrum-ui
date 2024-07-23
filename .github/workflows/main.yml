@@ -47,4 +47,4 @@ jobs:
             docker rm letscrum-ui
             docker image rm letscrum/letscrum-ui:latest
             docker pull letscrum/letscrum-ui:latest
-            docker run -d --name letscrum-ui -p 80:80 letscrum/letscrum-ui:latest
+            docker run -d --name letscrum-ui -p 80:80 443:80 letscrum/letscrum-ui:latest
