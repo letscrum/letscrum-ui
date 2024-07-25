@@ -42,8 +42,9 @@ store.changeTheme(currentTheme)
 
 import axios from 'axios'
 
-axios.defaults.baseURL = 'http://20.2.152.173:8081/api'
-// axios.defaults.baseURL = 'https://imoogoo.com/api'
+// read base url from .env file
+axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL
+
 axios.defaults.headers.Authorization = `Bearer ${store.token.accessToken}`
 
 app.mount('#app')
