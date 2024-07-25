@@ -44,6 +44,7 @@ import axios from 'axios'
 
 // read base url from .env file
 axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL
+console.log('process.env', import.meta.env.VITE_API_BASE_URL)
 
 axios.defaults.headers.Authorization = `Bearer ${store.token.accessToken}`
 

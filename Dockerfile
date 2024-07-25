@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY . .
 
+RUN rm -rf /app/.env.development
+
 RUN npm install
 
 RUN npm run build
