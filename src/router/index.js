@@ -10,6 +10,11 @@ import { useAppStore } from '@/stores/app'
 
 const routes = [
   {
+    path: '/users',
+    name: 'Users',
+    component: () => import('@/pages/UserList.vue'),
+  },
+  {
     path: '/projects',
     name: 'Home',
     component: () => import('@/pages/project/ProjectList.vue'),

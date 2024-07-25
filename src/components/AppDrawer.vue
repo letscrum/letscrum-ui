@@ -21,10 +21,10 @@
     <template v-slot:append>
 
       <v-list>
-        <!-- <v-list-item :prepend-icon="rail ? 'mdi-chevron-right' : ''" @click="rail = !rail" v-if="rail">
-
-        </v-list-item> -->
         <v-list-item>
+          <v-btn block to="/users">
+            Manage
+          </v-btn>
           <template v-slot:append>
             <v-btn
               :icon="rail ? 'mdi-chevron-right' : 'mdi-chevron-left'"
