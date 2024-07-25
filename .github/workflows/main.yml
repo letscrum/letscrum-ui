@@ -47,4 +47,4 @@ jobs:
             docker rm letscrum-ui
             docker image rm letscrum/letscrum-ui:latest
             docker pull letscrum/letscrum-ui:latest
-            docker run -d --name letscrum-ui --env VITE_API_BASE_URL=http://${{ secrets.DEMO_SERVER_IP }}/api -p 80:80 letscrum/letscrum-ui:latest
+            docker run -d --name letscrum-ui --env VITE_API_BASE_URL=http://${{ secrets.DEMO_SERVER_IP }}/api -p 80:80 -p 443:80 letscrum/letscrum-ui:latest
