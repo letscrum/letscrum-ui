@@ -99,6 +99,10 @@ export const useAppStore = defineStore('app', {
       localStorage.removeItem('projectId');
       localStorage.removeItem('projectName');
       localStorage.removeItem('projectDisplayName');
+      localStorage.removeItem('sprintId');
+      localStorage.removeItem('sprintName');
+      localStorage.removeItem('sprintStartDate');
+      localStorage.removeItem('sprintEndDate');
       this.user.id = 0;
       this.user.name = null;
       this.user.email = null;
@@ -108,6 +112,10 @@ export const useAppStore = defineStore('app', {
       this.project.id = 0;
       this.project.name = null;
       this.project.displayName = null;
+      this.sprint.id = 0;
+      this.sprint.name = null;
+      this.sprint.startDate = null;
+      this.sprint.endDate = null;
       this.breadcrumbs = [];
     },
     setProject(payload) {
