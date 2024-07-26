@@ -94,7 +94,7 @@ import { onMounted, computed, ref } from 'vue';
 const store = useAppStore()
 
 import { getGetProjects, postCreateProject } from '@/apis/project';
-import { getUsers } from '@/apis/user'
+import { getGetUsers } from '@/apis/user'
 
 const projects = ref([])
 const project = ref({})
@@ -109,7 +109,7 @@ const searchUsers = val => {
     users.value = []
     return false
   }
-  getUsers({
+  getGetUsers({
     keyword: val,
     page: 1,
     size: 999,

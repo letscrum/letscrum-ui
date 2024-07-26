@@ -19,7 +19,6 @@
       <v-list-item prepend-icon="mdi-home-city" title="Current Sprint" value="current_sprint" :to="'/projects/' + store.project.id + '/sprints/' + store.sprint.id"></v-list-item>
     </v-list>
     <template v-slot:append>
-
       <v-list>
         <v-list-item>
           <v-btn block to="/users">

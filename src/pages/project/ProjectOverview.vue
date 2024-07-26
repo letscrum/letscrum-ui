@@ -131,7 +131,7 @@ import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import { useAppStore } from '@/stores/app'
 import { onMounted, ref } from 'vue';
 import { getGetProject, putUpdateProject, deleteDeleteProject } from '@/apis/project'
-import { getUsers } from '@/apis/user'
+import { getGetUsers } from '@/apis/user'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -152,7 +152,7 @@ const searchUsers = val => {
     users.value = []
     return false
   }
-  getUsers({
+  getGetUsers({
     keyword: val,
     page: 1,
     size: 999,
