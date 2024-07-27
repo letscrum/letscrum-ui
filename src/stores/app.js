@@ -17,7 +17,7 @@ export const useAppStore = defineStore('app', {
     userMenus: UserMenu,
     breadcrumbs: [],
     user: {
-      id: 0,
+      id: null,
       name: null,
       email: null,
       isSuperAdmin: false
@@ -27,37 +27,37 @@ export const useAppStore = defineStore('app', {
       refreshToken: null
     },
     project: {
-      id: 0,
+      id: null,
       name: null,
       displayName: null,
       description: null
     },
     sprint: {
-      id: 0,
+      id: null,
       name: null,
       startDate: null,
       endDate: null
     },
   }),
   getters: {
-    isSignedIn: (state) => (state.user.id > 0),
+    isSignedIn: (state) => (state.user.id !== null),
   },
   actions: {
     refresh(payload) {
       if (payload.accessToken && payload.refreshToken) {
         localStorage.tokenAccessToken = payload.accessToken;
         localStorage.tokenRefreshToken = payload.refreshToken;
-        this.user.id = Number(localStorage.userId);
+        this.user.id = localStorage.userId;
         this.user.name = localStorage.userName;
         this.user.email = localStorage.userEmail;
         this.user.isSuperAdmin = localStorage.userIsSuperAdmin;
         this.token.accessToken = localStorage.tokenAccessToken;
         this.token.refreshToken = localStorage.tokenRefreshToken;
-        this.project.id = Number(localStorage.projectId);
+        this.project.id = localStorage.projectId;
         this.project.name = localStorage.projectName;
         this.project.displayName = localStorage.projectDisplayName;
         this.project.description = localStorage.projectDescription;
-        this.sprint.id = Number(localStorage.sprintId);
+        this.sprint.id = localStorage.sprintId;
         this.sprint.name = localStorage.sprintName;
         this.sprint.startDate = localStorage.sprintStartDate;
         this.sprint.endDate = localStorage.sprintEndDate;
@@ -79,7 +79,7 @@ export const useAppStore = defineStore('app', {
       localStorage.tokenAccessToken = accessToken;
       localStorage.tokenRefreshToken = refreshToken;
       this.user = {
-        id: Number(id),
+        id,
         name,
         email,
         isSuperAdmin
@@ -103,16 +103,16 @@ export const useAppStore = defineStore('app', {
       localStorage.removeItem('sprintName');
       localStorage.removeItem('sprintStartDate');
       localStorage.removeItem('sprintEndDate');
-      this.user.id = 0;
+      this.user.id = null;
       this.user.name = null;
       this.user.email = null;
       this.user.isSuperAdmin = null;
       this.token.accessToken = null;
       this.token.refreshToken = null;
-      this.project.id = 0;
+      this.project.id = null;
       this.project.name = null;
       this.project.displayName = null;
-      this.sprint.id = 0;
+      this.sprint.id = null;
       this.sprint.name = null;
       this.sprint.startDate = null;
       this.sprint.endDate = null;
@@ -130,7 +130,7 @@ export const useAppStore = defineStore('app', {
       localStorage.projectDisplayName = displayName;
       localStorage.projectDescription = description;
       this.project = {
-        id: Number(id),
+        id,
         name,
         displayName,
         description
@@ -148,7 +148,7 @@ export const useAppStore = defineStore('app', {
       localStorage.sprintStartDate = startDate;
       localStorage.sprintEndDate = endDate;
       this.sprint = {
-        id: Number(id),
+        id,
         name,
         startDate,
         endDate
@@ -159,7 +159,7 @@ export const useAppStore = defineStore('app', {
       localStorage.removeItem('projectName');
       localStorage.removeItem('projectDisplayName');
       localStorage.removeItem('projectDescription');
-      this.project.id = 0;
+      this.project.id = null;
       this.project.name = null;
       this.project.displayName = null;
       this.project.description = null;

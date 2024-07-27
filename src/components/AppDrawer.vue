@@ -11,11 +11,11 @@
     <v-list density="compact" nav>
       <v-list-item prepend-icon="mdi-home-city" title="Home" value="home" to="/projects"></v-list-item>
     </v-list>
-    <v-list density="compact" nav v-if="store.project.id > 0">
+    <v-list density="compact" nav v-if="store.project.id != '' && store.project.id != null">
       <v-list-item prepend-icon="mdi-home-city" title="Overview" value="overview" :to="'/projects/' + store.project.id"></v-list-item>
       <v-list-item prepend-icon="mdi-account" title="Sprints" value="sprints" :to="'/projects/' + store.project.id + '/sprints'"></v-list-item>
     </v-list>
-    <v-list density="compact" nav v-if="store.sprint.id > 0">
+    <v-list density="compact" nav v-if="store.sprint.id != '' && store.sprint.id != null">
       <v-list-item prepend-icon="mdi-home-city" title="Current Sprint" value="current_sprint" :to="'/projects/' + store.project.id + '/sprints/' + store.sprint.id"></v-list-item>
     </v-list>
     <template v-slot:append>
