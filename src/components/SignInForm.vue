@@ -10,15 +10,17 @@
     <v-card-text>
       <v-form ref="form" v-model="valid">
         <v-text-field
-          label="Email Address"
-          name="email"
+          label="Username"
+          name="name"
           prepend-icon="mdi-email"
           type="text"
+          v-model="name"
           required
         />
         <v-text-field
           id="password"
           label="Password"
+          v-model="password"
           name="password"
           prepend-icon="mdi-lock"
           type="password"
@@ -46,14 +48,16 @@ defineProps(['isDialog'])
 
 const store = useAppStore()
 const router = useRouter()
+const name = ref('admin')
+const password = ref('admin')
 
 const loading = ref(false)
 
 function SingIn() {
   loading.value = true
   postSignIn({
-    name: 'admin',
-    password: 'admin'
+    name: name.value,
+    password: password.value
   }).then((res) => {
     if (res.status === 200) {
       axios.defaults.headers.Authorization = `Bearer ${res.data.item.token.accessToken}`
