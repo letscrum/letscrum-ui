@@ -59,6 +59,31 @@
 
                 <v-autocomplete
                   v-model:search-input="search"
+                  v-model="admins"
+                  chips
+                  :items="users"
+                  label="Autocomplete"
+                  multiple
+                  @update:search="searchUsers"
+                  item-props
+                  no-filter
+                >
+                  <template v-slot:chip="{ props, item }">
+                    <v-chip :closable="!item.raw.owner"
+                      v-bind="props"
+                      :text="item.raw.name"
+                    ></v-chip>
+                  </template>
+                  <template v-slot:item="{ props, item }">
+                    <v-list-item
+                      v-bind="props"
+                      :title="item.raw.name"
+                    ></v-list-item>
+                  </template>
+                </v-autocomplete>
+
+                <v-autocomplete
+                  v-model:search-input="search"
                   v-model="members"
                   chips
                   :items="users"
@@ -75,11 +100,11 @@
                     ></v-chip>
                   </template>
                   <template v-slot:item="{ props, item }">
-                  <v-list-item
-                    v-bind="props"
-                    :title="item.raw.name"
-                  ></v-list-item>
-                </template>
+                    <v-list-item
+                      v-bind="props"
+                      :title="item.raw.name"
+                    ></v-list-item>
+                  </template>
                 </v-autocomplete>
               </v-card-text>
 
@@ -141,6 +166,7 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 
 const project = ref({})
+const admins = ref([])
 const members = ref([])
 const users = ref([])
 const search = ref()
@@ -181,21 +207,31 @@ function onGetProject() {
         endDate: res.data.item.currentSprint.endDate
       })
       project.value = res.data.item
-      members.value = res.data.item.members.map((item) => ({
-        id: item.userId,
-        name: item.userName,
-        owner: res.data.item.createdUser.id === item.userId ? true : false
+      admins.value = res.data.item.members.filter((member) => member.isAdmin).map((member) => ({
+        id: member.userId,
+        name: member.userName,
+        isAdmin: member.isAdmin,
+        owner: res.data.item.createdUser.id === member.userId ? true : false
       }))
+      members.value = res.data.item.members.filter((member) => !member.isAdmin).map((member) => ({
+        id: member.userId,
+        name: member.userName,
+        isAdmin: member.isAdmin,
+        owner: res.data.item.createdUser.id === member.userId ? true : false
+      }))
+      console.log(admins.value)
       console.log(members.value)
     }
   });
 }
 
 function onUpdateProject() {
+  let allMembers = admins.value.concat(members.value)
+
   putUpdateProject(route.params.projectId, {
     displayName: project.value.displayName,
     description: project.value.displayName,
-    members: members.value.map((member) => {
+    members: allMembers.map((member) => {
       return {
         userId: member.id,
         userName: member.name,
