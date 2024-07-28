@@ -156,6 +156,7 @@ function onOpenCreate() {
     isAdmin: true,
     owner: true
   }]
+  members.value = []
   dialog.value = true
 }
 
@@ -163,6 +164,20 @@ function createProject() {
   console.log(project.value)
   console.log(admins.value)
   console.log(members.value)
+  // set all isAdmin to true in admins
+  admins.value = admins.value.map((admin) => {
+    admin.isAdmin = true
+    return admin
+  })
+  // set all isAdmin to false in members
+  members.value = members.value.map((member) => {
+    member.isAdmin = false
+    return member
+  })
+  // remove the owner from the admins
+  admins.value = admins.value.filter((admin) => {
+    return !admin.owner
+  })
   // combine the admins and members
   let allMembers = admins.value.concat(members.value)
 

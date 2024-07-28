@@ -169,7 +169,7 @@ const project = ref({})
 const admins = ref([])
 const members = ref([])
 const users = ref([])
-const search = ref()
+const search = ref('')
 const dialogUpdate = ref(false)
 const dialogDelete = ref(false)
 
@@ -191,7 +191,7 @@ const searchUsers = val => {
 }
 
 function onGetProject() {
-  getGetProject(route.params.projectId).then((res) => {
+  getGetProject(store.org.id, route.params.projectId).then((res) => {
     console.log(res)
     if (res.status === 200) {
       store.setProject({
@@ -226,9 +226,24 @@ function onGetProject() {
 }
 
 function onUpdateProject() {
+  // set all isAdmin to true in admins
+  admins.value = admins.value.map((admin) => {
+    admin.isAdmin = true
+    return admin
+  })
+  // set all isAdmin to false in members
+  members.value = members.value.map((member) => {
+    member.isAdmin = false
+    return member
+  })
+  // remove the owner from the admins
+  admins.value = admins.value.filter((admin) => {
+    return !admin.owner
+  })
+  // combine the admins and members
   let allMembers = admins.value.concat(members.value)
 
-  putUpdateProject(route.params.projectId, {
+  putUpdateProject(store.org.id, route.params.projectId, {
     displayName: project.value.displayName,
     description: project.value.displayName,
     members: allMembers.map((member) => {
@@ -256,7 +271,7 @@ function onUpdateProject() {
 }
 
 function onDeleteProject() {
-  deleteDeleteProject(route.params.projectId).then((res) => {
+  deleteDeleteProject(store.org.id, route.params.projectId).then((res) => {
     console.log(res)
     if (res.status === 200) {
       if (res.data.success) {
