@@ -26,6 +26,12 @@ export const useAppStore = defineStore('app', {
       accessToken: null,
       refreshToken: null
     },
+    org: {
+      id: null,
+      name: null,
+      displayName: null,
+      description: null
+    },
     project: {
       id: null,
       name: null,
@@ -53,6 +59,10 @@ export const useAppStore = defineStore('app', {
         this.user.isSuperAdmin = localStorage.userIsSuperAdmin;
         this.token.accessToken = localStorage.tokenAccessToken;
         this.token.refreshToken = localStorage.tokenRefreshToken;
+        this.org.id = localStorage.orgId;
+        this.org.name = localStorage.orgName;
+        this.org.displayName = localStorage.orgDisplayName;
+        this.org.description = localStorage.orgDescription;
         this.project.id = localStorage.projectId;
         this.project.name = localStorage.projectName;
         this.project.displayName = localStorage.projectDisplayName;
@@ -96,6 +106,10 @@ export const useAppStore = defineStore('app', {
       localStorage.removeItem('userIsSuperAdmin');
       localStorage.removeItem('tokenAccessToken');
       localStorage.removeItem('tokenRefreshToken');
+      localStorage.removeItem('orgId');
+      localStorage.removeItem('orgName');
+      localStorage.removeItem('orgDisplayName');
+      localStorage.removeItem('orgDescription');
       localStorage.removeItem('projectId');
       localStorage.removeItem('projectName');
       localStorage.removeItem('projectDisplayName');
@@ -109,6 +123,10 @@ export const useAppStore = defineStore('app', {
       this.user.isSuperAdmin = null;
       this.token.accessToken = null;
       this.token.refreshToken = null;
+      this.org.id = null;
+      this.org.name = null;
+      this.org.displayName = null;
+      this.org.description = null;
       this.project.id = null;
       this.project.name = null;
       this.project.displayName = null;
@@ -117,6 +135,24 @@ export const useAppStore = defineStore('app', {
       this.sprint.startDate = null;
       this.sprint.endDate = null;
       this.breadcrumbs = [];
+    },
+    setOrg(payload) {
+      const {
+        id,
+        name,
+        displayName,
+        description
+      } = payload;
+      localStorage.orgId = id;
+      localStorage.orgName = name;
+      localStorage.orgDisplayName = displayName;
+      localStorage.orgDescription = description;
+      this.org = {
+        id,
+        name,
+        displayName,
+        description
+      };
     },
     setProject(payload) {
       const {
@@ -153,6 +189,16 @@ export const useAppStore = defineStore('app', {
         startDate,
         endDate
       };
+    },
+    clearOrg() {
+      localStorage.removeItem('orgId');
+      localStorage.removeItem('orgName');
+      localStorage.removeItem('orgDisplayName');
+      localStorage.removeItem('orgDescription');
+      this.org.id = null;
+      this.org.name = null;
+      this.org.displayName = null;
+      this.org.description = null;
     },
     clearProject() {
       localStorage.removeItem('projectId');

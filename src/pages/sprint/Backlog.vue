@@ -76,7 +76,7 @@ const headers = ref([
 
 function LoadWorkItems() {
   expanded.value = []
-  getGetWorkItems(route.params.projectId, {
+  getGetWorkItems(store.org.id, route.params.projectId, {
     sprintId: store.sprint.id,
     page: 1,
     size: -1

@@ -70,7 +70,7 @@ function onOpenCreate() {
 
 function onCreateSprint() {
   console.log(dates.value)
-  postCreateSprint(route.params.projectId, {
+  postCreateSprint(route.params.orgId, route.params.projectId, {
     name: sprint.value.name,
     startDate: Math.floor(new Date(dates.value[0] + 1000).getTime() / 1000),
     endDate: Math.floor(new Date(dates.value[dates.value.length - 1]).getTime() / 1000)

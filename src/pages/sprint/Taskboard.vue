@@ -181,7 +181,7 @@ const expanded = ref([])
 
 function LoadWorkItems() {
   expanded.value = []
-  getGetWorkItems(route.params.projectId, {
+  getGetWorkItems(store.org.id, route.params.projectId, {
     sprintId: store.sprint.id,
     page: 1,
     size: -1
@@ -223,7 +223,7 @@ function AddTask(workItemId) {
 
 function onCreateTask() {
   if (creatingTask.value === true && rightTaskTitle.value.value && createTaskWorkItemId.value > 0) {
-    postCreateTask(route.params.projectId, createTaskWorkItemId.value, {
+    postCreateTask(store.org.id, route.params.projectId, createTaskWorkItemId.value, {
       sprintId: route.params.sprintId,
       title: rightTaskTitle.value.value
     }).then(res => {
@@ -243,7 +243,7 @@ function onCreateTask() {
 
 function onCreatWorkItem() {
   if (creatingWorkItem.value === true && createWorkItemTitle.value.value) {
-    postCreateWorkItem(route.params.projectId, {
+    postCreateWorkItem(store.org.id, route.params.projectId, {
       title: createWorkItemTitle.value.value,
       sprintId: route.params.sprintId
     }).then(res => {
@@ -315,7 +315,7 @@ function onAdd(item) {
   let workItemId = split[0]
   let status = split[1]
   let taskId = item.data.id
-  putMoveTask(route.params.projectId, workItemId, taskId, {
+  putMoveTask(store.org.id, route.params.projectId, workItemId, taskId, {
     status: status,
     toWorkItemId: workItemId,
   }).then(res => {

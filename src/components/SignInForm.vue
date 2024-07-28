@@ -69,7 +69,7 @@ function SingIn() {
         accessToken: res.data.item.token.accessToken,
         refreshToken: res.data.item.token.refreshToken
       });
-      router.push({ path: '/projects' })
+      router.push({ path: '/orgs' })
       loading.value = false
     }
   }).catch(() => {

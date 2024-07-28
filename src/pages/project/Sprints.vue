@@ -183,7 +183,7 @@ onMounted(() => {
 })
 
 function LoadSprints() {
-  getGetSprints(route.params.projectId, {
+  getGetSprints(store.org.id, route.params.projectId, {
     page: 1,
     size: 999
   }).then((res) => {
@@ -213,11 +213,11 @@ function onSetSprint(id, name, startDate, endDate) {
     startDate: startDate,
     endDate: endDate
   })
-  router.push(`/projects/${route.params.projectId}/sprints/${id}`)
+  router.push(`/orgs/${store.org.id}/projects/${route.params.projectId}/sprints/${id}`)
 }
 
 function onDeleteSprint(projectId, id) {
-  deleteDeleteSprint(projectId, id).then((res) => {
+  deleteDeleteSprint(store.org.id, projectId, id).then((res) => {
     console.log(res)
     if (res.status === 200) {
       LoadSprints()

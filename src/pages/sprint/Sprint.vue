@@ -20,7 +20,7 @@
             <v-virtual-scroll height="320" item-height="64" :items="sprints">
               <template v-slot:default="{ item }">
                 <v-list-item
-                  :to="'/projects/' + item.projectId + '/sprints/' + item.id"
+                  :to="'/orgs/' + store.org.id + '/projects/' + item.projectId + '/sprints/' + item.id"
                   lines="two"
                   @click="onSetSprint(item.id, item.name, item.startDate, item.endDate)"
                   :title="item.name"
@@ -71,9 +71,9 @@
     </v-row>
 
     <v-tabs>
-      <v-tab :to="'/projects/' + route.params.projectId + '/sprints/' + route.params.sprintId">Taskboard</v-tab>
-      <v-tab :to="'/projects/' + route.params.projectId + '/sprints/' + route.params.sprintId + '/backlog'">Backlog</v-tab>
-      <v-tab :to="'/projects/' + route.params.projectId + '/sprints/' + route.params.sprintId + '/capacity'">Capacity</v-tab>
+      <v-tab :to="'/orgs/' + store.org.id + '/projects/' + route.params.projectId + '/sprints/' + route.params.sprintId">Taskboard</v-tab>
+      <v-tab :to="'/orgs/' + store.org.id + '/projects/' + route.params.projectId + '/sprints/' + route.params.sprintId + '/backlog'">Backlog</v-tab>
+      <v-tab :to="'/orgs/' + store.org.id + '/projects/' + route.params.projectId + '/sprints/' + route.params.sprintId + '/capacity'">Capacity</v-tab>
       <v-divider
         vertical
         inset
@@ -115,7 +115,7 @@ const member = ref({
 const mainContent = ref()
 
 function LoadSprints() {
-  getGetSprints(route.params.projectId, {
+  getGetSprints(store.org.id, route.params.projectId, {
     page: 1,
     size: 999
   }).then((res) => {
@@ -153,7 +153,7 @@ function onSetSprint(id, name, startDate, endDate) {
   })
   mainContent.value.LoadWorkItems()
 
-  router.push(`/projects/${route.params.projectId}/sprints/${id}`)
+  router.push(`/orgs/${store.org.id}/projects/${route.params.projectId}/sprints/${id}`)
 }
 
 function setMember(userId, userName) {

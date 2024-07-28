@@ -166,7 +166,7 @@ function createProject() {
   // combine the admins and members
   let allMembers = admins.value.concat(members.value)
 
-  postCreateProject({
+  postCreateProject(store.org.id, {
     displayName: project.value.displayName,
     description: project.value.description,
     members: allMembers.map((member) => {
@@ -190,7 +190,7 @@ onMounted(() => {
 })
 
 function LoadProjects() {
-  getGetProjects({
+  getGetProjects(store.org.id, {
     page: 1,
     size: 12
   }).then((res) => {

@@ -15,20 +15,25 @@ const routes = [
     component: () => import('@/pages/UserList.vue'),
   },
   {
-    path: '/projects',
+    path: '/orgs',
+    name: 'Orgs',
+    component: () => import('@/pages/org/OrgList.vue'),
+  },
+  {
+    path: '/orgs/:orgId/projects',
     name: 'Home',
     component: () => import('@/pages/project/ProjectList.vue'),
   },
   {
-    path: '/projects/:projectId',
+    path: '/orgs/:orgId/projects/:projectId',
     component: () => import('@/pages/project/ProjectOverview.vue')
   },
   {
-    path: '/projects/:projectId/sprints',
+    path: '/orgs/:orgId/projects/:projectId/sprints',
     component: () => import('@/pages/project/Sprints.vue'),
   },
   {
-    path: '/projects/:projectId/sprints/:sprintId',
+    path: '/orgs/:orgId/projects/:projectId/sprints/:sprintId',
     component: () => import('@/pages/sprint/Sprint.vue'),
     children: [
       {

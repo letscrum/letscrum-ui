@@ -263,7 +263,7 @@ function onDeleteProject() {
         store.setProject({})
         store.setSprint({})
         dialogDelete.value = false
-        router.push(`/projects`);
+        router.push(`/orgs/${store.org.id}/projects`);
       }
     }
   })

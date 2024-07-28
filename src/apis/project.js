@@ -2,12 +2,12 @@ import axios from 'axios'
 
 const version = '/v1'
 
-export const getGetProjects = (params) => axios.get(`${version}/projects`, { params })
+export const getGetProjects = (orgId, params) => axios.get(`${version}/orgs/${orgId}/projects`, { params })
 
-export const getGetProject = (projectId) => axios.get(`${version}/projects/${projectId}`)
+export const getGetProject = (orgId, projectId) => axios.get(`${version}/orgs/${orgId}/projects/${projectId}`)
 
-export const postCreateProject = (params) => axios.post(`${version}/projects`, params)
+export const postCreateProject = (orgId, params) => axios.post(`${version}/orgs/${orgId}/projects`, params)
 
-export const putUpdateProject = (projectId, params) => axios.put(`${version}/projects/${projectId}`, params)
+export const putUpdateProject = (orgId, projectId, params) => axios.put(`${version}/orgs/${orgId}/projects/${projectId}`, params)
 
-export const deleteDeleteProject = (projectId) => axios.delete(`${version}/projects/${projectId}`)
+export const deleteDeleteProject = (orgId, projectId) => axios.delete(`${version}/orgs/${orgId}/projects/${projectId}`)

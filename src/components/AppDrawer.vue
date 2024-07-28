@@ -9,14 +9,14 @@
     </v-toolbar> -->
     <v-divider></v-divider>
     <v-list density="compact" nav>
-      <v-list-item prepend-icon="mdi-home-city" title="Home" value="home" to="/projects"></v-list-item>
+      <v-list-item prepend-icon="mdi-home-city" title="Home" value="home" :to="'/orgs/' + store.org.id + '/projects'"></v-list-item>
     </v-list>
-    <v-list density="compact" nav v-if="store.project.id != '' && store.project.id != null">
-      <v-list-item prepend-icon="mdi-home-city" title="Overview" value="overview" :to="'/projects/' + store.project.id"></v-list-item>
-      <v-list-item prepend-icon="mdi-account" title="Sprints" value="sprints" :to="'/projects/' + store.project.id + '/sprints'"></v-list-item>
+    <v-list density="compact" nav v-if="store.project.id != '' && store.project.id != null && store.org.id != '' && store.org.id != null">
+      <v-list-item prepend-icon="mdi-home-city" title="Overview" value="overview" :to="'/orgs/' + store.org.id + '/projects/' + store.project.id"></v-list-item>
+      <v-list-item prepend-icon="mdi-account" title="Sprints" value="sprints" :to="'/orgs/' + store.org.id + '/projects/' + store.project.id + '/sprints'"></v-list-item>
     </v-list>
-    <v-list density="compact" nav v-if="store.sprint.id != '' && store.sprint.id != null">
-      <v-list-item prepend-icon="mdi-home-city" title="Current Sprint" value="current_sprint" :to="'/projects/' + store.project.id + '/sprints/' + store.sprint.id"></v-list-item>
+    <v-list density="compact" nav v-if="store.project.id != '' && store.project.id != null && store.org.id != '' && store.org.id != null && store.sprint.id != '' && store.sprint.id != null">
+      <v-list-item prepend-icon="mdi-home-city" title="Current Sprint" value="current_sprint" :to="'/orgs/' + store.org.id + '/projects/' + store.project.id + '/sprints/' + store.sprint.id"></v-list-item>
     </v-list>
     <template v-slot:append>
       <v-list>

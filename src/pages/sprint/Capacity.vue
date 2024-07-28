@@ -25,7 +25,7 @@ const headers = ref([
 ])
 
 function LoadSprint() {
-  getGetSprint(route.params.projectId, route.params.sprintId).then((res) => {
+  getGetSprint(route.params.orgId, route.params.projectId, route.params.sprintId).then((res) => {
     if (res.status === 200) {
       sprint.value = res.data.item
       members.value = res.data.item.members

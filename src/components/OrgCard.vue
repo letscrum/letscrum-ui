@@ -3,15 +3,15 @@
     class="mx-auto"
     outlined
     tile
-    @click="onLoadProject"
+    @click="onLoadOrg"
   >
     <v-list-item three-line>
       <v-list-item-subtitle>
         <div class="text-overline mb-4">
-          {{ project.members.length }} Members
+          1
         </div>
         <v-list-item-title class="text-h5 mb-1">
-          {{ project.displayName }}
+          {{ org.name }}
         </v-list-item-title>
       </v-list-item-subtitle>
     </v-list-item>
@@ -19,32 +19,26 @@
 </template>
 
 <script setup>
-import { getGetProject } from '@/apis/project'
+import { getGetOrg } from '@/apis/org'
 import { useAppStore } from '@/stores/app'
 import { useRouter } from 'vue-router'
 
 const store = useAppStore()
 const router = useRouter()
 
-const props = defineProps(['project'])
+const props = defineProps(['org'])
 
-function onLoadProject() {
-  getGetProject(store.org.id, props.project.id).then((res) => {
+function onLoadOrg() {
+  getGetOrg(props.org.id).then((res) => {
     console.log(res);
     if (res.status === 200) {
-      store.setProject({
+      store.setOrg({
         id: res.data.item.id,
         name: res.data.item.name,
         displayName: res.data.item.displayName,
         description: res.data.item.description,
       })
-      store.setSprint({
-        id: res.data.item.currentSprint.id,
-        name: res.data.item.currentSprint.name,
-        startDate: res.data.item.currentSprint.startDate,
-        endDate: res.data.item.currentSprint.endDate
-      });
-      router.push(`/orgs/${store.org.id}/projects/${res.data.item.id}`);
+      router.push(`/orgs/${res.data.item.id}/projects`);
     }
   });
 }
