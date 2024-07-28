@@ -9,7 +9,10 @@
     </v-toolbar> -->
     <v-divider></v-divider>
     <v-list density="compact" nav>
-      <v-list-item prepend-icon="mdi-home-city" title="Home" value="home" :to="'/orgs/' + store.org.id + '/projects'"></v-list-item>
+      <v-list-item prepend-icon="mdi-home-city" title="Orgs" value="orgs" :to="'/orgs/'"></v-list-item>
+    </v-list>
+    <v-list density="compact" nav>
+      <v-list-item prepend-icon="mdi-home-city" title="Projects" value="home" :to="'/orgs/' + store.org.id + '/projects'"></v-list-item>
     </v-list>
     <v-list density="compact" nav v-if="store.project.id != '' && store.project.id != null && store.org.id != '' && store.org.id != null">
       <v-list-item prepend-icon="mdi-home-city" title="Overview" value="overview" :to="'/orgs/' + store.org.id + '/projects/' + store.project.id"></v-list-item>
@@ -20,9 +23,21 @@
     </v-list>
     <template v-slot:append>
       <v-list>
-        <v-list-item>
-          <v-btn block to="/users">
+        <v-list-item v-if="route.name != 'Orgs' && route.name != 'Users' && store.org.id != null && store.org.id != ''">
+          <v-btn block :to="'/orgs/' + store.org.id + '/members'">
             Manage
+          </v-btn>
+          <template v-slot:append>
+            <v-btn
+              :icon="rail ? 'mdi-chevron-right' : 'mdi-chevron-left'"
+              variant="text"
+              :style="rail ? 'margin-left: -12px; margin-right: 12px;' : ''"
+              @click.stop="rail = !rail"></v-btn>
+          </template>
+        </v-list-item>
+        <v-list-item v-else-if="store.user.isSuperAdmin == 'true'">
+          <v-btn block :to="'/users'">
+            Users
           </v-btn>
           <template v-slot:append>
             <v-btn
@@ -40,6 +55,8 @@
 <script setup>
 import { computed } from 'vue'
 import { useAppStore } from '@/stores/app'
+import { useRoute } from 'vue-router'
+const route = useRoute()
 
 defineProps(['menus'])
 

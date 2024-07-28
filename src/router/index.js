@@ -20,6 +20,11 @@ const routes = [
     component: () => import('@/pages/org/OrgList.vue'),
   },
   {
+    path: '/orgs/:orgId/members',
+    name: 'OrgMembers',
+    component: () => import('@/pages/org/MemberList.vue'),
+  },
+  {
     path: '/orgs/:orgId/projects',
     name: 'Home',
     component: () => import('@/pages/project/ProjectList.vue'),
