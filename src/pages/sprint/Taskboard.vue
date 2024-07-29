@@ -168,6 +168,7 @@ const store = useAppStore()
 
 const route = useRoute()
 
+const workItemType = ref('')
 const workItems = ref([])
 const creatingWorkItem = ref(false)
 const creatingTask = ref(false)
@@ -198,7 +199,7 @@ function onDrop(event) {
 function AddWorkItem(type) {
   creatingWorkItem.value = !creatingWorkItem.value
   console.log('createWorkItemTitle', createWorkItemTitle.value, type)
-
+  workItemType.value = type
   setTimeout(() => {
     createWorkItemTitle.value.focus()
   }, 100);
@@ -245,7 +246,8 @@ function onCreatWorkItem() {
   if (creatingWorkItem.value === true && createWorkItemTitle.value.value) {
     postCreateWorkItem(store.org.id, route.params.projectId, {
       title: createWorkItemTitle.value.value,
-      sprintId: route.params.sprintId
+      sprintId: route.params.sprintId,
+      type: workItemType.value,
     }).then(res => {
       // insert res.data to allWorkItems at the beginning
       workItems.value.unshift(res.data.item)
