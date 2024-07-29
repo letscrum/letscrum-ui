@@ -51,7 +51,7 @@
                 <v-row no-gutters v-if="!isExpanded(item)">
                   <v-col cols="2">
                     <v-icon icon="mdi-menu-down" size="x-small" width="10%" class="float-left ma-1" @click="() => toggleExpand(item)"></v-icon>
-                    <WorkItemCard :workItem="item.raw"></WorkItemCard>
+                    <WorkItemCard :workItem="item.raw" :members="sprint.members"></WorkItemCard>
                   </v-col>
                   <v-col cols="10">
                     <v-row no-gutters>
@@ -73,7 +73,7 @@
                                 v-for="task in item.raw['tasks' + i.replace(' ', '')]"
                                 :key="task.id"
                               >
-                                <TaskCard :task="task"></TaskCard>
+                                <TaskCard :task="task" :members="sprint.members"></TaskCard>
                               </div>
                             </VueDraggable>
                           </v-col>
@@ -150,17 +150,19 @@ import { getGetWorkItems, postCreateWorkItem } from '@/apis/workitem';
 
 import { postCreateTask, putMoveTask } from '@/apis/task';
 
+import { getGetSprint } from '@/apis/sprint';
+
 import { useRoute } from 'vue-router'
 
 import { useAppStore } from '@/stores/app'
 
 import { VueDraggable } from 'vue-draggable-plus'
-import TaskCard from '@/components/TaskCard.vue';
 
 const store = useAppStore()
 
 const route = useRoute()
 
+const sprint = ref({})
 const workItemType = ref('')
 const workItems = ref([])
 const creatingWorkItem = ref(false)
@@ -321,7 +323,15 @@ function remove(item) {
   console.log('remove', item)
 }
 
+function LoadSprint() {
+  getGetSprint(store.org.id, route.params.projectId, route.params.sprintId).then(res => {
+    console.log('sprint', res)
+    sprint.value = res.data.item
+  })
+}
+
 onMounted(() => {
+  LoadSprint()
   LoadWorkItems()
 })
 
