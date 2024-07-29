@@ -50,12 +50,8 @@
               <v-expand-transition>
                 <v-row no-gutters v-if="!isExpanded(item)">
                   <v-col cols="2">
-                    <v-icon icon="mdi-menu-down" size="x-small" width="10%" class="float-left" @click="() => toggleExpand(item)"></v-icon>
-                    <v-sheet tile outlined class="mb-2 mr-2 float-left"
-                      style="border-left-color: rgb(0, 156, 204); border-width: 1px; border-left-width: 3px;"
-                      width="85%" min-width="160" height="100">
-                        {{ item.raw.id }}
-                    </v-sheet>
+                    <v-icon icon="mdi-menu-down" size="x-small" width="10%" class="float-left ma-1" @click="() => toggleExpand(item)"></v-icon>
+                    <WorkItemCard :workItem="item.raw"></WorkItemCard>
                   </v-col>
                   <v-col cols="10">
                     <v-row no-gutters>
@@ -77,11 +73,7 @@
                                 v-for="task in item.raw['tasks' + i.replace(' ', '')]"
                                 :key="task.id"
                               >
-                                <v-sheet tile outlined class="mb-2 mr-2 float-left"
-                                  style="border-left-color: rgb(242, 203, 29); border-width: 1px; border-left-width: 3px;"
-                                  width="185" height="100">
-                                    {{ task.id }}
-                                </v-sheet>
+                                <TaskCard :task="task"></TaskCard>
                               </div>
                             </VueDraggable>
                           </v-col>
@@ -163,6 +155,7 @@ import { useRoute } from 'vue-router'
 import { useAppStore } from '@/stores/app'
 
 import { VueDraggable } from 'vue-draggable-plus'
+import TaskCard from '@/components/TaskCard.vue';
 
 const store = useAppStore()
 
