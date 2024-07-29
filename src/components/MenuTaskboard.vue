@@ -1,7 +1,7 @@
 <template>
   <v-menu bottom left offset-y>
     <template v-slot:activator="{ props }">
-      <v-btn v-bind="props" icon="mdi-plus" variant="text" density="comfortable">
+      <v-btn v-bind="props" icon="mdi-plus" variant="text">
       </v-btn>
     </template>
     <v-list density="compact">
@@ -16,7 +16,7 @@
   <v-spacer></v-spacer>
   <v-menu bottom left offset-y>
     <template v-slot:activator="{ props }">
-      <v-btn v-bind="props" icon="mdi-order-bool-ascending" variant="text" density="comfortable">
+      <v-btn v-bind="props" icon="mdi-order-bool-ascending" variant="text">
       </v-btn>
     </template>
     <v-list density="compact">

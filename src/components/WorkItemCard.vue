@@ -1,5 +1,5 @@
 <template>
-  <v-sheet border rounded class="pa-1 ma-1" style="border-left-color: rgb(0, 156, 204); border-left-width: 3px;">
+  <v-sheet border rounded class="pa-1 ma-1" :style="'border-left-color: ' + (props.workItem.type == 'Backlog' ? 'rgb(0, 156, 204)' : 'red') + '; border-left-width: 3px;'">
     <div class="pa-1 ma-1" style="border-style: solid; border-color: silver; line-height: normal; height: 28px; width: auto;">
       {{ props.workItem.title }}
     </div>
