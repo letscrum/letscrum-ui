@@ -55,7 +55,7 @@
             </v-btn>
           </template>
           <v-list>
-            <v-list-item @click="setMember(-1, 'All')" title="All"></v-list-item>
+            <v-list-item @click="setMember('all', 'All')" title="All"></v-list-item>
             <v-list-item @click="setMember(store.user.id, '@Me')" title="@Me"></v-list-item>
 
             <v-list-item

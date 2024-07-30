@@ -28,7 +28,7 @@
                           ref="createWorkItemTitle" width="160"
                           @focusout="onCreatWorkItem()"
                           @keyup.enter="onCreatWorkItem()"
-                          style="border-width: 1px; border-style: solid; border-color: gray; margin: 2px 2px 2px 2px;" type="textarea" />
+                          class="item-card-text" type="textarea" />
                       </v-sheet>
                     </v-col>
                     <v-col cols="10">
@@ -51,7 +51,7 @@
                 <v-row no-gutters v-if="!isExpanded(item)">
                   <v-col cols="2">
                     <v-icon icon="mdi-menu-down" size="x-small" width="10%" class="float-left ma-1" @click="() => toggleExpand(item)"></v-icon>
-                    <WorkItemCard :workItem="item.raw" :members="sprint.members"></WorkItemCard>
+                    <WorkItemCard :workItem="item.raw" :members="sprint.members" @afterUpdate="updateWorkItem"></WorkItemCard>
                   </v-col>
                   <v-col cols="10">
                     <v-row no-gutters>
@@ -73,7 +73,7 @@
                                 v-for="task in item.raw['tasks' + i.replace(' ', '')]"
                                 :key="task.id"
                               >
-                                <TaskCard :task="task" :members="sprint.members" :status="task.status" @afterUpdate="updateTask"></TaskCard>
+                                <TaskCard :task="task" :members="sprint.members" @afterUpdate="updateTask"></TaskCard>
                               </div>
                             </VueDraggable>
                           </v-col>
@@ -88,11 +88,12 @@
                                 style="border-left-color: rgb(242, 203, 29); border-width: 1px; border-left-width: 3px;"
                                 width="185" height="100">
                                 <input
-                                    :id="item.raw.id + '-createTaskTitle'"
-                                    ref="createTaskTitle" width="160"
-                                    @focusout="onCreateTask()"
-                                    @keyup.enter="onCreateTask()"
-                                    style="border-width: 1px; border-style: solid; border-color: gray; margin: 2px 2px 2px 2px;" type="textarea" />
+                                  :id="item.raw.id + '-createTaskTitle'"
+                                  ref="createTaskTitle" width="160"
+                                  @focusout="onCreateTask()"
+                                  @keyup.enter="onCreateTask()"
+                                  class="item-card-text"
+                                  type="textarea" />
                               </v-sheet>
                             </div>
                           </v-col>
@@ -255,7 +256,7 @@ function onCreatWorkItem() {
 function filterTasks(userId) {
   console.log('userId', userId, typeof userId)
   let myItems = []
-  if (userId > 0) {
+  if (userId != "00000000-0000-0000-0000-000000000000") {
     // if allWorkItems assignUser.id or any tasks assignUser.id is equal to userId, add to myItems
     myItems = workItems.value.filter(item => {
       if (item.assignUser.id === userId.toString()) {
@@ -268,7 +269,7 @@ function filterTasks(userId) {
       }
     })
   }
-  if (userId === -1) {
+  if (userId == "all") {
     myItems = workItems.value
   }
   expanded.value = []
@@ -344,6 +345,15 @@ function updateTask(action, task) {
     workItems.value.find((item) => item.id == task.workItemId)['tasks' + action].splice(workItems.value.find((item) => item.id == task.workItemId)['tasks' + action].indexOf(targetTask), 1)
     // add targetTask to tasksDone
     workItems.value.find((item) => item.id == task.workItemId)['tasks' + task.status].push(targetTask)
+  }
+}
+
+function updateWorkItem(action, workItem) {
+  console.log('updateWorkItem', workItem)
+  if (action == 'assign') {
+    workItems.value.find((item) => item.id == workItem.id).assignUser.id = workItem.assignUser.id
+  } else {
+    workItems.value.find((item) => item.id == workItem.id).status = workItem.status
   }
 }
 

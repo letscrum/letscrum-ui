@@ -6,15 +6,22 @@
         {{ member.userName }}
       </option>
       <option value="00000000-0000-0000-0000-000000000000">Unassigned</option>
+    </select><br />
+    <select name="status" class="item-card-text" @change="updateStatus" :value="localWorkItem.status">
+      <option v-for="(s, i) in ['New', 'Approved', 'Done', 'Removed']" :key="i" :value="s">
+        {{ s }}
+      </option>
     </select>
   </v-sheet>
 </template>
 
 <script setup>
-const props = defineProps(['workItem', 'status', 'members'])
+const props = defineProps(['workItem', 'members'])
 import { onMounted, ref } from 'vue';
 
-import { putAssignWorkItem } from '@/apis/workitem';
+import { putAssignWorkItem, putUpdateWorkItemStatus } from '@/apis/workitem';
+import { defineEmits } from 'vue';
+const emit = defineEmits(['afterUpdate'])
 // console.log(props.workItem)
 import { useRoute } from 'vue-router';
 const route = useRoute();
@@ -28,6 +35,20 @@ function assignWorkItem(select) {
     assignUserId: select.target.value,
   }).then((res) => {
     console.log(res)
+    localWorkItem.value.assignUser.id = select.target.value
+    emit('afterUpdate', 'assign', localWorkItem.value)
+  })
+}
+
+
+function updateStatus(select) {
+  console.log(select)
+  putUpdateWorkItemStatus(route.params.orgId, route.params.projectId, localWorkItem.value.id, {
+    status: select.target.value,
+  }).then((res) => {
+    console.log(res)
+    localWorkItem.value.status = select.target.value
+    emit('afterUpdate', 'status', localWorkItem.value)
   })
 }
 
