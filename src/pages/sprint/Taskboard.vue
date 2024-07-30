@@ -73,7 +73,7 @@
                                 v-for="task in item.raw['tasks' + i.replace(' ', '')]"
                                 :key="task.id"
                               >
-                                <TaskCard :task="task" :members="sprint.members"></TaskCard>
+                                <TaskCard :task="task" :members="sprint.members" :status="task.status" @afterUpdate="updateTask"></TaskCard>
                               </div>
                             </VueDraggable>
                           </v-col>
@@ -316,7 +316,10 @@ function onAdd(item) {
     status: status,
     toWorkItemId: workItemId,
   }).then(res => {
-    console.log('res', res)
+    console.log('move res', res)
+    console.log('workItems', workItems.value)
+    workItems.value.find((item) => item.id == workItemId)['tasks' + status].find((task) => task.id == taskId).status = status
+    workItems.value.find((item) => item.id == workItemId)['tasks' + status].find((task) => task.id == taskId).workItemId = workItemId
   })
 }
 function remove(item) {
@@ -328,6 +331,20 @@ function LoadSprint() {
     console.log('sprint', res)
     sprint.value = res.data.item
   })
+}
+
+function updateTask(action, task) {
+  console.log('updateTask', task)
+  if (action == 'assign') {
+    workItems.value.find((item) => item.id == task.workItemId)['tasks' + task.status].find((task) => task.id == task.id).assignUser.id = task.assignUser.id
+  } else {
+    let targetTask = workItems.value.find((item) => item.id == task.workItemId)['tasks' + action].find((task) => task.id == task.id)
+    console.log('targetTask', targetTask)
+    // remove targetTask from tasksToDo
+    workItems.value.find((item) => item.id == task.workItemId)['tasks' + action].splice(workItems.value.find((item) => item.id == task.workItemId)['tasks' + action].indexOf(targetTask), 1)
+    // add targetTask to tasksDone
+    workItems.value.find((item) => item.id == task.workItemId)['tasks' + task.status].push(targetTask)
+  }
 }
 
 onMounted(() => {

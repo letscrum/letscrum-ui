@@ -1,0 +1,7 @@
+.item-card-text {
+  font-size: 12px;
+}
+
+.item-card-text:hover {
+  border-color: silver;
+}
