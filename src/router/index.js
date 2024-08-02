@@ -45,21 +45,21 @@ const routes = [
         path: '',
         components: {
           default: () => import('@/pages/sprint/Taskboard.vue'),
-          menu: () => import('@/components/MenuTaskboard.vue')
+          menu: () => import('@/components/menu/MenuTaskboard.vue')
         }
       },
       {
         path: 'backlog',
         components: {
           default: () => import('@/pages/sprint/Backlog.vue'),
-          menu: () => import('@/components/MenuBacklog.vue')
+          menu: () => import('@/components/menu/MenuBacklog.vue')
         }
       },
       {
         path: 'capacity',
         components: {
           default: () => import('@/pages/sprint/Capacity.vue'),
-          menu: () => import('@/components/MenuCapacity.vue')
+          menu: () => import('@/components/menu/MenuCapacity.vue')
         }
       }
     ],

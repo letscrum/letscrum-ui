@@ -210,6 +210,16 @@ export const useAppStore = defineStore('app', {
       this.project.displayName = null;
       this.project.description = null;
     },
+    clearSprint() {
+      localStorage.removeItem('sprintId');
+      localStorage.removeItem('sprintName');
+      localStorage.removeItem('sprintStartDate');
+      localStorage.removeItem('sprintEndDate');
+      this.sprint.id = null;
+      this.sprint.name = null;
+      this.sprint.startDate = null;
+      this.sprint.endDate = null;
+    },
     setRail(payload) {
       localStorage.rail = Boolean(payload);
       this.rail = Boolean(payload);
