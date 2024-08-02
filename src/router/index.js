@@ -85,7 +85,7 @@ const routes = [
   {
     path: '/about',
     name: 'About',
-    component: () => import('@/pages/index.vue')
+    component: () => import('@/pages/EmptyPage.vue')
   },
   {
     path: '/join',
