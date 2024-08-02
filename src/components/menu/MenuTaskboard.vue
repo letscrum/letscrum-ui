@@ -1,6 +1,6 @@
 <template>
   <v-menu bottom left offset-y>
-    <template v-slot:activator="{ props }">
+    <template #activator="{ props }">
       <v-btn v-bind="props" icon="mdi-plus" variant="text">
       </v-btn>
     </template>
@@ -15,7 +15,7 @@
   </v-menu>
   <v-spacer></v-spacer>
   <v-menu bottom left offset-y>
-    <template v-slot:activator="{ props }">
+    <template #activator="{ props }">
       <v-btn v-bind="props" icon="mdi-order-bool-ascending" variant="text">
       </v-btn>
     </template>

@@ -6,17 +6,17 @@
       </v-col>
       <v-col>
         <v-dialog
+          v-model="dialog"
           width="50%"
           persistent
-          v-model="dialog"
         >
-          <template v-slot:activator="{ props: activatorProps }">
+          <template #activator="{ props: activatorProps }">
             <v-btn outlined class="float-right" tile prepend-icon="mdi-pencil" v-bind="activatorProps" @click="onOpenCreate()">
               Create
             </v-btn>
           </template>
 
-          <template v-slot:default="{ isActive }">
+          <template #default="{ isActive }">
             <v-card
               prepend-icon="mdi-earth"
               title="Select Country"
@@ -24,9 +24,9 @@
               <v-divider class="my-1"></v-divider>
 
               <v-card-text class="px-4">
-                <v-text-field label="Label" v-model="project.displayName"></v-text-field>
+                <v-text-field v-model="project.displayName" label="Label"></v-text-field>
 
-                <v-textarea label="Label" v-model="project.description"></v-textarea>
+                <v-textarea v-model="project.description" label="Label"></v-textarea>
 
                 <v-autocomplete
                   v-model:search-input="search"
@@ -35,17 +35,18 @@
                   :items="users"
                   label="Autocomplete"
                   multiple
-                  @update:search="searchUsers"
                   item-props
                   no-filter
+                  @update:search="searchUsers"
                 >
-                  <template v-slot:chip="{ props, item }">
-                    <v-chip :closable="!item.raw.owner"
+                  <template #chip="{ props, item }">
+                    <v-chip
+:closable="!item.raw.owner"
                       v-bind="props"
                       :text="item.raw.name"
                     ></v-chip>
                   </template>
-                  <template v-slot:item="{ props, item }">
+                  <template #item="{ props, item }">
                     <v-list-item
                       v-bind="props"
                       :title="item.raw.name"
@@ -60,17 +61,18 @@
                   :items="users"
                   label="Autocomplete"
                   multiple
-                  @update:search="searchUsers"
                   item-props
                   no-filter
+                  @update:search="searchUsers"
                 >
-                  <template v-slot:chip="{ props, item }">
-                    <v-chip :closable="!item.raw.owner"
+                  <template #chip="{ props, item }">
+                    <v-chip
+:closable="!item.raw.owner"
                       v-bind="props"
                       :text="item.raw.name"
                     ></v-chip>
                   </template>
-                  <template v-slot:item="{ props, item }">
+                  <template #item="{ props, item }">
                     <v-list-item
                       v-bind="props"
                       :title="item.raw.name"
@@ -103,7 +105,7 @@
     </v-row>
     <v-divider class="my-2"></v-divider>
     <v-row no-gutters>
-      <v-col cols="12" md="4" class="pa-1" v-for="(project, i) in projects" :key="i">
+      <v-col v-for="(project, i) in projects" :key="i" cols="12" md="4" class="pa-1">
         <ProjectCard :project="project"></ProjectCard>
       </v-col>
     </v-row>
@@ -114,7 +116,7 @@
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 
 import { useAppStore } from '@/stores/app'
-import { onMounted, computed, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 const store = useAppStore()
 
@@ -216,9 +218,9 @@ function LoadProjects() {
   });
 }
 
-const pages = computed({
-  get() {
-    return Math.ceil(this.total / this.size);
-  }
-})
+// const pages = computed({
+//   get() {
+//     return Math.ceil(this.total / this.size);
+//   }
+// })
 </script>

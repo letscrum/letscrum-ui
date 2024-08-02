@@ -23,13 +23,6 @@ import { getGetProject } from '@/apis/project';
 const route = useRoute()
 const sprint = ref({})
 const members = ref([])
-const headers = ref([
-  { text: 'Order', value: 'order' },
-  { text: 'ID', value: 'id' },
-  { text: 'Title', value: 'title' },
-  { text: 'Assign', value: 'assign' },
-  { text: 'Status', value: 'status' },
-])
 
 function LoadSprint() {
   getGetSprint(route.params.orgId, route.params.projectId, route.params.sprintId).then((res) => {

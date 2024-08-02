@@ -3,24 +3,24 @@
     <v-toolbar flat>
       <v-toolbar-title>Login form</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn icon v-if="isDialog != undefined" @click="$emit('close-dialog')">
+      <v-btn v-if="isDialog != undefined" icon @click="$emit('close-dialog')">
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-toolbar>
     <v-card-text>
       <v-form ref="form" v-model="valid">
         <v-text-field
+          v-model="name"
           label="Username"
           name="name"
           prepend-icon="mdi-email"
           type="text"
-          v-model="name"
           required
         />
         <v-text-field
           id="password"
-          label="Password"
           v-model="password"
+          label="Password"
           name="password"
           prepend-icon="mdi-lock"
           type="password"

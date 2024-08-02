@@ -6,17 +6,17 @@
       </v-col>
       <v-col>
         <v-dialog
+          v-model="dialog"
           width="50%"
           persistent
-          v-model="dialog"
         >
-          <template v-slot:activator="{ props: activatorProps }">
+          <template #activator="{ props: activatorProps }">
             <v-btn outlined class="float-right" tile prepend-icon="mdi-pencil" v-bind="activatorProps" @click="onOpenOrg()">
               Create
             </v-btn>
           </template>
 
-          <template v-slot:default="{ isActive }">
+          <template #default="{ isActive }">
             <v-card
               prepend-icon="mdi-earth"
               title="Select Country"
@@ -24,9 +24,9 @@
               <v-divider class="my-1"></v-divider>
 
               <v-card-text class="px-4">
-                <v-text-field label="Label" v-model="org.name"></v-text-field>
+                <v-text-field v-model="org.name" label="Label"></v-text-field>
 
-                <v-textarea label="Label" v-model="org.description"></v-textarea>
+                <v-textarea v-model="org.description" label="Label"></v-textarea>
 
               </v-card-text>
 
@@ -54,7 +54,7 @@
     </v-row>
     <v-divider class="my-2"></v-divider>
     <v-row no-gutters>
-      <v-col cols="12" md="4" class="pa-1" v-for="(org, i) in orgs" :key="i">
+      <v-col v-for="(org, i) in orgs" :key="i" cols="12" md="4" class="pa-1">
         <OrgCard :org="org"></OrgCard>
       </v-col>
     </v-row>
@@ -63,11 +63,7 @@
 
 <script setup>
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
-
-import { useAppStore } from '@/stores/app'
-import { onMounted, computed, ref } from 'vue';
-
-const store = useAppStore()
+import { onMounted, ref } from 'vue';
 
 import { getGetOrgs, postCreateOrg } from '@/apis/org';
 
@@ -110,9 +106,9 @@ function LoadOrgs() {
   });
 }
 
-const pages = computed({
-  get() {
-    return Math.ceil(this.total / this.size);
-  }
-})
+// const pages = computed({
+//   get() {
+//     return Math.ceil(this.total / this.size);
+//   }
+// })
 </script>

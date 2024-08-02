@@ -1,10 +1,10 @@
 <template>
   <v-dialog
+    v-model="dialog"
     width="50%"
     persistent
-    v-model="dialog"
   >
-    <template v-slot:activator="{ props: activatorProps }">
+    <template #activator="{ props: activatorProps }">
       <div v-bind="activatorProps" @click="onOpenCreate()">
         <slot></slot>
       </div>
@@ -13,7 +13,7 @@
       </v-btn> -->
     </template>
 
-    <template v-slot:default="{ isActive }">
+    <template #default="{ isActive }">
       <v-card
         prepend-icon="mdi-earth"
         title="Select Country"
@@ -21,7 +21,7 @@
         <v-divider class="my-1"></v-divider>
 
         <v-card-text class="px-4">
-          <v-text-field label="Label" v-model="workItem.title"></v-text-field>
+          <v-text-field v-model="workItem.title" label="Label"></v-text-field>
         </v-card-text>
 
         <v-divider></v-divider>

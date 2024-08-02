@@ -11,22 +11,22 @@
           :items="['All', ...sprint.members.map((item) => item.userName)]"
         ></v-select> -->
         <v-menu offset-y bottom left width="400">
-          <template v-slot:activator="{ props }">
+          <template #activator="{ props }">
             <v-btn v-bind="props" append-icon="mdi-chevron-down" size="large" variant="text" class="float-right">
               {{ store.sprint.name }}
             </v-btn>
           </template>
           <v-list>
             <v-virtual-scroll height="320" item-height="64" :items="sprints">
-              <template v-slot:default="{ item }">
+              <template #default="{ item }">
                 <v-list-item
                   :to="'/orgs/' + store.org.id + '/projects/' + item.projectId + '/sprints/' + item.id"
                   lines="two"
-                  @click="onSetSprint(item.id, item.name, item.startDate, item.endDate)"
                   :title="item.name"
                   :subtitle="new Date(item.startDate * 1000).toISOString().substring(0, 10) + ' - ' + new Date(item.endDate * 1000).toISOString().substring(0, 10)"
+                  @click="onSetSprint(item.id, item.name, item.startDate, item.endDate)"
                 >
-                  <template v-slot:append>
+                  <template #append>
                     <v-chip
                       :color="item.status === 'Current' ? 'primary' : ''"
                       :variant="item.status === 'Current' ? 'flat' : 'tonal'"
@@ -38,9 +38,9 @@
               </template>
             </v-virtual-scroll>
             <v-divider class="my-2"></v-divider>
-            <SprintCreate @afterCreate="LoadSprints()">
+            <SprintCreate @after-create="LoadSprints()">
               <v-list-item title="New Sprint" @click="console.log()">
-                <template v-slot:prepend>
+                <template #prepend>
                   <v-icon>mdi-plus</v-icon>
                 </template>
               </v-list-item>
@@ -49,20 +49,20 @@
         </v-menu>
 
         <v-menu>
-          <template v-slot:activator="{ props }">
+          <template #activator="{ props }">
             <v-btn v-bind="props" append-icon="mdi-chevron-down" size="large" variant="text" class="float-right">
               {{ member.userName }}
             </v-btn>
           </template>
           <v-list>
-            <v-list-item @click="setMember('all', 'All')" title="All"></v-list-item>
-            <v-list-item @click="setMember(store.user.id, '@Me')" title="@Me"></v-list-item>
+            <v-list-item title="All" @click="setMember('all', 'All')"></v-list-item>
+            <v-list-item title="@Me" @click="setMember(store.user.id, '@Me')"></v-list-item>
 
             <v-list-item
-              @click="setMember(item.userId, item.userName)"
               v-for="(item, i) in sprint.members"
               :key="i"
               :title="item.userName"
+              @click="setMember(item.userId, item.userName)"
             >
             </v-list-item>
           </v-list>
@@ -79,7 +79,7 @@
         inset
         class="mx-2"
       ></v-divider>
-      <router-view name="menu" @createWorkItem="onCreateWorkItem">
+      <router-view name="menu" @create-work-item="onCreateWorkItem">
       </router-view>
     </v-tabs>
     <v-divider class="my-2"></v-divider>

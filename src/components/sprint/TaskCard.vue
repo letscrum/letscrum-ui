@@ -1,13 +1,13 @@
 <template>
   <v-sheet border rounded class="pa-1 ma-1" style="border-left-color: rgb(242, 203, 29); border-left-width: 3px; max-width: 180px;">
     <input type="text" class="item-card-text" :value="localTask.title"><br />
-    <select name="assign" class="item-card-text" @change="assignTask" :value="localTask.assignUser.id">
+    <select name="assign" class="item-card-text" :value="localTask.assignUser.id" @change="assignTask">
       <option v-for="(member, i) in localMembers" :key="i" :value="member.userId">
         {{ member.userName }}
       </option>
       <option value="00000000-0000-0000-0000-000000000000">Unassigned</option>
     </select><br />
-    <select name="status" class="item-card-text" @change="updateStatus" :value="localTask.status">
+    <select name="status" class="item-card-text" :value="localTask.status" @change="updateStatus">
       <option v-for="(s, i) in ['ToDo', 'InProgress', 'Done', 'Removed']" :key="i" :value="s">
         {{ s }}
       </option>

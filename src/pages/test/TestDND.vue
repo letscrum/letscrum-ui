@@ -1,11 +1,11 @@
 <template>
   <div class="flex">
     <VueDraggable
+      v-model="list1"
       class="flex flex-col gap-2 p-4 w-300px h-300px m-auto bg-gray-500/5 rounded overflow-auto"
       style="width: 300px; height: 300px;"
-      v-model="list1"
       animation="150"
-      ghostClass="ghost"
+      ghost-class="ghost"
       group="people"
       @update="onUpdate"
       @add="onAdd"
@@ -20,12 +20,12 @@
       </div>
     </VueDraggable>
     <VueDraggable
+      v-model="list2"
       class="flex flex-col gap-2 p-4 w-300px h-300px m-auto bg-gray-500/5 rounded overflow-auto"
       style="width: 300px; height: 300px;"
-      v-model="list2"
       animation="150"
       group="people"
-      ghostClass="ghost"
+      ghost-class="ghost"
       @update="onUpdate"
       @add="onAdd"
       @remove="remove"

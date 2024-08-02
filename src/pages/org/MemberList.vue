@@ -26,7 +26,7 @@
       <v-divider></v-divider>
       <v-data-table v-model:search="search" :items="members">
 
-        <template v-slot:item.isAdmin="{ item }">
+        <template #item.isAdmin="{ item }">
           <SetOrgAdmin :member="item" @after="fetchMembers">
             <v-btn>
               {{ item.isAdmin ? 'Remove admin' : 'Set admin' }}
@@ -60,7 +60,7 @@ function fetchMembers() {
 
 function onCreate() {
   // random user name length 6
-  let userName = Math.random().toString(36).substring(2, 8)
+  // let userName = Math.random().toString(36).substring(2, 8)
 }
 
 onMounted(() => {

@@ -14,19 +14,19 @@
     <v-list density="compact" nav>
       <v-list-item prepend-icon="mdi-home-city" title="Projects" value="home" :to="'/orgs/' + store.org.id + '/projects'"></v-list-item>
     </v-list>
-    <v-list density="compact" nav v-if="store.project.id != '' && store.project.id != null && store.org.id != '' && store.org.id != null">
+    <v-list v-if="store.project.id != '' && store.project.id != null && store.org.id != '' && store.org.id != null" density="compact" nav>
       <v-list-item prepend-icon="mdi-home-city" title="Overview" value="overview" :to="'/orgs/' + store.org.id + '/projects/' + store.project.id"></v-list-item>
     </v-list>
-    <v-list density="compact" nav v-if="store.project.id != '' && store.project.id != null && store.org.id != '' && store.org.id != null && store.sprint.id != '' && store.sprint.id != null">
+    <v-list v-if="store.project.id != '' && store.project.id != null && store.org.id != '' && store.org.id != null && store.sprint.id != '' && store.sprint.id != null" density="compact" nav>
       <v-list-item prepend-icon="mdi-home-city" title="Sprint" value="sprint" :to="'/orgs/' + store.org.id + '/projects/' + store.project.id + '/sprints/' + store.sprint.id"></v-list-item>
     </v-list>
-    <template v-slot:append>
+    <template #append>
       <v-list>
         <v-list-item v-if="route.name != 'Orgs' && route.name != 'Users' && store.org.id != null && store.org.id != ''">
           <v-btn block :to="'/orgs/' + store.org.id + '/members'">
             Manage
           </v-btn>
-          <template v-slot:append>
+          <template #append>
             <v-btn
               :icon="rail ? 'mdi-chevron-right' : 'mdi-chevron-left'"
               variant="text"
@@ -38,7 +38,7 @@
           <v-btn block :to="'/users'">
             Users
           </v-btn>
-          <template v-slot:append>
+          <template #append>
             <v-btn
               :icon="rail ? 'mdi-chevron-right' : 'mdi-chevron-left'"
               variant="text"

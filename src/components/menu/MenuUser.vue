@@ -1,6 +1,6 @@
 <template>
   <v-menu bottom left offset-y :close-on-content-click="false">
-    <template v-slot:activator="{ props }">
+    <template #activator="{ props }">
       <v-btn icon="mdi-account" v-bind="props"></v-btn>
     </template>
     <v-card min-width="200">
@@ -10,7 +10,7 @@
           subtitle="Founder of Vuetify"
           title="John Leider"
         >
-          <template v-slot:append>
+          <template #append>
             <v-btn rounded color="red" dark>VIP</v-btn>
           </template>
         </v-list-item>
@@ -25,7 +25,7 @@
           v-for="(userMenu, i) in userMenus" :key="i" :to="userMenu.path"
           color="primary"
         >
-          <template v-slot:prepend>
+          <template #prepend>
             <v-icon :icon="userMenu.icon"></v-icon>
           </template>
 
@@ -35,7 +35,7 @@
       <v-divider></v-divider>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text="" @click="signOut" to="/">{{ $t('user.userMenus.signOut.text') }}</v-btn>
+        <v-btn text="" to="/" @click="signOut">{{ $t('user.userMenus.signOut.text') }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-menu>

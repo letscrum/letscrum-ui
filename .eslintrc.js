@@ -10,8 +10,10 @@ module.exports = {
     node: true,
   },
   extends: [
-    'vuetify',
     './.eslintrc-auto-import.json',
+    'eslint:recommended',
+    "plugin:vue/vue3-recommended",
+    "prettier",
   ],
   rules: {
     'vue/multi-word-component-names': 'off',

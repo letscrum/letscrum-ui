@@ -10,7 +10,7 @@
           max-width="400"
           persistent
         >
-          <template v-slot:activator="{ props: activatorProps }">
+          <template #activator="{ props: activatorProps }">
             <v-btn outlined class="float-right ml-2" color="red" density="comfortable" icon="mdi-delete" v-bind="activatorProps">
             </v-btn>
           </template>
@@ -20,7 +20,7 @@
             text="Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running."
             title="Use Google's location service?"
           >
-            <template v-slot:actions>
+            <template #actions>
               <v-spacer></v-spacer>
 
               <v-btn @click="dialogDelete = false">
@@ -35,17 +35,17 @@
         </v-dialog>
 
         <v-dialog
+          v-model="dialogUpdate"
           width="50%"
           persistent
-          v-model="dialogUpdate"
         >
-          <template v-slot:activator="{ props: activatorProps }">
+          <template #activator="{ props: activatorProps }">
             <v-btn outlined class="float-right" tile prepend-icon="mdi-pencil" v-bind="activatorProps" @click="onGetProject()">
               Edit
             </v-btn>
           </template>
 
-          <template v-slot:default="{ isActive }">
+          <template #default="{ isActive }">
             <v-card
               prepend-icon="mdi-earth"
               title="Select Country"
@@ -53,9 +53,9 @@
               <v-divider class="my-1"></v-divider>
 
               <v-card-text class="px-4">
-                <v-text-field label="Label" v-model="project.displayName"></v-text-field>
+                <v-text-field v-model="project.displayName" label="Label"></v-text-field>
 
-                <v-textarea label="Label" v-model="project.description"></v-textarea>
+                <v-textarea v-model="project.description" label="Label"></v-textarea>
 
                 <v-autocomplete
                   v-model:search-input="search"
@@ -64,17 +64,18 @@
                   :items="users"
                   label="Autocomplete"
                   multiple
-                  @update:search="searchUsers"
                   item-props
                   no-filter
+                  @update:search="searchUsers"
                 >
-                  <template v-slot:chip="{ props, item }">
-                    <v-chip :closable="!item.raw.owner"
+                  <template #chip="{ props, item }">
+                    <v-chip
+:closable="!item.raw.owner"
                       v-bind="props"
                       :text="item.raw.name"
                     ></v-chip>
                   </template>
-                  <template v-slot:item="{ props, item }">
+                  <template #item="{ props, item }">
                     <v-list-item
                       v-bind="props"
                       :title="item.raw.name"
@@ -89,17 +90,18 @@
                   :items="users"
                   label="Autocomplete"
                   multiple
-                  @update:search="searchUsers"
                   item-props
                   no-filter
+                  @update:search="searchUsers"
                 >
-                  <template v-slot:chip="{ props, item }">
-                    <v-chip :closable="!item.raw.owner"
+                  <template #chip="{ props, item }">
+                    <v-chip
+:closable="!item.raw.owner"
                       v-bind="props"
                       :text="item.raw.name"
                     ></v-chip>
                   </template>
-                  <template v-slot:item="{ props, item }">
+                  <template #item="{ props, item }">
                     <v-list-item
                       v-bind="props"
                       :title="item.raw.name"
@@ -137,7 +139,7 @@
         {{ project.description }}
       </v-col>
     </v-row>
-    <v-row no-gutters v-for="(member, i) in admins" :key="i">
+    <v-row v-for="(member, i) in admins" :key="i" no-gutters>
       <v-col>
         <v-chip
         >
@@ -145,7 +147,7 @@
         </v-chip>
       </v-col>
     </v-row>
-    <v-row no-gutters v-for="(member, i) in members" :key="i">
+    <v-row v-for="(member, i) in members" :key="i" no-gutters>
       <v-col>
         <v-chip
         >
@@ -158,7 +160,7 @@
         <h2>Sprints</h2>
       </v-col>
       <v-col>
-        <SprintCreate @afterCreate="LoadSprints()">
+        <SprintCreate @after-create="LoadSprints()">
           <v-btn outlined class="float-right" tile prepend-icon="mdi-pencil">
             Create
           </v-btn>
@@ -274,7 +276,7 @@
     </v-row>
     <v-divider class="my-2"></v-divider>
     <v-row no-gutters>
-      <v-col cols="12" md="4" class="pa-1" v-for="(sprint, i) in sprints" :key="i">
+      <v-col v-for="(sprint, i) in sprints" :key="i" cols="12" md="4" class="pa-1">
         {{ sprint }}
         <v-btn
           outlined
@@ -427,20 +429,14 @@ onMounted(() => {
 })
 
 
-const sprint = ref({})
-
-const dates = ref([])
 
 const date = ref([null, null])
-const sprintName = ref('')
 const startDate = ref('')
 const endDate = ref('')
 const rangeDate = ref('')
-const menu = ref(false)
-const dialog = ref(false)
 const sprints = ref([])
 
-watch(date, (date, preDate) => {
+watch(date, (date) => {
   startDate.value = date[0] ? date[0] : '';
   endDate.value = date[1] ? date[1] : '';
   if (date[0] > date[1]) {

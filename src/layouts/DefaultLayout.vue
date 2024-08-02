@@ -2,10 +2,10 @@
   <AppBar
     :menus="store.menus"
     :accounts="store.accounts"
-    :userMenus="store.userMenus"
+    :user-menus="store.userMenus"
     :user="store.user"
-    :logoUrl="store.logoUrl" />
-  <AppDrawer :menus="store.menus" v-if="store.isSignedIn" />
+    :logo-url="store.logoUrl" />
+  <AppDrawer v-if="store.isSignedIn" :menus="store.menus" />
   <v-container fluid>
     <slot></slot>
   </v-container>

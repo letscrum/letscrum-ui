@@ -3,32 +3,33 @@
     <v-row no-gutters>
       <v-col>
         <v-data-iterator
+          v-model:expanded="expanded"
           :items="workItems"
           hide-default-footer
-          v-model:expanded="expanded"
           items-per-page="-1"
         >
-          <template v-slot:header>
+          <template #header>
             <v-row no-gutters>
               <v-col cols="2">
-                <v-btn variant="plain" prepend-icon="mdi-arrow-expand-vertical" size="x-small" @click="collapseAll()" v-if="expanded.length > 0">
+                <v-btn v-if="expanded.length > 0" variant="plain" prepend-icon="mdi-arrow-expand-vertical" size="x-small" @click="collapseAll()">
                   Expand all
                 </v-btn>
-                <v-btn variant="plain" prepend-icon="mdi-arrow-collapse-vertical" size="x-small" @click="collapseAll()" v-else>
+                <v-btn v-else variant="plain" prepend-icon="mdi-arrow-collapse-vertical" size="x-small" @click="collapseAll()">
                   Collapse all
                 </v-btn>
                 <div v-if="creatingWorkItem">
                   <v-row no-gutters>
                     <v-col cols="2">
                       <v-icon icon="mdi-menu-down" size="x-small" width="10%" class="float-left"></v-icon>
-                      <v-sheet tile outlined class="mb-2 mr-2 float-left"
+                      <v-sheet
+tile outlined class="mb-2 mr-2 float-left"
                         style="border-left-color: rgb(0, 156, 204); border-width: 1px; border-left-width: 3px;"
                         width="85%" min-width="160" height="100">
                           <input
                           ref="createWorkItemTitle" width="160"
-                          @focusout="onCreatWorkItem()"
-                          @keyup.enter="onCreatWorkItem()"
-                          class="item-card-text" type="textarea" />
+                          class="item-card-text"
+                          type="textarea"
+                          @focusout="onCreatWorkItem()" @keyup.enter="onCreatWorkItem()" />
                       </v-sheet>
                     </v-col>
                     <v-col cols="10">
@@ -38,62 +39,64 @@
               </v-col>
               <v-col cols="10">
                 <v-row no-gutters>
-                  <v-col cols="4" v-for="i in ['To Do', 'In Progress', 'Done']" :key="i">
+                  <v-col v-for="i in ['To Do', 'In Progress', 'Done']" :key="i" cols="4">
                     {{ i }}
                   </v-col>
                 </v-row>
               </v-col>
             </v-row>
           </template>
-          <template v-slot:default="{ items, isExpanded, toggleExpand }">
+          <template #default="{ items, isExpanded, toggleExpand }">
             <div v-for="item in items" :key="item.raw.id">
               <v-expand-transition>
-                <v-row no-gutters v-if="!isExpanded(item)">
+                <v-row v-if="!isExpanded(item)" no-gutters>
                   <v-col cols="2">
                     <v-icon icon="mdi-menu-down" size="x-small" width="10%" class="float-left ma-1" @click="() => toggleExpand(item)"></v-icon>
-                    <WorkItemCard :workItem="item.raw" :members="sprint.members" @afterUpdate="updateWorkItem"></WorkItemCard>
+                    <WorkItemCard :work-item="item.raw" :members="sprint.members" @after-update="updateWorkItem"></WorkItemCard>
                   </v-col>
                   <v-col cols="10">
                     <v-row no-gutters>
-                      <v-col cols="4" v-for="i in ['To Do', 'In Progress', 'Done']" :key="i">
-                        <v-row no-gutters
+                      <v-col v-for="i in ['To Do', 'In Progress', 'Done']" :key="i" cols="4">
+                        <v-row
+no-gutters
                         style="background-color: aquamarine; width: 100%; height: 80%;"
                         >
                           <v-col
                           style="background-color: aquamarine; width: 100%; height: 100%;"
                           >
                             <VueDraggable
-                              @add="onAdd"
+                              :id="item.raw.id + '-' + i.replace(' ', '')"
                               v-model="item.raw['tasks' + i.replace(' ', '')]"
                               group="task"
-                              :id="item.raw.id + '-' + i.replace(' ', '')"
                               style="background-color: aquamarine; width: 100%; height: 100%;"
+                              @add="onAdd"
                               >
                               <div
                                 v-for="task in item.raw['tasks' + i.replace(' ', '')]"
                                 :key="task.id"
                               >
-                                <TaskCard :task="task" :members="sprint.members" @afterUpdate="updateTask"></TaskCard>
+                                <TaskCard :task="task" :members="sprint.members" @after-update="updateTask"></TaskCard>
                               </div>
                             </VueDraggable>
                           </v-col>
                         </v-row>
-                        <v-row no-gutters v-if="i === 'To Do'">
+                        <v-row v-if="i === 'To Do'" no-gutters>
                           <v-col>
-                            <v-btn variant="plain" prepend-icon="mdi-plus" size="small" class="mr-2" @click="AddTask(item.raw.id)" v-if="!creatingTask">
+                            <v-btn v-if="!creatingTask" variant="plain" prepend-icon="mdi-plus" size="small" class="mr-2" @click="AddTask(item.raw.id)">
                               New task
                             </v-btn>
                             <div v-show="creatingTask && item.raw.id === createTaskWorkItemId">
-                              <v-sheet tile outlined class="mb-2 mr-2 float-left"
+                              <v-sheet
+tile outlined class="mb-2 mr-2 float-left"
                                 style="border-left-color: rgb(242, 203, 29); border-width: 1px; border-left-width: 3px;"
                                 width="185" height="100">
                                 <input
                                   :id="item.raw.id + '-createTaskTitle'"
                                   ref="createTaskTitle" width="160"
-                                  @focusout="onCreateTask()"
-                                  @keyup.enter="onCreateTask()"
                                   class="item-card-text"
-                                  type="textarea" />
+                                  type="textarea"
+                                  @focusout="onCreateTask()"
+                                  @keyup.enter="onCreateTask()" />
                               </v-sheet>
                             </div>
                           </v-col>
@@ -102,14 +105,14 @@
                     </v-row>
                   </v-col>
                 </v-row>
-                <v-row no-gutters v-else>
+                <v-row v-else no-gutters>
                   <v-col>
                     <VueDraggable
-                      @add="onAdd"
+                      :id="item.raw.id + '-ToDo'"
                       v-model="item.raw['tasksToDo']"
                       group="task"
-                      :id="item.raw.id + '-ToDo'"
                       style="background-color: aquamarine; width: 100%; height: 100%;"
+                      @add="onAdd"
                       >
                       <v-icon icon="mdi-menu-right" size="x-small" class="float-left" @click="() => toggleExpand(item)"></v-icon>
                       {{ item.raw.title }}
@@ -186,10 +189,6 @@ function LoadWorkItems() {
     workItems.value = res.data.items
     console.log('workItems', workItems.value)
   })
-}
-
-function onDrop(event) {
-  console.log('onDrop', event)
 }
 
 function AddWorkItem(type) {
@@ -300,9 +299,6 @@ function collapseAll() {
   console.log('expanded', expanded.value)
 }
 
-function onUpdate(item) {
-  console.log('update', item)
-}
 function onAdd(item) {
   console.log('add', item)
   console.log('to', item.to)
@@ -322,9 +318,6 @@ function onAdd(item) {
     workItems.value.find((item) => item.id == workItemId)['tasks' + status].find((task) => task.id == taskId).status = status
     workItems.value.find((item) => item.id == workItemId)['tasks' + status].find((task) => task.id == taskId).workItemId = workItemId
   })
-}
-function remove(item) {
-  console.log('remove', item)
 }
 
 function LoadSprint() {

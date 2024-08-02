@@ -1,23 +1,23 @@
 <template>
   <div>
     <v-data-table
+      v-model:expanded="expanded"
       :headers="headers"
       :items="workItems"
-      v-model:expanded="expanded"
       item-key="id"
       show-expand
     >
-      <template v-slot:headers="{ columns, isSorted, getSortIcon, toggleSort }">
+      <template #headers="{ columns, isSorted, getSortIcon, toggleSort }">
         <tr>
           <th
             v-for="column in columns"
             :key="column.text"
-            @click="toggleSort(column)"
             :class="[
               'column sortable',
               isSorted(column) ? 'sorted' : '',
               column.align === 'start' ? 'text-start' : '',
             ]"
+            @click="toggleSort(column)"
           >
             <v-icon small>{{ getSortIcon(column) }}</v-icon>
             {{ column.text }}
@@ -25,7 +25,7 @@
         </tr>
       </template>
 
-      <template v-slot:item="{ item }">
+      <template #item="{ item }">
         <tr>
           <td>{{ item.order }}</td>
           <td>{{ item.id }}</td>
@@ -35,7 +35,7 @@
           <td>{{ item.type }}</td>
         </tr>
       </template>
-      <template v-slot:expanded-row="{ columns, item }">
+      <template #expanded-row="{ columns, item }">
         <tr>
           <td :colspan="columns.length">
             More info about {{ item.name }}

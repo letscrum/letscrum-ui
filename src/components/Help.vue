@@ -62,12 +62,12 @@
 export default {
   name: 'Help',
   props: ['show'],
-  created() {
-    this.isHelpShow = this.show;
-  },
   data: () => ({
     isHelpShow: false
   }),
+  created() {
+    this.isHelpShow = this.show;
+  },
   methods: {
   }
 };

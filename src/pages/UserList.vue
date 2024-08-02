@@ -28,7 +28,7 @@
       <v-divider></v-divider>
       <v-data-table v-model:search="search" :items="users">
 
-        <template v-slot:item.isSuperAdmin="{ item }">
+        <template #item.isSuperAdmin="{ item }">
           <SetSuperAdmin :user="item" @after="fetchUsers">
             <v-btn>
               {{ item.isSuperAdmin ? 'Remove super admin' : 'Set super admin' }}

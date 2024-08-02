@@ -9,14 +9,14 @@
     />
     <v-toolbar-items class="hidden-sm-and-down">
       <v-btn
-        text
         v-for="(menu, i) in store.menus"
         :key="i"
+        text
         :to="menu.path"
       >{{ $t('core.menus.' + menu.name + '.text') }}</v-btn>
     </v-toolbar-items>
     <v-breadcrumbs :items="store.breadcrumbs">
-      <template v-slot:item="{ item }">
+      <template #item="{ item }">
         <v-breadcrumbs-item>
           <v-btn plain small tile :to="item.href" :disabled="item.disabled">
             {{ item.text.toUpperCase() }}
@@ -48,8 +48,8 @@
       inset
       class="mx-1"
     ></v-divider>
-    <MenuAnonymous :accounts="store.accounts" v-if="!store.isSignedIn"></MenuAnonymous>
-    <MenuUser :userMenus="store.userMenus" :user="store.user" v-else></MenuUser>
+    <MenuAnonymous v-if="!store.isSignedIn" :accounts="store.accounts"></MenuAnonymous>
+    <MenuUser v-else :user-menus="store.userMenus" :user="store.user"></MenuUser>
     <div v-if="!store.isSignedIn">
       <v-btn
         v-for="(account, i) in store.accounts"

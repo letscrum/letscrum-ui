@@ -1,13 +1,13 @@
 <template>
   <v-sheet border rounded class="pa-1 ma-1" :style="'border-left-color: ' + (props.workItem.type == 'Backlog' ? 'rgb(0, 156, 204)' : 'rgb(204, 41, 61)') + '; border-left-width: 3px;'">
     <input type="text" class="item-card-text" :value="localWorkItem.id + ' ' + localWorkItem.title"><br />
-    <select name="example" class="item-card-text" @change="assignWorkItem" :value="localWorkItem.assignUser.id">
+    <select name="example" class="item-card-text" :value="localWorkItem.assignUser.id" @change="assignWorkItem">
       <option v-for="(member, i) in localMembers" :key="i" :value="member.userId">
         {{ member.userName }}
       </option>
       <option value="00000000-0000-0000-0000-000000000000">Unassigned</option>
     </select><br />
-    <select name="status" class="item-card-text" @change="updateStatus" :value="localWorkItem.status">
+    <select name="status" class="item-card-text" :value="localWorkItem.status" @change="updateStatus">
       <option v-for="(s, i) in ['New', 'Approved', 'Done', 'Removed']" :key="i" :value="s">
         {{ s }}
       </option>
@@ -17,7 +17,7 @@
 
 <script setup>
 const props = defineProps(['workItem', 'members'])
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 
 import { putAssignWorkItem, putUpdateWorkItemStatus } from '@/apis/workitem';
 const emit = defineEmits(['afterUpdate'])

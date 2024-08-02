@@ -1,6 +1,6 @@
 <template>
   <v-menu bottom left offset-y>
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <v-btn class="hidden-md-and-up" icon v-on="on">
         <v-icon>mdi-dots-vertical</v-icon>
       </v-btn>

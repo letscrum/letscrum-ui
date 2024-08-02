@@ -3,38 +3,38 @@
     <v-toolbar flat>
       <v-toolbar-title>Login form</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn icon v-if="isDialog != undefined" @click="$emit('close-dialog')">
+      <v-btn v-if="isDialog != undefined" icon @click="$emit('close-dialog')">
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-toolbar>
     <v-card-text>
       <v-form ref="form" v-model="valid">
         <v-text-field
+          v-model="form.email"
           label="Email Address"
           name="email"
           prepend-icon="mdi-email"
           type="text"
-          v-model="form.email"
           :rules="emailRules"
           required
         />
         <v-text-field
           id="password"
+          v-model="form.password"
           label="Password"
           name="password"
           prepend-icon="mdi-lock"
           type="password"
-          v-model="form.password"
           :rules="passwordRules"
           required
         />
         <v-text-field
           id="rePassword"
+          v-model="form.rePassword"
           label="Confirm Password"
           name="rePassword"
           prepend-icon="mdi-lock"
           type="password"
-          v-model="form.rePassword"
           :rules="rePasswordRules"
           required
         />

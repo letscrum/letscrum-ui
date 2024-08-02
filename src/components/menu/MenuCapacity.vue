@@ -19,8 +19,8 @@
     Undo
   </v-btn>
   <v-menu offset-y bottom right>
-    <template v-slot:activator="{ on, attrs }">
-      <v-btn v-bind="attrs" v-on="on" tile icon small style="margin-top: 10px;">
+    <template #activator="{ on, attrs }">
+      <v-btn v-bind="attrs" tile icon small style="margin-top: 10px;" v-on="on">
         <v-icon>
           mdi-dots-horizontal
         </v-icon>
@@ -51,8 +51,8 @@
   </v-menu>
   <v-spacer></v-spacer>
   <v-menu offset-y bottom left>
-    <template v-slot:activator="{ on, attrs }">
-      <v-btn v-bind="attrs" v-on="on" tile icon small style="margin-top: 10px;">
+    <template #activator="{ on, attrs }">
+      <v-btn v-bind="attrs" tile icon small style="margin-top: 10px;" v-on="on">
         <v-icon>
           mdi-order-bool-ascending
         </v-icon>

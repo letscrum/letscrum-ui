@@ -5,7 +5,7 @@
         <h2>Sprints</h2>
       </v-col>
       <v-col>
-        <SprintCreate @afterCreate="LoadSprints()">
+        <SprintCreate @after-create="LoadSprints()">
           <v-btn outlined class="float-right" tile prepend-icon="mdi-pencil">
             Create
           </v-btn>
@@ -121,7 +121,7 @@
     </v-row>
     <v-divider class="my-2"></v-divider>
     <v-row no-gutters>
-      <v-col cols="12" md="4" class="pa-1" v-for="(sprint, i) in sprints" :key="i">
+      <v-col v-for="(sprint, i) in sprints" :key="i" cols="12" md="4" class="pa-1">
         {{ sprint }}
         <v-btn
           outlined
@@ -154,20 +154,14 @@ const router = useRouter()
 
 const store = useAppStore();
 
-const sprint = ref({})
-
-const dates = ref([])
 
 const date = ref([null, null])
-const sprintName = ref('')
 const startDate = ref('')
 const endDate = ref('')
 const rangeDate = ref('')
-const menu = ref(false)
-const dialog = ref(false)
 const sprints = ref([])
 
-watch(date, (date, preDate) => {
+watch(date, (date) => {
   startDate.value = date[0] ? date[0] : '';
   endDate.value = date[1] ? date[1] : '';
   if (date[0] > date[1]) {

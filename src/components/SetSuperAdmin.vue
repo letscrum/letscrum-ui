@@ -1,10 +1,10 @@
 <template>
   <v-dialog
+    v-model="dialog"
     width="50%"
     persistent
-    v-model="dialog"
   >
-    <template v-slot:activator="{ props: activatorProps }">
+    <template #activator="{ props: activatorProps }">
       <div v-bind="activatorProps">
         <slot></slot>
       </div>
@@ -18,7 +18,7 @@
       :text="props.user.isSuperAdmin ? 'Remove super admin?' : 'Set as super admin?'"
       :title="props.user.id"
     >
-      <template v-slot:actions>
+      <template #actions>
         <v-spacer></v-spacer>
 
         <v-btn @click="dialog = false">
