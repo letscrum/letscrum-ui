@@ -80,11 +80,11 @@ function changeTheme() {
 }
 
 function changeLanguage() {
-  if (store.language === 'cn') {
+  if (store.language === 'zh') {
     store.setLanguage('en');
   }
   else {
-    store.setLanguage('cn');
+    store.setLanguage('zh');
   }
   location.reload();
 }

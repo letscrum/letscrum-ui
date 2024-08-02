@@ -148,7 +148,7 @@ router.beforeEach((to, from, next) => {
     }
   } else {
     if (store.isSignedIn) {
-      next({ name: 'Home' })
+      next({ name: 'Orgs' })
     } else {
       next()
     }

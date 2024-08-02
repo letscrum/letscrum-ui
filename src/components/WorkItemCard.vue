@@ -20,7 +20,6 @@ const props = defineProps(['workItem', 'members'])
 import { onMounted, ref } from 'vue';
 
 import { putAssignWorkItem, putUpdateWorkItemStatus } from '@/apis/workitem';
-import { defineEmits } from 'vue';
 const emit = defineEmits(['afterUpdate'])
 // console.log(props.workItem)
 import { useRoute } from 'vue-router';

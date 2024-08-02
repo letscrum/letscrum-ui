@@ -1,23 +1,18 @@
-// import Vue from 'vue'
-// import VueI18n from 'vue-i18n'
 
-// Vue.use(VueI18n)
+import { createI18n } from 'vue-i18n'
+import ZH from '@/locales/zh.json';
+import EN from '@/locales/en.json';
 
-// function loadLocaleMessages() {
-//   const locales = require.context('./locales', true, /[A-Za-z0-9-_,\s]+\.json$/i)
-//   const messages = {}
-//   locales.keys().forEach((key) => {
-//     const matched = key.match(/([A-Za-z0-9-_]+)\./i)
-//     if (matched && matched.length > 1) {
-//       const locale = matched[1]
-//       messages[locale] = locales(key)
-//     }
-//   });
-//   return messages
-// }
+function loadLocaleMessages() {
+  const messages = {
+    zh: ZH,
+    en: EN,
+  }
+  return messages
+}
 
-// export default new VueI18n({
-//   locale: localStorage.language || window.navigator.language.toLowerCase() || 'cn',
-//   fallbackLocale: 'cn',
-//   messages: loadLocaleMessages()
-// })
+export default createI18n({
+  locale: localStorage.language || window.navigator.language.toLowerCase() || 'zh',
+  fallbackLocale: 'zh',
+  messages: loadLocaleMessages()
+})

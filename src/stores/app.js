@@ -7,7 +7,7 @@ import UserMenu from '@/assets/user/menu.json';
 
 export const useAppStore = defineStore('app', {
   state: () => ({
-    language: localStorage.language || window.navigator.language.toLowerCase() || 'cn',
+    language: localStorage.language || window.navigator.language.toLowerCase() || 'zh',
     rail: false,
     theme: null,
     logoUrl: '/assets/images/logo.png',
