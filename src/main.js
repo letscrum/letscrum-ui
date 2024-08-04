@@ -42,6 +42,14 @@ if (!currentTheme) {
 
 store.changeTheme(currentTheme)
 
+if (localStorage.sprintShowDetails == 'true') {
+  store.setTaskboardSidebar('details')
+} else if (localStorage.sprintShowSprints == 'true') {
+  store.setTaskboardSidebar('sprints')
+} else {
+  store.setTaskboardSidebar('')
+}
+
 import axios from 'axios'
 
 // read base url from .env file

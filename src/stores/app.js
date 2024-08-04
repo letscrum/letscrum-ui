@@ -42,7 +42,9 @@ export const useAppStore = defineStore('app', {
       id: null,
       name: null,
       startDate: null,
-      endDate: null
+      endDate: null,
+      showDetails: false,
+      showSprints: false,
     },
   }),
   getters: {
@@ -71,6 +73,8 @@ export const useAppStore = defineStore('app', {
         this.sprint.name = localStorage.sprintName;
         this.sprint.startDate = localStorage.sprintStartDate;
         this.sprint.endDate = localStorage.sprintEndDate;
+        this.sprint.showDetails = localStorage.sprintShowDetails;
+        this.sprint.showSprints = localStorage.sprintShowSprints;
       }
     },
     signIn(payload) {
@@ -117,6 +121,8 @@ export const useAppStore = defineStore('app', {
       localStorage.removeItem('sprintName');
       localStorage.removeItem('sprintStartDate');
       localStorage.removeItem('sprintEndDate');
+      localStorage.removeItem('sprintShowDetails');
+      localStorage.removeItem('sprintShowSprints');
       this.user.id = null;
       this.user.name = null;
       this.user.email = null;
@@ -134,6 +140,8 @@ export const useAppStore = defineStore('app', {
       this.sprint.name = null;
       this.sprint.startDate = null;
       this.sprint.endDate = null;
+      this.sprint.showDetails = false;
+      this.sprint.showSprints = false;
       this.breadcrumbs = [];
     },
     setOrg(payload) {
@@ -177,7 +185,7 @@ export const useAppStore = defineStore('app', {
         id,
         name,
         startDate,
-        endDate
+        endDate,
       } = payload;
       localStorage.sprintId = id;
       localStorage.sprintName = name;
@@ -187,8 +195,26 @@ export const useAppStore = defineStore('app', {
         id,
         name,
         startDate,
-        endDate
+        endDate,
       };
+    },
+    setTaskboardSidebar(payload) {
+      if (payload == 'details') {
+        localStorage.sprintShowDetails = true;
+        localStorage.sprintShowSprints = false;
+        this.sprint.showDetails = true;
+        this.sprint.showSprints = false;
+      } else if (payload == 'sprints') {
+        localStorage.sprintShowDetails = false;
+        localStorage.sprintShowSprints = true;
+        this.sprint.showDetails = false;
+        this.sprint.showSprints = true;
+      } else {
+        localStorage.sprintShowDetails = false;
+        localStorage.sprintShowSprints = false;
+        this.sprint.showDetails = false;
+        this.sprint.showSprints = false;
+      }
     },
     clearOrg() {
       localStorage.removeItem('orgId');
@@ -215,10 +241,14 @@ export const useAppStore = defineStore('app', {
       localStorage.removeItem('sprintName');
       localStorage.removeItem('sprintStartDate');
       localStorage.removeItem('sprintEndDate');
+      localStorage.removeItem('sprintShowDetails');
+      localStorage.removeItem('sprintShowSprints');
       this.sprint.id = null;
       this.sprint.name = null;
       this.sprint.startDate = null;
       this.sprint.endDate = null;
+      this.sprint.showDetails = false;
+      this.sprint.showSprints = false;
     },
     setRail(payload) {
       localStorage.rail = Boolean(payload);

@@ -134,12 +134,12 @@ tile outlined class="mb-2 mr-2 float-left"
         </v-data-iterator>
       </v-col>
       <v-divider vertical />
-      <v-col v-if="showDetails" cols="3">
+      <v-col v-if="store.sprint.showDetails" cols="3">
         <v-card flat tile>
           <v-card-title>
             <span class="text-h5">Work Details</span>
             <v-spacer></v-spacer>
-            <v-btn icon="mdi-close" @click="showDetails = false">
+            <v-btn icon="mdi-close" @click="onCloseSide">
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </v-card-title>
@@ -151,12 +151,12 @@ tile outlined class="mb-2 mr-2 float-left"
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col v-if="showSprints" cols="3">
+      <v-col v-if="store.sprint.showSprints" cols="3">
         <v-card flat tile>
           <v-card-title>
             <span class="text-h5">Sprints</span>
             <v-spacer></v-spacer>
-            <v-btn icon="mdi-close" @click="showSprints = false">
+            <v-btn icon="mdi-close" @click="onCloseSide">
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </v-card-title>
@@ -236,8 +236,6 @@ const rightTaskTitle = ref(null)
 const createTaskWorkItemId = ref(0)
 const sprintWorkItems = ref([])
 
-const showDetails = ref(false)
-const showSprints = ref(true)
 const expanded = ref([])
 
 function LoadWorkItems() {
@@ -285,6 +283,10 @@ function AddWorkItem(type) {
   setTimeout(() => {
     createWorkItemTitle.value.focus()
   }, 100);
+}
+
+function onCloseSide() {
+  store.setTaskboardSidebar('')
 }
 
 function AddTask(workItemId) {
@@ -375,13 +377,7 @@ defineExpose({
 })
 
 function show(type) {
-  showDetails.value = false
-  showSprints.value = false
-  if (type === 'details') {
-    showDetails.value = !showDetails.value
-  } else {
-    showSprints.value = !showSprints.value
-  }
+  store.setTaskboardSidebar(type)
 }
 
 function collapseAll() {
