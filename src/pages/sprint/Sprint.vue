@@ -79,12 +79,12 @@
         inset
         class="mx-2"
       ></v-divider>
-      <router-view name="menu" @create-work-item="onCreateWorkItem">
+      <router-view name="menu" @create-work-item="onCreateWorkItem" @show="onShow">
       </router-view>
     </v-tabs>
     <v-divider class="my-2"></v-divider>
     <router-view v-slot="{ Component }">
-      <component :is="Component" ref="mainContent" />
+      <component :is="Component" ref="mainContent" :sprints="sprints" />
     </router-view>
   </DefaultLayout>
 </template>
@@ -167,6 +167,9 @@ function onCreateWorkItem(workItemType) {
   mainContent.value.AddWorkItem(workItemType)
 }
 
+function onShow(type) {
+  mainContent.value.show(type)
+}
 onMounted(() => {
   LoadSprints()
 })

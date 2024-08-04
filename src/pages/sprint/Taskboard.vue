@@ -21,8 +21,7 @@
                   <v-row no-gutters>
                     <v-col cols="2">
                       <v-icon icon="mdi-menu-down" size="x-small" width="10%" class="float-left"></v-icon>
-                      <v-sheet
-tile outlined class="mb-2 mr-2 float-left"
+                      <v-sheet tile outlined class="mb-2 mr-2 float-left"
                         style="border-left-color: rgb(0, 156, 204); border-width: 1px; border-left-width: 3px;"
                         width="85%" min-width="160" height="100">
                           <input
@@ -47,18 +46,27 @@ tile outlined class="mb-2 mr-2 float-left"
             </v-row>
           </template>
           <template #default="{ items, isExpanded, toggleExpand }">
+
             <div v-for="item in items" :key="item.raw.id">
               <v-expand-transition>
                 <v-row v-if="!isExpanded(item)" no-gutters>
                   <v-col cols="2">
                     <v-icon icon="mdi-menu-down" size="x-small" width="10%" class="float-left ma-1" @click="() => toggleExpand(item)"></v-icon>
-                    <WorkItemCard :work-item="item.raw" :members="sprint.members" @after-update="updateWorkItem"></WorkItemCard>
+                    <VueDraggable
+                      :id="item.raw.id"
+                      v-model="workItems"
+                      group="workItem"
+                      style="background-color: aquamarine; width: 100%; height: 100%;"
+                      @add="onMoveToSprint"
+                      >
+                      <WorkItemCard :work-item="item.raw" :members="sprint.members" @after-update="updateWorkItem"></WorkItemCard>
+                    </VueDraggable>
+
                   </v-col>
                   <v-col cols="10">
                     <v-row no-gutters>
                       <v-col v-for="i in ['To Do', 'In Progress', 'Done']" :key="i" cols="4">
-                        <v-row
-no-gutters
+                        <v-row no-gutters
                         style="background-color: aquamarine; width: 100%; height: 80%;"
                         >
                           <v-col
@@ -121,16 +129,17 @@ tile outlined class="mb-2 mr-2 float-left"
                 </v-row>
               </v-expand-transition>
             </div>
+
           </template>
         </v-data-iterator>
       </v-col>
       <v-divider vertical />
-      <v-col v-if="workDetail" cols="3">
+      <v-col v-if="showDetails" cols="3">
         <v-card flat tile>
           <v-card-title>
             <span class="text-h5">Work Details</span>
             <v-spacer></v-spacer>
-            <v-btn icon="mdi-close" @click="workDetail = false">
+            <v-btn icon="mdi-close" @click="showDetails = false">
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </v-card-title>
@@ -142,6 +151,51 @@ tile outlined class="mb-2 mr-2 float-left"
           </v-card-text>
         </v-card>
       </v-col>
+      <v-col v-if="showSprints" cols="3">
+        <v-card flat tile>
+          <v-card-title>
+            <span class="text-h5">Sprints</span>
+            <v-spacer></v-spacer>
+            <v-btn icon="mdi-close" @click="showSprints = false">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </v-card-title>
+          <v-card-text>
+            <div v-for="item in props.sprints"
+                :key="item.id">
+              <VueDraggable
+                :id="item.id"
+                v-model="sprintWorkItems"
+                group="workItem"
+                style="background-color: aquamarine; width: 100%; height: 100%;"
+                draggable="false"
+                :disabled="item.id === route.params.sprintId"
+                @add="onMoveToSprint"
+              >
+                <v-list-item
+                  lines="two"
+                  :to="'/orgs/' + store.org.id + '/projects/' + item.projectId + '/sprints/' + item.id"
+                  @click="onSetSprint(item.id, item.name, item.startDate, item.endDate)"
+                >
+
+                  <v-list-item-title>{{ item.name }}</v-list-item-title>
+                  <v-list-item-subtitle>{{ new Date(item.startDate * 1000).toISOString().substring(0, 10) + ' - ' + new Date(item.endDate * 1000).toISOString().substring(0, 10) }}</v-list-item-subtitle>
+                  <template #append>
+                    <v-chip
+                      :color="item.status === 'Current' ? 'primary' : ''"
+                      :variant="item.status === 'Current' ? 'flat' : 'tonal'"
+                    >
+                      {{ item.status }}
+                    </v-chip>
+                  </template>
+
+                </v-list-item>
+
+              </VueDraggable>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-col>
     </v-row>
   </div>
 </template>
@@ -150,17 +204,22 @@ tile outlined class="mb-2 mr-2 float-left"
 
 import { onMounted, ref } from 'vue'
 
-import { getGetWorkItems, postCreateWorkItem } from '@/apis/workitem';
+import { getGetWorkItems, postCreateWorkItem, putMoveWorkItem } from '@/apis/workitem';
 
 import { postCreateTask, putMoveTask } from '@/apis/task';
 
 import { getGetSprint } from '@/apis/sprint';
 
 import { useRoute } from 'vue-router'
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
 
 import { useAppStore } from '@/stores/app'
 
 import { VueDraggable } from 'vue-draggable-plus'
+
+const props = defineProps(['sprints'])
 
 const store = useAppStore()
 
@@ -175,8 +234,10 @@ const createWorkItemTitle = ref(null)
 const createTaskTitle = ref(null)
 const rightTaskTitle = ref(null)
 const createTaskWorkItemId = ref(0)
+const sprintWorkItems = ref([])
 
-const workDetail = ref(false)
+const showDetails = ref(false)
+const showSprints = ref(true)
 const expanded = ref([])
 
 function LoadWorkItems() {
@@ -189,6 +250,32 @@ function LoadWorkItems() {
     workItems.value = res.data.items
     console.log('workItems', workItems.value)
   })
+}
+
+function onMoveToSprint(item) {
+  console.log('onMoveToSprint', item)
+  console.log('to', item.to)
+  console.log('tid', item.to.id)
+  console.log('from', item.from)
+  console.log('fid', item.from.id)
+  if (route.params.sprintId != item.to.id) {
+    putMoveWorkItem(store.org.id, route.params.projectId, item.from.id, {
+      sprintId: item.to.id,
+    }).then(res => {
+      console.log('move res', res)
+    })
+  }
+}
+
+function onSetSprint(id, name, startDate, endDate) {
+  store.setSprint({
+    id: id,
+    name: name,
+    startDate: startDate,
+    endDate: endDate
+  })
+  LoadWorkItems()
+  router.push(`/orgs/${store.org.id}/projects/${route.params.projectId}/sprints/${id}`)
 }
 
 function AddWorkItem(type) {
@@ -283,8 +370,19 @@ function filterTasks(userId) {
 defineExpose({
   filterTasks,
   AddWorkItem,
-  LoadWorkItems
+  LoadWorkItems,
+  show,
 })
+
+function show(type) {
+  showDetails.value = false
+  showSprints.value = false
+  if (type === 'details') {
+    showDetails.value = !showDetails.value
+  } else {
+    showSprints.value = !showSprints.value
+  }
+}
 
 function collapseAll() {
   console.log('workItems', workItems.value)

@@ -13,3 +13,5 @@ export const deleteDeleteWorkItem = (orgId, projectId, workItemId) => axios.dele
 export const putUpdateWorkItemStatus = (orgId, projectId, workItemId, params) => axios.put(`${version}/orgs/${orgId}/projects/${projectId}/workitems/${workItemId}/status`, params)
 
 export const putAssignWorkItem = (orgId, projectId, workItemId, params) => axios.put(`${version}/orgs/${orgId}/projects/${projectId}/workitems/${workItemId}/assign`, params)
+
+export const putMoveWorkItem = (orgId, projectId, workItemId, params) => axios.put(`${version}/orgs/${orgId}/projects/${projectId}/workitems/${workItemId}/move`, params)
