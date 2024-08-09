@@ -4,8 +4,8 @@
       :src="store.logoUrl"
       contain
       class="mr-5"
-      width="110"
-      max-width="110"
+      width="150"
+      max-width="150"
     />
     <v-toolbar-items class="hidden-sm-and-down">
       <v-btn

@@ -10,7 +10,7 @@ export const useAppStore = defineStore('app', {
     language: localStorage.language || window.navigator.language.toLowerCase() || 'zh',
     rail: false,
     theme: null,
-    logoUrl: '/assets/images/logo.png',
+    logoUrl: '/images/logo.svg',
     menus: Menu,
     links: Link,
     accounts: Account,
@@ -256,9 +256,7 @@ export const useAppStore = defineStore('app', {
     },
     changeTheme(payload) {
       localStorage.theme = payload;
-      localStorage.logoUrl = payload ? '/assets/images/logo-dark.png' : '/assets/images/logo.png';
       this.theme = payload;
-      this.logoUrl = this.theme ? '/assets/images/logo-dark.png' : '/assets/images/logo.png';
     },
     setLanguage(payload) {
       localStorage.language = payload;

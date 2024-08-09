@@ -300,7 +300,7 @@ import DefaultLayout from '@/layouts/DefaultLayout.vue'
 
 import { useAppStore } from '@/stores/app'
 import { getGetProject, putUpdateProject, deleteDeleteProject } from '@/apis/project'
-import { getGetUsers } from '@/apis/user'
+import { getGetOrgMembers } from '@/apis/org'
 import { useRouter } from 'vue-router'
 import { getGetSprints, deleteDeleteSprint } from '@/apis/sprint';
 import { ref, watch, onMounted } from 'vue';
@@ -324,13 +324,18 @@ const searchUsers = val => {
     users.value = []
     return false
   }
-  getGetUsers({
-    keyword: val,
-    page: 1,
-    size: 999,
-  }).then(res => {
+
+  getGetOrgMembers(store.org.id).then((res) => {
+    console.log(res)
     if (res.status === 200) {
-      users.value = res.data.items
+      users.value = res.data.items.filter((user) => user.member.name.includes(val)).map((item) => {
+        return {
+          id: item.member.id,
+          name: item.member.name,
+          isAdmin: item.isAdmin,
+          owner: item.member.id === store.user.id ? true : false
+        }
+      })
       console.log(members.value)
     }
   })

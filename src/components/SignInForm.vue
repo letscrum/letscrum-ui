@@ -3,7 +3,7 @@
     <v-toolbar flat>
       <v-toolbar-title>Login form</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn v-if="isDialog != undefined" icon @click="$emit('close-dialog')">
+      <v-btn v-if="props.isDialog != undefined" icon @click="OnClose">
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-toolbar>
@@ -44,7 +44,9 @@ import { ref } from 'vue'
 import { postSignIn } from '@/apis/index'
 import axios from 'axios'
 
-defineProps(['isDialog'])
+const props = defineProps(['isDialog'])
+
+defineEmits(['close-dialog'])
 
 const store = useAppStore()
 const router = useRouter()
@@ -52,6 +54,11 @@ const name = ref('admin')
 const password = ref('admin')
 
 const loading = ref(false)
+
+function OnClose() {
+
+  emit('close-dialog')
+}
 
 function SingIn() {
   loading.value = true

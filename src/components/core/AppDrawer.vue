@@ -11,7 +11,7 @@
     <v-list density="compact" nav>
       <v-list-item prepend-icon="mdi-home-city" title="Orgs" value="orgs" :to="'/orgs/'"></v-list-item>
     </v-list>
-    <v-list density="compact" nav>
+    <v-list v-if="store.org.id != '' && store.org.id != null" density="compact" nav>
       <v-list-item prepend-icon="mdi-home-city" title="Projects" value="home" :to="'/orgs/' + store.org.id + '/projects'"></v-list-item>
     </v-list>
     <v-list v-if="store.project.id != '' && store.project.id != null && store.org.id != '' && store.org.id != null" density="compact" nav>
@@ -34,7 +34,7 @@
               @click.stop="rail = !rail"></v-btn>
           </template>
         </v-list-item>
-        <v-list-item v-else-if="store.user.isSuperAdmin == 'true'">
+        <v-list-item v-else-if="store.user.isSuperAdmin == 'true' || store.user.isSuperAdmin == true ">
           <v-btn block :to="'/users'">
             Users
           </v-btn>

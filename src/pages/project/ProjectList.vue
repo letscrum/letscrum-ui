@@ -120,8 +120,8 @@ import { onMounted, ref } from 'vue';
 
 const store = useAppStore()
 
-import { getGetProjects, postCreateProject } from '@/apis/project';
-import { getGetUsers } from '@/apis/user'
+import { getGetProjects, postCreateProject } from '@/apis/project'
+import { getGetOrgMembers } from '@/apis/org'
 
 const projects = ref([])
 const project = ref({})
@@ -137,13 +137,17 @@ const searchUsers = val => {
     users.value = []
     return false
   }
-  getGetUsers({
-    keyword: val,
-    page: 1,
-    size: 999,
-  }).then(res => {
+  getGetOrgMembers(store.org.id).then((res) => {
+    console.log(res)
     if (res.status === 200) {
-      users.value = res.data.items
+      users.value = res.data.items.filter((user) => user.member.name.includes(val)).map((item) => {
+        return {
+          id: item.member.id,
+          name: item.member.name,
+          isAdmin: item.isAdmin,
+          owner: item.member.id === store.user.id ? true : false
+        }
+      })
       console.log(members.value)
     }
   })
