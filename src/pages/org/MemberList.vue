@@ -1,5 +1,6 @@
 <template>
   <DefaultLayout>
+    {{ org }}
     <v-card flat>
       <v-card-title class="d-flex align-center pe-2">
         <v-icon icon="mdi-video-input-component"></v-icon>
@@ -107,7 +108,7 @@
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import { ref } from 'vue'
 import { onMounted } from 'vue'
-import { getGetOrgMembers, postAddOrgMembers } from '@/apis/org'
+import { getGetOrgMembers, postAddOrgMembers, getGetOrg } from '@/apis/org'
 import { useAppStore } from '@/stores/app'
 import { getGetUsers } from '@/apis/user'
 
@@ -119,6 +120,7 @@ const search = ref('')
 const members = ref([])
 const addMembers = ref([])
 const users = ref([])
+const org = ref({})
 
 function fetchMembers() {
   getGetOrgMembers(store.org.id).then((res) => {
@@ -160,7 +162,15 @@ function onAdd() {
 
 }
 
+function getOrg() {
+  getGetOrg(store.org.id).then((res) => {
+    console.log(res)
+    org.value = res.data.item
+  })
+}
+
 onMounted(() => {
+  getOrg()
   fetchMembers()
 })
 

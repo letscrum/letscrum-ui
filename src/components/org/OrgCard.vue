@@ -21,6 +21,7 @@
 <script setup>
 import { getGetOrg } from '@/apis/org'
 import { useAppStore } from '@/stores/app'
+import { ref } from 'vue';
 import { useRouter } from 'vue-router'
 
 const store = useAppStore()
@@ -28,8 +29,10 @@ const router = useRouter()
 
 const props = defineProps(['org'])
 
+const org = ref(props.org)
+
 function onLoadOrg() {
-  getGetOrg(props.org.id).then((res) => {
+  getGetOrg(org.value.id).then((res) => {
     console.log(res);
     if (res.status === 200) {
       store.setOrg({

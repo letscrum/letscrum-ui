@@ -1,7 +1,7 @@
 <template>
   <v-menu bottom left offset-y :close-on-content-click="false">
     <template #activator="{ props }">
-      <v-btn icon="mdi-account" v-bind="props"></v-btn>
+      <v-btn prepend-icon="mdi-account" v-bind="props">{{ store.user.name }}</v-btn>
     </template>
     <v-card min-width="200">
       <v-list>
