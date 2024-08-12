@@ -136,25 +136,43 @@
     <v-divider class="my-2"></v-divider>
     <v-row no-gutters>
       <v-col>
-        {{ project.description }}
+        {{ project }}
       </v-col>
     </v-row>
-    <v-row v-for="(member, i) in admins" :key="i" no-gutters>
-      <v-col>
-        <v-chip
-        >
-          {{ member.name }}
-        </v-chip>
-      </v-col>
-    </v-row>
-    <v-row v-for="(member, i) in members" :key="i" no-gutters>
-      <v-col>
-        <v-chip
-        >
-          {{ member.name }}
-        </v-chip>
-      </v-col>
-    </v-row>
+    <v-card flat>
+      <v-card-title class="d-flex align-center pe-2">
+        <v-icon icon="mdi-video-input-component"></v-icon>
+        Members
+        <v-spacer></v-spacer>
+
+        <v-spacer></v-spacer>
+        <v-text-field
+          v-model="search"
+          density="compact"
+          label="Search"
+          prepend-inner-icon="mdi-magnify"
+          variant="solo-filled"
+          flat
+          hide-details
+          single-line
+        ></v-text-field>
+      </v-card-title>
+      <v-spacer></v-spacer>
+
+      <v-divider></v-divider>
+      <v-data-table v-model:search="search" :items="allMembers">
+
+        <template #item.isAdmin="{ item }">
+          <v-chip
+            :color="item.isAdmin ? 'primary' : ''"
+            small
+          >
+            {{ item.isAdmin ? 'Admin' : 'Member' }}
+          </v-chip>
+        </template>
+
+      </v-data-table>
+    </v-card>
     <v-row no-gutters>
       <v-col>
         <h2>Sprints</h2>
@@ -314,10 +332,12 @@ const route = useRoute()
 const project = ref({})
 const admins = ref([])
 const members = ref([])
+const allMembers = ref([])
 const users = ref([])
 const search = ref('')
 const dialogUpdate = ref(false)
 const dialogDelete = ref(false)
+const dialogAdd = ref(false)
 
 const searchUsers = val => {
   if (!val) {
@@ -352,6 +372,7 @@ function onGetProject() {
         description: res.data.item.description,
       })
       project.value = res.data.item
+      allMembers.value = res.data.item.members
       admins.value = res.data.item.members.filter((member) => member.isAdmin).map((member) => ({
         id: member.userId,
         name: member.userName,
