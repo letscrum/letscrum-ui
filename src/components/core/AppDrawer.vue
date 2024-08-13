@@ -9,8 +9,8 @@
     </v-toolbar> -->
     <v-divider></v-divider>
     <div v-if="route.name == 'Orgs' || route.name == 'Projects' || route.name == 'OrgMembers'">
-      <v-list density="compact" nav v-for="org in store.orgs" :key="org.id" @click="onLoadOrg(org.id)">
-        <v-list-item prepend-icon="mdi-home-city" :title="org.name" :value="org.id" :to="'/orgs/' + org.id + '/projects'"></v-list-item>
+      <v-list density="compact" nav v-for="org in store.orgs" :key="org.id" @click="onLoadOrg(org)">
+        <v-list-item prepend-icon="mdi-home-city" :title="org.name" :to="'/orgs/' + org.id + '/projects'"></v-list-item>
       </v-list>
       <v-list density="compact" nav>
         <v-list-item prepend-icon="mdi-home-city" title="New Org" value="new"></v-list-item>
@@ -78,19 +78,14 @@ const rail = computed({
 })
 
 
-function onLoadOrg(orgId) {
-  getGetOrg(orgId).then((res) => {
-    if (res.status === 200) {
-      store.setOrg({
-        id: res.data.item.id,
-        name: res.data.item.name,
-        displayName: res.data.item.displayName,
-        description: res.data.item.description,
-      })
-      // router.push(`/orgs/${res.data.item.id}/projects`);
-      router.go(0);
-    }
-  });
+function onLoadOrg(org) {
+  store.setOrg({
+    id: org.id,
+    name: org.name,
+    displayName: org.displayName,
+    description: org.description,
+  })
+  router.push(`/orgs/${org.id}/projects`);
 }
 
 </script>

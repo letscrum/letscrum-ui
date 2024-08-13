@@ -211,6 +211,10 @@ onMounted(() => {
   LoadProjects()
 })
 
+onBeforeRouteUpdate(() => {
+  LoadProjects()
+})
+
 function LoadProjects() {
   getGetProjects(store.org.id, {
     page: 1,
