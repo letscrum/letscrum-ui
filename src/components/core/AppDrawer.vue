@@ -8,18 +8,22 @@
 
     </v-toolbar> -->
     <v-divider></v-divider>
-    <v-list density="compact" nav>
-      <v-list-item prepend-icon="mdi-home-city" title="Orgs" value="orgs" :to="'/orgs/'"></v-list-item>
-    </v-list>
-    <v-list v-if="store.org.id != '' && store.org.id != null" density="compact" nav>
-      <v-list-item prepend-icon="mdi-home-city" title="Projects" value="home" :to="'/orgs/' + store.org.id + '/projects'"></v-list-item>
-    </v-list>
-    <v-list v-if="store.project.id != '' && store.project.id != null && store.org.id != '' && store.org.id != null" density="compact" nav>
-      <v-list-item prepend-icon="mdi-home-city" title="Overview" value="overview" :to="'/orgs/' + store.org.id + '/projects/' + store.project.id"></v-list-item>
-    </v-list>
-    <v-list v-if="store.project.id != '' && store.project.id != null && store.org.id != '' && store.org.id != null && store.sprint.id != '' && store.sprint.id != null" density="compact" nav>
-      <v-list-item prepend-icon="mdi-home-city" title="Sprint" value="sprint" :to="'/orgs/' + store.org.id + '/projects/' + store.project.id + '/sprints/' + store.sprint.id"></v-list-item>
-    </v-list>
+    <div v-if="route.name == 'Orgs' || route.name == 'Projects' || route.name == 'OrgMembers'">
+      <v-list density="compact" nav v-for="org in store.orgs" :key="org.id" @click="onLoadOrg(org.id)">
+        <v-list-item prepend-icon="mdi-home-city" :title="org.name" :value="org.id" :to="'/orgs/' + org.id + '/projects'"></v-list-item>
+      </v-list>
+      <v-list density="compact" nav>
+        <v-list-item prepend-icon="mdi-home-city" title="New Org" value="new"></v-list-item>
+      </v-list>
+    </div>
+    <div v-else>
+      <v-list v-if="store.project.id != '' && store.project.id != null && store.org.id != '' && store.org.id != null" density="compact" nav>
+        <v-list-item prepend-icon="mdi-home-city" title="Overview" value="overview" :to="'/orgs/' + store.org.id + '/projects/' + store.project.id"></v-list-item>
+      </v-list>
+      <v-list v-if="store.project.id != '' && store.project.id != null && store.org.id != '' && store.org.id != null && store.sprint.id != '' && store.sprint.id != null" density="compact" nav>
+        <v-list-item prepend-icon="mdi-home-city" title="Sprint" value="sprint" :to="'/orgs/' + store.org.id + '/projects/' + store.project.id + '/sprints/' + store.sprint.id"></v-list-item>
+      </v-list>
+    </div>
     <template #append>
       <v-list>
         <v-list-item v-if="route.name != 'Orgs' && route.name != 'Users' && store.org.id != null && store.org.id != ''">
@@ -54,8 +58,11 @@
 <script setup>
 import { computed } from 'vue'
 import { useAppStore } from '@/stores/app'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { getGetOrg } from '@/apis/org'
+
 const route = useRoute()
+const router = useRouter()
 
 defineProps(['menus'])
 
@@ -69,4 +76,21 @@ const rail = computed({
     store.setRail(val);
   }
 })
+
+
+function onLoadOrg(orgId) {
+  getGetOrg(orgId).then((res) => {
+    if (res.status === 200) {
+      store.setOrg({
+        id: res.data.item.id,
+        name: res.data.item.name,
+        displayName: res.data.item.displayName,
+        description: res.data.item.description,
+      })
+      // router.push(`/orgs/${res.data.item.id}/projects`);
+      router.go(0);
+    }
+  });
+}
+
 </script>

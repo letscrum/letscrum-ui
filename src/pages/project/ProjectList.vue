@@ -105,8 +105,8 @@
     </v-row>
     <v-divider class="my-2"></v-divider>
     <v-row no-gutters>
-      <v-col v-for="(project, i) in projects" :key="i" cols="12" md="4" class="pa-1">
-        <ProjectCard :project="project"></ProjectCard>
+      <v-col v-for="(p, i) in projects" :key="i" cols="12" md="4" class="pa-1">
+        <ProjectCard :project="p"></ProjectCard>
       </v-col>
     </v-row>
   </DefaultLayout>
@@ -122,6 +122,7 @@ const store = useAppStore()
 
 import { getGetProjects, postCreateProject } from '@/apis/project'
 import { getGetOrgMembers } from '@/apis/org'
+import { onBeforeRouteUpdate } from 'vue-router';
 
 const projects = ref([])
 const project = ref({})
@@ -215,7 +216,7 @@ function LoadProjects() {
     page: 1,
     size: 12
   }).then((res) => {
-    console.log(res);
+    console.log('projects', res);
     if (res.status === 200) {
       projects.value = res.data.items;
     }

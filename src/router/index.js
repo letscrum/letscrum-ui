@@ -26,19 +26,22 @@ const routes = [
   },
   {
     path: '/orgs/:orgId/projects',
-    name: 'Home',
+    name: 'Projects',
     component: () => import('@/pages/project/ProjectList.vue'),
   },
   {
     path: '/orgs/:orgId/projects/:projectId',
+    name: 'Project',
     component: () => import('@/pages/project/ProjectOverview.vue')
   },
   {
     path: '/orgs/:orgId/projects/:projectId/sprints',
+    name: 'Sprints',
     component: () => import('@/pages/project/Sprints.vue'),
   },
   {
     path: '/orgs/:orgId/projects/:projectId/sprints/:sprintId',
+    name: 'Sprint',
     component: () => import('@/pages/sprint/Sprint.vue'),
     children: [
       {

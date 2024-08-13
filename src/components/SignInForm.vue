@@ -42,6 +42,7 @@ import { useAppStore } from '@/stores/app'
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 import { postSignIn } from '@/apis/index'
+import { getGetOrgs } from '@/apis/org'
 import axios from 'axios'
 
 const props = defineProps(['isDialog'])
@@ -76,8 +77,12 @@ function SingIn() {
         accessToken: res.data.item.token.accessToken,
         refreshToken: res.data.item.token.refreshToken
       });
-      router.push({ path: '/orgs' })
-      loading.value = false
+      getGetOrgs().then((res) => {
+        store.setOrgs(res.data.items)
+        store.setOrg(res.data.items[0])
+        router.push('/orgs/' + res.data.items[0].id + '/projects')
+        loading.value = false
+      })
     }
   }).catch(() => {
     loading.value = false

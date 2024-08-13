@@ -50,6 +50,10 @@ if (localStorage.sprintShowDetails == 'true') {
   store.setTaskboardSidebar('')
 }
 
+if (localStorage.orgs) {
+  store.orgs = JSON.parse(localStorage.orgs)
+}
+
 import axios from 'axios'
 
 // read base url from .env file

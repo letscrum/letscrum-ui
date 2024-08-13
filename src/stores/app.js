@@ -26,6 +26,7 @@ export const useAppStore = defineStore('app', {
       accessToken: null,
       refreshToken: null
     },
+    orgs: [],
     org: {
       id: null,
       name: null,
@@ -110,6 +111,7 @@ export const useAppStore = defineStore('app', {
       localStorage.removeItem('userIsSuperAdmin');
       localStorage.removeItem('tokenAccessToken');
       localStorage.removeItem('tokenRefreshToken');
+      localStorage.removeItem('orgs');
       localStorage.removeItem('orgId');
       localStorage.removeItem('orgName');
       localStorage.removeItem('orgDisplayName');
@@ -129,6 +131,7 @@ export const useAppStore = defineStore('app', {
       this.user.isSuperAdmin = null;
       this.token.accessToken = null;
       this.token.refreshToken = null;
+      this.orgs = [];
       this.org.id = null;
       this.org.name = null;
       this.org.displayName = null;
@@ -143,6 +146,10 @@ export const useAppStore = defineStore('app', {
       this.sprint.showDetails = false;
       this.sprint.showSprints = false;
       this.breadcrumbs = [];
+    },
+    setOrgs(payload) {
+      localStorage.orgs = JSON.stringify(payload);
+      this.orgs = payload;
     },
     setOrg(payload) {
       const {
@@ -215,6 +222,10 @@ export const useAppStore = defineStore('app', {
         this.sprint.showDetails = false;
         this.sprint.showSprints = false;
       }
+    },
+    clearOrgs() {
+      localStorage.removeItem('orgs');
+      this.orgs = [];
     },
     clearOrg() {
       localStorage.removeItem('orgId');
