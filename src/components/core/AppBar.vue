@@ -9,22 +9,28 @@
       @click="$router.push('/orgs/' + store.org.id + '/projects')"
     />
     <v-toolbar-items class="hidden-sm-and-down">
-      <v-btn
+      <!-- <v-btn
         v-for="(menu, i) in store.menus"
         :key="i"
         text
         :to="menu.path"
-      >{{ $t('core.menus.' + menu.name + '.text') }}</v-btn>
+      >{{ $t('core.menus.' + menu.name + '.text') }}</v-btn> -->
+      <v-breadcrumbs :items="nav">
+        <template #title="{ item }">
+          {{ item.title.toUpperCase() }}
+        </template>
+      </v-breadcrumbs>
+      <!-- <v-breadcrumbs :items="nav">
+        <template #item="{ item }">
+          <v-breadcrumbs-item>
+            <v-btn plain small tile :to="item.href" :disabled="item.disabled">
+              {{ item.text.toUpperCase() }}
+            </v-btn>
+          </v-breadcrumbs-item>
+        </template>
+      </v-breadcrumbs> -->
     </v-toolbar-items>
-    <v-breadcrumbs :items="store.breadcrumbs">
-      <template #item="{ item }">
-        <v-breadcrumbs-item>
-          <v-btn plain small tile :to="item.href" :disabled="item.disabled">
-            {{ item.text.toUpperCase() }}
-          </v-btn>
-        </v-breadcrumbs-item>
-      </template>
-    </v-breadcrumbs>
+
     <v-spacer></v-spacer>
     <!-- <v-text-field
       hide-details
@@ -73,6 +79,24 @@ const store = useAppStore()
 import { useTheme } from 'vuetify'
 
 const theme = useTheme()
+
+const nav = ref([
+        {
+          title: 'Orgs',
+          disabled: false,
+          to: '/orgs',
+        },
+        {
+          title: 'Link 1',
+          disabled: false,
+          to: 'breadcrumbs_link_1',
+        },
+        {
+          title: 'Link 2',
+          disabled: true,
+          to: 'breadcrumbs_link_2',
+        },
+      ])
 
 
 function changeTheme() {
