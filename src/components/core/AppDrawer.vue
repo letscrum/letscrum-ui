@@ -26,20 +26,11 @@
     </div>
     <template #append>
       <v-list>
-        <v-list-item v-if="route.name != 'Orgs' && route.name != 'Users' && store.org.id != null && store.org.id != ''">
-          <v-btn block :to="'/orgs/' + store.org.id + '/members'">
+        <v-list-item>
+          <v-btn v-if="route.name != 'Orgs' && route.name != 'Users' && store.org.id != null && store.org.id != ''" block :to="'/orgs/' + store.org.id + '/members'">
             Manage
           </v-btn>
-          <template #append>
-            <v-btn
-              :icon="rail ? 'mdi-chevron-right' : 'mdi-chevron-left'"
-              variant="text"
-              :style="rail ? 'margin-left: -12px; margin-right: 12px;' : ''"
-              @click.stop="rail = !rail"></v-btn>
-          </template>
-        </v-list-item>
-        <v-list-item v-else-if="store.user.isSuperAdmin == 'true' || store.user.isSuperAdmin == true ">
-          <v-btn block :to="'/users'">
+          <v-btn v-else-if="store.user.isSuperAdmin == 'true' || store.user.isSuperAdmin == true " block :to="'/users'">
             Users
           </v-btn>
           <template #append>
