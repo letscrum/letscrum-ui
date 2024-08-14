@@ -7,8 +7,9 @@ import UserMenu from '@/assets/user/menu.json';
 
 export const useAppStore = defineStore('app', {
   state: () => ({
-    language: localStorage.language || window.navigator.language.toLowerCase() || 'zh',
+    language: localStorage.language || window.navigator.language.toLowerCase() || 'en',
     rail: false,
+    drawer: false,
     theme: null,
     logoUrl: '/images/logo.svg',
     menus: Menu,
@@ -264,6 +265,10 @@ export const useAppStore = defineStore('app', {
     setRail(payload) {
       localStorage.rail = Boolean(payload);
       this.rail = Boolean(payload);
+    },
+    setDrawer(payload) {
+      localStorage.drawer = Boolean(payload);
+      this.drawer = Boolean(payload);
     },
     changeTheme(payload) {
       localStorage.theme = payload;

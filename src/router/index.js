@@ -18,26 +18,94 @@ const routes = [
     path: '/orgs',
     name: 'Orgs',
     component: () => import('@/pages/org/OrgList.vue'),
+    meta: {
+      breadcrumbs: [
+        {
+          title: 'Orgs',
+          to: { name: 'Orgs' }
+        }
+      ]
+    },
   },
   {
     path: '/orgs/:orgId/members',
     name: 'OrgMembers',
     component: () => import('@/pages/org/MemberList.vue'),
+    meta: {
+      breadcrumbs: [
+        {
+          title: 'Orgs',
+          to: { name: 'Orgs' }
+        },
+        {
+          title: 'Manage',
+          to: { name: 'OrgMembers' }
+        },
+      ]
+    },
   },
   {
     path: '/orgs/:orgId/projects',
     name: 'Projects',
     component: () => import('@/pages/project/ProjectList.vue'),
+    meta: {
+      breadcrumbs: [
+        {
+          title: 'Orgs',
+          to: { name: 'Orgs' }
+        },
+        {
+          title: 'Projects',
+          to: { name: 'Projects' }
+        },
+      ]
+    },
   },
   {
     path: '/orgs/:orgId/projects/:projectId',
     name: 'Project',
-    component: () => import('@/pages/project/ProjectOverview.vue')
+    component: () => import('@/pages/project/ProjectOverview.vue'),
+    meta: {
+      breadcrumbs: [
+        {
+          title: 'Orgs',
+          to: { name: 'Orgs' }
+        },
+        {
+          title: 'Projects',
+          to: { name: 'Projects' }
+        },
+        {
+          title: 'Project',
+          to: { name: 'Project' }
+        },
+      ]
+    },
   },
   {
     path: '/orgs/:orgId/projects/:projectId/sprints',
     name: 'Sprints',
     component: () => import('@/pages/project/Sprints.vue'),
+    meta: {
+      breadcrumbs: [
+        {
+          title: 'Orgs',
+          to: { name: 'Orgs' }
+        },
+        {
+          title: 'Projects',
+          to: { name: 'Projects' }
+        },
+        {
+          title: 'Project',
+          to: { name: 'Project' }
+        },
+        {
+          title: 'Sprints',
+          to: { name: 'Sprints' }
+        }
+      ]
+    },
   },
   {
     path: '/orgs/:orgId/projects/:projectId/sprints/:sprintId',
@@ -46,26 +114,107 @@ const routes = [
     children: [
       {
         path: '',
+        name: 'SprintTaskboard',
         components: {
           default: () => import('@/pages/sprint/Taskboard.vue'),
           menu: () => import('@/components/menu/MenuTaskboard.vue')
-        }
+        },
+        meta: {
+          breadcrumbs: [
+            {
+              title: 'Orgs',
+              to: { name: 'Orgs' }
+            },
+            {
+              title: 'Projects',
+              to: { name: 'Projects' }
+            },
+            {
+              title: 'Project',
+              to: { name: 'Project' }
+            },
+            {
+              title: 'Sprints',
+              to: { name: 'Sprints' }
+            }
+          ]
+        },
       },
       {
         path: 'backlog',
         components: {
           default: () => import('@/pages/sprint/Backlog.vue'),
           menu: () => import('@/components/menu/MenuBacklog.vue')
-        }
+        },
+        meta: {
+          breadcrumbs: [
+            {
+              title: 'Orgs',
+              to: { name: 'Orgs' }
+            },
+            {
+              title: 'Projects',
+              to: { name: 'Projects' }
+            },
+            {
+              title: 'Project',
+              to: { name: 'Project' }
+            },
+            {
+              title: 'Sprints',
+              to: { name: 'Sprints' }
+            }
+          ]
+        },
       },
       {
         path: 'capacity',
         components: {
           default: () => import('@/pages/sprint/Capacity.vue'),
           menu: () => import('@/components/menu/MenuCapacity.vue')
-        }
+        },
+        meta: {
+          breadcrumbs: [
+            {
+              title: 'Orgs',
+              to: { name: 'Orgs' }
+            },
+            {
+              title: 'Projects',
+              to: { name: 'Projects' }
+            },
+            {
+              title: 'Project',
+              to: { name: 'Project' }
+            },
+            {
+              title: 'Sprints',
+              to: { name: 'Sprints' }
+            }
+          ]
+        },
       }
     ],
+    meta: {
+      breadcrumbs: [
+        {
+          title: 'Orgs',
+          to: { name: 'Orgs' }
+        },
+        {
+          title: 'Projects',
+          to: { name: 'Projects' }
+        },
+        {
+          title: 'Project',
+          to: { name: 'Project' }
+        },
+        {
+          title: 'Sprints',
+          to: { name: 'Sprints' }
+        }
+      ]
+    },
   },
   {
     path: '/test/:tid',

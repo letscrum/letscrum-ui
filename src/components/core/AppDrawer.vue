@@ -1,29 +1,17 @@
 <template>
   <v-navigation-drawer
+    v-model="drawer"
     :rail="rail"
-    permanent
     @click="rail = false"
   >
-    <!-- <v-toolbar>
-
-    </v-toolbar> -->
     <v-divider></v-divider>
-    <div v-if="route.name == 'Orgs' || route.name == 'Projects' || route.name == 'OrgMembers'">
-      <v-list density="compact" nav v-for="org in store.orgs" :key="org.id" @click="onLoadOrg(org)">
-        <v-list-item prepend-icon="mdi-home-city" :title="org.name" :to="'/orgs/' + org.id + '/projects'"></v-list-item>
-      </v-list>
-      <v-list density="compact" nav>
-        <v-list-item prepend-icon="mdi-home-city" title="New Org" value="new"></v-list-item>
-      </v-list>
-    </div>
-    <div v-else>
-      <v-list v-if="store.project.id != '' && store.project.id != null && store.org.id != '' && store.org.id != null" density="compact" nav>
-        <v-list-item prepend-icon="mdi-home-city" title="Overview" value="overview" :to="'/orgs/' + store.org.id + '/projects/' + store.project.id"></v-list-item>
-      </v-list>
-      <v-list v-if="store.project.id != '' && store.project.id != null && store.org.id != '' && store.org.id != null && store.sprint.id != '' && store.sprint.id != null" density="compact" nav>
-        <v-list-item prepend-icon="mdi-home-city" title="Sprint" value="sprint" :to="'/orgs/' + store.org.id + '/projects/' + store.project.id + '/sprints/' + store.sprint.id"></v-list-item>
-      </v-list>
-    </div>
+    <v-list v-if="route.name == 'Orgs' || route.name == 'Projects' || route.name == 'OrgMembers'">
+      <v-list-item v-for="org in store.orgs" :key="org.id" @click="onLoadOrg(org)" prepend-icon="mdi-home-city" :title="org.name" :to="'/orgs/' + org.id + '/projects'"></v-list-item>
+    </v-list>
+    <v-list v-else>
+      <v-list-item v-if="store.project.id != '' && store.project.id != null && store.org.id != '' && store.org.id != null" prepend-icon="mdi-home-city" title="Overview" value="overview" :to="'/orgs/' + store.org.id + '/projects/' + store.project.id"></v-list-item>
+      <v-list-item v-if="store.project.id != '' && store.project.id != null && store.org.id != '' && store.org.id != null && store.sprint.id != '' && store.sprint.id != null" prepend-icon="mdi-home-city" title="Sprint" value="sprint" :to="'/orgs/' + store.org.id + '/projects/' + store.project.id + '/sprints/' + store.sprint.id"></v-list-item>
+    </v-list>
     <template #append>
       <v-list>
         <v-list-item>
@@ -33,7 +21,7 @@
           <v-btn v-else-if="store.user.isSuperAdmin == 'true' || store.user.isSuperAdmin == true " block :to="'/users'">
             Users
           </v-btn>
-          <template #append>
+          <template v-if="!mobile" #append>
             <v-btn
               :icon="rail ? 'mdi-chevron-right' : 'mdi-chevron-left'"
               variant="text"
@@ -50,10 +38,11 @@
 import { computed } from 'vue'
 import { useAppStore } from '@/stores/app'
 import { useRoute, useRouter } from 'vue-router'
-import { getGetOrg } from '@/apis/org'
+import { useDisplay } from 'vuetify'
 
 const route = useRoute()
 const router = useRouter()
+const { mobile } = useDisplay()
 
 defineProps(['menus'])
 
@@ -61,13 +50,21 @@ const store = useAppStore()
 
 const rail = computed({
   get() {
-    return store.rail;
+    return mobile.value == true ? false : store.rail;
   },
   set(val) {
     store.setRail(val);
   }
 })
 
+const drawer = computed({
+  get() {
+    return mobile.value == true ? store.drawer : true
+  },
+  set(val) {
+    store.setDrawer(val)
+  }
+})
 
 function onLoadOrg(org) {
   store.setOrg({

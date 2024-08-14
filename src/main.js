@@ -25,6 +25,8 @@ const store = useAppStore()
 
 const rail = localStorage.rail === 'true'
 store.setRail(rail)
+const drawer = localStorage.drawer === 'true'
+store.setDrawer(drawer)
 
 if (localStorage.tokenAccessToken && localStorage.tokenRefreshToken) {
   store.refresh ({
