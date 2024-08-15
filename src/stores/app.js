@@ -11,7 +11,7 @@ export const useAppStore = defineStore('app', {
     rail: false,
     drawer: false,
     theme: null,
-    logoUrl: '/images/logo.svg',
+    logoUrl: '/images/logo-text.svg',
     menus: Menu,
     links: Link,
     accounts: Account,
@@ -273,6 +273,11 @@ export const useAppStore = defineStore('app', {
     changeTheme(payload) {
       localStorage.theme = payload;
       this.theme = payload;
+      if (payload == 'dark') {
+        this.logoUrl = '/images/logo-text-dark.svg';
+      } else {
+        this.logoUrl = '/images/logo-text.svg';
+      }
     },
     setLanguage(payload) {
       localStorage.language = payload;
