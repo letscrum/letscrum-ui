@@ -7,13 +7,16 @@
   >
     <v-list-item three-line>
       <v-list-item-subtitle>
-        <div class="text-overline mb-4">
+        <div class="text-overline">
           1
         </div>
-        <v-list-item-title class="text-h5 mb-1">
-          {{ org.name }}
-        </v-list-item-title>
       </v-list-item-subtitle>
+      <v-list-item-title class="text-h5">
+        {{ org.name }}
+      </v-list-item-title>
+      <template #prepend>
+        <v-avatar size="x-large" rounded="0" :color="uuidToColor(org.id)">{{ org.name.substring(0, 1) }}</v-avatar>
+      </template>
     </v-list-item>
   </v-card>
 </template>
@@ -23,6 +26,7 @@ import { getGetOrg } from '@/apis/org'
 import { useAppStore } from '@/stores/app'
 import { ref } from 'vue';
 import { useRouter } from 'vue-router'
+import { uuidToColor } from '@/utils/utils'
 
 const store = useAppStore()
 const router = useRouter()

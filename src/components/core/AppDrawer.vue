@@ -6,16 +6,41 @@
   >
     <v-divider></v-divider>
     <v-list v-if="route.name == 'Orgs' || route.name == 'Projects' || route.name == 'OrgMembers'">
-      <v-list-item v-for="org in store.orgs" :key="org.id" @click="onLoadOrg(org)" prepend-icon="mdi-home-city" :title="org.name" :to="'/orgs/' + org.id + '/projects'"></v-list-item>
+      <v-list-item v-for="org in store.orgs" :key="org.id" @click="onLoadOrg(org)" :to="'/orgs/' + org.id + '/projects'">
+        <v-list-item-title>
+          {{ org.name }}
+        </v-list-item-title>
+        <template #prepend>
+          <v-avatar size="x-small" rounded="0" :color="uuidToColor(org.id)">{{ org.name.substring(0, 1) }}</v-avatar>
+        </template>
+      </v-list-item>
     </v-list>
     <v-list v-else>
-      <v-list-item v-if="store.project.id != '' && store.project.id != null && store.org.id != '' && store.org.id != null" prepend-icon="mdi-home-city" title="Overview" value="overview" :to="'/orgs/' + store.org.id + '/projects/' + store.project.id"></v-list-item>
-      <v-list-item v-if="store.project.id != '' && store.project.id != null && store.org.id != '' && store.org.id != null && store.sprint.id != '' && store.sprint.id != null" prepend-icon="mdi-home-city" title="Sprint" value="sprint" :to="'/orgs/' + store.org.id + '/projects/' + store.project.id + '/sprints/' + store.sprint.id"></v-list-item>
+      <v-list-item v-if="store.project.id != '' && store.project.id != null && store.org.id != '' && store.org.id != null" :to="'/orgs/' + store.org.id + '/projects/' + store.project.id">
+        <v-list-item-title>
+          Overview
+        </v-list-item-title>
+        <template #prepend>
+          <v-avatar size="x-small" rounded="0">
+            <v-icon>mdi-trello</v-icon>
+          </v-avatar>
+        </template>
+      </v-list-item>
+      <v-list-item v-if="store.project.id != '' && store.project.id != null && store.org.id != '' && store.org.id != null && store.sprint.id != '' && store.sprint.id != null" :to="'/orgs/' + store.org.id + '/projects/' + store.project.id + '/sprints/' + store.sprint.id">
+        <v-list-item-title>
+          Sprint
+        </v-list-item-title>
+        <template #prepend>
+          <v-avatar size="x-small" rounded="0">
+            <v-icon>mdi-view-dashboard</v-icon>
+          </v-avatar>
+        </template>
+      </v-list-item>
     </v-list>
     <template #append>
       <v-list>
         <v-list-item>
-          <v-btn v-if="route.name != 'Orgs' && route.name != 'Users' && store.org.id != null && store.org.id != ''" block :to="'/orgs/' + store.org.id + '/members'">
+          <v-btn v-if="route.name != 'Orgs' && route.name != 'Users' && store.org.id != null && store.org.id != ''" block :to="'/orgs/' + store.org.id + '/members'" prepend-icon="mdi-cog">
             Manage
           </v-btn>
           <v-btn v-else-if="store.user.isSuperAdmin == 'true' || store.user.isSuperAdmin == true " block :to="'/users'">
@@ -26,7 +51,8 @@
               :icon="rail ? 'mdi-chevron-right' : 'mdi-chevron-left'"
               variant="text"
               :style="rail ? 'margin-left: -12px; margin-right: 12px;' : ''"
-              @click.stop="rail = !rail"></v-btn>
+              @click.stop="rail = !rail">
+            </v-btn>
           </template>
         </v-list-item>
       </v-list>
@@ -39,6 +65,7 @@ import { computed } from 'vue'
 import { useAppStore } from '@/stores/app'
 import { useRoute, useRouter } from 'vue-router'
 import { useDisplay } from 'vuetify'
+import { uuidToColor } from '@/utils/utils'
 
 const route = useRoute()
 const router = useRouter()
