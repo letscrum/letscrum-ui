@@ -1,12 +1,41 @@
 <template>
   <div>
     <v-data-table
-      v-model:expanded="expanded"
+      :group-by="groupBy"
       :headers="headers"
-      :items="workItems"
-      item-key="id"
-      show-expand
+      :items="tasks"
+      item-value="title"
     >
+      <template #group-header="{ item, toggleGroup, isGroupOpen }">
+        <tr>
+          <td>
+            <VBtn
+              :icon="isGroupOpen(item) ? '$expand' : '$next'"
+              size="small"
+              variant="text"
+              @click="toggleGroup(item)"
+            ></VBtn>
+          </td>
+          <td>
+            {{ workItems.find(w => w.id === item.value).id }}
+          </td>
+          <td>
+
+          </td>
+          <td>
+            {{ workItems.find(w => w.id === item.value).type }}
+          </td>
+          <td>
+            {{ workItems.find(w => w.id === item.value).title }}
+          </td>
+          <td>
+            {{ workItems.find(w => w.id === item.value).status }}
+          </td>
+          <td>
+            {{ workItems.find(w => w.id === item.value).assignUser.name == '' ? 'unassigned' : workItems.find(w => w.id === item.value).assignUser.name }}
+          </td>
+        </tr>
+      </template>
       <template #headers="{ columns, isSorted, getSortIcon, toggleSort }">
         <tr>
           <th
@@ -24,22 +53,15 @@
           </th>
         </tr>
       </template>
-
       <template #item="{ item }">
         <tr>
-          <td>{{ item.order }}</td>
+          <td></td>
+          <td>{{ item.workItemId }}</td>
           <td>{{ item.id }}</td>
+          <td></td>
           <td>{{ item.title }}</td>
-          <td>{{ item.assign }}</td>
           <td>{{ item.status }}</td>
-          <td>{{ item.type }}</td>
-        </tr>
-      </template>
-      <template #expanded-row="{ columns, item }">
-        <tr>
-          <td :colspan="columns.length">
-            More info about {{ item.name }}
-          </td>
+          <td>{{ item.assignUser.name == '' ? 'unassigned' : item.assignUser.name }}</td>
         </tr>
       </template>
     </v-data-table>
@@ -60,19 +82,37 @@ const workItems = ref([])
 const expanded = ref([])
 const headers = ref([
   {
-    text: 'Order',
-    align: 'start',
-    sortable: false,
-    value: 'order',
+    text: 'Work Item Id',
+    key: 'workItemId',
   },
-  { text: 'ID', value: 'id' },
-  { text: 'Title', value: 'title' },
-  { text: 'Assign', value: 'assign' },
-  { text: 'Status', value: 'status' },
-  { text: 'Type', value: 'type' },
-  { title: '', key: 'data-table-expand' },
+  {
+    text: 'Task Id',
+    key: 'id',
+  },
+  {
+    text: 'Type',
+    key: 'type',
+  },
+  {
+    text: 'Title',
+    key: 'title',
+  },
+  {
+    text: 'Status',
+    value: 'status',
+  },
+  {
+    text: 'Assignee',
+    value: 'assignUser.name',
+  }
 ])
 
+const groupBy = ref([
+  {
+    key: 'workItemId',
+    order: 'desc',
+  }])
+const tasks = ref([])
 
 function LoadWorkItems() {
   expanded.value = []
@@ -83,6 +123,15 @@ function LoadWorkItems() {
   }).then(res => {
     workItems.value = res.data.items
     console.log('workItems', workItems.value)
+    // add all workItems tasks to tasks
+    workItems.value.forEach(item => {
+      item.tasksAll.forEach(task => {
+        tasks.value.push({
+          workItemId: item.id,
+          ...task
+        })
+      })
+    })
   })
 }
 
