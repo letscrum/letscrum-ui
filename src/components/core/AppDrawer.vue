@@ -5,7 +5,7 @@
     @click="rail = false"
   >
     <v-divider></v-divider>
-    <v-list v-if="route.name == 'Orgs' || route.name == 'Projects' || route.name == 'OrgMembers'">
+    <v-list v-if="route.name == 'Orgs' || route.name == 'Projects' || route.name == 'Org'">
       <v-list-item>
         <v-list-item-title>
           Orgs
@@ -60,7 +60,7 @@
     <template #append>
       <v-list>
         <v-list-item>
-          <v-btn v-if="(route.name == 'Projects' || route.name == 'OrgMembers') && store.org.id != null && store.org.id != ''" block :to="'/orgs/' + store.org.id + '/members'" prepend-icon="mdi-cog">
+          <v-btn v-if="(route.name == 'Projects' || route.name == 'Org') && store.org.id != null && store.org.id != ''" block :to="'/orgs/' + store.org.id" prepend-icon="mdi-cog">
             Manage
           </v-btn>
           <template v-if="!mobile" #append>

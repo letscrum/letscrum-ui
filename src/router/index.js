@@ -28,9 +28,9 @@ const routes = [
     },
   },
   {
-    path: '/orgs/:orgId/members',
-    name: 'OrgMembers',
-    component: () => import('@/pages/org/MemberList.vue'),
+    path: '/orgs/:orgId',
+    name: 'Org',
+    component: () => import('@/pages/org/Org.vue'),
     meta: {
       breadcrumbs: [
         {
@@ -38,8 +38,8 @@ const routes = [
           to: { name: 'Orgs' }
         },
         {
-          title: 'Manage',
-          to: { name: 'OrgMembers' }
+          title: 'Org',
+          to: { name: 'Org' }
         },
       ]
     },
