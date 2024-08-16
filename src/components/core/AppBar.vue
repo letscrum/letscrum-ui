@@ -4,7 +4,7 @@
     <v-img
       :src="store.logoUrl"
       contain
-      class="mx-3"
+      class="ml-3 mr-1"
       width="150"
       max-width="150"
       @click="router.push('/orgs/' + store.org.id + '/projects')"

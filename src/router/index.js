@@ -134,14 +134,15 @@ const routes = [
               to: { name: 'Project' }
             },
             {
-              title: 'Sprints',
-              to: { name: 'Sprints' }
+              title: 'Sprint',
+              to: { name: 'SprintTaskboard' }
             }
           ]
         },
       },
       {
         path: 'backlog',
+        name: 'SprintBacklog',
         components: {
           default: () => import('@/pages/sprint/Backlog.vue'),
           menu: () => import('@/components/menu/MenuBacklog.vue')
@@ -161,14 +162,15 @@ const routes = [
               to: { name: 'Project' }
             },
             {
-              title: 'Sprints',
-              to: { name: 'Sprints' }
+              title: 'Sprint',
+              to: { name: 'SprintBacklog' }
             }
           ]
         },
       },
       {
         path: 'capacity',
+        name: 'SprintCapacity',
         components: {
           default: () => import('@/pages/sprint/Capacity.vue'),
           menu: () => import('@/components/menu/MenuCapacity.vue')
@@ -188,33 +190,13 @@ const routes = [
               to: { name: 'Project' }
             },
             {
-              title: 'Sprints',
-              to: { name: 'Sprints' }
+              title: 'Sprint',
+              to: { name: 'SprintCapacity' }
             }
           ]
         },
       }
     ],
-    meta: {
-      breadcrumbs: [
-        {
-          title: 'Orgs',
-          to: { name: 'Orgs' }
-        },
-        {
-          title: 'Projects',
-          to: { name: 'Projects' }
-        },
-        {
-          title: 'Project',
-          to: { name: 'Project' }
-        },
-        {
-          title: 'Sprints',
-          to: { name: 'Sprints' }
-        }
-      ]
-    },
   },
   {
     path: '/test/:tid',

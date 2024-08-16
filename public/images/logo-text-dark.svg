@@ -4,7 +4,8 @@
       .cls-1 {
         font-size: 160px;
         fill: #fff;
-        font-family: Impact;
+        font-family: "Arial Narrow";
+        font-weight: 700;
       }
 
       .cls-2 {
@@ -20,9 +21,9 @@
       }
     </style>
   </defs>
-  <text id="LetScrum" class="cls-1" x="207.628" y="157.934">LetScrum</text>
-  <image id="矩形_1" data-name="矩形 1" x="15" y="161" width="156" height="20" xlink:href="data:img/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJwAAAAUCAYAAAB4W1T4AAAAWklEQVRoge3SAQmAABAEwdf+BT6tVhCERWQmwXHssTPX8N6uEx84P7+QXxEcKcGREhwpwZESHCnBkRIcKcGREhwpwZESHCnBkRIcKcGREhwpwZESHCnB0ZmZG6kgAvL45EzrAAAAAElFTkSuQmCC"/>
-  <path id="三角形_1" data-name="三角形 1" class="cls-2" d="M193.368,171l-22.074,18.542V152.457Z"/>
-  <path id="椭圆_4" data-name="椭圆 4" class="cls-2" d="M36.79,0A36.79,36.79,0,1,1,0,36.79,36.79,36.79,0,0,1,36.79,0Zm0.123,14.891a21.78,21.78,0,1,1-21.78,21.78A21.78,21.78,0,0,1,36.913,14.891Z"/>
-  <path id="椭圆_2" data-name="椭圆 2" class="cls-3" d="M96.831,36.79A72.108,72.108,0,1,1,24.723,108.9,72.108,72.108,0,0,1,96.831,36.79Zm0,20.308a51.8,51.8,0,1,1-51.8,51.8A51.8,51.8,0,0,1,96.831,57.1Z"/>
+  <text id="LetScrum" class="cls-1" x="214.628" y="152.934">LetScrum</text>
+  <image id="bottom" data-name="bottom" x="15" y="161" width="156" height="20" xlink:href="data:img/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJwAAAAUCAYAAAB4W1T4AAAAWklEQVRoge3SAQmAABAEwdf+BT6tVhCERWQmwXHssTPX8N6uEx84P7+QXxEcKcGREhwpwZESHCnBkRIcKcGREhwpwZESHCnBkRIcKcGREhwpwZESHCnB0ZmZG6kgAvL45EzrAAAAAElFTkSuQmCC"/>
+  <path id="bottom_right" data-name="bottom_right" class="cls-2" d="M193.368,171l-22.074,18.542V152.457Z"/>
+  <path id="top_left" data-name="top_left" class="cls-2" d="M36.79,0A36.79,36.79,0,1,1,0,36.79,36.79,36.79,0,0,1,36.79,0Zm0.123,14.891a21.78,21.78,0,1,1-21.78,21.78A21.78,21.78,0,0,1,36.913,14.891Z"/>
+  <path id="main" data-name="main" class="cls-3" d="M96.831,36.79A72.108,72.108,0,1,1,24.723,108.9,72.108,72.108,0,0,1,96.831,36.79Zm0,20.308a51.8,51.8,0,1,1-51.8,51.8A51.8,51.8,0,0,1,96.831,57.1Z"/>
 </svg>

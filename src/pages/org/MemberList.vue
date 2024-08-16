@@ -92,7 +92,10 @@
       <v-data-table v-model:search="search" :items="members">
 
         <template #item.isAdmin="{ item }">
-          <SetOrgAdmin :member="item" @after="fetchMembers">
+          <div v-if="item.member.name == org.createdBy">
+            Owner
+          </div>
+          <SetOrgAdmin v-else :member="item" @after="fetchMembers">
             <v-btn>
               {{ item.isAdmin ? 'Remove admin' : 'Set admin' }}
             </v-btn>
@@ -101,6 +104,23 @@
 
       </v-data-table>
     </v-card>
+    <v-dialog v-model="dialogDelete" width="50%">
+      <template #activator="{ props: activatorProps }">
+        <v-btn block color="red" v-bind="activatorProps">Delete Org</v-btn>
+      </template>
+      <template #default="{ isActive }">
+        <v-card>
+          <v-card-title>Delete Org</v-card-title>
+          <v-card-text>
+            Are you sure you want to delete this org?
+          </v-card-text>
+          <v-card-actions>
+            <v-btn text @click="isActive.value = false">Cancel</v-btn>
+            <v-btn text @click="onDeleteOrg()">Delete</v-btn>
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
   </DefaultLayout>
 </template>
 
@@ -108,13 +128,16 @@
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import { ref } from 'vue'
 import { onMounted } from 'vue'
-import { getGetOrgMembers, postAddOrgMembers, getGetOrg } from '@/apis/org'
+import { getGetOrgMembers, postAddOrgMembers, getGetOrg, getGetOrgs, deleteDeleteOrg } from '@/apis/org'
 import { useAppStore } from '@/stores/app'
 import { getGetUsers } from '@/apis/user'
+import { useRouter } from 'vue-router'
 
 const store = useAppStore()
+const router = useRouter()
 
 const dialogAdd = ref(false)
+const dialogDelete = ref(false)
 
 const search = ref('')
 const members = ref([])
@@ -166,6 +189,23 @@ function getOrg() {
   getGetOrg(store.org.id).then((res) => {
     console.log(res)
     org.value = res.data.item
+  })
+}
+
+function onDeleteOrg() {
+  deleteDeleteOrg(store.org.id).then((res) => {
+    if (res.status === 200) {
+      if (store.org.id == store.org.id) {
+        store.clearOrg()
+      }
+      getGetOrgs().then((res) => {
+        if (res.status === 200) {
+          store.setOrgs(res.data.items)
+          router.push('/orgs')
+          dialogDelete.value = false
+        }
+      })
+    }
   })
 }
 

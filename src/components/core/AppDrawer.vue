@@ -6,6 +6,21 @@
   >
     <v-divider></v-divider>
     <v-list v-if="route.name == 'Orgs' || route.name == 'Projects' || route.name == 'OrgMembers'">
+      <v-list-item>
+        <v-list-item-title>
+          Orgs
+        </v-list-item-title>
+        <template #append>
+          <OrgCreate>
+            <v-btn
+              density="compact"
+              icon="mdi-plus"
+              variant="plain"
+              ></v-btn>
+          </OrgCreate>
+        </template>
+      </v-list-item>
+      <v-divider></v-divider>
       <v-list-item v-for="org in store.orgs" :key="org.id" @click="onLoadOrg(org)" :to="'/orgs/' + org.id + '/projects'">
         <v-list-item-title>
           {{ org.name }}
@@ -16,6 +31,11 @@
       </v-list-item>
     </v-list>
     <v-list v-else>
+      <v-list-item>
+        <v-list-item-title>
+          {{ store.project.name }}
+        </v-list-item-title>
+      </v-list-item>
       <v-list-item v-if="store.project.id != '' && store.project.id != null && store.org.id != '' && store.org.id != null" :to="'/orgs/' + store.org.id + '/projects/' + store.project.id">
         <v-list-item-title>
           Overview
@@ -40,11 +60,8 @@
     <template #append>
       <v-list>
         <v-list-item>
-          <v-btn v-if="route.name != 'Orgs' && route.name != 'Users' && store.org.id != null && store.org.id != ''" block :to="'/orgs/' + store.org.id + '/members'" prepend-icon="mdi-cog">
+          <v-btn v-if="(route.name == 'Projects' || route.name == 'OrgMembers') && store.org.id != null && store.org.id != ''" block :to="'/orgs/' + store.org.id + '/members'" prepend-icon="mdi-cog">
             Manage
-          </v-btn>
-          <v-btn v-else-if="store.user.isSuperAdmin == 'true' || store.user.isSuperAdmin == true " block :to="'/users'">
-            Users
           </v-btn>
           <template v-if="!mobile" #append>
             <v-btn
