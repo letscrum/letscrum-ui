@@ -17,6 +17,9 @@
             ></VBtn>
           </td>
           <td>
+            <v-btn>add</v-btn>
+          </td>
+          <td>
             {{ workItems.find(w => w.id === item.value).id }}
           </td>
           <td>
@@ -26,7 +29,7 @@
             {{ workItems.find(w => w.id === item.value).type }}
           </td>
           <td>
-            {{ workItems.find(w => w.id === item.value).title }}
+            <v-btn>{{ workItems.find(w => w.id === item.value).title }}</v-btn>
           </td>
           <td>
             {{ workItems.find(w => w.id === item.value).status }}
@@ -54,12 +57,14 @@
         </tr>
       </template>
       <template #item="{ item }">
-        <tr>
+        <tr v-if="item.id !== '0'">
+          <td>
+          </td>
           <td></td>
           <td>{{ item.workItemId }}</td>
           <td>{{ item.id }}</td>
           <td></td>
-          <td>{{ item.title }}</td>
+          <td><v-btn>{{ item.title }}</v-btn></td>
           <td>{{ item.status }}</td>
           <td>{{ item.assignUser.name == '' ? 'unassigned' : item.assignUser.name }}</td>
         </tr>
@@ -81,6 +86,9 @@ const route = useRoute()
 const workItems = ref([])
 const expanded = ref([])
 const headers = ref([
+  {
+    text: '#',
+  },
   {
     text: 'Work Item Id',
     key: 'workItemId',
@@ -125,12 +133,25 @@ function LoadWorkItems() {
     console.log('workItems', workItems.value)
     // add all workItems tasks to tasks
     workItems.value.forEach(item => {
-      item.tasksAll.forEach(task => {
+      if (item.tasksAll.length === 0) {
         tasks.value.push({
           workItemId: item.id,
-          ...task
+          id: '0',
+          type: '',
+          title: '',
+          status: '',
+          assignUser: {
+            name: ''
+          }
         })
-      })
+      } else {
+        item.tasksAll.forEach(task => {
+          tasks.value.push({
+            workItemId: item.id,
+            ...task
+          })
+        })
+      }
     })
   })
 }
