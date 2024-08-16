@@ -2,6 +2,7 @@
   <v-navigation-drawer
     v-model="drawer"
     :rail="rail"
+    style="background-color: white;"
     @click="rail = false"
   >
     <v-divider></v-divider>

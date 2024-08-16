@@ -56,7 +56,7 @@
                       :id="item.raw.id"
                       v-model="workItems"
                       group="workItem"
-                      style="background-color: aquamarine; width: 100%; height: 100%;"
+                      style="width: 100%; height: 100%;"
                       @add="onMoveToSprint"
                       >
                       <WorkItemCard :work-item="item.raw" :members="sprint.members" @after-update="updateWorkItem"></WorkItemCard>
@@ -67,16 +67,16 @@
                     <v-row no-gutters>
                       <v-col v-for="i in ['To Do', 'In Progress', 'Done']" :key="i" cols="4">
                         <v-row no-gutters
-                        style="background-color: aquamarine; width: 100%; height: 80%;"
+                        style="width: 100%; height: 80%;"
                         >
                           <v-col
-                          style="background-color: aquamarine; width: 100%; height: 100%;"
+                          style="width: 100%; height: 100%;"
                           >
                             <VueDraggable
                               :id="item.raw.id + '-' + i.replace(' ', '')"
                               v-model="item.raw['tasks' + i.replace(' ', '')]"
                               group="task"
-                              style="background-color: aquamarine; width: 100%; height: 100%;"
+                              style="width: 100%; height: 100%;"
                               @add="onAdd"
                               >
                               <div
@@ -119,7 +119,7 @@ tile outlined class="mb-2 mr-2 float-left"
                       :id="item.raw.id + '-ToDo'"
                       v-model="item.raw['tasksToDo']"
                       group="task"
-                      style="background-color: aquamarine; width: 100%; height: 100%;"
+                      style="width: 100%; height: 100%;"
                       @add="onAdd"
                       >
                       <v-icon icon="mdi-menu-right" size="x-small" class="float-left" @click="() => toggleExpand(item)"></v-icon>
@@ -167,7 +167,7 @@ tile outlined class="mb-2 mr-2 float-left"
                 :id="item.id"
                 v-model="sprintWorkItems"
                 group="workItem"
-                style="background-color: aquamarine; width: 100%; height: 100%;"
+                style="width: 100%; height: 100%;"
                 draggable="false"
                 :disabled="item.id === route.params.sprintId"
                 @add="onMoveToSprint"
