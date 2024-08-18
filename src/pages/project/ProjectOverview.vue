@@ -161,7 +161,6 @@
 
       <v-divider></v-divider>
       <v-data-table v-model:search="search" :items="allMembers">
-
         <template #item.isAdmin="{ item }">
           <v-chip
             :color="item.isAdmin ? 'primary' : ''"
@@ -337,7 +336,6 @@ const users = ref([])
 const search = ref('')
 const dialogUpdate = ref(false)
 const dialogDelete = ref(false)
-const dialogAdd = ref(false)
 
 const searchUsers = val => {
   if (!val) {

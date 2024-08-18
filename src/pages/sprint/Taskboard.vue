@@ -256,13 +256,20 @@ function onMoveToSprint(item) {
   console.log('tid', item.to.id)
   console.log('from', item.from)
   console.log('fid', item.from.id)
-  if (route.params.sprintId != item.to.id) {
+  console.log('sprints', props.sprints)
+  if (props.sprints.find((sprint) => sprint.id == item.to.id) && item.from.id != item.to.id && route.params.sprintId != item.to.id) {
     putMoveWorkItem(store.org.id, route.params.projectId, item.from.id, {
       sprintId: item.to.id,
     }).then(res => {
       console.log('move res', res)
+      LoadWorkItems()
     })
+  } else if (item.from.id == item.to.id) {
+    return
+  } else {
+    LoadWorkItems()
   }
+
 }
 
 function onSetSprint(id, name, startDate, endDate) {

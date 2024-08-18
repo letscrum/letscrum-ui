@@ -58,12 +58,11 @@
       </template>
       <template #item="{ item }">
         <tr v-if="item.id !== '0'">
-          <td>
-          </td>
+          <td></td>
           <td></td>
           <td>{{ item.workItemId }}</td>
           <td>{{ item.id }}</td>
-          <td></td>
+          <td>Task</td>
           <td><v-btn>{{ item.title }}</v-btn></td>
           <td>{{ item.status }}</td>
           <td>{{ item.assignUser.name == '' ? 'unassigned' : item.assignUser.name }}</td>

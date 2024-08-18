@@ -2,10 +2,6 @@
   <v-card outlined>
     <v-toolbar flat>
       <v-toolbar-title>Login form</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn v-if="props.isDialog != undefined" icon @click="OnClose">
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
     </v-toolbar>
     <v-card-text>
       <v-form ref="form" v-model="valid">
@@ -45,21 +41,12 @@ import { postSignIn } from '@/apis/index'
 import { getGetOrgs, getGetOrg } from '@/apis/org'
 import axios from 'axios'
 
-const props = defineProps(['isDialog'])
-
-defineEmits(['close-dialog'])
-
 const store = useAppStore()
 const router = useRouter()
 const name = ref('admin')
 const password = ref('admin')
 
 const loading = ref(false)
-
-function OnClose() {
-
-  emit('close-dialog')
-}
 
 function SingIn() {
   loading.value = true

@@ -46,7 +46,28 @@
 <script setup>
 
 import { useAppStore } from '@/stores/app'
-defineProps(['menus', 'logoUrl', 'accounts', 'userMenus', 'user'])
+defineProps({
+  menus: {
+    type: Array,
+    required: true
+  },
+  logoUrl: {
+    type: String,
+    required: true
+  },
+  accounts: {
+    type: Array,
+    required: true
+  },
+  userMenus: {
+    type: Array,
+    required: true
+  },
+  user: {
+    type: Object,
+    required: true
+  }
+})
 
 const store = useAppStore()
 import { useTheme } from 'vuetify'

@@ -89,7 +89,12 @@ const route = useRoute()
 const router = useRouter()
 const { mobile } = useDisplay()
 
-defineProps(['menus'])
+defineProps({
+  menus: {
+    type: Array,
+    required: true
+  }
+})
 
 const store = useAppStore()
 
