@@ -365,12 +365,7 @@ function onGetProject() {
   getGetProject(store.org.id, route.params.projectId).then((res) => {
     console.log(res)
     if (res.status === 200) {
-      store.setProject({
-        id: res.data.item.id,
-        name: res.data.item.name,
-        displayName: res.data.item.displayName,
-        description: res.data.item.description,
-      })
+      store.setProject(res.data.item)
       project.value = res.data.item
       allMembers.value = res.data.item.members
       admins.value = res.data.item.members.filter((member) => member.isAdmin).map((member) => ({
@@ -425,6 +420,7 @@ function onUpdateProject() {
           id: res.data.id,
           displayName: project.value.displayName,
           description: project.value.displayName,
+          myRole: project.value.myRole,
         })
       }
     }

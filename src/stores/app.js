@@ -16,7 +16,6 @@ export const useAppStore = defineStore('app', {
     links: Link,
     accounts: Account,
     userMenus: UserMenu,
-    breadcrumbs: [],
     user: {
       id: null,
       name: null,
@@ -32,13 +31,15 @@ export const useAppStore = defineStore('app', {
       id: null,
       name: null,
       displayName: null,
-      description: null
+      description: null,
+      myRole: null
     },
     project: {
       id: null,
       name: null,
       displayName: null,
-      description: null
+      description: null,
+      myRole: null
     },
     sprint: {
       id: null,
@@ -67,10 +68,12 @@ export const useAppStore = defineStore('app', {
         this.org.name = localStorage.orgName;
         this.org.displayName = localStorage.orgDisplayName;
         this.org.description = localStorage.orgDescription;
+        this.org.myRole = localStorage.orgMyRole;
         this.project.id = localStorage.projectId;
         this.project.name = localStorage.projectName;
         this.project.displayName = localStorage.projectDisplayName;
         this.project.description = localStorage.projectDescription;
+        this.project.myRole = localStorage.projectMyRole;
         this.sprint.id = localStorage.sprintId;
         this.sprint.name = localStorage.sprintName;
         this.sprint.startDate = localStorage.sprintStartDate;
@@ -117,9 +120,12 @@ export const useAppStore = defineStore('app', {
       localStorage.removeItem('orgName');
       localStorage.removeItem('orgDisplayName');
       localStorage.removeItem('orgDescription');
+      localStorage.removeItem('orgMyRole');
       localStorage.removeItem('projectId');
       localStorage.removeItem('projectName');
       localStorage.removeItem('projectDisplayName');
+      localStorage.removeItem('projectDescription');
+      localStorage.removeItem('projectMyRole');
       localStorage.removeItem('sprintId');
       localStorage.removeItem('sprintName');
       localStorage.removeItem('sprintStartDate');
@@ -137,9 +143,12 @@ export const useAppStore = defineStore('app', {
       this.org.name = null;
       this.org.displayName = null;
       this.org.description = null;
+      this.org.myRole = null;
       this.project.id = null;
       this.project.name = null;
       this.project.displayName = null;
+      this.project.description = null;
+      this.project.myRole = null;
       this.sprint.id = null;
       this.sprint.name = null;
       this.sprint.startDate = null;
@@ -157,17 +166,20 @@ export const useAppStore = defineStore('app', {
         id,
         name,
         displayName,
-        description
+        description,
+        myRole,
       } = payload;
       localStorage.orgId = id;
       localStorage.orgName = name;
       localStorage.orgDisplayName = displayName;
       localStorage.orgDescription = description;
+      localStorage.orgMyRole = myRole;
       this.org = {
         id,
         name,
         displayName,
-        description
+        description,
+        myRole,
       };
     },
     setProject(payload) {
@@ -175,17 +187,20 @@ export const useAppStore = defineStore('app', {
         id,
         name,
         displayName,
-        description
+        description,
+        myRole,
       } = payload;
       localStorage.projectId = id;
       localStorage.projectName = name;
       localStorage.projectDisplayName = displayName;
       localStorage.projectDescription = description;
+      localStorage.projectMyRole = myRole;
       this.project = {
         id,
         name,
         displayName,
-        description
+        description,
+        myRole,
       };
     },
     setSprint(payload) {
@@ -233,20 +248,24 @@ export const useAppStore = defineStore('app', {
       localStorage.removeItem('orgName');
       localStorage.removeItem('orgDisplayName');
       localStorage.removeItem('orgDescription');
+      localStorage.removeItem('orgMyRole');
       this.org.id = null;
       this.org.name = null;
       this.org.displayName = null;
       this.org.description = null;
+      this.org.myRole = null;
     },
     clearProject() {
       localStorage.removeItem('projectId');
       localStorage.removeItem('projectName');
       localStorage.removeItem('projectDisplayName');
       localStorage.removeItem('projectDescription');
+      localStorage.removeItem('projectMyRole');
       this.project.id = null;
       this.project.name = null;
       this.project.displayName = null;
       this.project.description = null;
+      this.project.myRole = null;
     },
     clearSprint() {
       localStorage.removeItem('sprintId');
@@ -283,17 +302,5 @@ export const useAppStore = defineStore('app', {
       localStorage.language = payload;
       this.language = payload;
     },
-    pushBreadcrumbs(payload) {
-      this.breadcrumbs.push(payload);
-    },
-    popBreadcrumbs() {
-      this.breadcrumbs.slice(0, this.breadcrumbs.length - 1);
-    },
-    setBreadcrumbs(payload) {
-      this.breadcrumbs = [...payload];
-    },
-    clearBreadcrumbs() {
-      this.breadcrumbs = [];
-    }
   },
 })

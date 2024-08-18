@@ -112,12 +112,7 @@ const drawer = computed({
 })
 
 function onLoadOrg(org) {
-  store.setOrg({
-    id: org.id,
-    name: org.name,
-    displayName: org.displayName,
-    description: org.description,
-  })
+  store.setOrg(org)
   router.push(`/orgs/${org.id}/projects`);
 }
 

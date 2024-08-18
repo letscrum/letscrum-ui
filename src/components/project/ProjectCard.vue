@@ -36,18 +36,8 @@ function onLoadProject() {
   getGetProject(store.org.id, props.project.id).then((res) => {
     console.log(res);
     if (res.status === 200) {
-      store.setProject({
-        id: res.data.item.id,
-        name: res.data.item.name,
-        displayName: res.data.item.displayName,
-        description: res.data.item.description,
-      })
-      store.setSprint({
-        id: res.data.item.currentSprint.id,
-        name: res.data.item.currentSprint.name,
-        startDate: res.data.item.currentSprint.startDate,
-        endDate: res.data.item.currentSprint.endDate
-      });
+      store.setProject(res.data.item);
+      store.setSprint(res.data.item.currentSprint);
       router.push(`/orgs/${store.org.id}/projects/${res.data.item.id}`);
     }
   });

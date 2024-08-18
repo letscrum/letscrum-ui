@@ -39,12 +39,7 @@ function onLoadOrg() {
   getGetOrg(org.value.id).then((res) => {
     console.log(res);
     if (res.status === 200) {
-      store.setOrg({
-        id: res.data.item.id,
-        name: res.data.item.name,
-        displayName: res.data.item.displayName,
-        description: res.data.item.description,
-      })
+      store.setOrg(res.data.item);
       router.push(`/orgs/${res.data.item.id}/projects`);
     }
   });
