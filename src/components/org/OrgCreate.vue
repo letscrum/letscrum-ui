@@ -76,7 +76,15 @@ function createOrg() {
     if (res.status === 200) {
       getGetOrgs().then((res) => {
         if (res.status === 200) {
-          store.setOrgs(res.data.items)
+          store.setOrgs(res.data.items.map((item) => {
+            return {
+              id: item.id,
+              name: item.name,
+              displayName: item.displayName,
+              description: item.description,
+              myRole: item.myRole,
+            }
+          }))
           dialog.value = false
         }
       })
