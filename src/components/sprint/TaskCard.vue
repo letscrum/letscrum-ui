@@ -1,6 +1,22 @@
 <template>
   <v-sheet border rounded class="pa-1 ma-1" style="border-left-color: rgb(242, 203, 29); border-left-width: 3px; max-width: 180px;">
-    <input type="text" class="item-card-text" :value="localTask.title"><br />
+    <ItemDetail :item="localTask">
+      <input :readonly="!isEditing" type="text" class="item-card-text" :value="localTask.id + ' ' + localTask.title">
+    </ItemDetail>
+    <v-menu>
+      <template #activator="{ props }">
+        <v-btn variant="plain" density="compact" size="small" icon="mdi-plus" v-bind="props"></v-btn>
+      </template>
+      <v-list>
+        <v-list-item>
+          <v-list-item-title @click="isEditing = true">Edit</v-list-item-title>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-title>Delete</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+    <br />
     <select name="assign" class="item-card-text" :value="localTask.assignUser.id" @change="assignTask">
       <option v-for="(member, i) in localMembers" :key="i" :value="member.userId">
         {{ member.userName }}
@@ -29,6 +45,8 @@ const route = useRoute();
 
 const localTask = ref(props.task);
 const localMembers = ref(props.members);
+
+const isEditing = ref(false)
 console.log(localTask.value)
 
 function assignTask(select) {

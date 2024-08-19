@@ -29,7 +29,9 @@
             {{ workItems.find(w => w.id === item.value).type }}
           </td>
           <td>
-            <v-btn>{{ workItems.find(w => w.id === item.value).title }}</v-btn>
+            <ItemDetail :item="workItems.find(w => w.id === item.value)">
+              {{ workItems.find(w => w.id === item.value).title }}
+            </ItemDetail>
           </td>
           <td>
             {{ workItems.find(w => w.id === item.value).status }}
@@ -63,7 +65,9 @@
           <td>{{ item.workItemId }}</td>
           <td>{{ item.id }}</td>
           <td>Task</td>
-          <td><v-btn>{{ item.title }}</v-btn></td>
+          <td><ItemDetail :item="item">
+            {{ item.title }}
+          </ItemDetail></td>
           <td>{{ item.status }}</td>
           <td>{{ item.assignUser.name == '' ? 'unassigned' : item.assignUser.name }}</td>
         </tr>

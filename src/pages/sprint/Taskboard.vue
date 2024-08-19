@@ -25,10 +25,10 @@
                         style="border-left-color: rgb(0, 156, 204); border-width: 1px; border-left-width: 3px;"
                         width="85%" min-width="160" height="100">
                           <input
-                          ref="createWorkItemTitle" width="160"
-                          class="item-card-text"
-                          type="textarea"
-                          @focusout="onCreatWorkItem()" @keyup.enter="onCreatWorkItem()" />
+                            ref="createWorkItemTitle" width="160"
+                            class="item-card-text"
+                            type="textarea"
+                            @focusout="onCreatWorkItem()" @keyup.enter="onCreatWorkItem()" />
                       </v-sheet>
                     </v-col>
                     <v-col cols="10">

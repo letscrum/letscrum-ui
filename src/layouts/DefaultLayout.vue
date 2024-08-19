@@ -1,11 +1,6 @@
 <template>
-  <AppBar
-    :menus="store.menus"
-    :accounts="store.accounts"
-    :user-menus="store.userMenus"
-    :user="store.user"
-    :logo-url="store.logoUrl" />
-  <AppDrawer v-if="store.isSignedIn" :menus="store.menus" />
+  <AppBar />
+  <AppDrawer v-if="store.isSignedIn" />
   <v-container fluid>
     <slot></slot>
   </v-container>
