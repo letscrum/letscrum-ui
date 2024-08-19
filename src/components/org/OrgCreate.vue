@@ -21,6 +21,8 @@
         <v-card-text class="px-4">
           <v-text-field v-model="org.name" label="Label"></v-text-field>
 
+          <v-text-field v-model="org.displayName" label="Label"></v-text-field>
+
           <v-textarea v-model="org.description" label="Label"></v-textarea>
 
         </v-card-text>
@@ -67,13 +69,14 @@ function createOrg() {
   console.log(org.value)
   postCreateOrg({
     name: org.value.name,
+    displayName: org.value.displayName,
+    description: org.value.description,
   }).then((res) => {
     console.log(res)
     if (res.status === 200) {
       getGetOrgs().then((res) => {
         if (res.status === 200) {
           store.setOrgs(res.data.items)
-          store.setOrg(res.data.items[0])
           dialog.value = false
         }
       })

@@ -84,7 +84,6 @@ import { useAppStore } from '@/stores/app'
 import { useRoute, useRouter } from 'vue-router'
 import { useDisplay } from 'vuetify'
 import { uuidToColor } from '@/utils/utils'
-import { getGetOrg } from '@/apis/org'
 
 const route = useRoute()
 const router = useRouter()
@@ -118,10 +117,8 @@ const drawer = computed({
 })
 
 function onLoadOrg(org) {
-  getGetOrg(org.id).then((res) => {
-    store.setOrg(res.data.item)
-    router.push(`/orgs/${org.id}/projects`)
-  })
+  store.setOrg(org)
+  router.push(`/orgs/${org.id}/projects`)
 }
 
 </script>

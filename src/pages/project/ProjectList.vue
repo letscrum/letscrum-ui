@@ -24,6 +24,8 @@
               <v-divider class="my-1"></v-divider>
 
               <v-card-text class="px-4">
+                <v-text-field v-model="project.name" label="Label"></v-text-field>
+
                 <v-text-field v-model="project.displayName" label="Label"></v-text-field>
 
                 <v-textarea v-model="project.description" label="Label"></v-textarea>
@@ -189,7 +191,7 @@ function createProject() {
   let allMembers = admins.value.concat(members.value)
 
   postCreateProject(store.org.id, {
-    displayName: project.value.displayName,
+    name: project.value.name,
     description: project.value.description,
     members: allMembers.map((member) => {
       return {
