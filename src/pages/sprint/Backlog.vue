@@ -8,7 +8,7 @@
     >
       <template #header>
         <v-row no-gutters>
-          <v-col cols="2" style="background-color: aqua;">
+          <v-col cols="1" style="background-color: aqua;">
             <v-btn v-if="expanded.length > 0" variant="plain" prepend-icon="mdi-arrow-expand-vertical" size="x-small" @click="collapseAll()">
               Expand all
             </v-btn>
@@ -16,7 +16,7 @@
               Collapse all
             </v-btn>
           </v-col>
-          <v-col cols="10" style="background-color: aquamarine">
+          <v-col cols="11" style="background-color: aquamarine">
             wi details
           </v-col>
         </v-row>
@@ -28,50 +28,52 @@
           handle=".handleWorkItem"
         >
         <div v-for="item in items" :key="item.raw.id">
-            <v-row no-gutters class="handleWorkItem" style="background-color: bisque">
-              <v-col cols="2">
-                <v-icon :icon="!isExpanded(item) ? 'mdi-menu-down' : 'mdi-menu-right'" size="x-small" width="10%" class="float-left ma-1" @click="() => toggleExpand(item)"></v-icon>
-              </v-col>
-              <v-col cols="10">
-                {{ item.raw.title }}
-              </v-col>
-            </v-row>
+          <v-row no-gutters class="handleWorkItem" style="background-color: bisque">
+            <v-col cols="1">
+              <v-icon :icon="!isExpanded(item) ? 'mdi-menu-down' : 'mdi-menu-right'" size="x-small" width="10%" class="float-left ma-1" @click="() => toggleExpand(item)"></v-icon>
+              <v-icon icon="mdi-plus" size="x-small" width="10%" class="float-left ma-1"></v-icon>
+            </v-col>
+            <v-col cols="7">
+              {{ item.raw.title }}
+            </v-col>
+            <v-col cols="4">
+              {{ item.raw.status }}
+            </v-col>
+          </v-row>
           <v-expand-transition>
             <VueDraggable
+              v-model="item.raw.tasksAll"
+              group="tasks"
+              @update="onUpdate"
+              @add="onAdd"
+              @remove="remove"
+              >
+              <v-row v-if="!isExpanded(item)" no-gutters>
+                <v-col cols="12">
+                  <VueDraggable
                     v-model="item.raw.tasksAll"
                     group="tasks"
                     @update="onUpdate"
                     @add="onAdd"
                     @remove="remove"
                     >
-            <v-row v-if="!isExpanded(item)" no-gutters>
-              <v-col cols="12">
-                <VueDraggable
-                    v-model="item.raw.tasksAll"
-                    group="tasks"
-                    @update="onUpdate"
-                    @add="onAdd"
-                    @remove="remove"
-                    >
-                <div v-for="task in item.raw.tasksAll" :key="task.id">
+                    <div v-for="task in item.raw.tasksAll" :key="task.id">
+                      <v-row no-gutters style="background-color:brown">
+                        <v-col cols="1">
 
-                    <v-row no-gutters style="background-color:brown">
-                      <v-col cols="2">
-
-                      </v-col>
-                      <v-col cols="6">
-                        {{ task.title }}
-                      </v-col>
-                      <v-col cols="4">
-                        {{ task.status }}
-                      </v-col>
-                    </v-row>
-                </div>
-              </VueDraggable>
-              </v-col>
-            </v-row>
-          </VueDraggable>
-
+                        </v-col>
+                        <v-col cols="7">
+                          {{ task.title }}
+                        </v-col>
+                        <v-col cols="4">
+                          {{ task.status }}
+                        </v-col>
+                      </v-row>
+                    </div>
+                  </VueDraggable>
+                </v-col>
+              </v-row>
+            </VueDraggable>
           </v-expand-transition>
         </div>
       </VueDraggable>
@@ -109,7 +111,6 @@ function LoadWorkItems() {
   })
 }
 
-
 function collapseAll() {
   console.log('workItems', workItems.value)
   if (expanded.value.length > 0) {
@@ -126,10 +127,6 @@ function collapseAll() {
 onMounted(() => {
   LoadWorkItems()
 })
-
-function onMoveWorkItem(event) {
-  console.log('onMoveWorkItem', event)
-}
 
 function onUpdate() {
   console.log('update')
