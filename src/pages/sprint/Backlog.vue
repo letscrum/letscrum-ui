@@ -1,78 +1,82 @@
 <template>
   <div>
-    <v-data-table
-      :group-by="groupBy"
-      :headers="headers"
-      :items="tasks"
-      item-value="title"
+    <v-data-iterator
+      v-model:expanded="expanded"
+      :items="workItems"
+      hide-default-footer
+      items-per-page="-1"
     >
-      <template #group-header="{ item, toggleGroup, isGroupOpen }">
-        <tr>
-          <td>
-            <VBtn
-              :icon="isGroupOpen(item) ? '$expand' : '$next'"
-              size="small"
-              variant="text"
-              @click="toggleGroup(item)"
-            ></VBtn>
-          </td>
-          <td>
-            <v-btn>add</v-btn>
-          </td>
-          <td>
-            {{ workItems.find(w => w.id === item.value).id }}
-          </td>
-          <td>
+      <template #header>
+        <v-row no-gutters>
+          <v-col cols="2" style="background-color: aqua;">
+            <v-btn v-if="expanded.length > 0" variant="plain" prepend-icon="mdi-arrow-expand-vertical" size="x-small" @click="collapseAll()">
+              Expand all
+            </v-btn>
+            <v-btn v-else variant="plain" prepend-icon="mdi-arrow-collapse-vertical" size="x-small" @click="collapseAll()">
+              Collapse all
+            </v-btn>
+          </v-col>
+          <v-col cols="10" style="background-color: aquamarine">
+            wi details
+          </v-col>
+        </v-row>
+      </template>
+      <template #default="{ items, isExpanded, toggleExpand }">
+        <VueDraggable
+          v-model="workItems"
+          :animation="150"
+          handle=".handleWorkItem"
+        >
+        <div v-for="item in items" :key="item.raw.id">
+            <v-row no-gutters class="handleWorkItem" style="background-color: bisque">
+              <v-col cols="2">
+                <v-icon :icon="!isExpanded(item) ? 'mdi-menu-down' : 'mdi-menu-right'" size="x-small" width="10%" class="float-left ma-1" @click="() => toggleExpand(item)"></v-icon>
+              </v-col>
+              <v-col cols="10">
+                {{ item.raw.title }}
+              </v-col>
+            </v-row>
+          <v-expand-transition>
+            <VueDraggable
+                    v-model="item.raw.tasksAll"
+                    group="tasks"
+                    @update="onUpdate"
+                    @add="onAdd"
+                    @remove="remove"
+                    >
+            <v-row v-if="!isExpanded(item)" no-gutters>
+              <v-col cols="12">
+                <VueDraggable
+                    v-model="item.raw.tasksAll"
+                    group="tasks"
+                    @update="onUpdate"
+                    @add="onAdd"
+                    @remove="remove"
+                    >
+                <div v-for="task in item.raw.tasksAll" :key="task.id">
 
-          </td>
-          <td>
-            {{ workItems.find(w => w.id === item.value).type }}
-          </td>
-          <td>
-            <ItemDetail :item="workItems.find(w => w.id === item.value)">
-              {{ workItems.find(w => w.id === item.value).title }}
-            </ItemDetail>
-          </td>
-          <td>
-            {{ workItems.find(w => w.id === item.value).status }}
-          </td>
-          <td>
-            {{ workItems.find(w => w.id === item.value).assignUser.name == '' ? 'unassigned' : workItems.find(w => w.id === item.value).assignUser.name }}
-          </td>
-        </tr>
+                    <v-row no-gutters style="background-color:brown">
+                      <v-col cols="2">
+
+                      </v-col>
+                      <v-col cols="6">
+                        {{ task.title }}
+                      </v-col>
+                      <v-col cols="4">
+                        {{ task.status }}
+                      </v-col>
+                    </v-row>
+                </div>
+              </VueDraggable>
+              </v-col>
+            </v-row>
+          </VueDraggable>
+
+          </v-expand-transition>
+        </div>
+      </VueDraggable>
       </template>
-      <template #headers="{ columns, isSorted, getSortIcon, toggleSort }">
-        <tr>
-          <th
-            v-for="column in columns"
-            :key="column.text"
-            :class="[
-              'column sortable',
-              isSorted(column) ? 'sorted' : '',
-              column.align === 'start' ? 'text-start' : '',
-            ]"
-            @click="toggleSort(column)"
-          >
-            <v-icon small>{{ getSortIcon(column) }}</v-icon>
-            {{ column.text }}
-          </th>
-        </tr>
-      </template>
-      <template #item="{ item }">
-        <tr v-if="item.id !== '0'">
-          <td></td>
-          <td></td>
-          <td>{{ item.workItemId }}</td>
-          <td>{{ item.id }}</td>
-          <td>Task</td>
-          <td><ItemDetail :item="item">
-            {{ item.title }}
-          </ItemDetail></td>
-          <td>{{ item.status }}</td>
-          <td>{{ item.assignUser.name == '' ? 'unassigned' : item.assignUser.name }}</td>
-        </tr>
-      </template>
-    </v-data-table>
+    </v-data-iterator>
   </div>
 </template>
 <script setup>
@@ -81,6 +85,7 @@ import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { getGetWorkItems } from '@/apis/workitem'
 import { useAppStore } from '@/stores/app'
+import { VueDraggable } from 'vue-draggable-plus'
 
 const store = useAppStore()
 
@@ -88,42 +93,6 @@ const route = useRoute()
 
 const workItems = ref([])
 const expanded = ref([])
-const headers = ref([
-  {
-    text: '#',
-  },
-  {
-    text: 'Work Item Id',
-    key: 'workItemId',
-  },
-  {
-    text: 'Task Id',
-    key: 'id',
-  },
-  {
-    text: 'Type',
-    key: 'type',
-  },
-  {
-    text: 'Title',
-    key: 'title',
-  },
-  {
-    text: 'Status',
-    value: 'status',
-  },
-  {
-    text: 'Assignee',
-    value: 'assignUser.name',
-  }
-])
-
-const groupBy = ref([
-  {
-    key: 'workItemId',
-    order: 'desc',
-  }])
-const tasks = ref([])
 
 function LoadWorkItems() {
   expanded.value = []
@@ -134,34 +103,42 @@ function LoadWorkItems() {
   }).then(res => {
     workItems.value = res.data.items
     console.log('workItems', workItems.value)
-    // add all workItems tasks to tasks
     workItems.value.forEach(item => {
-      if (item.tasksAll.length === 0) {
-        tasks.value.push({
-          workItemId: item.id,
-          id: '0',
-          type: '',
-          title: '',
-          status: '',
-          assignUser: {
-            name: ''
-          }
-        })
-      } else {
-        item.tasksAll.forEach(task => {
-          tasks.value.push({
-            workItemId: item.id,
-            ...task
-          })
-        })
-      }
+      expanded.value.push(item.id.toString())
     })
   })
 }
 
 
+function collapseAll() {
+  console.log('workItems', workItems.value)
+  if (expanded.value.length > 0) {
+    expanded.value = []
+  } else {
+    expanded.value = []
+    workItems.value.forEach(item => {
+      expanded.value.push(item.id.toString())
+    })
+  }
+  console.log('expanded', expanded.value)
+}
+
 onMounted(() => {
   LoadWorkItems()
 })
+
+function onMoveWorkItem(event) {
+  console.log('onMoveWorkItem', event)
+}
+
+function onUpdate() {
+  console.log('update')
+}
+function onAdd(event) {
+  console.log('add', event)
+}
+function remove(event) {
+  console.log('remove', event)
+}
 
 </script>
