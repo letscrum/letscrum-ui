@@ -34,7 +34,9 @@
               <v-icon icon="mdi-plus" size="x-small" width="10%" class="float-left ma-1"></v-icon>
             </v-col>
             <v-col cols="7">
-              {{ item.raw.title }}
+              <ItemDetail item-type="WORKITEM" :item-id="item.raw.id">
+                {{ item.raw.title }}
+              </ItemDetail>
             </v-col>
             <v-col cols="4">
               {{ item.raw.status }}
@@ -63,7 +65,9 @@
 
                         </v-col>
                         <v-col cols="7">
-                          {{ task.title }}
+                          <ItemDetail item-type="TASK" :item-id="task.id">
+                            {{ task.title }}
+                          </ItemDetail>
                         </v-col>
                         <v-col cols="4">
                           {{ task.status }}
