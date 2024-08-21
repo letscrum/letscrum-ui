@@ -1,7 +1,7 @@
 <template>
   <v-menu location="end" :close-on-content-click="false">
     <template #activator="{ props }">
-      <v-btn class="mt-2" v-bind="props" prepend-icon="mdi-plus" variant="text">
+      <v-btn style="margin-top: 6px;" v-bind="props" prepend-icon="mdi-plus" variant="text">
         New Work Item
       </v-btn>
     </template>

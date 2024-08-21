@@ -48,7 +48,7 @@
           </v-list>
         </v-menu>
 
-        <v-menu>
+        <v-menu v-if="route.name == 'SprintTaskboard'">
           <template #activator="{ props }">
             <v-btn v-bind="props" append-icon="mdi-chevron-down" size="large" variant="text" class="float-right">
               {{ member.userName }}
@@ -82,7 +82,6 @@
       <router-view name="menu" @create-work-item="onCreateWorkItem" @show="onShow">
       </router-view>
     </v-tabs>
-    <v-divider class="my-2"></v-divider>
     <router-view v-slot="{ Component }">
       <component :is="Component" ref="mainContent" :sprints="sprints" />
     </router-view>
