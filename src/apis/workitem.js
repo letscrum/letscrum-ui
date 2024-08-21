@@ -4,6 +4,8 @@ const version = '/v1'
 
 export const getGetWorkItems = (orgId, projectId, params) => axios.get(`${version}/orgs/${orgId}/projects/${projectId}/workitems`, { params })
 
+export const getGetWorkItem = (orgId, projectId, workItemId) => axios.get(`${version}/orgs/${orgId}/projects/${projectId}/workitems/${workItemId}`)
+
 export const postCreateWorkItem = (orgId, projectId, params) => axios.post(`${version}/orgs/${orgId}/projects/${projectId}/workitems`, params)
 
 export const putUpdateWorkItem = (orgId, projectId, params) => axios.put(`${version}/orgs/${orgId}/projects/${projectId}/workitems`, params)

@@ -1,6 +1,6 @@
 <template>
   <v-sheet border rounded class="pa-1 ma-1" style="border-left-color: rgb(242, 203, 29); border-left-width: 3px; max-width: 180px;">
-    <ItemDetail :item="localTask">
+    <ItemDetail item-type="TASK" :item-id="localTask.id">
       <input :readonly="!isEditing" type="text" class="item-card-text" :value="localTask.id + ' ' + localTask.title">
     </ItemDetail>
     <v-menu>

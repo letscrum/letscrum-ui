@@ -1,6 +1,6 @@
 <template>
   <v-sheet border rounded class="pa-1 ma-1" :style="'border-left-color: ' + (props.workItem.type == 'Backlog' ? 'rgb(0, 156, 204)' : 'rgb(204, 41, 61)') + '; border-left-width: 3px;'">
-    <ItemDetail :item="localWorkItem">
+    <ItemDetail  item-type="WORKITEM" :item-id="localWorkItem.id">
       <input readonly type="text" class="item-card-text" :value="localWorkItem.id + ' ' + localWorkItem.title"><br />
     </ItemDetail>
     <select name="example" class="item-card-text" :value="localWorkItem.assignUser.id" @change="assignWorkItem">

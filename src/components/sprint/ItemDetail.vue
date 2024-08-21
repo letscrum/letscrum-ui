@@ -4,7 +4,7 @@
     persistent
   >
     <template #activator="{ props: activatorProps }">
-      <div v-bind="activatorProps">
+      <div v-bind="activatorProps" @click="onLoadItem">
         <slot></slot>
       </div>
     </template>
@@ -16,6 +16,8 @@
         </v-card-text>
 
         <v-divider></v-divider>
+
+        {{ item }}
 
         <v-card-actions>
           <v-btn
@@ -39,18 +41,43 @@
 
 <script setup>
 import { onMounted, ref } from 'vue';
+import { getGetTask } from '@/apis/task';
+import { getGetWorkItem } from '@/apis/workitem';
 
-const props = defineProps(['item']);
+import { useRoute } from 'vue-router';
 
-const item = ref(props.item)
+const route = useRoute()
+
+const props = defineProps(['itemType', 'itemId']);
+
+const item = ref({})
 const dialog = ref(false)
-
-onMounted(() => {
-  console.log(item.value)
-})
 
 function onSave() {
   console.log(item.value)
+}
+
+onMounted(() => {
+
+})
+
+function onLoadItem() {
+  if (props.itemType === 'TASK') {
+    getGetTask(
+      route.params.orgId,
+      route.params.projectId,
+      '0',
+      props.itemId).then((res) => {
+      item.value = res.data.item
+    })
+  } else if (props.itemType === 'WORKITEM') {
+    getGetWorkItem(
+      route.params.orgId,
+      route.params.projectId,
+      props.itemId).then((res) => {
+      item.value = res.data.item
+    })
+  }
 }
 
 
