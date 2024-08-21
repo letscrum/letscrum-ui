@@ -26,6 +26,7 @@
           v-model="workItems"
           :animation="150"
           handle=".handleWorkItem"
+          @update="onReOrderWorkItems"
         >
         <div v-for="item in items" :key="item.raw.id">
           <v-row no-gutters class="handleWorkItem" style="background-color: bisque">
@@ -44,18 +45,20 @@
           </v-row>
           <v-expand-transition>
             <VueDraggable
+              :id="item.raw.id"
               v-model="item.raw.tasksAll"
               group="tasks"
-              @update="onUpdate"
+              @update="onReOrderTasks"
               @add="onAdd"
               @remove="remove"
               >
               <v-row v-if="!isExpanded(item)" no-gutters>
                 <v-col cols="12">
                   <VueDraggable
+                    :id="item.raw.id"
                     v-model="item.raw.tasksAll"
                     group="tasks"
-                    @update="onUpdate"
+                    @update="onReOrderTasks"
                     @add="onAdd"
                     @remove="remove"
                     >
@@ -89,7 +92,8 @@
 
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { getGetWorkItems } from '@/apis/workitem'
+import { getGetWorkItems, putReOrderWorkItems } from '@/apis/workitem'
+import { putReOrderTasks } from '@/apis/task'
 import { useAppStore } from '@/stores/app'
 import { VueDraggable } from 'vue-draggable-plus'
 
@@ -140,6 +144,27 @@ function onAdd(event) {
 }
 function remove(event) {
   console.log('remove', event)
+}
+function onReOrderWorkItems(event) {
+  console.log('reorder', event)
+  console.log('workItems', workItems.value.map(item => item.id))
+  putReOrderWorkItems(
+    route.params.orgId, route.params.projectId, {
+    workItemIds: workItems.value.map(item => item.id)
+  }).then(res => {
+    console.log('reorder', res)
+  })
+}
+
+function onReOrderTasks(event) {
+  console.log('reorder', event)
+  console.log('from', event.from.id)
+  putReOrderTasks(
+    route.params.orgId, route.params.projectId, event.from.id, {
+    taskIds: workItems.value.find(item => item.id == event.from.id).tasksAll.map(task => task.id)
+  }).then(res => {
+    console.log('reorder', res)
+  })
 }
 
 </script>

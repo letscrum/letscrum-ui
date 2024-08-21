@@ -17,3 +17,5 @@ export const putUpdateTaskStatus = (orgId, projectId, workItemId, taskId, params
 export const putAssignTask = (orgId, projectId, workItemId, taskId, params) => axios.put(`${version}/orgs/${orgId}/projects/${projectId}/workitems/${workItemId}/tasks/${taskId}/assign`, params)
 
 export const putMoveTask = (orgId, projectId, workItemId, taskId, params) => axios.put(`${version}/orgs/${orgId}/projects/${projectId}/workitems/${workItemId}/tasks/${taskId}/move`, params)
+
+export const putReOrderTasks = (orgId, projectId, workItemId, params) => axios.put(`${version}/orgs/${orgId}/projects/${projectId}/workitems/${workItemId}/tasks/reorder`, params)
