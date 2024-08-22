@@ -79,7 +79,15 @@
         inset
         class="mx-2"
       ></v-divider>
-      <router-view name="menu" @create-work-item="onCreateWorkItem" @show="onShow" @after-add="onReLoadSprint" @after-add-from-project="onAddFromProject">
+      <router-view
+        name="menu"
+        @create-work-item="onCreateWorkItem"
+        @show="onShow"
+        @after-add="onReLoadSprint"
+        @after-add-from-project="onAddFromProject"
+        @after-save="onSave"
+        @after-undo="onUndo"
+      >
       </router-view>
     </v-tabs>
     <router-view v-slot="{ Component }">
@@ -176,6 +184,14 @@ function onReLoadSprint() {
 
 function onAddFromProject() {
   mainContent.value.addAllMembersFromProject()
+}
+
+function onSave() {
+  mainContent.value.saveMembers()
+}
+
+function onUndo() {
+  mainContent.value.undoMembers()
 }
 
 onMounted(() => {

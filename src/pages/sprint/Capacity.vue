@@ -23,12 +23,21 @@
       </thead>
       <tbody>
         <tr
-          v-for="item in members"
+          v-for="item in currentMembers"
           :key="item.userId"
         >
           <td>{{ item.userName }}</td>
-          <td>{{ item.role }}</td>
-          <td>{{ item.capacity }}</td>
+          <td>
+            <select v-model="item.role">
+              <option value="Unassigned">Unassigned</option>
+              <option value="Development">Development</option>
+              <option value="Designer">Designer</option>
+              <option value="Testing">Testing</option>
+            </select>
+          </td>
+          <td>
+            <input v-model="item.capacity" />
+          </td>
           <td><v-btn @click="onRemoveSprintMember(item.userId)">X</v-btn></td>
         </tr>
       </tbody>
@@ -46,12 +55,14 @@ import { getGetProject } from '@/apis/project';
 const route = useRoute()
 const sprint = ref({})
 const members = ref([])
+const currentMembers = ref([])
 
 function LoadSprint() {
   getGetSprint(route.params.orgId, route.params.projectId, route.params.sprintId).then((res) => {
     if (res.status === 200) {
       sprint.value = res.data.item
       members.value = res.data.item.members
+      currentMembers.value = res.data.item.members
     }
   })
 }
@@ -90,6 +101,8 @@ function addAllMembersFromProject() {
 defineExpose({
   reloadSprint,
   addAllMembersFromProject,
+  saveMembers,
+  undoMembers,
 })
 
 function reloadSprint() {
@@ -107,6 +120,23 @@ function onRemoveSprintMember(userId) {
       LoadSprint()
     }
   })
+}
+
+function saveMembers() {
+  putUpdateSprintMembers(route.params.orgId, route.params.projectId, route.params.sprintId, {
+    members: currentMembers.value
+  }).then((res) => {
+    if (res.status === 200) {
+      LoadSprint()
+    }
+  })
+}
+
+function undoMembers() {
+  console.log('undo', currentMembers.value)
+  console.log('undo', members.value)
+
+  currentMembers.value = members.value
 }
 
 onMounted(() => {

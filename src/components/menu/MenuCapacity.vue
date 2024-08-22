@@ -38,10 +38,10 @@
     </v-list>
   </v-menu>
 
-  <v-btn style="margin-top: 6px;" prepend-icon="mdi-content-save" variant="text">
+  <v-btn style="margin-top: 6px;" prepend-icon="mdi-content-save" variant="text" @click="onSave">
     Save
   </v-btn>
-  <v-btn style="margin-top: 6px;" prepend-icon="mdi-undo-variant" variant="text">
+  <v-btn style="margin-top: 6px;" prepend-icon="mdi-undo-variant" variant="text" @click="onUndo">
     Undo
   </v-btn>
   <v-menu bottom left offset-y>
@@ -65,7 +65,7 @@ import { getGetProject } from '@/apis/project';
 import { postAddSprintMember } from '@/apis/sprint';
 import { onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-const emit = defineEmits(['afterAdd', 'afterAddFromProject'])
+const emit = defineEmits(['afterAdd', 'afterAddFromProject', 'afterSave', 'afterUndo'])
 
 const route = useRoute()
 
@@ -109,6 +109,14 @@ function onAddSprintMember() {
 
 function onAddFromProject() {
   emit('afterAddFromProject')
+}
+
+function onSave() {
+  emit('afterSave')
+}
+
+function onUndo() {
+  emit('afterUndo')
 }
 
 onMounted(() => {
