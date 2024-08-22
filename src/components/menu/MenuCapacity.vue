@@ -50,7 +50,7 @@
       </v-btn>
     </template>
     <v-list density="compact">
-      <v-list-item>
+      <v-list-item @click="onAddFromProject">
         <v-list-item-title>Add all project members</v-list-item-title>
       </v-list-item>
       <v-list-item>
@@ -65,7 +65,7 @@ import { getGetProject } from '@/apis/project';
 import { postAddSprintMember } from '@/apis/sprint';
 import { onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-const emit = defineEmits(['afterAdd'])
+const emit = defineEmits(['afterAdd', 'afterAddFromProject'])
 
 const route = useRoute()
 
@@ -105,6 +105,10 @@ function onAddSprintMember() {
       emit('afterAdd')
     }
   })
+}
+
+function onAddFromProject() {
+  emit('afterAddFromProject')
 }
 
 onMounted(() => {

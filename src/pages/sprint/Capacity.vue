@@ -56,29 +56,27 @@ function LoadSprint() {
   })
 }
 
-function AddAllMembers() {
+function addAllMembersFromProject() {
   getGetProject(route.params.orgId, route.params.projectId).then((res) => {
     if (res.status === 200) {
       const project = res.data.item
       for (let i = 0; i < project.members.length; i++) {
         const member = project.members[i]
-        if (members.value.find((item) => item.userId === member.userId)) {
+        if (members.value.find((item) => item.userId == member.userId)) {
           continue
         }
-        members.value.push(member)
+        let sprintMember = {
+          userId: member.userId,
+          userName: member.userName,
+          role: 'Unassigned',
+          capacity: 0,
+        }
+        members.value.push(sprintMember)
       }
       console.log(members.value)
 
-      let sprintMembers = members.value.map((item) => {
-        return {
-          userId: item.userId,
-          userName: item.userName,
-          Capacity: 0
-        }
-      })
-
       putUpdateSprintMembers(route.params.orgId, route.params.projectId, route.params.sprintId, {
-        members: sprintMembers
+        members: members.value
       }).then((res) => {
         if (res.status === 200) {
           LoadSprint()
@@ -91,6 +89,7 @@ function AddAllMembers() {
 
 defineExpose({
   reloadSprint,
+  addAllMembersFromProject,
 })
 
 function reloadSprint() {
