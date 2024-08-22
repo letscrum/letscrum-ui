@@ -54,6 +54,6 @@ const router = useRouter()
 
 function signOut() {
   store.signOut()
-  router.push('/')
+  router.go(0)
 }
 </script>

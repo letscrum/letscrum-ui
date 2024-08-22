@@ -162,12 +162,14 @@
       <v-divider></v-divider>
       <v-data-table v-model:search="search" :items="allMembers">
         <template #item.isAdmin="{ item }">
-          <v-chip
-            :color="item.isAdmin ? 'primary' : ''"
-            small
-          >
-            {{ item.isAdmin ? 'Admin' : 'Member' }}
-          </v-chip>
+          <div v-if="item.userName == project.createdUser.name">
+            Owner
+          </div>
+          <SetProjectAdmin v-else :member="item" @after="onGetProject">
+            <v-btn>
+              {{ item.isAdmin ? 'Remove admin' : 'Set admin' }}
+            </v-btn>
+          </SetProjectAdmin>
         </template>
 
       </v-data-table>

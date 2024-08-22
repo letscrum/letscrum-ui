@@ -16,7 +16,7 @@
     <v-card
       prepend-icon="mdi-map-marker"
       :text="props.member.isAdmin ? 'Remove admin?' : 'Set as admin?'"
-      :title="props.member.member.id"
+      :title="props.member.userId"
     >
       <template #actions>
         <v-spacer></v-spacer>
@@ -34,7 +34,7 @@
 </template>
 
 <script setup>
-import { putSetOrgAdmin } from '@/apis/org'
+import { putSetProjectAdmin } from '@/apis/project'
 const emit = defineEmits(['after'])
 
 const props = defineProps(['member'])
@@ -47,7 +47,7 @@ const dialog = ref(false)
 
 
 function OnSetAdmin() {
-  putSetOrgAdmin(store.org.id, props.member.member.id, !props.member.isAdmin).then(() => {
+  putSetProjectAdmin(store.org.id, store.project.id, props.member.userId, !props.member.isAdmin).then(() => {
     dialog.value = false
     emit('after')
   })

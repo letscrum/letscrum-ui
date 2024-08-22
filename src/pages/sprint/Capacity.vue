@@ -6,17 +6,40 @@
       </v-icon>
       Add All Members
     </v-btn>
-    <v-data-table
-      :items="members"
-    >
-    </v-data-table>
+    <v-table>
+      <thead>
+        <tr>
+          <th class="text-left">
+            Name
+          </th>
+          <th class="text-left">
+            Role
+          </th>
+          <th class="text-left">
+            Capacity
+          </th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="item in members"
+          :key="item.userId"
+        >
+          <td>{{ item.userName }}</td>
+          <td>{{ item.role }}</td>
+          <td>{{ item.capacity }}</td>
+          <td><v-btn @click="onRemoveSprintMember(item.userId)">X</v-btn></td>
+        </tr>
+      </tbody>
+    </v-table>
   </div>
 </template>
 
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { getGetSprint, putUpdateSprintMembers } from '@/apis/sprint'
+import { getGetSprint, putUpdateSprintMembers, deleteRemoveSprintMember } from '@/apis/sprint'
 import { getGetProject } from '@/apis/project';
 
 
@@ -61,6 +84,28 @@ function AddAllMembers() {
           LoadSprint()
         }
       })
+    }
+  })
+}
+
+
+defineExpose({
+  reloadSprint,
+})
+
+function reloadSprint() {
+  LoadSprint()
+}
+
+function onRemoveSprintMember(userId) {
+  deleteRemoveSprintMember(
+    route.params.orgId,
+    route.params.projectId,
+    route.params.sprintId,
+    userId,
+  ).then((res) => {
+    if (res.status === 200) {
+      LoadSprint()
     }
   })
 }

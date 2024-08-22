@@ -155,7 +155,6 @@ export const useAppStore = defineStore('app', {
       this.sprint.endDate = null;
       this.sprint.showDetails = false;
       this.sprint.showSprints = false;
-      this.breadcrumbs = [];
     },
     setOrgs(payload) {
       localStorage.orgs = JSON.stringify(payload);

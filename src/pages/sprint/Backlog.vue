@@ -136,9 +136,6 @@ onMounted(() => {
   LoadWorkItems()
 })
 
-function onUpdate() {
-  console.log('update')
-}
 function onAdd(event) {
   console.log('add', event)
 }

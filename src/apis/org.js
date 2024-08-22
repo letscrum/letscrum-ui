@@ -16,4 +16,4 @@ export const postAddOrgMembers = (orgId, params) => axios.post(`${version}/orgs/
 
 export const deleteRemoveOrgMember = (orgId, memberId) => axios.delete(`${version}/orgs/${orgId}/members/${memberId}`)
 
-export const getSetOrgAdmin = (orgId, memberId, isAdmin) => axios.get(`${version}/orgs/${orgId}/members/${memberId}/admin/${isAdmin}`)
+export const putSetOrgAdmin = (orgId, memberId, isAdmin) => axios.put(`${version}/orgs/${orgId}/members/${memberId}/admin/${isAdmin}`)
