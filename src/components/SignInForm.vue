@@ -4,7 +4,7 @@
       <v-toolbar-title>Login form</v-toolbar-title>
     </v-toolbar>
     <v-card-text>
-      <v-form ref="form" v-model="valid">
+      <v-form>
         <v-text-field
           v-model="name"
           label="Username"

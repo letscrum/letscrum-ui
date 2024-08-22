@@ -22,7 +22,7 @@
         <v-list-subheader>用户中心</v-list-subheader>
 
         <v-list-item
-          v-for="(userMenu, i) in userMenus" :key="i" :to="userMenu.path"
+          v-for="(userMenu, i) in store.userMenus" :key="i" :to="userMenu.path"
           color="primary"
         >
           <template #prepend>
@@ -35,7 +35,7 @@
       <v-divider></v-divider>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text="" to="/" @click="signOut">{{ $t('user.userMenus.signOut.text') }}</v-btn>
+        <v-btn text="" @click="signOut">{{ $t('user.userMenus.signOut.text') }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-menu>
@@ -46,14 +46,12 @@
 import { useAppStore } from '@/stores/app'
 import { useRouter } from 'vue-router'
 
-defineProps(['userMenus', 'user'])
-
 const store = useAppStore()
 const router = useRouter()
 
 
 function signOut() {
   store.signOut()
-  router.go(0)
+  router.push('/')
 }
 </script>

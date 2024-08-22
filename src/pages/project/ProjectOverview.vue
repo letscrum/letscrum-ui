@@ -298,13 +298,11 @@
       <v-col v-for="(sprint, i) in sprints" :key="i" cols="12" md="4" class="pa-1">
         {{ sprint }}
         <v-btn
-          outlined
           color="primary"
           @click="onSetSprint(sprint.id, sprint.name, sprint.startDate, sprint.endDate)">
           {{ sprint.name }}
         </v-btn>
         <v-btn
-          outlined
           color="primary"
           @click="onDeleteSprint(sprint.projectId, sprint.id)">
           Delete

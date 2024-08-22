@@ -80,9 +80,20 @@
         class="mx-2"
       ></v-divider>
       <router-view
+        v-if="route.name == 'SprintTaskboard'"
         name="menu"
         @create-work-item="onCreateWorkItem"
         @show="onShow"
+      >
+      </router-view>
+      <router-view
+        v-if="route.name == 'SprintBacklog'"
+        name="menu"
+      >
+      </router-view>
+      <router-view
+        v-if="route.name == 'SprintCapacity'"
+        name="menu"
         @after-add="onReLoadSprint"
         @after-add-from-project="onAddFromProject"
         @after-save="onSave"

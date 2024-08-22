@@ -1,11 +1,5 @@
 <template>
   <div>
-    <v-btn tile text small style="margin-top: 10px;" @click="AddAllMembers">
-      <v-icon left>
-        mdi-plus
-      </v-icon>
-      Add All Members
-    </v-btn>
     <v-table>
       <thead>
         <tr>

@@ -28,8 +28,8 @@
       inset
       class="mx-1"
     ></v-divider>
-    <MenuAnonymous v-if="!store.isSignedIn" :accounts="store.accounts"></MenuAnonymous>
-    <MenuUser v-else :user-menus="store.userMenus" :user="store.user"></MenuUser>
+    <MenuAnonymous v-if="!store.isSignedIn"></MenuAnonymous>
+    <MenuUser v-else></MenuUser>
     <div v-if="!store.isSignedIn">
       <v-btn
         v-for="(account, i) in store.accounts"
@@ -70,6 +70,5 @@ function changeLanguage() {
   }
   location.reload();
 }
-
 
 </script>
