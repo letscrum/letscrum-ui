@@ -38,7 +38,7 @@ import { useAppStore } from '@/stores/app'
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 import { postSignIn } from '@/apis/index'
-import { getGetOrgs } from '@/apis/org'
+import { getGetOrgs, getGetOrg } from '@/apis/org'
 import axios from 'axios'
 
 const store = useAppStore()
@@ -76,17 +76,17 @@ function SingIn() {
                 myRole: item.myRole
               }
             }))
-            router.push('/orgs')
-
-            // getGetOrg(res.data.items[0].id).then((res) => {
-            //   if (res.status === 200) {
-            //     store.setOrg(res.data.item)
-            //     router.push('/orgs/' + res.data.item.id + '/projects')
-            //   } else {
-            //     router.push('/orgs')
-            //   }
-            // })
+            getGetOrg(res.data.items[0].id).then((res) => {
+              if (res.status === 200) {
+                store.setOrg(res.data.item)
+                router.push('/orgs/' + res.data.item.id + '/projects')
+              } else {
+                router.push('/orgs')
+              }
+            })
           }
+        } else {
+          router.push('/orgs')
         }
       })
       loading.value = false
