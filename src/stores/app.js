@@ -16,6 +16,10 @@ export const useAppStore = defineStore('app', {
     links: Link,
     accounts: Account,
     userMenus: UserMenu,
+    globalErr: {
+      show: false,
+      message: null,
+    },
     user: {
       id: null,
       name: null,
@@ -301,5 +305,11 @@ export const useAppStore = defineStore('app', {
       localStorage.language = payload;
       this.language = payload;
     },
+    setGlobalErrMessage(payload) {
+      this.globalErr.message = payload;
+    },
+    showGlobalErr(payload) {
+      this.globalErr.show = payload;
+    }
   },
 })

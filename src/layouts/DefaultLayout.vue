@@ -4,6 +4,7 @@
   <v-container fluid>
     <slot></slot>
   </v-container>
+  <global-err-toast></global-err-toast>
 </template>
 
 <script setup>

@@ -76,6 +76,10 @@ axios.interceptors.response.use(
       axios.defaults.headers.Authorization = `Bearer ${store.token.accessToken}`
       error.config.headers.Authorization = `Bearer ${store.token.accessToken}`
       return axios.request(error.config)
+    } else {
+      console.log('error', error)
+      store.setGlobalErrMessage(error.response.data.message)
+      store.showGlobalErr(true)
     }
     return Promise.reject(error)
   }
