@@ -64,7 +64,7 @@ const routes = [
   {
     path: '/orgs/:orgId/projects/:projectId',
     name: 'Project',
-    component: () => import('@/pages/project/ProjectOverview.vue'),
+    component: () => import('@/pages/project/Project.vue'),
     meta: {
       breadcrumbs: [
         {
@@ -79,31 +79,6 @@ const routes = [
           title: 'Project',
           to: { name: 'Project' }
         },
-      ]
-    },
-  },
-  {
-    path: '/orgs/:orgId/projects/:projectId/sprints',
-    name: 'Sprints',
-    component: () => import('@/pages/project/Sprints.vue'),
-    meta: {
-      breadcrumbs: [
-        {
-          title: 'Orgs',
-          to: { name: 'Orgs' }
-        },
-        {
-          title: 'Projects',
-          to: { name: 'Projects' }
-        },
-        {
-          title: 'Project',
-          to: { name: 'Project' }
-        },
-        {
-          title: 'Sprints',
-          to: { name: 'Sprints' }
-        }
       ]
     },
   },
