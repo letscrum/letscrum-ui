@@ -74,35 +74,38 @@
           </template>
         </v-dialog>
 
-        <v-spacer></v-spacer>
-        <v-text-field
-          v-model="search"
-          density="compact"
-          label="Search"
-          prepend-inner-icon="mdi-magnify"
-          variant="solo-filled"
-          flat
-          hide-details
-          single-line
-        ></v-text-field>
       </v-card-title>
       <v-spacer></v-spacer>
 
       <v-divider></v-divider>
-      <v-data-table v-model:search="search" :items="members">
-
-        <template #item.isAdmin="{ item }">
-          <div v-if="item.member.name == org.createdBy">
-            Owner
-          </div>
-          <SetOrgAdmin v-else :member="item" @after="fetchMembers">
-            <v-btn>
-              {{ item.isAdmin ? 'Remove admin' : 'Set admin' }}
-            </v-btn>
-          </SetOrgAdmin>
-        </template>
-
-      </v-data-table>
+      <v-table>
+        <thead>
+          <tr>
+            <th class="text-left">
+              Name
+            </th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="item in members"
+            :key="item.id"
+          >
+            <td>{{ item.member.name }}</td>
+            <td>
+              <div v-if="item.member.name == org.createdBy">
+                Owner
+              </div>
+              <SetOrgAdmin v-else :member="item" @after="fetchMembers">
+                <v-btn>
+                  {{ item.isAdmin ? 'Remove admin' : 'Set admin' }}
+                </v-btn>
+              </SetOrgAdmin>
+            </td>
+          </tr>
+        </tbody>
+      </v-table>
     </v-card>
     <v-dialog v-model="dialogDelete" width="50%">
       <template #activator="{ props: activatorProps }">
