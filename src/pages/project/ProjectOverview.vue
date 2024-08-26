@@ -143,36 +143,38 @@
       <v-card-title class="d-flex align-center pe-2">
         <v-icon icon="mdi-video-input-component"></v-icon>
         Members
-        <v-spacer></v-spacer>
-
-        <v-spacer></v-spacer>
-        <v-text-field
-          v-model="search"
-          density="compact"
-          label="Search"
-          prepend-inner-icon="mdi-magnify"
-          variant="solo-filled"
-          flat
-          hide-details
-          single-line
-        ></v-text-field>
       </v-card-title>
       <v-spacer></v-spacer>
 
       <v-divider></v-divider>
-      <v-data-table v-model:search="search" :items="allMembers">
-        <template #item.isAdmin="{ item }">
-          <div v-if="item.userName == project.createdUser.name">
-            Owner
-          </div>
-          <SetProjectAdmin v-else :member="item" @after="onGetProject">
-            <v-btn>
-              {{ item.isAdmin ? 'Remove admin' : 'Set admin' }}
-            </v-btn>
-          </SetProjectAdmin>
-        </template>
-
-      </v-data-table>
+      <v-table>
+        <thead>
+          <tr>
+            <th class="text-left">
+              Name
+            </th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="item in allMembers"
+            :key="item.userId"
+          >
+            <td>{{ item.userName }}</td>
+            <td>
+              <div v-if="item.userName == project.createdUser.name">
+                Owner
+              </div>
+              <SetProjectAdmin v-else :member="item" @after="onGetProject">
+                <v-btn>
+                  {{ item.isAdmin ? 'Remove admin' : 'Set admin' }}
+                </v-btn>
+              </SetProjectAdmin>
+            </td>
+          </tr>
+        </tbody>
+      </v-table>
     </v-card>
     <v-row no-gutters>
       <v-col>
