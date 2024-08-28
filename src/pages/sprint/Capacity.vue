@@ -4,6 +4,8 @@
       <thead>
         <tr>
           <th class="text-left">
+          </th>
+          <th class="text-left">
             Name
           </th>
           <th class="text-left">
@@ -20,6 +22,9 @@
           v-for="item in currentMembers"
           :key="item.userId"
         >
+          <td>
+            <user-avatar :user-id="item.userId" :user-name="item.userName"></user-avatar>
+          </td>
           <td>{{ item.userName }}</td>
           <td>
             <select v-model="item.role">
@@ -44,7 +49,6 @@ import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { getGetSprint, putUpdateSprintMembers, deleteRemoveSprintMember } from '@/apis/sprint'
 import { getGetProject } from '@/apis/project';
-
 
 const route = useRoute()
 const sprint = ref({})

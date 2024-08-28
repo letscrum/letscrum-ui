@@ -82,6 +82,8 @@
         <thead>
           <tr>
             <th class="text-left">
+            </th>
+            <th class="text-left">
               Name
             </th>
             <th></th>
@@ -90,8 +92,11 @@
         <tbody>
           <tr
             v-for="item in members"
-            :key="item.id"
+            :key="item.member.id"
           >
+            <td>
+              <user-avatar :user-id="item.member.id" :user-name="item.member.name"></user-avatar>
+            </td>
             <td>{{ item.member.name }}</td>
             <td>
               <div v-if="item.member.name == org.createdBy">

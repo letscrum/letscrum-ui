@@ -151,6 +151,9 @@
         <thead>
           <tr>
             <th class="text-left">
+
+            </th>
+            <th class="text-left">
               Name
             </th>
             <th></th>
@@ -161,6 +164,9 @@
             v-for="item in allMembers"
             :key="item.userId"
           >
+            <td>
+              <user-avatar :user-id="item.userId" :user-name="item.userName"></user-avatar>
+            </td>
             <td>{{ item.userName }}</td>
             <td>
               <div v-if="item.userName == project.createdUser.name">

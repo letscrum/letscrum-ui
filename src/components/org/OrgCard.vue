@@ -8,7 +8,7 @@
     <v-list-item three-line>
       <v-list-item-subtitle>
         <div class="text-overline">
-          1
+          {{ org.members.length + 1 }} Members
         </div>
       </v-list-item-subtitle>
       <v-list-item-title class="text-h5">
@@ -34,6 +34,7 @@ const router = useRouter()
 const props = defineProps(['org'])
 
 const org = ref(props.org)
+console.log('org', org.value)
 
 function onLoadOrg() {
   getGetOrg(org.value.id).then((res) => {
