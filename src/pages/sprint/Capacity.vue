@@ -37,7 +37,13 @@
           <td>
             <input v-model="item.capacity" />
           </td>
-          <td><v-btn @click="onRemoveSprintMember(item.userId)">X</v-btn></td>
+          <td>
+            <SprintMemberDelete :member="item" @after="LoadSprint">
+              <v-btn>
+                X
+              </v-btn>
+            </SprintMemberDelete>
+          </td>
         </tr>
       </tbody>
     </v-table>
@@ -47,7 +53,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { getGetSprint, putUpdateSprintMembers, deleteRemoveSprintMember } from '@/apis/sprint'
+import { getGetSprint, putUpdateSprintMembers } from '@/apis/sprint'
 import { getGetProject } from '@/apis/project';
 
 const route = useRoute()
@@ -105,19 +111,6 @@ defineExpose({
 
 function reloadSprint() {
   LoadSprint()
-}
-
-function onRemoveSprintMember(userId) {
-  deleteRemoveSprintMember(
-    route.params.orgId,
-    route.params.projectId,
-    route.params.sprintId,
-    userId,
-  ).then((res) => {
-    if (res.status === 200) {
-      LoadSprint()
-    }
-  })
 }
 
 function saveMembers() {

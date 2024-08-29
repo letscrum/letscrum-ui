@@ -13,3 +13,5 @@ export const putUpdateProject = (orgId, projectId, params) => axios.put(`${versi
 export const deleteDeleteProject = (orgId, projectId) => axios.delete(`${version}/orgs/${orgId}/projects/${projectId}`)
 
 export const putSetProjectAdmin = (orgId, projectId, userId, isAdmin) => axios.put(`${version}/orgs/${orgId}/projects/${projectId}/members/${userId}/admin/${isAdmin}`)
+
+export const deleteRemoveProjectMember = (orgId, projectId, userId) => axios.delete(`${version}/orgs/${orgId}/projects/${projectId}/members/${userId}`)

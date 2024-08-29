@@ -157,6 +157,7 @@
               Name
             </th>
             <th></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -177,6 +178,13 @@
                   {{ item.isAdmin ? 'Remove admin' : 'Set admin' }}
                 </v-btn>
               </SetProjectAdmin>
+            </td>
+            <td>
+              <ProjectMemberDelete :member="item" @after="onGetProject">
+                <v-btn>
+                  X
+                </v-btn>
+              </ProjectMemberDelete>
             </td>
           </tr>
         </tbody>

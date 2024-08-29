@@ -87,6 +87,7 @@
               Name
             </th>
             <th></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -107,6 +108,13 @@
                   {{ item.isAdmin ? 'Remove admin' : 'Set admin' }}
                 </v-btn>
               </SetOrgAdmin>
+            </td>
+            <td>
+              <OrgMemberDelete :member="item" @after="fetchMembers">
+                <v-btn>
+                  X
+                </v-btn>
+              </OrgMemberDelete>
             </td>
           </tr>
         </tbody>
