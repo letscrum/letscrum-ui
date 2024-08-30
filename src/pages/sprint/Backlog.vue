@@ -132,6 +132,15 @@ function collapseAll() {
   console.log('expanded', expanded.value)
 }
 
+
+defineExpose({
+  showSide,
+})
+
+function showSide(type) {
+  store.setTaskboardSidebar(type)
+}
+
 onMounted(() => {
   LoadWorkItems()
 })

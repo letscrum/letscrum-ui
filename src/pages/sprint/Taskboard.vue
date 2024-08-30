@@ -380,10 +380,10 @@ defineExpose({
   filterTasks,
   AddWorkItem,
   LoadWorkItems,
-  show,
+  showSide,
 })
 
-function show(type) {
+function showSide(type) {
   store.setTaskboardSidebar(type)
 }
 

@@ -55,11 +55,13 @@ import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { getGetSprint, putUpdateSprintMembers } from '@/apis/sprint'
 import { getGetProject } from '@/apis/project';
+import { useAppStore } from '@/stores/app';
 
 const route = useRoute()
 const sprint = ref({})
 const members = ref([])
 const currentMembers = ref([])
+const store = useAppStore()
 
 function LoadSprint() {
   getGetSprint(route.params.orgId, route.params.projectId, route.params.sprintId).then((res) => {
@@ -107,7 +109,12 @@ defineExpose({
   addAllMembersFromProject,
   saveMembers,
   undoMembers,
+  showSide,
 })
+
+function showSide(type) {
+  store.setTaskboardSidebar(type)
+}
 
 function reloadSprint() {
   LoadSprint()

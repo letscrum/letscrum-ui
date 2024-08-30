@@ -56,10 +56,26 @@
       </SprintCreate>
     </v-list>
   </v-menu>
+  <v-menu bottom left offset-y>
+    <template #activator="{ props }">
+      <v-btn v-bind="props" icon="mdi-order-bool-ascending" variant="text">
+      </v-btn>
+    </template>
+    <v-list density="compact">
+      <v-list-subheader>用户中心</v-list-subheader>
+
+      <v-list-item @click="onShowSide('details')">
+        <v-list-item-title>Work details</v-list-item-title>
+      </v-list-item>
+      <v-list-item @click="onShowSide('sprints')">
+        <v-list-item-title>Sprints</v-list-item-title>
+      </v-list-item>
+    </v-list>
+  </v-menu>
 </template>
 
 <script setup>
-const emit = defineEmits(['afterSetSprint', 'afterSetMember', 'afterLoadSprints'])
+const emit = defineEmits(['afterSetSprint', 'afterSetMember', 'afterLoadSprints', 'afterShowSide'])
 
 import { useAppStore } from '@/stores/app'
 import { useRoute } from 'vue-router';
@@ -126,6 +142,10 @@ function LoadSprints() {
       console.log(sprint.value)
     }
   })
+}
+
+function onShowSide(type) {
+  emit('afterShowSide', type)
 }
 
 </script>

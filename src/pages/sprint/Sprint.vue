@@ -32,7 +32,6 @@
         v-if="route.name == 'SprintTaskboard'"
         name="menu"
         @create-work-item="onCreateWorkItem"
-        @show="onShow"
       >
       </router-view>
       <router-view
@@ -54,6 +53,7 @@
         @after-set-sprint="onSetSprint"
         @after-set-member="onSetMember"
         @after-load-sprints="onLoadSprints"
+        @after-show-side="onShowSide"
       >
       </router-view>
     </v-tabs>
@@ -101,8 +101,8 @@ function onCreateWorkItem(workItemType) {
   mainContent.value.AddWorkItem(workItemType)
 }
 
-function onShow(type) {
-  mainContent.value.show(type)
+function onShowSide(type) {
+  mainContent.value.showSide(type)
 }
 
 function onReLoadSprint() {
