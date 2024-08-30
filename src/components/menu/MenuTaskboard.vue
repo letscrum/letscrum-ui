@@ -1,7 +1,7 @@
 <template>
   <v-menu bottom left offset-y>
     <template #activator="{ props }">
-      <v-btn v-bind="props" icon="mdi-plus" variant="text">
+      <v-btn v-bind="props" icon="mdi-plus" variant="text" density="comfortable" style="margin-top: 6px;">
       </v-btn>
     </template>
     <v-list density="compact">

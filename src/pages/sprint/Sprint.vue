@@ -4,7 +4,7 @@
       <v-col>
         <h2>{{ store.sprint.name }}</h2>
       </v-col>
-      <v-col>
+      <v-col align="right">
         <SprintStatus></SprintStatus>
       </v-col>
     </v-row>

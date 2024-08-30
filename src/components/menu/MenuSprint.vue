@@ -1,7 +1,7 @@
 <template>
   <v-menu v-if="route.name == 'SprintTaskboard'">
     <template #activator="{ props }">
-      <v-btn v-bind="props" append-icon="mdi-chevron-down" size="large" variant="text" class="float-right">
+      <v-btn v-bind="props" append-icon="mdi-chevron-down" style="margin-top: 6px;" variant="text">
         {{ member.userName }}
       </v-btn>
     </template>
@@ -18,10 +18,9 @@
       </v-list-item>
     </v-list>
   </v-menu>
-
   <v-menu offset-y bottom left width="400">
     <template #activator="{ props }">
-      <v-btn v-bind="props" append-icon="mdi-chevron-down" size="large" variant="text" class="float-right">
+      <v-btn v-bind="props" append-icon="mdi-chevron-down" style="margin-top: 6px;" variant="text">
         {{ store.sprint.name }}
       </v-btn>
     </template>
@@ -58,7 +57,7 @@
   </v-menu>
   <v-menu bottom left offset-y>
     <template #activator="{ props }">
-      <v-btn v-bind="props" icon="mdi-order-bool-ascending" variant="text">
+      <v-btn v-bind="props" icon="mdi-order-bool-ascending" variant="text" density="comfortable" style="margin-top: 6px;">
       </v-btn>
     </template>
     <v-list density="compact">

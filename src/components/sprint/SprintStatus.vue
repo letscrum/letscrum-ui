@@ -1,21 +1,20 @@
 <template>
+  <v-sheet
+          max-width="200px"
+        >
   <v-dialog
     v-model="dialog"
     persistent
   >
     <template #activator="{ props: activatorProps }">
       <div v-bind="activatorProps" @click="onOpenCreate()">
-        <v-sheet
-          max-width="200px"
-        >
+
           <v-sparkline
-            max-width="200"
             :labels="labels"
             :model-value="value"
             line-width="1"
             padding="16"
           ></v-sparkline>
-        </v-sheet>
       </div>
     </template>
 
@@ -28,7 +27,6 @@
 
         <v-card-text class="px-4">
           <v-sparkline
-            max-width="200"
             :labels="labels"
             :model-value="value"
             line-width="1"
@@ -48,7 +46,7 @@
       </v-card>
     </template>
   </v-dialog>
-
+</v-sheet>
 </template>
 
 <script setup>
