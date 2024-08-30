@@ -5,17 +5,7 @@
         <h2>{{ store.sprint.name }}</h2>
       </v-col>
       <v-col>
-        <v-sheet
-          max-width="200px"
-        >
-          <v-sparkline
-            max-width="200"
-            :labels="labels"
-            :model-value="value"
-            line-width="1"
-            padding="16"
-          ></v-sparkline>
-        </v-sheet>
+        <SprintStatus></SprintStatus>
       </v-col>
     </v-row>
 
@@ -73,26 +63,6 @@ const store = useAppStore()
 const route = useRoute()
 const sprints = ref([])
 
-const labels = ref([
-        '12am',
-        '3am',
-        '6am',
-        '9am',
-        '12pm',
-        '3pm',
-        '6pm',
-        '9pm',
-      ])
-const value = ([
-        200,
-        675,
-        410,
-        390,
-        310,
-        460,
-        250,
-        240,
-      ])
 
 const mainContent = ref()
 
