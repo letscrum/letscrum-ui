@@ -1,21 +1,21 @@
 <template>
-  <v-sheet
-          max-width="200px"
-        >
   <v-dialog
     v-model="dialog"
     persistent
   >
     <template #activator="{ props: activatorProps }">
-      <div v-bind="activatorProps" @click="onOpenCreate()">
-
-          <v-sparkline
-            :labels="labels"
-            :model-value="value"
-            line-width="1"
-            padding="16"
-          ></v-sparkline>
-      </div>
+      <v-sheet max-width="200px">
+        <v-sparkline
+          v-bind="activatorProps"
+          fill
+          :gradient="['rgb(0,120,212)']"
+          line-width="0"
+          :model-value="value"
+          padding="0"
+          :smooth="false"
+          auto-draw
+        ></v-sparkline>
+      </v-sheet>
     </template>
 
     <template #default="{ isActive }">
@@ -27,11 +27,16 @@
 
         <v-card-text class="px-4">
           <v-sparkline
-            :labels="labels"
-            :model-value="value"
-            line-width="1"
-            padding="16"
-          ></v-sparkline>
+          fill
+          :gradient="['rgb(0,120,212)']"
+          line-width="0"
+          :model-value="value"
+          padding="4"
+          height="120"
+          :smooth="false"
+          :labels="labels"
+          auto-draw
+        ></v-sparkline>
         </v-card-text>
 
         <v-divider></v-divider>
@@ -46,7 +51,6 @@
       </v-card>
     </template>
   </v-dialog>
-</v-sheet>
 </template>
 
 <script setup>
