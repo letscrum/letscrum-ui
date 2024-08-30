@@ -35,6 +35,7 @@
           height="120"
           :smooth="false"
           :labels="labels"
+          label-size="4"
           auto-draw
         ></v-sparkline>
         </v-card-text>
