@@ -5,68 +5,17 @@
         <h2>{{ store.sprint.name }}</h2>
       </v-col>
       <v-col>
-        <!-- <v-select
-          density="compact"
-          width="100"
-          :items="['All', ...sprint.members.map((item) => item.userName)]"
-        ></v-select> -->
-        <v-menu offset-y bottom left width="400">
-          <template #activator="{ props }">
-            <v-btn v-bind="props" append-icon="mdi-chevron-down" size="large" variant="text" class="float-right">
-              {{ store.sprint.name }}
-            </v-btn>
-          </template>
-          <v-list>
-            <v-virtual-scroll height="320" item-height="64" :items="sprints">
-              <template #default="{ item }">
-                <v-list-item
-                  :to="'/orgs/' + store.org.id + '/projects/' + item.projectId + '/sprints/' + item.id"
-                  lines="two"
-                  :title="item.name"
-                  :subtitle="new Date(item.startDate * 1000).toISOString().substring(0, 10) + ' - ' + new Date(item.endDate * 1000).toISOString().substring(0, 10)"
-                  @click="onSetSprint(item.id, item.name, item.startDate, item.endDate)"
-                >
-                  <template #append>
-                    <v-chip
-                      :color="item.status === 'Current' ? 'primary' : ''"
-                      :variant="item.status === 'Current' ? 'flat' : 'tonal'"
-                    >
-                      {{ item.status }}
-                    </v-chip>
-                  </template>
-                </v-list-item>
-              </template>
-            </v-virtual-scroll>
-            <v-divider class="my-2"></v-divider>
-            <SprintCreate @after-create="LoadSprints()">
-              <v-list-item title="New Sprint" @click="console.log()">
-                <template #prepend>
-                  <v-icon>mdi-plus</v-icon>
-                </template>
-              </v-list-item>
-            </SprintCreate>
-          </v-list>
-        </v-menu>
-
-        <v-menu v-if="route.name == 'SprintTaskboard'">
-          <template #activator="{ props }">
-            <v-btn v-bind="props" append-icon="mdi-chevron-down" size="large" variant="text" class="float-right">
-              {{ member.userName }}
-            </v-btn>
-          </template>
-          <v-list>
-            <v-list-item title="All" @click="setMember('all', 'All')"></v-list-item>
-            <v-list-item title="@Me" @click="setMember(store.user.id, '@Me')"></v-list-item>
-
-            <v-list-item
-              v-for="(item, i) in sprint.members"
-              :key="i"
-              :title="item.userName"
-              @click="setMember(item.userId, item.userName)"
-            >
-            </v-list-item>
-          </v-list>
-        </v-menu>
+        <v-sheet
+          max-width="200px"
+        >
+          <v-sparkline
+            max-width="200"
+            :labels="labels"
+            :model-value="value"
+            line-width="1"
+            padding="16"
+          ></v-sparkline>
+        </v-sheet>
       </v-col>
     </v-row>
 
@@ -100,6 +49,13 @@
         @after-undo="onUndo"
       >
       </router-view>
+      <router-view
+        name="sprintMenu"
+        @after-set-sprint="onSetSprint"
+        @after-set-member="onSetMember"
+        @after-load-sprints="onLoadSprints"
+      >
+      </router-view>
     </v-tabs>
     <router-view v-slot="{ Component }">
       <component :is="Component" ref="mainContent" :sprints="sprints" />
@@ -111,74 +67,34 @@
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import { useRoute } from 'vue-router'
 import { useAppStore } from '@/stores/app'
-import { onMounted, ref } from 'vue';
-import { getGetSprints } from '@/apis/sprint';
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
 
 const store = useAppStore()
 
 const route = useRoute()
-
 const sprints = ref([])
 
-const sprint = ref({})
-
-const member = ref({
-  userId: 0,
-  userName: 'All'
-})
+const labels = ref([
+        '12am',
+        '3am',
+        '6am',
+        '9am',
+        '12pm',
+        '3pm',
+        '6pm',
+        '9pm',
+      ])
+const value = ([
+        200,
+        675,
+        410,
+        390,
+        310,
+        460,
+        250,
+        240,
+      ])
 
 const mainContent = ref()
-
-function LoadSprints() {
-  getGetSprints(store.org.id, route.params.projectId, {
-    page: 1,
-    size: 999
-  }).then((res) => {
-    console.log(res);
-    if (res.status === 200) {
-      sprints.value = res.data.items;
-      console.log(sprints.value);
-      // get sprints status 'Current' item and set to store
-      if (store.sprint.id === 0) {
-        const currentSprint = sprints.value.find((item) => item.status === 'Current')
-        if (currentSprint) {
-          store.setSprint({
-            id: currentSprint.id,
-            name: currentSprint.name,
-            startDate: currentSprint.startDate,
-            endDate: currentSprint.endDate
-          })
-          sprint.value = currentSprint
-        }
-      } else {
-        const currentSprint = sprints.value.find((item) => item.id === route.params.sprintId)
-        sprint.value = currentSprint
-      }
-      console.log(sprint.value)
-    }
-  })
-}
-
-function onSetSprint(id, name, startDate, endDate) {
-  store.setSprint({
-    id: id,
-    name: name,
-    startDate: startDate,
-    endDate: endDate
-  })
-  mainContent.value.LoadWorkItems()
-
-  router.push(`/orgs/${store.org.id}/projects/${route.params.projectId}/sprints/${id}`)
-}
-
-function setMember(userId, userName) {
-  member.value.userId = userId
-  member.value.userName = userName
-  mainContent.value.filterTasks(userId)
-}
 
 function onCreateWorkItem(workItemType) {
   console.log('create work item', workItemType)
@@ -205,7 +121,16 @@ function onUndo() {
   mainContent.value.undoMembers()
 }
 
-onMounted(() => {
-  LoadSprints()
-})
+function onSetSprint() {
+  mainContent.value.LoadWorkItems()
+}
+
+function onSetMember(memberId) {
+  mainContent.value.filterTasks(memberId)
+}
+
+function onLoadSprints(getSprints) {
+  sprints.value = getSprints
+}
+
 </script>

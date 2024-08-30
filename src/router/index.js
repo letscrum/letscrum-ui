@@ -92,6 +92,7 @@ const routes = [
         name: 'SprintTaskboard',
         components: {
           default: () => import('@/pages/sprint/Taskboard.vue'),
+          sprintMenu: () => import('@/components/menu/MenuSprint.vue'),
           menu: () => import('@/components/menu/MenuTaskboard.vue')
         },
         meta: {
@@ -120,6 +121,7 @@ const routes = [
         name: 'SprintBacklog',
         components: {
           default: () => import('@/pages/sprint/Backlog.vue'),
+          sprintMenu: () => import('@/components/menu/MenuSprint.vue'),
           menu: () => import('@/components/menu/MenuBacklog.vue')
         },
         meta: {
@@ -148,6 +150,7 @@ const routes = [
         name: 'SprintCapacity',
         components: {
           default: () => import('@/pages/sprint/Capacity.vue'),
+          sprintMenu: () => import('@/components/menu/MenuSprint.vue'),
           menu: () => import('@/components/menu/MenuCapacity.vue')
         },
         meta: {
