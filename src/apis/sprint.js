@@ -8,6 +8,8 @@ export const getGetSprint = (orgId, projectId, sprintId) => axios.get(`${version
 
 export const postCreateSprint = (orgId, projectId, params) => axios.post(`${version}/orgs/${orgId}/projects/${projectId}/sprints`, params)
 
+export const putUpdateSprint = (orgId, projectId, sprintId, params) => axios.put(`${version}/orgs/${orgId}/projects/${projectId}/sprints/${sprintId}`, params)
+
 export const putUpdateSprintMembers = (orgId, projectId, sprintId, params) => axios.put(`${version}/orgs/${orgId}/projects/${projectId}/sprints/${sprintId}/members`, params)
 
 export const deleteDeleteSprint = (orgId, projectId, sprintId) => axios.delete(`${version}/orgs/${orgId}/projects/${projectId}/sprints/${sprintId}`)

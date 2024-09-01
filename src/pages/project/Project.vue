@@ -318,6 +318,11 @@
           @click="onSetSprint(sprint.id, sprint.name, sprint.startDate, sprint.endDate)">
           {{ sprint.name }}
         </v-btn>
+        <SprintEdit :sprint-id="sprint.id" @after-edit="LoadSprints()">
+          <v-btn>
+            Edit
+          </v-btn>
+        </SprintEdit>
         <v-btn
           color="primary"
           @click="onDeleteSprint(sprint.projectId, sprint.id)">
