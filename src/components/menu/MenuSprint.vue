@@ -1,5 +1,5 @@
 <template>
-  <v-menu v-if="route.name == 'SprintTaskboard'">
+  <v-menu v-if="route.name == 'SprintTaskboard'" offset-y bottom left>
     <template #activator="{ props }">
       <v-btn v-bind="props" append-icon="mdi-chevron-down" style="margin-top: 6px;" variant="text">
         {{ member.userName }}

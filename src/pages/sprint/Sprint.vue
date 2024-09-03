@@ -5,7 +5,7 @@
         <h2>{{ store.sprint.name }}</h2>
       </v-col>
       <v-col align="right">
-        <SprintStatus></SprintStatus>
+        <SprintBurndown></SprintBurndown>
       </v-col>
     </v-row>
 
@@ -57,6 +57,7 @@
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import { useRoute } from 'vue-router'
 import { useAppStore } from '@/stores/app'
+import SprintBurndown from '@/components/sprint/SprintBurndown.vue';
 
 const store = useAppStore()
 

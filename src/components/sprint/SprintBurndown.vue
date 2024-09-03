@@ -13,7 +13,6 @@
           :model-value="value"
           padding="0"
           :smooth="false"
-          auto-draw
         ></v-sparkline>
       </v-sheet>
     </template>
@@ -35,8 +34,7 @@
           height="120"
           :smooth="false"
           :labels="labels"
-          label-size="4"
-          auto-draw
+          label-size="2"
         ></v-sparkline>
         </v-card-text>
 
@@ -55,26 +53,25 @@
 </template>
 
 <script setup>
+import { getSprintItemBurndown } from '@/apis/sprint';
+import { onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute()
+
 const dialog = ref(false)
-const labels = ref([
-        '12am',
-        '3am',
-        '6am',
-        '9am',
-        '12pm',
-        '3pm',
-        '6pm',
-        '9pm',
-      ])
-const value = ([
-        200,
-        675,
-        410,
-        390,
-        310,
-        460,
-        250,
-        240,
-      ])
+const labels = ref([])
+const value = ref([])
+
+onMounted(() => {
+  getSprintItemBurndown(route.params.orgId, route.params.projectId, route.params.sprintId).then((res) => {
+    console.log(res)
+    // get res.data.burndown list date convert to date unix timestamp to date format and set to labels value
+    labels.value = res.data.burndown.map((item) => new Date(item.date * 1000).toISOString().substring(5, 7) + '/' + new Date(item.date * 1000).toISOString().substring(8, 10) )
+
+    // get res.data.burndown list actual and set to value value
+    value.value = res.data.burndown.map((item) => item.actual)
+  })
+})
 
 </script>

@@ -17,3 +17,5 @@ export const deleteDeleteSprint = (orgId, projectId, sprintId) => axios.delete(`
 export const postAddSprintMember = (orgId, projectId, sprintId, params) => axios.post(`${version}/orgs/${orgId}/projects/${projectId}/sprints/${sprintId}/members`, params)
 
 export const deleteRemoveSprintMember = (orgId, projectId, sprintId, userId) => axios.delete(`${version}/orgs/${orgId}/projects/${projectId}/sprints/${sprintId}/members/${userId}`)
+
+export const getSprintItemBurndown = (orgId, projectId, sprintId) => axios.get(`${version}/orgs/${orgId}/projects/${projectId}/sprints/${sprintId}/item_burndown`)
