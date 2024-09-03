@@ -109,7 +109,6 @@ const workItems = ref([])
 const expanded = ref([])
 
 function LoadWorkItems() {
-  expanded.value = []
   getGetWorkItems(store.org.id, route.params.projectId, {
     sprintId: store.sprint.id,
     page: 1,
@@ -139,6 +138,7 @@ function collapseAll() {
 
 defineExpose({
   showSide,
+  LoadWorkItems,
 })
 
 function showSide(type) {

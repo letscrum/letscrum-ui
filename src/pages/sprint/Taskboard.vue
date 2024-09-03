@@ -422,6 +422,7 @@ function onAdd(item) {
     console.log('workItems', workItems.value)
     workItems.value.find((item) => item.id == workItemId)['tasks' + status].find((task) => task.id == taskId).status = status
     workItems.value.find((item) => item.id == workItemId)['tasks' + status].find((task) => task.id == taskId).workItemId = workItemId
+    emit('task-changed')
   })
 }
 

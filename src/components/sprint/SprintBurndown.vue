@@ -36,6 +36,7 @@
           :labels="props.burndownData.labels"
           label-size="2"
         ></v-sparkline>
+        {{ props.burndownData }}
         </v-card-text>
 
         <v-divider></v-divider>

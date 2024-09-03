@@ -27,6 +27,7 @@
       <router-view
         v-if="route.name == 'SprintBacklog'"
         name="menu"
+        @after-create="onCreateWorkItemFromBacklog"
       >
       </router-view>
       <router-view
@@ -75,6 +76,10 @@ const mainContent = ref()
 function onCreateWorkItem(workItemType) {
   console.log('create work item', workItemType)
   mainContent.value.AddWorkItem(workItemType)
+}
+
+function onCreateWorkItemFromBacklog() {
+  mainContent.value.LoadWorkItems()
 }
 
 function onShowSide(type) {
