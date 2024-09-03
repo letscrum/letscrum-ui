@@ -57,6 +57,8 @@ import { getGetSprint, putUpdateSprintMembers } from '@/apis/sprint'
 import { getGetProject } from '@/apis/project';
 import { useAppStore } from '@/stores/app';
 
+const emit = defineEmits(['task-changed'])
+
 const route = useRoute()
 const sprint = ref({})
 const members = ref([])
@@ -139,5 +141,6 @@ function undoMembers() {
 
 onMounted(() => {
   LoadSprint()
+  emit('task-changed')
 })
 </script>

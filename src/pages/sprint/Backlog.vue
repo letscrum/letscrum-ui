@@ -32,7 +32,7 @@
           <v-row no-gutters class="handleWorkItem" style="background-color: bisque">
             <v-col cols="1">
               <v-icon :icon="!isExpanded(item) ? 'mdi-menu-down' : 'mdi-menu-right'" size="x-small" width="10%" class="float-left ma-1" @click="() => toggleExpand(item)"></v-icon>
-              <v-icon icon="mdi-plus" size="x-small" width="10%" class="float-left ma-1"></v-icon>
+              <v-icon icon="mdi-plus" size="x-small" width="10%" class="float-left ma-1" @click="onCreateTask"></v-icon>
             </v-col>
             <v-col cols="7">
               <ItemDetail item-type="WORKITEM" :item-id="item.raw.id">
@@ -97,6 +97,8 @@ import { putReOrderTasks } from '@/apis/task'
 import { useAppStore } from '@/stores/app'
 import { VueDraggable } from 'vue-draggable-plus'
 
+const emit = defineEmits(['task-changed'])
+
 const store = useAppStore()
 
 const route = useRoute()
@@ -143,6 +145,7 @@ function showSide(type) {
 
 onMounted(() => {
   LoadWorkItems()
+  emit('task-changed')
 })
 
 function onAdd(event) {
@@ -171,6 +174,10 @@ function onReOrderTasks(event) {
   }).then(res => {
     console.log('reorder', res)
   })
+}
+
+function onCreateTask() {
+  emit('task-changed')
 }
 
 </script>

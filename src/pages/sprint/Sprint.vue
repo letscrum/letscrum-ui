@@ -5,7 +5,7 @@
         <h2>{{ store.sprint.name }}</h2>
       </v-col>
       <v-col align="right">
-        <SprintBurndown></SprintBurndown>
+        <SprintBurndown :burndown-data="burndown"></SprintBurndown>
       </v-col>
     </v-row>
 
@@ -48,7 +48,7 @@
       </router-view>
     </v-tabs>
     <router-view v-slot="{ Component }">
-      <component :is="Component" ref="mainContent" :sprints="sprints" />
+      <component :is="Component" ref="mainContent" :sprints="sprints" @task-changed="onLoadBurndown" />
     </router-view>
   </DefaultLayout>
 </template>
@@ -57,12 +57,16 @@
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import { useRoute } from 'vue-router'
 import { useAppStore } from '@/stores/app'
-import SprintBurndown from '@/components/sprint/SprintBurndown.vue';
+import { getSprintItemBurndown } from '@/apis/sprint';
 
 const store = useAppStore()
 
 const route = useRoute()
 const sprints = ref([])
+const burndown = ref({
+  labels: [],
+  values: [],
+})
 
 
 const mainContent = ref()
@@ -102,6 +106,17 @@ function onSetMember(memberId) {
 
 function onLoadSprints(getSprints) {
   sprints.value = getSprints
+}
+
+function onLoadBurndown() {
+  getSprintItemBurndown(route.params.orgId, route.params.projectId, route.params.sprintId).then((res) => {
+    console.log(res)
+    // get res.data.burndown list date convert to date unix timestamp to date format and set to labels value
+    burndown.value.labels = res.data.burndown.map((item) => new Date(item.date * 1000).toISOString().substring(5, 7) + '/' + new Date(item.date * 1000).toISOString().substring(8, 10))
+
+    // get res.data.burndown list actual and set to value value
+    burndown.value.values = res.data.burndown.map((item) => item.actual)
+  })
 }
 
 </script>

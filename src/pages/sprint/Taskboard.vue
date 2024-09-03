@@ -213,6 +213,8 @@ import { getGetSprint } from '@/apis/sprint';
 import { useRoute } from 'vue-router'
 import { useRouter } from 'vue-router';
 
+const emit = defineEmits(['task-changed'])
+
 const router = useRouter()
 
 import { useAppStore } from '@/stores/app'
@@ -327,6 +329,8 @@ function onCreateTask() {
           workItems.value[i].tasksToDo.push(res.data.item)
         }
       }
+      // reload sprint burndown
+      emit('task-changed')
     })
   }
   creatingTask.value = false
@@ -454,6 +458,7 @@ function updateWorkItem(action, workItem) {
 onMounted(() => {
   LoadSprint()
   LoadWorkItems()
+  emit('task-changed')
 })
 
 </script>
