@@ -32,7 +32,9 @@
           <v-row no-gutters class="handleWorkItem" style="background-color: bisque">
             <v-col cols="1">
               <v-icon :icon="!isExpanded(item) ? 'mdi-menu-down' : 'mdi-menu-right'" size="x-small" width="10%" class="float-left ma-1" @click="() => toggleExpand(item)"></v-icon>
-              <v-icon icon="mdi-plus" size="x-small" width="10%" class="float-left ma-1" @click="onCreateTask"></v-icon>
+              <TaskCreate :work-item-id="item.raw.id" @after-create="onCreateTask">
+                <v-icon icon="mdi-plus" size="x-small" width="10%" class="float-left ma-1"></v-icon>
+              </TaskCreate>
             </v-col>
             <v-col cols="7">
               <ItemDetail item-type="WORKITEM" :item-id="item.raw.id">
@@ -177,6 +179,7 @@ function onReOrderTasks(event) {
 }
 
 function onCreateTask() {
+  LoadWorkItems()
   emit('task-changed')
 }
 

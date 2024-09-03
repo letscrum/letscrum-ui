@@ -4,7 +4,7 @@
     persistent
   >
     <template #activator="{ props: activatorProps }">
-      <div v-bind="activatorProps" @click="onLoadItem">
+      <div v-bind="activatorProps" @click="onOpen()">
         <slot></slot>
       </div>
     </template>
@@ -18,6 +18,7 @@
         <v-divider></v-divider>
 
         {{ item }}
+        {{ props.workItemId }}
 
         <v-card-actions>
           <v-btn
@@ -41,46 +42,39 @@
 
 <script setup>
 import { onMounted, ref } from 'vue';
-import { getGetTask } from '@/apis/task';
-import { getGetWorkItem } from '@/apis/workitem';
+import { postCreateTask } from '@/apis/task';
 
 import { useRoute } from 'vue-router';
 
 const route = useRoute()
 
-const props = defineProps(['itemType', 'itemId']);
-const emit = defineEmits(['afterUpdate'])
+const props = defineProps(['workItemId']);
+const emit = defineEmits(['afterCreate'])
 
 const item = ref({})
 const dialog = ref(false)
 
+function onOpen() {
+  item.value = {}
+}
+
 function onSave() {
-  console.log(item.value)
-  emit('afterUpdate')
+  postCreateTask(
+    route.params.orgId,
+    route.params.projectId,
+    props.workItemId, {
+    sprintId: route.params.sprintId,
+    title: item.value.title,
+  }).then(res => {
+    if (res.status === 200) {
+      dialog.value = false
+      emit('afterCreate')
+    }
+  })
 }
 
 onMounted(() => {
-
 })
-
-function onLoadItem() {
-  if (props.itemType === 'TASK') {
-    getGetTask(
-      route.params.orgId,
-      route.params.projectId,
-      '0',
-      props.itemId).then((res) => {
-      item.value = res.data.item
-    })
-  } else if (props.itemType === 'WORKITEM') {
-    getGetWorkItem(
-      route.params.orgId,
-      route.params.projectId,
-      props.itemId).then((res) => {
-      item.value = res.data.item
-    })
-  }
-}
 
 
 </script>
