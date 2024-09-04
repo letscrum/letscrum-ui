@@ -57,7 +57,6 @@
                       v-model="workItems"
                       group="workItem"
                       style="width: 100%; height: 100%;"
-                      @add="onMoveToSprint"
                       >
                       <WorkItemCard :work-item="item.raw" :members="sprint.members" @after-update="updateWorkItem"></WorkItemCard>
                     </VueDraggable>
@@ -152,49 +151,7 @@ tile outlined class="mb-2 mr-2 float-left"
         </v-card>
       </v-col>
       <v-col v-if="store.sprint.showSprints" cols="3">
-        <v-card flat tile>
-          <v-card-title>
-            <span class="text-h5">Sprints</span>
-            <v-spacer></v-spacer>
-            <v-btn icon="mdi-close" @click="onCloseSide">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </v-card-title>
-          <v-card-text>
-            <div v-for="item in props.sprints"
-                :key="item.id">
-              <VueDraggable
-                :id="item.id"
-                v-model="sprintWorkItems"
-                group="workItem"
-                style="width: 100%; height: 100%;"
-                draggable="false"
-                :disabled="item.id === route.params.sprintId"
-                @add="onMoveToSprint"
-              >
-                <v-list-item
-                  lines="two"
-                  :to="'/orgs/' + store.org.id + '/projects/' + item.projectId + '/sprints/' + item.id"
-                  @click="onSetSprint(item.id, item.name, item.startDate, item.endDate)"
-                >
-
-                  <v-list-item-title>{{ item.name }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ new Date(item.startDate * 1000).toISOString().substring(0, 10) + ' - ' + new Date(item.endDate * 1000).toISOString().substring(0, 10) }}</v-list-item-subtitle>
-                  <template #append>
-                    <v-chip
-                      :color="item.status === 'Current' ? 'primary' : ''"
-                      :variant="item.status === 'Current' ? 'flat' : 'tonal'"
-                    >
-                      {{ item.status }}
-                    </v-chip>
-                  </template>
-
-                </v-list-item>
-
-              </VueDraggable>
-            </div>
-          </v-card-text>
-        </v-card>
+        <SprintsSider :sprints="props.sprints" @after-move="LoadWorkItems" @close-side="onCloseSide"></SprintsSider>
       </v-col>
     </v-row>
   </div>
@@ -204,18 +161,15 @@ tile outlined class="mb-2 mr-2 float-left"
 
 import { onMounted, ref } from 'vue'
 
-import { getGetWorkItems, postCreateWorkItem, putMoveWorkItem } from '@/apis/workitem';
+import { getGetWorkItems, postCreateWorkItem } from '@/apis/workitem';
 
 import { postCreateTask, putMoveTask } from '@/apis/task';
 
 import { getGetSprint } from '@/apis/sprint';
 
 import { useRoute } from 'vue-router'
-import { useRouter } from 'vue-router';
 
 const emit = defineEmits(['task-changed'])
-
-const router = useRouter()
 
 import { useAppStore } from '@/stores/app'
 
@@ -236,7 +190,6 @@ const createWorkItemTitle = ref(null)
 const createTaskTitle = ref(null)
 const rightTaskTitle = ref(null)
 const createTaskWorkItemId = ref(0)
-const sprintWorkItems = ref([])
 
 const expanded = ref([])
 
@@ -250,39 +203,6 @@ function LoadWorkItems() {
     workItems.value = res.data.items
     console.log('workItems', workItems.value)
   })
-}
-
-function onMoveToSprint(item) {
-  console.log('onMoveToSprint', item)
-  console.log('to', item.to)
-  console.log('tid', item.to.id)
-  console.log('from', item.from)
-  console.log('fid', item.from.id)
-  console.log('sprints', props.sprints)
-  if (props.sprints.find((sprint) => sprint.id == item.to.id) && item.from.id != item.to.id && route.params.sprintId != item.to.id) {
-    putMoveWorkItem(store.org.id, route.params.projectId, item.from.id, {
-      sprintId: item.to.id,
-    }).then(res => {
-      console.log('move res', res)
-      LoadWorkItems()
-    })
-  } else if (item.from.id == item.to.id) {
-    return
-  } else {
-    LoadWorkItems()
-  }
-
-}
-
-function onSetSprint(id, name, startDate, endDate) {
-  store.setSprint({
-    id: id,
-    name: name,
-    startDate: startDate,
-    endDate: endDate
-  })
-  LoadWorkItems()
-  router.push(`/orgs/${store.org.id}/projects/${route.params.projectId}/sprints/${id}`)
 }
 
 function AddWorkItem(type) {

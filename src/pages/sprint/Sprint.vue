@@ -10,9 +10,9 @@
     </v-row>
 
     <v-tabs>
-      <v-tab :to="'/orgs/' + store.org.id + '/projects/' + route.params.projectId + '/sprints/' + route.params.sprintId">Taskboard</v-tab>
-      <v-tab :to="'/orgs/' + store.org.id + '/projects/' + route.params.projectId + '/sprints/' + route.params.sprintId + '/backlog'">Backlog</v-tab>
-      <v-tab :to="'/orgs/' + store.org.id + '/projects/' + route.params.projectId + '/sprints/' + route.params.sprintId + '/capacity'">Capacity</v-tab>
+      <v-tab :to="'/orgs/' + store.org.id + '/projects/' + store.project.id + '/sprints/' + store.sprint.id">Taskboard</v-tab>
+      <v-tab :to="'/orgs/' + store.org.id + '/projects/' + store.project.id + '/sprints/' + store.sprint.id + '/backlog'">Backlog</v-tab>
+      <v-tab :to="'/orgs/' + store.org.id + '/projects/' + store.project.id + '/sprints/' + store.sprint.id + '/capacity'">Capacity</v-tab>
       <v-divider
         vertical
         inset
