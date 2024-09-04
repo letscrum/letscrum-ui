@@ -111,7 +111,7 @@
         </v-card>
       </v-col>
       <v-col v-if="store.sprint.showSprints" cols="3">
-        <SprintsSider :sprints="props.sprints" @after-move="LoadWorkItems" @close-side="onCloseSide"></SprintsSider>
+        <SprintsSider :sprints="props.sprints" @after-move="onCreateTask" @close-side="onCloseSide"></SprintsSider>
       </v-col>
     </v-row>
   </div>
@@ -120,7 +120,7 @@
 
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { getGetWorkItems, putReOrderWorkItems } from '@/apis/workitem'
+import { getGetSprintWorkItems, getGetProjectWorkItems, putReOrderWorkItems } from '@/apis/workitem'
 import { putReOrderTasks } from '@/apis/task'
 import { useAppStore } from '@/stores/app'
 import { VueDraggable } from 'vue-draggable-plus'
@@ -137,17 +137,29 @@ const workItems = ref([])
 const expanded = ref([])
 
 function LoadWorkItems() {
-  getGetWorkItems(store.org.id, route.params.projectId, {
-    sprintId: store.sprint.id,
-    page: 1,
-    size: -1
-  }).then(res => {
-    workItems.value = res.data.items
-    console.log('workItems', workItems.value)
-    workItems.value.forEach(item => {
-      expanded.value.push(item.id.toString())
+  if (route.name == 'ProductBacklog') {
+    getGetProjectWorkItems(store.org.id, route.params.projectId, {
+      page: 1,
+      size: -1
+    }).then(res => {
+      workItems.value = res.data.items
+      console.log('workItems', workItems.value)
+      workItems.value.forEach(item => {
+        expanded.value.push(item.id.toString())
+      })
     })
-  })
+  } else {
+    getGetSprintWorkItems(store.org.id, route.params.projectId, store.sprint.id, {
+      page: 1,
+      size: -1
+    }).then(res => {
+      workItems.value = res.data.items
+      console.log('workItems', workItems.value)
+      workItems.value.forEach(item => {
+        expanded.value.push(item.id.toString())
+      })
+    })
+  }
 }
 
 function collapseAll() {

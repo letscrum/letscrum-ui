@@ -83,6 +83,42 @@ const routes = [
     },
   },
   {
+    path: '/orgs/:orgId/projects/:projectId/backlog',
+    name: 'ProjectBacklog',
+    component: () => import('@/pages/project/ProjectBacklog.vue'),
+    children: [
+      {
+        path: '',
+        name: 'ProductBacklog',
+        components: {
+          default: () => import('@/pages/sprint/Backlog.vue'),
+          sprintMenu: () => import('@/components/menu/MenuSprint.vue'),
+          menu: () => import('@/components/menu/MenuBacklog.vue')
+        },
+        meta: {
+          breadcrumbs: [
+            {
+              title: 'Orgs',
+              to: { name: 'Orgs' }
+            },
+            {
+              title: 'Projects',
+              to: { name: 'Projects' }
+            },
+            {
+              title: 'Project',
+              to: { name: 'Project' }
+            },
+            {
+              title: 'Backlog',
+              to: { name: 'ProjectBacklog' }
+            }
+          ]
+        },
+      },
+    ],
+  },
+  {
     path: '/orgs/:orgId/projects/:projectId/sprints/:sprintId',
     name: 'Sprint',
     component: () => import('@/pages/sprint/Sprint.vue'),

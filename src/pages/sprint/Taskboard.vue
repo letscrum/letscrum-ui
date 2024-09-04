@@ -151,7 +151,7 @@ tile outlined class="mb-2 mr-2 float-left"
         </v-card>
       </v-col>
       <v-col v-if="store.sprint.showSprints" cols="3">
-        <SprintsSider :sprints="props.sprints" @after-move="LoadWorkItems" @close-side="onCloseSide"></SprintsSider>
+        <SprintsSider :sprints="props.sprints" @after-move="LoadWorkItemsWithBurndown" @close-side="onCloseSide"></SprintsSider>
       </v-col>
     </v-row>
   </div>
@@ -161,7 +161,7 @@ tile outlined class="mb-2 mr-2 float-left"
 
 import { onMounted, ref } from 'vue'
 
-import { getGetWorkItems, postCreateWorkItem } from '@/apis/workitem';
+import { getGetSprintWorkItems, postCreateWorkItem } from '@/apis/workitem';
 
 import { postCreateTask, putMoveTask } from '@/apis/task';
 
@@ -195,8 +195,7 @@ const expanded = ref([])
 
 function LoadWorkItems() {
   expanded.value = []
-  getGetWorkItems(store.org.id, route.params.projectId, {
-    sprintId: store.sprint.id,
+  getGetSprintWorkItems(store.org.id, route.params.projectId, store.sprint.id, {
     page: 1,
     size: -1
   }).then(res => {
@@ -374,6 +373,11 @@ function updateWorkItem(action, workItem) {
   } else {
     workItems.value.find((item) => item.id == workItem.id).status = workItem.status
   }
+}
+
+function LoadWorkItemsWithBurndown() {
+  LoadWorkItems()
+  emit('task-changed')
 }
 
 onMounted(() => {

@@ -2,7 +2,9 @@ import axios from 'axios'
 
 const version = '/v1'
 
-export const getGetWorkItems = (orgId, projectId, params) => axios.get(`${version}/orgs/${orgId}/projects/${projectId}/workitems`, { params })
+export const getGetSprintWorkItems = (orgId, projectId, sprintId, params) => axios.get(`${version}/orgs/${orgId}/projects/${projectId}/sprints/${sprintId}/workitems`, { params })
+
+export const getGetProjectWorkItems = (orgId, projectId, params) => axios.get(`${version}/orgs/${orgId}/projects/${projectId}/workitems`, { params })
 
 export const getGetWorkItem = (orgId, projectId, workItemId) => axios.get(`${version}/orgs/${orgId}/projects/${projectId}/workitems/${workItemId}`)
 

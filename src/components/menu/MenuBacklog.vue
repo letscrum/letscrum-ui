@@ -74,11 +74,17 @@ const item = ref({
 const emit = defineEmits(['afterCreate'])
 
 function onCreateWorkItem() {
+  let sprintId = "00000000-0000-0000-0000-000000000000"
+  if (route.name == 'ProductBacklog') {
+    sprintId = "00000000-0000-0000-0000-000000000000"
+  } else {
+    sprintId = route.params.sprintId
+  }
   postCreateWorkItem(
     route.params.orgId,
     route.params.projectId, {
       title: item.value.title,
-      sprintId: route.params.sprintId,
+      sprintId: sprintId,
       type: item.value.type,
     }).then(res => {
       if (res.status === 200) {

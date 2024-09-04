@@ -59,11 +59,17 @@ function onOpen() {
 }
 
 function onSave() {
+  let sprintId = "00000000-0000-0000-0000-000000000000"
+  if (route.name == 'ProductBacklog') {
+    sprintId = "00000000-0000-0000-0000-000000000000"
+  } else {
+    sprintId = route.params.sprintId
+  }
   postCreateTask(
     route.params.orgId,
     route.params.projectId,
     props.workItemId, {
-    sprintId: route.params.sprintId,
+    sprintId: sprintId,
     title: item.value.title,
   }).then(res => {
     if (res.status === 200) {

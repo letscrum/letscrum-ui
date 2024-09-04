@@ -8,6 +8,18 @@
       </v-btn>
     </v-card-title>
     <v-card-text>
+      <VueDraggable
+          id="00000000-0000-0000-0000-000000000000"
+          v-model="sprintWorkItems"
+          group="workItem"
+          style="width: 100%; height: 100%;"
+          draggable="false"
+          @add="onMoveToSprint"
+        >
+        <v-list-item @click="console.log('backlog')" :to="'/orgs/' + store.org.id + '/projects/' + route.params.projectId + '/backlog'">
+          <v-list-item-title>Produc Backlogs</v-list-item-title>
+        </v-list-item>
+      </VueDraggable>
       <div v-for="item in props.sprints"
           :key="item.id">
         <VueDraggable
@@ -65,7 +77,8 @@ function onMoveToSprint(item) {
   console.log('from', item.from)
   console.log('itemid', item.item.id)
   console.log('sprints', props.sprints)
-  if (props.sprints.find((sprint) => sprint.id == item.to.id) && item.item.id != item.to.id && route.params.sprintId != item.to.id) {
+  if ((props.sprints.find((sprint) => sprint.id == item.to.id) && item.item.id != item.to.id && route.params.sprintId != item.to.id)
+    || item.to.id == '00000000-0000-0000-0000-000000000000') {
     putMoveWorkItem(store.org.id, route.params.projectId, item.item.id, {
       sprintId: item.to.id,
     }).then(res => {
@@ -74,7 +87,7 @@ function onMoveToSprint(item) {
     })
   } else if (item.item.id == item.to.id) {
     return
-  } else {
+  } else{
     emit('after-move')
   }
 
