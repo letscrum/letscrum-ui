@@ -37,6 +37,7 @@
           label-size="2"
         ></v-sparkline>
         {{ props.burndownData }}
+        {{ props.workBurndown }}
         </v-card-text>
 
         <v-divider></v-divider>
@@ -54,7 +55,7 @@
 </template>
 
 <script setup>
-const props = defineProps(['burndownData'])
+const props = defineProps(['burndownData', 'workBurndown'])
 
 const dialog = ref(false)
 

@@ -5,7 +5,7 @@
         <h2>{{ store.sprint.name }}</h2>
       </v-col>
       <v-col align="right">
-        <SprintBurndown :burndown-data="burndown"></SprintBurndown>
+        <SprintBurndown :burndown-data="burndown" :work-burndown="workBurndown"></SprintBurndown>
       </v-col>
     </v-row>
 
@@ -58,7 +58,7 @@
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import { useRoute } from 'vue-router'
 import { useAppStore } from '@/stores/app'
-import { getSprintItemBurndown } from '@/apis/sprint';
+import { getSprintItemBurndown, getSprintWorkBurnDown } from '@/apis/sprint';
 import { onMounted } from 'vue';
 
 const store = useAppStore()
@@ -66,6 +66,10 @@ const store = useAppStore()
 const route = useRoute()
 const sprints = ref([])
 const burndown = ref({
+  labels: [],
+  values: [],
+})
+const workBurndown = ref({
   labels: [],
   values: [],
 })
@@ -124,6 +128,14 @@ function onLoadBurndown() {
 
     // get res.data.burndown list actual and set to value value
     burndown.value.values = res.data.burndown.map((item) => item.actual)
+  })
+  getSprintWorkBurnDown(route.params.orgId, route.params.projectId, store.sprint.id).then((res) => {
+    console.log(res)
+    // get res.data.burndown list date convert to date unix timestamp to date format and set to labels value
+    workBurndown.value.labels = res.data.burndown.map((item) => new Date(item.date * 1000).toISOString().substring(5, 7) + '/' + new Date(item.date * 1000).toISOString().substring(8, 10))
+
+    // get res.data.burndown list actual and set to value value
+    workBurndown.value.values = res.data.burndown.map((item) => item.actual)
   })
 }
 

@@ -22,7 +22,14 @@
         {{ member.userName }}
       </option>
       <option value="00000000-0000-0000-0000-000000000000">Unassigned</option>
-    </select><br />
+    </select>
+    <input
+      type="text"
+      class="item-card-text"
+      v-model="localTask.remaining"
+      @focusout="onUpdateWorkHours(localTask.workItemId, localTask.id)"
+      @keyup.enter="onUpdateWorkHours(localTask.workItemId, localTask.id)" />
+    <br />
     <select name="status" class="item-card-text" :value="localTask.status" @change="updateStatus">
       <option v-for="(s, i) in ['ToDo', 'InProgress', 'Done', 'Removed']" :key="i" :value="s">
         {{ s }}
@@ -34,7 +41,7 @@
 <script setup>
 const props = defineProps(['task', 'members']);
 
-import { putAssignTask, putMoveTask } from '@/apis/task';
+import { putAssignTask, putMoveTask, putUpdateWorkHours } from '@/apis/task';
 import { onMounted, ref } from 'vue';
 const emit = defineEmits(['afterUpdate'])
 
@@ -70,6 +77,16 @@ function updateStatus(select) {
     let oldStatus = localTask.value.status
     localTask.value.status = select.target.value
     emit('afterUpdate', oldStatus, localTask.value)
+  })
+}
+
+function onUpdateWorkHours(workItemId, taskId) {
+  putUpdateWorkHours(route.params.orgId, route.params.projectId, workItemId, taskId,
+  {
+    remaining: localTask.value.remaining,
+  }
+  ).then((res) => {
+    console.log(res)
   })
 }
 
