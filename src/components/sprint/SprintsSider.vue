@@ -17,7 +17,7 @@
           @add="onMoveToSprint"
         >
         <v-list-item @click="console.log('backlog')" :to="'/orgs/' + store.org.id + '/projects/' + route.params.projectId + '/backlog'">
-          <v-list-item-title>Produc Backlogs</v-list-item-title>
+          <v-list-item-title>Product Backlog</v-list-item-title>
         </v-list-item>
       </VueDraggable>
       <div v-for="item in props.sprints"

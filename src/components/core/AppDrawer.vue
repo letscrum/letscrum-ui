@@ -47,6 +47,16 @@
           </v-avatar>
         </template>
       </v-list-item>
+      <v-list-item v-if="store.project.id != '' && store.project.id != null && store.org.id != '' && store.org.id != null" :to="'/orgs/' + store.org.id + '/projects/' + store.project.id + '/backlog'">
+        <v-list-item-title>
+          Backlog
+        </v-list-item-title>
+        <template #prepend>
+          <v-avatar size="x-small" rounded="0">
+            <v-icon>mdi-trello</v-icon>
+          </v-avatar>
+        </template>
+      </v-list-item>
       <v-list-item v-if="store.project.id != '' && store.project.id != null && store.org.id != '' && store.org.id != null && store.sprint.id != '' && store.sprint.id != null" :to="'/orgs/' + store.org.id + '/projects/' + store.project.id + '/sprints/' + store.sprint.id">
         <v-list-item-title>
           Sprint
