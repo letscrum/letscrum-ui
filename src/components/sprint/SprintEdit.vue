@@ -23,6 +23,12 @@
         <v-card-text class="px-4">
           <v-text-field v-model="sprint.name" label="Label"></v-text-field>
 
+          <v-select
+            v-model="sprint.burndownType"
+            :items="burndownTypes"
+            label="Burndown Type"
+          ></v-select>
+
           <v-date-picker v-model="dates" show-adjacent-months multiple="range"></v-date-picker>
 
         </v-card-text>
@@ -57,11 +63,17 @@ const props = defineProps(['sprintId'])
 import { ref } from 'vue';
 
 import { useRoute } from 'vue-router'
+import { useAppStore } from '@/stores/app'
 
+const store = useAppStore()
 const route = useRoute()
 const dialog = ref(false)
 const sprint = ref({})
 const dates = ref([])
+const burndownTypes = ref([
+  'ByTask',
+  'ByHour'
+])
 
 function onOpen() {
   getGetSprint(route.params.orgId, route.params.projectId, props.sprintId).then((res) => {
@@ -89,11 +101,22 @@ function onSaveSprint() {
   putUpdateSprint(route.params.orgId, route.params.projectId, sprint.value.id, {
     name: sprint.value.name,
     startDate: Math.floor(new Date(dates.value[0] + 1000).getTime() / 1000),
-    endDate: Math.floor(new Date(dates.value[dates.value.length - 1]).getTime() / 1000)
+    endDate: Math.floor(new Date(dates.value[dates.value.length - 1]).getTime() / 1000),
+    burndownType: sprint.value.burndownType,
   }).then((res) => {
     console.log(res)
     if (res.status === 200) {
       console.log(res.data)
+      // if store.sprint.id === sprint.id, update store.sprint
+      if (store.sprint.id === sprint.value.id) {
+        store.setSprint({
+          id: sprint.value.id,
+          name: sprint.value.name,
+          startDate: Math.floor(new Date(dates.value[0] + 1000).getTime() / 1000),
+          endDate: Math.floor(new Date(dates.value[dates.value.length - 1]).getTime() / 1000),
+          burndownType: sprint.value.burndownType,
+        })
+      }
       dialog.value = false
       emit('afterEdit')
     }

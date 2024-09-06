@@ -73,20 +73,23 @@ function updateStatus(select) {
     status: select.target.value,
     toWorkItemId: localTask.value.workItemId,
   }).then((res) => {
-    console.log(res)
-    let oldStatus = localTask.value.status
-    localTask.value.status = select.target.value
-    emit('afterUpdate', oldStatus, localTask.value)
+    if (res.status === 200) {
+      console.log(res)
+      let oldStatus = localTask.value.status
+      localTask.value.status = select.target.value
+      emit('afterUpdate', oldStatus, localTask.value)
+    }
   })
 }
 
 function onUpdateWorkHours(workItemId, taskId) {
-  putUpdateWorkHours(route.params.orgId, route.params.projectId, workItemId, taskId,
-  {
+  putUpdateWorkHours(route.params.orgId, route.params.projectId, workItemId, taskId, {
     remaining: localTask.value.remaining,
-  }
-  ).then((res) => {
-    console.log(res)
+  }).then((res) => {
+    if (res.status === 200) {
+      console.log(res)
+      emit('afterUpdate', 'remaining', localTask.value)
+    }
   })
 }
 

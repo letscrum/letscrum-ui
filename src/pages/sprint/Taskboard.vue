@@ -356,7 +356,7 @@ function updateTask(action, task) {
   console.log('updateTask', task)
   if (action == 'assign') {
     workItems.value.find((item) => item.id == task.workItemId)['tasks' + task.status].find((task) => task.id == task.id).assignUser.id = task.assignUser.id
-  } else {
+  } else if (action != 'remaining') {
     let targetTask = workItems.value.find((item) => item.id == task.workItemId)['tasks' + action].find((task) => task.id == task.id)
     console.log('targetTask', targetTask)
     // remove targetTask from tasksToDo
@@ -364,6 +364,8 @@ function updateTask(action, task) {
     // add targetTask to tasksDone
     workItems.value.find((item) => item.id == task.workItemId)['tasks' + task.status].push(targetTask)
   }
+  // reload sprint burndown
+  emit('task-changed')
 }
 
 function updateWorkItem(action, workItem) {

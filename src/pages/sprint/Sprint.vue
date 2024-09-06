@@ -5,7 +5,7 @@
         <h2>{{ store.sprint.name }}</h2>
       </v-col>
       <v-col align="right">
-        <SprintBurndown :burndown-data="burndown" :work-burndown="workBurndown"></SprintBurndown>
+        <SprintBurndown :burndown-data="burndown"></SprintBurndown>
       </v-col>
     </v-row>
 
@@ -69,10 +69,6 @@ const burndown = ref({
   labels: [],
   values: [],
 })
-const workBurndown = ref({
-  labels: [],
-  values: [],
-})
 
 
 const mainContent = ref()
@@ -121,22 +117,27 @@ function onLoadSprints(getSprints) {
 }
 
 function onLoadBurndown() {
-  getSprintTaskBurndown(route.params.orgId, route.params.projectId, store.sprint.id).then((res) => {
-    console.log(res)
-    // get res.data.burndown list date convert to date unix timestamp to date format and set to labels value
-    burndown.value.labels = res.data.burndown.map((item) => new Date(item.date * 1000).toISOString().substring(5, 7) + '/' + new Date(item.date * 1000).toISOString().substring(8, 10))
+  console.log('reload burndown')
+  if (store.sprint.burndownType == 'ByHour') {
+    getSprintWorkBurnDown(route.params.orgId, route.params.projectId, store.sprint.id).then((res) => {
+      console.log(res)
+      // get res.data.burndown list date convert to date unix timestamp to date format and set to labels value
+      burndown.value.labels = res.data.burndown.map((item) => new Date(item.date * 1000).toISOString().substring(5, 7) + '/' + new Date(item.date * 1000).toISOString().substring(8, 10))
 
-    // get res.data.burndown list actual and set to value value
-    burndown.value.values = res.data.burndown.map((item) => item.actual)
-  })
-  getSprintWorkBurnDown(route.params.orgId, route.params.projectId, store.sprint.id).then((res) => {
-    console.log(res)
-    // get res.data.burndown list date convert to date unix timestamp to date format and set to labels value
-    workBurndown.value.labels = res.data.burndown.map((item) => new Date(item.date * 1000).toISOString().substring(5, 7) + '/' + new Date(item.date * 1000).toISOString().substring(8, 10))
+      // get res.data.burndown list actual and set to value value
+      burndown.value.values = res.data.burndown.map((item) => item.actual)
+    })
+  } else {
+    getSprintTaskBurndown(route.params.orgId, route.params.projectId, store.sprint.id).then((res) => {
+      console.log(res)
+      // get res.data.burndown list date convert to date unix timestamp to date format and set to labels value
+      burndown.value.labels = res.data.burndown.map((item) => new Date(item.date * 1000).toISOString().substring(5, 7) + '/' + new Date(item.date * 1000).toISOString().substring(8, 10))
 
-    // get res.data.burndown list actual and set to value value
-    workBurndown.value.values = res.data.burndown.map((item) => item.actual)
-  })
+      // get res.data.burndown list actual and set to value value
+      burndown.value.values = res.data.burndown.map((item) => item.actual)
+    })
+  }
+
 }
 
 onMounted(() => {
