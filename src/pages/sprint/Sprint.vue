@@ -58,7 +58,7 @@
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import { useRoute } from 'vue-router'
 import { useAppStore } from '@/stores/app'
-import { getSprintItemBurndown, getSprintWorkBurnDown } from '@/apis/sprint';
+import { getSprintTaskBurndown, getSprintWorkBurnDown } from '@/apis/sprint';
 import { onMounted } from 'vue';
 
 const store = useAppStore()
@@ -121,7 +121,7 @@ function onLoadSprints(getSprints) {
 }
 
 function onLoadBurndown() {
-  getSprintItemBurndown(route.params.orgId, route.params.projectId, store.sprint.id).then((res) => {
+  getSprintTaskBurndown(route.params.orgId, route.params.projectId, store.sprint.id).then((res) => {
     console.log(res)
     // get res.data.burndown list date convert to date unix timestamp to date format and set to labels value
     burndown.value.labels = res.data.burndown.map((item) => new Date(item.date * 1000).toISOString().substring(5, 7) + '/' + new Date(item.date * 1000).toISOString().substring(8, 10))
