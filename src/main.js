@@ -45,11 +45,11 @@ if (!currentTheme) {
 store.changeTheme(currentTheme)
 
 if (localStorage.sprintShowDetails == 'true') {
-  store.setTaskboardSidebar('details')
+  store.setSidebar('details')
 } else if (localStorage.sprintShowSprints == 'true') {
-  store.setTaskboardSidebar('sprints')
+  store.setSidebar('sprints')
 } else {
-  store.setTaskboardSidebar('')
+  store.setSidebar('')
 }
 
 if (localStorage.orgs) {

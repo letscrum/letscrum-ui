@@ -214,7 +214,7 @@ function AddWorkItem(type) {
 }
 
 function onCloseSide() {
-  store.setTaskboardSidebar('')
+  store.setSidebar('')
 }
 
 function AddTask(workItemId) {
@@ -307,7 +307,7 @@ defineExpose({
 })
 
 function showSide(type) {
-  store.setTaskboardSidebar(type)
+  store.setSidebar(type)
 }
 
 function collapseAll() {

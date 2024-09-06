@@ -115,7 +115,7 @@ defineExpose({
 })
 
 function showSide(type) {
-  store.setTaskboardSidebar(type)
+  store.setSidebar(type)
 }
 
 function reloadSprint() {

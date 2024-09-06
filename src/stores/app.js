@@ -50,6 +50,7 @@ export const useAppStore = defineStore('app', {
       name: null,
       startDate: null,
       endDate: null,
+      burndownType: null,
       showDetails: false,
       showSprints: false,
     },
@@ -82,6 +83,7 @@ export const useAppStore = defineStore('app', {
         this.sprint.name = localStorage.sprintName;
         this.sprint.startDate = localStorage.sprintStartDate;
         this.sprint.endDate = localStorage.sprintEndDate;
+        this.sprint.burndownType = localStorage.sprintBurndownType;
         this.sprint.showDetails = localStorage.sprintShowDetails;
         this.sprint.showSprints = localStorage.sprintShowSprints;
       }
@@ -157,6 +159,7 @@ export const useAppStore = defineStore('app', {
       this.sprint.name = null;
       this.sprint.startDate = null;
       this.sprint.endDate = null;
+      this.sprint.burndownType = null;
       this.sprint.showDetails = false;
       this.sprint.showSprints = false;
     },
@@ -212,19 +215,22 @@ export const useAppStore = defineStore('app', {
         name,
         startDate,
         endDate,
+        burndownType,
       } = payload;
       localStorage.sprintId = id;
       localStorage.sprintName = name;
       localStorage.sprintStartDate = startDate;
       localStorage.sprintEndDate = endDate;
+      localStorage.sprintBurndownType = burndownType;
       this.sprint = {
         id,
         name,
         startDate,
         endDate,
+        burndownType,
       };
     },
-    setTaskboardSidebar(payload) {
+    setSidebar(payload) {
       if (payload == 'details') {
         localStorage.sprintShowDetails = true;
         localStorage.sprintShowSprints = false;
@@ -275,12 +281,14 @@ export const useAppStore = defineStore('app', {
       localStorage.removeItem('sprintName');
       localStorage.removeItem('sprintStartDate');
       localStorage.removeItem('sprintEndDate');
+      localStorage.removeItem('sprintBurndownType');
       localStorage.removeItem('sprintShowDetails');
       localStorage.removeItem('sprintShowSprints');
       this.sprint.id = null;
       this.sprint.name = null;
       this.sprint.startDate = null;
       this.sprint.endDate = null;
+      this.sprint.burndownType = null;
       this.sprint.showDetails = false;
       this.sprint.showSprints = false;
     },

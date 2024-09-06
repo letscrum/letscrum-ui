@@ -34,7 +34,7 @@
           <v-list-item
             lines="two"
             :to="'/orgs/' + store.org.id + '/projects/' + item.projectId + '/sprints/' + item.id"
-            @click="onSetSprint(item.id, item.name, item.startDate, item.endDate)"
+            @click="onSetSprint(item.id, item.name, item.startDate, item.endDate, item.burndownType)"
           >
 
             <v-list-item-title>{{ item.name }}</v-list-item-title>
@@ -94,12 +94,13 @@ function onMoveToSprint(item) {
 }
 
 
-function onSetSprint(id, name, startDate, endDate) {
+function onSetSprint(id, name, startDate, endDate, burndownType) {
   store.setSprint({
     id: id,
     name: name,
     startDate: startDate,
-    endDate: endDate
+    endDate: endDate,
+    burndownType: burndownType,
   })
   emit('after-move')
 }

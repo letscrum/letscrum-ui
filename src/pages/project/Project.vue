@@ -315,7 +315,7 @@
         {{ sprint }}
         <v-btn
           color="primary"
-          @click="onSetSprint(sprint.id, sprint.name, sprint.startDate, sprint.endDate)">
+          @click="onSetSprint(sprint.id, sprint.name, sprint.startDate, sprint.endDate, sprint.burndownType)">
           {{ sprint.name }}
         </v-btn>
         <SprintEdit :sprint-id="sprint.id" @after-edit="LoadSprints()">
@@ -454,8 +454,8 @@ function onDeleteProject() {
     console.log(res)
     if (res.status === 200) {
       if (res.data.success) {
-        store.setProject({})
-        store.setSprint({})
+        store.clearProject()
+        store.clearSprint()
         dialogDelete.value = false
         router.push(`/orgs/${store.org.id}/projects`);
       }
@@ -504,7 +504,8 @@ function LoadSprints() {
             id: currentSprint.id,
             name: currentSprint.name,
             startDate: currentSprint.startDate,
-            endDate: currentSprint.endDate
+            endDate: currentSprint.endDate,
+            burndownType: currentSprint.burndownType,
           })
         }
       }
@@ -512,12 +513,13 @@ function LoadSprints() {
   })
 }
 
-function onSetSprint(id, name, startDate, endDate) {
+function onSetSprint(id, name, startDate, endDate, burndownType) {
   store.setSprint({
     id: id,
     name: name,
     startDate: startDate,
-    endDate: endDate
+    endDate: endDate,
+    burndownType: burndownType,
   })
   router.push(`/orgs/${store.org.id}/projects/${route.params.projectId}/sprints/${id}`)
 }

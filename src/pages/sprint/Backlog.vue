@@ -182,7 +182,7 @@ defineExpose({
 })
 
 function showSide(type) {
-  store.setTaskboardSidebar(type)
+  store.setSidebar(type)
 }
 
 onMounted(() => {
@@ -225,7 +225,7 @@ function onCreateTask() {
 
 
 function onCloseSide() {
-  store.setTaskboardSidebar('')
+  store.setSidebar('')
 }
 
 </script>

@@ -32,7 +32,7 @@
             lines="two"
             :title="item.name"
             :subtitle="new Date(item.startDate * 1000).toISOString().substring(0, 10) + ' - ' + new Date(item.endDate * 1000).toISOString().substring(0, 10)"
-            @click="onSetSprint(item.id, item.name, item.startDate, item.endDate)"
+            @click="onSetSprint(item.id, item.name, item.startDate, item.endDate, item.burndownType)"
           >
             <template #append>
               <v-chip
@@ -92,12 +92,13 @@ const member = ref({
   userName: 'All'
 })
 
-function onSetSprint(id, name, startDate, endDate) {
+function onSetSprint(id, name, startDate, endDate, burndownType) {
   store.setSprint({
     id: id,
     name: name,
     startDate: startDate,
-    endDate: endDate
+    endDate: endDate,
+    burndownType: burndownType,
   })
   emit('afterSetSprint')
 }
@@ -130,7 +131,8 @@ function LoadSprints() {
             id: currentSprint.id,
             name: currentSprint.name,
             startDate: currentSprint.startDate,
-            endDate: currentSprint.endDate
+            endDate: currentSprint.endDate,
+            burndownType: currentSprint.burndownType,
           })
           sprint.value = currentSprint
         }
