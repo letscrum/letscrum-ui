@@ -12,7 +12,7 @@
           <v-list-item-title @click="isEditing = true">Edit</v-list-item-title>
         </v-list-item>
         <v-list-item>
-          <v-list-item-title>Delete</v-list-item-title>
+          <v-list-item-title @click="onDelete(localTask.id)">Delete</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -41,7 +41,7 @@
 <script setup>
 const props = defineProps(['task', 'members']);
 
-import { putAssignTask, putMoveTask, putUpdateWorkHours } from '@/apis/task';
+import { putAssignTask, putMoveTask, putUpdateWorkHours, deleteDeleteTask } from '@/apis/task';
 import { onMounted, ref } from 'vue';
 const emit = defineEmits(['afterUpdate'])
 
@@ -91,6 +91,13 @@ function onUpdateWorkHours(workItemId, taskId) {
       emit('afterUpdate', 'remaining', localTask.value)
     }
   })
+}
+
+function onDelete(taskId) {
+  deleteDeleteTask(route.params.orgId, route.params.projectId, localTask.value.workItemId, taskId).then((res) => {
+    console.log(res)
+  })
+  emit('afterUpdate', 'delete', localTask.value)
 }
 
 onMounted(() => {

@@ -356,12 +356,15 @@ function updateTask(action, task) {
   console.log('updateTask', task)
   if (action == 'assign') {
     workItems.value.find((item) => item.id == task.workItemId)['tasks' + task.status].find((task) => task.id == task.id).assignUser.id = task.assignUser.id
+  } else if (action == 'delete') {
+    // remove task from taskboard
+    workItems.value.find((item) => item.id == task.workItemId)['tasks' + task.status].splice(workItems.value.find((item) => item.id == task.workItemId)['tasks' + task.status].indexOf(task), 1)
   } else if (action != 'remaining') {
     let targetTask = workItems.value.find((item) => item.id == task.workItemId)['tasks' + action].find((task) => task.id == task.id)
     console.log('targetTask', targetTask)
-    // remove targetTask from tasksToDo
+    // remove targetTask from taskboard
     workItems.value.find((item) => item.id == task.workItemId)['tasks' + action].splice(workItems.value.find((item) => item.id == task.workItemId)['tasks' + action].indexOf(targetTask), 1)
-    // add targetTask to tasksDone
+    // add targetTask to taskboard
     workItems.value.find((item) => item.id == task.workItemId)['tasks' + task.status].push(targetTask)
   }
   // reload sprint burndown
