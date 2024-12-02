@@ -14,7 +14,7 @@
     "roboto-fontface": "*",
     "vue": "3.5.0",
     "vue-draggable-plus": "0.5.3",
-    "vue-i18n": "9.14.0",
+    "vue-i18n": "9.14.2",
     "vuetify": "3.6.15"
   },
   "devDependencies": {
