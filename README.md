@@ -1,79 +1,82 @@
-# Vuetify (Default)
+# LetScrum UI
 
-This is the official scaffolding tool for Vuetify, designed to give you a head start in building your new Vuetify application. It sets up a base template with all the necessary configurations and standard directory structure, enabling you to begin development without the hassle of setting up the project from scratch.
+A modern, responsive user interface for the LetScrum project management platform, built with Vue 3 and Vuetify.
 
-## ❗️ Important Links
+## 🚀 Overview
 
-- 📄 [Docs](https://vuetifyjs.com/)
-- 🚨 [Issues](https://issues.vuetifyjs.com/)
-- 🏬 [Store](https://store.vuetifyjs.com/)
-- 🎮 [Playground](https://play.vuetifyjs.com/)
-- 💬 [Discord](https://community.vuetifyjs.com)
-
-## 💿 Install
-
-Set up your project using your preferred package manager. Use the corresponding command to install the dependencies:
-
-| Package Manager                                                | Command        |
-|---------------------------------------------------------------|----------------|
-| [yarn](https://yarnpkg.com/getting-started)                   | `yarn install` |
-| [npm](https://docs.npmjs.com/cli/v7/commands/npm-install)     | `npm install`  |
-| [pnpm](https://pnpm.io/installation)                          | `pnpm install` |
-| [bun](https://bun.sh/#getting-started)                        | `bun install`  |
-
-After completing the installation, your environment is ready for Vuetify development.
+LetScrum UI provides a comprehensive interface for agile project management. It features a clean, card-based design inspired by modern design systems (Microsoft Foundry style), offering a seamless experience for managing organizations, projects, sprints, and backlogs.
 
 ## ✨ Features
 
-- 🖼️ **Optimized Front-End Stack**: Leverage the latest Vue 3 and Vuetify 3 for a modern, reactive UI development experience. [Vue 3](https://v3.vuejs.org/) | [Vuetify 3](https://vuetifyjs.com/en/)
-- 🗃️ **State Management**: Integrated with [Pinia](https://pinia.vuejs.org/), the intuitive, modular state management solution for Vue.
-- 🚦 **Routing and Layouts**: Utilizes Vue Router for SPA navigation and vite-plugin-vue-layouts for organizing Vue file layouts. [Vue Router](https://router.vuejs.org/) | [vite-plugin-vue-layouts](https://github.com/JohnCampionJr/vite-plugin-vue-layouts)
-- ⚡ **Next-Gen Tooling**: Powered by Vite, experience fast cold starts and instant HMR (Hot Module Replacement). [Vite](https://vitejs.dev/)
-- 🧩 **Automated Component Importing**: Streamline your workflow with unplugin-vue-components, automatically importing components as you use them. [unplugin-vue-components](https://github.com/antfu/unplugin-vue-components)
+- **Modern UI/UX**: Clean, card-based interface with a focus on usability and aesthetics.
+- **Project Management**: Create and manage projects, view project details, and track progress.
+- **Agile Tools**: Full support for Sprints, Backlogs, and Taskboards.
+- **Organization Management**: Manage organizations and members.
+- **User Management**: Authentication, user profiles, and role-based access control.
+- **Internationalization**: Built-in support for English and Chinese (zh) locales.
+- **Responsive Design**: Optimized for both desktop and mobile devices.
 
-These features are curated to provide a seamless development experience from setup to deployment, ensuring that your Vuetify application is both powerful and maintainable.
+## 🛠️ Tech Stack
 
-## 💡 Usage
+- **Framework**: [Vue 3](https://v3.vuejs.org/)
+- **UI Library**: [Vuetify 3](https://vuetifyjs.com/)
+- **Build Tool**: [Vite](https://vitejs.dev/)
+- **State Management**: [Pinia](https://pinia.vuejs.org/)
+- **Routing**: [Vue Router](https://router.vuejs.org/)
+- **HTTP Client**: [Axios](https://axios-http.com/)
+- **Internationalization**: [Vue I18n](https://kazupon.github.io/vue-i18n/)
 
-This section covers how to start the development server and build your project for production.
+## 📦 Installation
 
-### Starting the Development Server
+1. **Clone the repository**
 
-To start the development server with hot-reload, run the following command. The server will be accessible at [http://localhost:3000](http://localhost:3000):
+   ```bash
+   git clone https://github.com/letscrum/letscrum-ui.git
+   cd letscrum-ui
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+## 💻 Development
+
+To start the development server with hot-reload:
 
 ```bash
-yarn dev
+npm run dev
 ```
 
-(Repeat for npm, pnpm, and bun with respective commands.)
+The application will be available at `http://localhost:3000`.
 
-> Add NODE_OPTIONS='--no-warnings' to suppress the JSON import warnings that happen as part of the Vuetify import mapping. If you are on Node [v21.3.0](https://nodejs.org/en/blog/release/v21.3.0) or higher, you can change this to NODE_OPTIONS='--disable-warning=5401'. If you don't mind the warning, you can remove this from your package.json dev script.
+## 🏗️ Build
 
-### Building for Production
-
-To build your project for production, use:
+To build the project for production:
 
 ```bash
-yarn build
+npm run build
 ```
 
-(Repeat for npm, pnpm, and bun with respective commands.)
+The build artifacts will be stored in the `dist/` directory.
 
-Once the build process is completed, your application will be ready for deployment in a production environment.
+## 🐳 Docker Support
 
-## 💪 Support Vuetify Development
+This project includes a `Dockerfile` for containerized deployment.
 
-This project is built with [Vuetify](https://vuetifyjs.com/en/), a UI Library with a comprehensive collection of Vue components. Vuetify is an MIT licensed Open Source project that has been made possible due to the generous contributions by our [sponsors and backers](https://vuetifyjs.com/introduction/sponsors-and-backers/). If you are interested in supporting this project, please consider:
+**Build the Docker image:**
 
-- [Requesting Enterprise Support](https://support.vuetifyjs.com/)
-- [Sponsoring John on Github](https://github.com/users/johnleider/sponsorship)
-- [Sponsoring Kael on Github](https://github.com/users/kaelwd/sponsorship)
-- [Supporting the team on Open Collective](https://opencollective.com/vuetify)
-- [Becoming a sponsor on Patreon](https://www.patreon.com/vuetify)
-- [Becoming a subscriber on Tidelift](https://tidelift.com/subscription/npm/vuetify)
-- [Making a one-time donation with Paypal](https://paypal.me/vuetify)
+```bash
+docker build -t letscrum-ui .
+```
 
-## 📑 License
-[MIT](http://opensource.org/licenses/MIT)
+**Run the container:**
 
-Copyright (c) 2016-present Vuetify, LLC
+```bash
+docker run -d -p 80:80 letscrum-ui
+```
+
+## 📄 License
+
+Licensed under the [Apache License, Version 2.0](LICENSE).
