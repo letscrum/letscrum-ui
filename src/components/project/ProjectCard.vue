@@ -2,7 +2,9 @@
   <v-hover v-slot="{ isHovering, props }">
     <v-card
       v-bind="props"
-      :elevation="isHovering ? 8 : 2"
+      :elevation="isHovering ? 2 : 0"
+      border
+      variant="flat"
       class="mx-auto transition-swing cursor-pointer h-100"
       rounded="lg"
       @click="onLoadProject"
@@ -13,9 +15,9 @@
             size="48"
             rounded="lg"
             :color="uuidToColor(project.id)"
-            class="elevation-2"
+            variant="tonal"
           >
-            <span class="text-h6 font-weight-bold text-white">
+            <span class="text-h6 font-weight-bold">
               {{ (project.displayName || project.name).substring(0, 1).toUpperCase() }}
             </span>
           </v-avatar>

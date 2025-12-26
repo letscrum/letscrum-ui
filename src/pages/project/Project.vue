@@ -160,9 +160,9 @@
         <v-tab value="members">{{ $t('project.detail.tabs.members') }}</v-tab>
       </v-tabs>
 
-      <v-window v-model="tab">
+      <v-window v-model="tab" style="overflow: visible;">
         <!-- Sprints Tab -->
-        <v-window-item value="sprints">
+        <v-window-item value="sprints" style="overflow: visible;">
           <v-row class="mb-4">
             <v-spacer></v-spacer>
             <v-col cols="auto">
@@ -176,53 +176,12 @@
 
           <v-row v-if="sprints.length > 0">
             <v-col v-for="(sprint, i) in sprints" :key="i" cols="12" sm="6" md="4">
-              <v-card variant="outlined" class="h-100">
-                <v-card-item>
-                  <template #prepend>
-                    <v-icon color="primary" icon="mdi-run-fast" size="large"></v-icon>
-                  </template>
-                  <v-card-title>{{ sprint.name }}</v-card-title>
-                  <v-card-subtitle>
-                    {{ new Date(sprint.startDate * 1000).toLocaleDateString() }} -
-                    {{ new Date(sprint.endDate * 1000).toLocaleDateString() }}
-                  </v-card-subtitle>
-                </v-card-item>
-
-                <v-card-text>
-                  <v-chip
-                    :color="sprint.status === 'CURRENT' ? 'success' : 'default'"
-                    size="small"
-                    class="mb-2"
-                  >
-                    {{ sprint.status }}
-                  </v-chip>
-                </v-card-text>
-
-                <v-divider></v-divider>
-
-                <v-card-actions>
-                  <v-btn
-                    variant="text"
-                    color="primary"
-                    @click="onSetSprint(sprint.id, sprint.name, sprint.startDate, sprint.endDate, sprint.burndownType)"
-                  >
-                    {{ $t('project.detail.sprints.enter') }}
-                  </v-btn>
-                  <v-spacer></v-spacer>
-
-                  <SprintEdit :sprint-id="sprint.id" @after-edit="LoadSprints()">
-                    <v-btn icon="mdi-pencil" size="small" variant="text" color="grey"></v-btn>
-                  </SprintEdit>
-
-                  <v-btn
-                    icon="mdi-delete"
-                    size="small"
-                    variant="text"
-                    color="error"
-                    @click="onDeleteSprint(sprint.projectId, sprint.id)"
-                  ></v-btn>
-                </v-card-actions>
-              </v-card>
+              <SprintCard
+                :sprint="sprint"
+                @enter="(s) => onSetSprint(s.id, s.name, s.startDate, s.endDate, s.burndownType)"
+                @refresh="LoadSprints"
+                @delete="(id) => onDeleteSprint(sprint.projectId, id)"
+              />
             </v-col>
           </v-row>
 
