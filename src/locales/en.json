@@ -46,6 +46,14 @@
     },
     "card": {
       "members": "Members"
+    },
+    "create": {
+      "title": "Create Organization",
+      "name": "Name",
+      "displayName": "Display Name",
+      "description": "Description",
+      "cancel": "Cancel",
+      "confirm": "Create"
     }
   },
   "project": {

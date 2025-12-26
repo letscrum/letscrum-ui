@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     v-model="dialog"
-    width="50%"
+    width="500"
     persistent
   >
     <template #activator="{ props: activatorProps }">
@@ -11,38 +11,63 @@
     </template>
 
     <template #default="{ isActive }">
-      <v-card
-        prepend-icon="mdi-earth"
-        title="Select Country"
-        height="50vh"
-      >
-        <v-divider class="my-1"></v-divider>
+      <v-card rounded="lg" elevation="2">
+        <v-card-title class="d-flex align-center pa-4">
+          <v-icon icon="mdi-domain-plus" class="mr-2" color="primary"></v-icon>
+          {{ $t('org.create.title') }}
+        </v-card-title>
 
-        <v-card-text class="px-4">
-          <v-text-field v-model="org.name" label="Label"></v-text-field>
+        <v-divider></v-divider>
 
-          <v-text-field v-model="org.displayName" label="Label"></v-text-field>
+        <v-card-text class="pa-4">
+          <v-form ref="form" @submit.prevent="createOrg">
+            <v-text-field
+              v-model="org.name"
+              :label="$t('org.create.name')"
+              variant="outlined"
+              density="compact"
+              class="mb-2"
+              required
+            ></v-text-field>
 
-          <v-textarea v-model="org.description" label="Label"></v-textarea>
+            <v-text-field
+              v-model="org.displayName"
+              :label="$t('org.create.displayName')"
+              variant="outlined"
+              density="compact"
+              class="mb-2"
+            ></v-text-field>
 
+            <v-textarea
+              v-model="org.description"
+              :label="$t('org.create.description')"
+              variant="outlined"
+              density="compact"
+              rows="3"
+              auto-grow
+            ></v-textarea>
+          </v-form>
         </v-card-text>
 
         <v-divider></v-divider>
 
-        <v-card-actions>
-          <v-btn
-            text="Close"
-            @click="isActive.value = false"
-          ></v-btn>
-
+        <v-card-actions class="pa-4">
           <v-spacer></v-spacer>
+          <v-btn
+            variant="text"
+            @click="isActive.value = false"
+          >
+            {{ $t('org.create.cancel') }}
+          </v-btn>
 
           <v-btn
-            color="surface-variant"
-            text="Save"
+            color="primary"
             variant="flat"
+            :loading="loading"
             @click="createOrg()"
-          ></v-btn>
+          >
+            {{ $t('org.create.confirm') }}
+          </v-btn>
         </v-card-actions>
       </v-card>
     </template>
@@ -58,6 +83,7 @@ import { useAppStore } from '@/stores/app';
 
 const org = ref({})
 const dialog = ref(false)
+const loading = ref(false)
 const store = useAppStore()
 
 function onOpenOrg() {
@@ -66,13 +92,14 @@ function onOpenOrg() {
 }
 
 function createOrg() {
-  console.log(org.value)
+  if (!org.value.name) return; // Basic validation
+
+  loading.value = true;
   postCreateOrg({
     name: org.value.name,
     displayName: org.value.displayName,
     description: org.value.description,
   }).then((res) => {
-    console.log(res)
     if (res.status === 200) {
       getGetOrgs().then((res) => {
         if (res.status === 200) {
@@ -87,8 +114,13 @@ function createOrg() {
           }))
           dialog.value = false
         }
+        loading.value = false;
       })
+    } else {
+      loading.value = false;
     }
+  }).catch(() => {
+    loading.value = false;
   })
 }
 
