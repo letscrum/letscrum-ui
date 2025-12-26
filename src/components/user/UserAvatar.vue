@@ -1,6 +1,6 @@
 <template>
-  <v-avatar :color="uuidToColor(userId)">
-    {{ userName.substring(0, 1) }}
+  <v-avatar :color="uuidToColor(props.userId || '')">
+    {{ (props.userName || '').substring(0, 1).toUpperCase() }}
   </v-avatar>
 </template>
 
@@ -8,8 +8,4 @@
 import { uuidToColor } from '@/utils/utils'
 
 const props = defineProps(['userId', 'userName'])
-
-const userId = ref(props.userId)
-const userName = ref(props.userName)
-
 </script>

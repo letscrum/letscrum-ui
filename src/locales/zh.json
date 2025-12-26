@@ -131,7 +131,43 @@
     "signUpBtn": "创建账号"
   },
   "user": {
+    "list": {
+      "title": "用户列表",
+      "search": "搜索用户",
+      "create": "创建用户",
+      "headers": {
+        "name": "姓名",
+        "email": "邮箱",
+        "role": "角色",
+        "actions": "操作"
+      },
+      "role": {
+        "superAdmin": "超级管理员",
+        "user": "用户"
+      },
+      "actions": {
+        "setSuperAdmin": "设为超级管理员",
+        "removeSuperAdmin": "移除超级管理员"
+      }
+    },
+    "create": {
+      "title": "创建用户",
+      "name": "姓名",
+      "email": "邮箱",
+      "password": "密码",
+      "confirmPassword": "确认密码",
+      "cancel": "取消",
+      "confirm": "创建",
+      "rules": {
+        "required": "必填",
+        "email": "邮箱格式不正确",
+        "match": "两次输入的密码不一致"
+      }
+    },
     "userMenus": {
+      "users": {
+        "text": "用户管理"
+      },
       "setting": {
         "text": "账号设置"
       },

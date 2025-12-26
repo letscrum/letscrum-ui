@@ -140,7 +140,43 @@
     "signUpBtn": "Sign Up"
   },
   "user": {
+    "list": {
+      "title": "Users",
+      "search": "Search Users",
+      "create": "Create User",
+      "headers": {
+        "name": "Name",
+        "email": "Email",
+        "role": "Role",
+        "actions": "Actions"
+      },
+      "role": {
+        "superAdmin": "Super Admin",
+        "user": "User"
+      },
+      "actions": {
+        "setSuperAdmin": "Set Super Admin",
+        "removeSuperAdmin": "Remove Super Admin"
+      }
+    },
+    "create": {
+      "title": "Create User",
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "cancel": "Cancel",
+      "confirm": "Create",
+      "rules": {
+        "required": "Required",
+        "email": "Invalid email",
+        "match": "Passwords do not match"
+      }
+    },
     "userMenus": {
+      "users": {
+        "text": "User Management"
+      },
       "setting": {
         "text": "Account Settings"
       },
