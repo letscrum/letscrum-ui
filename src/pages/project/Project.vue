@@ -36,31 +36,15 @@
             </v-btn>
           </ProjectEdit>
 
-          <v-btn
-            variant="outlined"
-            color="error"
-            prepend-icon="mdi-delete"
-          >
-            {{ $t('project.detail.delete') }}
-            <v-dialog
-              v-model="dialogDelete"
-              activator="parent"
-              max-width="400"
-              persistent
+          <ProjectDelete>
+            <v-btn
+              variant="outlined"
+              color="error"
+              prepend-icon="mdi-delete"
             >
-              <v-card
-                prepend-icon="mdi-alert"
-                title="Delete Project?"
-                text="Are you sure you want to delete this project? This action cannot be undone."
-              >
-                <template #actions>
-                  <v-spacer></v-spacer>
-                  <v-btn @click="dialogDelete = false">Cancel</v-btn>
-                  <v-btn color="error" @click="onDeleteProject()">Delete</v-btn>
-                </template>
-              </v-card>
-            </v-dialog>
-          </v-btn>
+              {{ $t('project.detail.delete') }}
+            </v-btn>
+          </ProjectDelete>
         </v-col>
       </v-row>
 
@@ -157,9 +141,10 @@
 <script setup>
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import ProjectEdit from '@/components/project/ProjectEdit.vue'
+import ProjectDelete from '@/components/project/ProjectDelete.vue'
 
 import { useAppStore } from '@/stores/app'
-import { getGetProject, deleteDeleteProject } from '@/apis/project'
+import { getGetProject } from '@/apis/project'
 import { useRouter } from 'vue-router'
 import { getGetSprints, deleteDeleteSprint } from '@/apis/sprint';
 import { ref, watch, onMounted } from 'vue';
@@ -174,7 +159,6 @@ const route = useRoute()
 const tab = ref('sprints')
 const project = ref({})
 const allMembers = ref([])
-const dialogDelete = ref(false)
 
 function onGetProject() {
   getGetProject(store.org.id, route.params.projectId).then((res) => {
@@ -186,21 +170,6 @@ function onGetProject() {
     }
   });
 }
-
-function onDeleteProject() {
-  deleteDeleteProject(store.org.id, route.params.projectId).then((res) => {
-    console.log(res)
-    if (res.status === 200) {
-      if (res.data.success) {
-        store.clearProject()
-        store.clearSprint()
-        dialogDelete.value = false
-        router.push(`/orgs/${store.org.id}/projects`);
-      }
-    }
-  })
-}
-
 
 onMounted(() => {
   onGetProject()

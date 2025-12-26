@@ -77,6 +77,12 @@
       "cancel": "取消",
       "confirm": "保存"
     },
+    "delete": {
+      "title": "删除项目？",
+      "confirmText": "您确定要删除此项目吗？此操作无法撤销。",
+      "cancel": "取消",
+      "confirm": "删除"
+    },
     "detail": {
       "edit": "编辑",
       "delete": "删除",
