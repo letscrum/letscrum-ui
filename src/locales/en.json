@@ -77,9 +77,18 @@
       "cancel": "Cancel",
       "confirm": "Create"
     },
+    "edit": {
+      "title": "Edit Project",
+      "displayName": "Display Name",
+      "description": "Description",
+      "admins": "Admins",
+      "members": "Members",
+      "cancel": "Cancel",
+      "confirm": "Save"
+    },
     "detail": {
-      "edit": "Edit Project",
-      "delete": "Delete Project",
+      "edit": "Edit",
+      "delete": "Delete",
       "tabs": {
         "members": "Members",
         "sprints": "Sprints"
