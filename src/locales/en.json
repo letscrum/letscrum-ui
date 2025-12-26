@@ -67,6 +67,16 @@
     "card": {
       "members": "Members"
     },
+    "create": {
+      "title": "Create Project",
+      "name": "Name",
+      "displayName": "Display Name",
+      "description": "Description",
+      "admins": "Admins",
+      "members": "Members",
+      "cancel": "Cancel",
+      "confirm": "Create"
+    },
     "detail": {
       "edit": "Edit Project",
       "delete": "Delete Project",
