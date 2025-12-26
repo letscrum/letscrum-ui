@@ -1,6 +1,6 @@
 <template>
   <v-app-bar scroll-behavior="elevate">
-    <v-app-bar-nav-icon class="hidden-md-and-up" @click="store.setDrawer(!store.drawer)"></v-app-bar-nav-icon>
+    <v-app-bar-nav-icon v-if="mobile" @click="store.setDrawer(!store.drawer)"></v-app-bar-nav-icon>
     <v-img
       :src="store.logoUrl"
       contain
@@ -9,7 +9,7 @@
       max-width="150"
       @click="router.push('/orgs/' + store.org.id + '/projects')"
     />
-    <v-toolbar-items class="hidden-sm-and-down">
+    <v-toolbar-items v-if="!mobile">
       <v-breadcrumbs :items="route.meta.breadcrumbs">
         <template #item="{ item }">
           <v-btn variant="plain" :to="item.to" :ripple="false" :readonly="item.to.name == route.name">
@@ -48,13 +48,14 @@
 import { useAppStore } from '@/stores/app'
 
 const store = useAppStore()
-import { useTheme } from 'vuetify'
+import { useTheme, useDisplay } from 'vuetify'
 
 import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 
 const theme = useTheme()
+const { mobile } = useDisplay()
 
 function changeTheme() {
   theme.global.name.value = store.theme === 'light' ? 'dark' : 'light'

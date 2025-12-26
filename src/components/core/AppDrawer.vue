@@ -4,6 +4,17 @@
     :rail="rail"
     @click="rail = false"
   >
+    <v-list v-if="mobile && route.meta.breadcrumbs">
+      <v-list-item class="pa-0">
+        <v-breadcrumbs :items="route.meta.breadcrumbs" density="compact">
+          <template #item="{ item }">
+            <v-breadcrumbs-item :to="item.to" :disabled="item.to.name == route.name" class="text-caption">
+              {{ item.title }}
+            </v-breadcrumbs-item>
+          </template>
+        </v-breadcrumbs>
+      </v-list-item>
+    </v-list>
     <v-divider></v-divider>
     <v-list v-if="route.name == 'Orgs' || route.name == 'Projects' || route.name == 'Org'">
       <v-list-item>

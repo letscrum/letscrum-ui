@@ -36,6 +36,18 @@
     "description": "A Vue project template with Vuetify!",
     "keywords": "vue,vuetify"
   },
+  "org": {
+    "list": {
+      "title": "Organizations",
+      "subtitle": "Manage your organizations and projects",
+      "createBtn": "Create Organization",
+      "emptyTitle": "No organizations found",
+      "emptySubtitle": "Get started by creating a new organization"
+    },
+    "card": {
+      "members": "Members"
+    }
+  },
   "signIn": {
     "emailLabel": "",
     "emailRuleFormat": "2",

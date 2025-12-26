@@ -27,6 +27,18 @@
     "description": "基于Vuetify的Vue站点模板！",
     "keywords": "vue,vuetify"
   },
+  "org": {
+    "list": {
+      "title": "组织列表",
+      "subtitle": "管理您的组织和项目",
+      "createBtn": "创建组织",
+      "emptyTitle": "未找到组织",
+      "emptySubtitle": "开始创建一个新组织"
+    },
+    "card": {
+      "members": "成员"
+    }
+  },
   "signIn": {
     "emailLabel": "",
     "emailRuleFormat": "2",
