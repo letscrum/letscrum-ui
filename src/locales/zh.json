@@ -78,11 +78,11 @@
     }
   },
   "signIn": {
-    "emailLabel": "",
+    "emailLabel": "用户名",
     "emailRuleFormat": "2",
     "emailRuleRequired": "1",
-    "formTitle": "",
-    "passwordLabel": "",
+    "formTitle": "登录",
+    "passwordLabel": "密码",
     "passwordRuleRequired": "",
     "signInBtn": "登录"
   },

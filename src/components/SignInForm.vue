@@ -1,13 +1,13 @@
 <template>
   <v-card outlined>
     <v-toolbar flat>
-      <v-toolbar-title>Login form</v-toolbar-title>
+      <v-toolbar-title>{{ $t('signIn.formTitle') }}</v-toolbar-title>
     </v-toolbar>
     <v-card-text>
       <v-form>
         <v-text-field
           v-model="name"
-          label="Username"
+          :label="$t('signIn.emailLabel')"
           name="name"
           prepend-icon="mdi-email"
           type="text"
@@ -16,7 +16,7 @@
         <v-text-field
           id="password"
           v-model="password"
-          label="Password"
+          :label="$t('signIn.passwordLabel')"
           name="password"
           prepend-icon="mdi-lock"
           type="password"

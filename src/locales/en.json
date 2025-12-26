@@ -87,11 +87,11 @@
     }
   },
   "signIn": {
-    "emailLabel": "",
+    "emailLabel": "Username",
     "emailRuleFormat": "2",
     "emailRuleRequired": "1",
-    "formTitle": "",
-    "passwordLabel": "",
+    "formTitle": "Login Form",
+    "passwordLabel": "Password",
     "passwordRuleRequired": "",
     "signInBtn": "Sign In"
   },
