@@ -1,335 +1,285 @@
 <template>
   <DefaultLayout>
-    <v-row no-gutters>
-      <v-col>
-        <h2>{{ store.project.displayName }}</h2>
-      </v-col>
-      <v-col>
-        <v-dialog
-          v-model="dialogDelete"
-          max-width="400"
-          persistent
-        >
-          <template #activator="{ props: activatorProps }">
-            <v-btn outlined class="float-right ml-2" color="red" density="comfortable" icon="mdi-delete" v-bind="activatorProps">
-            </v-btn>
-          </template>
-
-          <v-card
-            prepend-icon="mdi-map-marker"
-            text="Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running."
-            title="Use Google's location service?"
-          >
-            <template #actions>
-              <v-spacer></v-spacer>
-
-              <v-btn @click="dialogDelete = false">
-                Disagree
-              </v-btn>
-
-              <v-btn @click="onDeleteProject()">
-                Agree
-              </v-btn>
-            </template>
-          </v-card>
-        </v-dialog>
-
-        <v-dialog
-          v-model="dialogUpdate"
-          width="50%"
-          persistent
-        >
-          <template #activator="{ props: activatorProps }">
-            <v-btn outlined class="float-right" tile prepend-icon="mdi-pencil" v-bind="activatorProps" @click="onGetProject()">
-              Edit
-            </v-btn>
-          </template>
-
-          <template #default="{ isActive }">
-            <v-card
-              prepend-icon="mdi-earth"
-              title="Select Country"
+    <v-container fluid class="pa-6">
+      <!-- Header Section -->
+      <v-row class="mb-6">
+        <v-col cols="12" md="8">
+          <div class="d-flex align-center mb-2">
+            <v-avatar
+              size="64"
+              rounded="lg"
+              :color="uuidToColor(project.id || '')"
+              class="mr-4 elevation-2"
             >
-              <v-divider class="my-1"></v-divider>
-
-              <v-card-text class="px-4">
-                <v-text-field v-model="project.displayName" label="Label"></v-text-field>
-
-                <v-textarea v-model="project.description" label="Label"></v-textarea>
-
-                <v-autocomplete
-                  v-model:search-input="search"
-                  v-model="admins"
-                  chips
-                  :items="users"
-                  label="Autocomplete"
-                  multiple
-                  item-props
-                  no-filter
-                  @update:search="searchUsers"
-                >
-                  <template #chip="{ props, item }">
-                    <v-chip
-:closable="!item.raw.owner"
-                      v-bind="props"
-                      :text="item.raw.name"
-                    ></v-chip>
-                  </template>
-                  <template #item="{ props, item }">
-                    <v-list-item
-                      v-bind="props"
-                      :title="item.raw.name"
-                    ></v-list-item>
-                  </template>
-                </v-autocomplete>
-
-                <v-autocomplete
-                  v-model:search-input="search"
-                  v-model="members"
-                  chips
-                  :items="users"
-                  label="Autocomplete"
-                  multiple
-                  item-props
-                  no-filter
-                  @update:search="searchUsers"
-                >
-                  <template #chip="{ props, item }">
-                    <v-chip
-:closable="!item.raw.owner"
-                      v-bind="props"
-                      :text="item.raw.name"
-                    ></v-chip>
-                  </template>
-                  <template #item="{ props, item }">
-                    <v-list-item
-                      v-bind="props"
-                      :title="item.raw.name"
-                    ></v-list-item>
-                  </template>
-                </v-autocomplete>
-              </v-card-text>
-
-              <v-divider></v-divider>
-
-              <v-card-actions>
-                <v-btn
-                  text="Close"
-                  @click="isActive.value = false"
-                ></v-btn>
-
-                <v-spacer></v-spacer>
-
-                <v-btn
-                  color="surface-variant"
-                  text="Save"
-                  variant="flat"
-                  @click="onUpdateProject()"
-                ></v-btn>
-              </v-card-actions>
-            </v-card>
-          </template>
-        </v-dialog>
-
-      </v-col>
-    </v-row>
-    <v-divider class="my-2"></v-divider>
-    <v-row no-gutters>
-      <v-col>
-        {{ project }}
-      </v-col>
-    </v-row>
-    <v-card flat>
-      <v-card-title class="d-flex align-center pe-2">
-        <v-icon icon="mdi-video-input-component"></v-icon>
-        Members
-      </v-card-title>
-      <v-spacer></v-spacer>
-
-      <v-divider></v-divider>
-      <v-table>
-        <thead>
-          <tr>
-            <th class="text-left">
-
-            </th>
-            <th class="text-left">
-              Name
-            </th>
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="item in allMembers"
-            :key="item.userId"
-          >
-            <td>
-              <user-avatar :user-id="item.userId" :user-name="item.userName"></user-avatar>
-            </td>
-            <td>{{ item.userName }}</td>
-            <td>
-              <div v-if="item.userName == project.createdUser.name">
-                Owner
+              <span class="text-h4 font-weight-bold text-white">
+                {{ (project.displayName || project.name || '').substring(0, 1).toUpperCase() }}
+              </span>
+            </v-avatar>
+            <div>
+              <h1 class="text-h4 font-weight-bold text-primary">{{ project.displayName || project.name }}</h1>
+              <div class="text-subtitle-1 text-medium-emphasis">
+                {{ project.name }}
               </div>
-              <SetProjectAdmin v-else :member="item" @after="onGetProject">
-                <v-btn>
-                  {{ item.isAdmin ? 'Remove admin' : 'Set admin' }}
-                </v-btn>
-              </SetProjectAdmin>
-            </td>
-            <td>
-              <ProjectMemberDelete :member="item" @after="onGetProject">
-                <v-btn>
-                  X
-                </v-btn>
-              </ProjectMemberDelete>
-            </td>
-          </tr>
-        </tbody>
-      </v-table>
-    </v-card>
-    <v-row no-gutters>
-      <v-col>
-        <h2>Sprints</h2>
-      </v-col>
-      <v-col>
-        <SprintCreate @after-create="LoadSprints()">
-          <v-btn outlined class="float-right" tile prepend-icon="mdi-pencil">
-            Create
-          </v-btn>
-        </SprintCreate>
-        <!-- <v-menu offset-y bottom left min-width="300">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn v-bind="attrs" v-on="on" plain tile large class="float-right">
-              {{ store.sprint.name }}
-              <v-icon right>
-                mdi-chevron-down
-              </v-icon>
-            </v-btn>
-          </template>
-          <v-list>
-            <v-virtual-scroll height="350" item-height="64" :items="sprints">
-              <template v-slot:default="{ item }">
-                <v-list-item
-                  :to="'/projects/' + project.id + '/sprints/' + item.id"
-                  two-line
-                  @click="onSetSprint(item.id, item.name, item.startDate, item.endDate)"
-                >
-                  <v-list-item-content>
-                    <v-list-item-title>{{ item.name }}</v-list-item-title>
-                    <v-list-item-subtitle>
-                      {{ new Date(item.startDate * 1000).toISOString().substr(0, 10) }}
-                      - {{ new Date(item.endDate * 1000).toISOString().substr(0, 10) }}
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
-                  <v-list-item-action>
-                    <v-list-item-action-text>
+            </div>
+          </div>
+          <p class="text-body-1 mt-4">{{ project.description }}</p>
+        </v-col>
+        <v-col cols="12" md="4" class="text-md-right">
+          <v-btn
+            variant="outlined"
+            color="primary"
+            prepend-icon="mdi-pencil"
+            class="mr-2"
+            @click="onGetProject()"
+          >
+            {{ $t('project.detail.edit') }}
+            <v-dialog
+              v-model="dialogUpdate"
+              activator="parent"
+              width="50%"
+              persistent
+            >
+              <v-card
+                prepend-icon="mdi-pencil"
+                :title="$t('project.detail.edit')"
+              >
+                <v-divider class="my-1"></v-divider>
+
+                <v-card-text class="px-4">
+                  <v-text-field v-model="project.displayName" label="Display Name"></v-text-field>
+
+                  <v-textarea v-model="project.description" label="Description"></v-textarea>
+
+                  <v-autocomplete
+                    v-model:search-input="search"
+                    v-model="admins"
+                    chips
+                    :items="users"
+                    label="Admins"
+                    multiple
+                    item-props
+                    no-filter
+                    @update:search="searchUsers"
+                  >
+                    <template #chip="{ props, item }">
                       <v-chip
-                        :color="item.status === 'CURRENT' ? 'primary' : ''"
-                        small
-                      >
-                        {{ item.status }}
-                      </v-chip>
-                    </v-list-item-action-text>
-                  </v-list-item-action>
-                </v-list-item>
-              </template>
-            </v-virtual-scroll>
-          </v-list>
-          <v-list>
-            <v-dialog v-model="dialog" persistent max-width="600">
-              <template v-slot:activator="{ on, attrs }">
-                <v-list-item v-bind="attrs" v-on="on">
-                  <v-list-item-icon>
-                    <v-icon>mdi-plus</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title>New Sprint</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </template>
-              <v-card>
-                <v-card-title>
-                  <span class="text-h5">Create Sprint</span>
-                </v-card-title>
-                <v-card-text>
-                  <v-container>
-                    <v-row>
-                      <v-col cols="12">
-                        <v-text-field
-                          label="Name"
-                          required
-                          v-model="sprintName"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12">
-                        <v-menu
-                          v-model="menu"
-                          :close-on-content-click="false"
-                          :nudge-right="40"
-                          transition="scale-transition"
-                          offset-y
-                          min-width="auto"
-                        >
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-text-field
-                              v-model="rangeDate"
-                              label="Picker without buttons"
-                              readonly
-                              v-bind="attrs"
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-date-picker
-                            v-model="date"
-                            no-title
-                            range
-                          ></v-date-picker>
-                        </v-menu>
-                      </v-col>
-                      <v-col cols="12">
-                      </v-col>
-                    </v-row>
-                  </v-container>
+                        :closable="!item.raw.owner"
+                        v-bind="props"
+                        :text="item.raw.name"
+                      ></v-chip>
+                    </template>
+                    <template #item="{ props, item }">
+                      <v-list-item
+                        v-bind="props"
+                        :title="item.raw.name"
+                      ></v-list-item>
+                    </template>
+                  </v-autocomplete>
+
+                  <v-autocomplete
+                    v-model:search-input="search"
+                    v-model="members"
+                    chips
+                    :items="users"
+                    label="Members"
+                    multiple
+                    item-props
+                    no-filter
+                    @update:search="searchUsers"
+                  >
+                    <template #chip="{ props, item }">
+                      <v-chip
+                        :closable="!item.raw.owner"
+                        v-bind="props"
+                        :text="item.raw.name"
+                      ></v-chip>
+                    </template>
+                    <template #item="{ props, item }">
+                      <v-list-item
+                        v-bind="props"
+                        :title="item.raw.name"
+                      ></v-list-item>
+                    </template>
+                  </v-autocomplete>
                 </v-card-text>
+
+                <v-divider></v-divider>
+
                 <v-card-actions>
+                  <v-btn
+                    text="Close"
+                    @click="dialogUpdate = false"
+                  ></v-btn>
+
                   <v-spacer></v-spacer>
-                  <v-btn text @click="dialog = false">
-                    Close
-                  </v-btn>
-                  <v-btn text @click="onCreateSprint">
-                    Create
-                  </v-btn>
+
+                  <v-btn
+                    color="primary"
+                    text="Save"
+                    variant="flat"
+                    @click="onUpdateProject()"
+                  ></v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
-          </v-list>
-        </v-menu> -->
-      </v-col>
-    </v-row>
-    <v-divider class="my-2"></v-divider>
-    <v-row no-gutters>
-      <v-col v-for="(sprint, i) in sprints" :key="i" cols="12" md="4" class="pa-1">
-        {{ sprint }}
-        <v-btn
-          color="primary"
-          @click="onSetSprint(sprint.id, sprint.name, sprint.startDate, sprint.endDate, sprint.burndownType)">
-          {{ sprint.name }}
-        </v-btn>
-        <SprintEdit :sprint-id="sprint.id" @after-edit="LoadSprints()">
-          <v-btn>
-            Edit
           </v-btn>
-        </SprintEdit>
-        <v-btn
-          color="primary"
-          @click="onDeleteSprint(sprint.projectId, sprint.id)">
-          Delete
-        </v-btn>
-      </v-col>
-    </v-row>
+
+          <v-btn
+            variant="outlined"
+            color="error"
+            prepend-icon="mdi-delete"
+          >
+            {{ $t('project.detail.delete') }}
+            <v-dialog
+              v-model="dialogDelete"
+              activator="parent"
+              max-width="400"
+              persistent
+            >
+              <v-card
+                prepend-icon="mdi-alert"
+                title="Delete Project?"
+                text="Are you sure you want to delete this project? This action cannot be undone."
+              >
+                <template #actions>
+                  <v-spacer></v-spacer>
+                  <v-btn @click="dialogDelete = false">Cancel</v-btn>
+                  <v-btn color="error" @click="onDeleteProject()">Delete</v-btn>
+                </template>
+              </v-card>
+            </v-dialog>
+          </v-btn>
+        </v-col>
+      </v-row>
+
+      <v-divider class="mb-6"></v-divider>
+
+      <!-- Tabs Section -->
+      <v-tabs v-model="tab" color="primary" class="mb-6">
+        <v-tab value="sprints">{{ $t('project.detail.tabs.sprints') }}</v-tab>
+        <v-tab value="members">{{ $t('project.detail.tabs.members') }}</v-tab>
+      </v-tabs>
+
+      <v-window v-model="tab">
+        <!-- Sprints Tab -->
+        <v-window-item value="sprints">
+          <v-row class="mb-4">
+            <v-spacer></v-spacer>
+            <v-col cols="auto">
+              <SprintCreate @after-create="LoadSprints()">
+                <v-btn color="primary" prepend-icon="mdi-plus">
+                  {{ $t('project.detail.sprints.create') }}
+                </v-btn>
+              </SprintCreate>
+            </v-col>
+          </v-row>
+
+          <v-row v-if="sprints.length > 0">
+            <v-col v-for="(sprint, i) in sprints" :key="i" cols="12" sm="6" md="4">
+              <v-card variant="outlined" class="h-100">
+                <v-card-item>
+                  <template #prepend>
+                    <v-icon color="primary" icon="mdi-run-fast" size="large"></v-icon>
+                  </template>
+                  <v-card-title>{{ sprint.name }}</v-card-title>
+                  <v-card-subtitle>
+                    {{ new Date(sprint.startDate * 1000).toLocaleDateString() }} -
+                    {{ new Date(sprint.endDate * 1000).toLocaleDateString() }}
+                  </v-card-subtitle>
+                </v-card-item>
+
+                <v-card-text>
+                  <v-chip
+                    :color="sprint.status === 'CURRENT' ? 'success' : 'default'"
+                    size="small"
+                    class="mb-2"
+                  >
+                    {{ sprint.status }}
+                  </v-chip>
+                </v-card-text>
+
+                <v-divider></v-divider>
+
+                <v-card-actions>
+                  <v-btn
+                    variant="text"
+                    color="primary"
+                    @click="onSetSprint(sprint.id, sprint.name, sprint.startDate, sprint.endDate, sprint.burndownType)"
+                  >
+                    {{ $t('project.detail.sprints.enter') }}
+                  </v-btn>
+                  <v-spacer></v-spacer>
+
+                  <SprintEdit :sprint-id="sprint.id" @after-edit="LoadSprints()">
+                    <v-btn icon="mdi-pencil" size="small" variant="text" color="grey"></v-btn>
+                  </SprintEdit>
+
+                  <v-btn
+                    icon="mdi-delete"
+                    size="small"
+                    variant="text"
+                    color="error"
+                    @click="onDeleteSprint(sprint.projectId, sprint.id)"
+                  ></v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-col>
+          </v-row>
+
+          <v-row v-else justify="center" class="mt-8">
+            <v-col cols="12" class="text-center">
+              <v-icon size="64" color="grey-lighten-1">mdi-run</v-icon>
+              <h3 class="text-h6 text-grey-darken-1 mt-4">{{ $t('project.detail.sprints.empty') }}</h3>
+            </v-col>
+          </v-row>
+        </v-window-item>
+
+        <!-- Members Tab -->
+        <v-window-item value="members">
+          <v-card variant="outlined">
+            <v-table>
+              <thead>
+                <tr>
+                  <th class="text-left" width="80"></th>
+                  <th class="text-left">{{ $t('project.detail.members.name') }}</th>
+                  <th class="text-left">{{ $t('project.detail.members.role') }}</th>
+                  <th class="text-right">{{ $t('project.detail.members.actions') }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in allMembers" :key="item.userId">
+                  <td>
+                    <user-avatar :user-id="item.userId" :user-name="item.userName"></user-avatar>
+                  </td>
+                  <td class="font-weight-medium">{{ item.userName }}</td>
+                  <td>
+                    <v-chip
+                      :color="item.userName == project.createdUser?.name ? 'warning' : (item.isAdmin ? 'primary' : 'default')"
+                      size="small"
+                    >
+                      {{ item.userName == project.createdUser?.name ? $t('project.detail.members.owner') : (item.isAdmin ? $t('project.detail.members.admin') : $t('project.detail.members.member')) }}
+                    </v-chip>
+                  </td>
+                  <td class="text-right">
+                    <div v-if="item.userName != project.createdUser?.name">
+                      <SetProjectAdmin :member="item" @after="onGetProject">
+                        <v-btn size="small" variant="text" :color="item.isAdmin ? 'warning' : 'primary'">
+                          {{ item.isAdmin ? $t('project.detail.members.removeAdmin') : $t('project.detail.members.setAdmin') }}
+                        </v-btn>
+                      </SetProjectAdmin>
+
+                      <ProjectMemberDelete :member="item" @after="onGetProject">
+                        <v-btn size="small" variant="text" color="error" icon="mdi-delete"></v-btn>
+                      </ProjectMemberDelete>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </v-table>
+          </v-card>
+        </v-window-item>
+      </v-window>
+    </v-container>
   </DefaultLayout>
 </template>
 
@@ -343,12 +293,14 @@ import { useRouter } from 'vue-router'
 import { getGetSprints, deleteDeleteSprint } from '@/apis/sprint';
 import { ref, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router'
+import { uuidToColor } from '@/utils/utils'
 
 const router = useRouter()
 const store = useAppStore()
 
 const route = useRoute()
 
+const tab = ref('sprints')
 const project = ref({})
 const admins = ref([])
 const members = ref([])

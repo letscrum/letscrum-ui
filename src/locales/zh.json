@@ -39,6 +39,44 @@
       "members": "成员"
     }
   },
+  "project": {
+    "list": {
+      "title": "项目列表",
+      "subtitle": "管理您的项目",
+      "createBtn": "创建项目",
+      "emptyTitle": "未找到项目",
+      "emptySubtitle": "开始创建一个新项目"
+    },
+    "card": {
+      "members": "成员"
+    },
+    "detail": {
+      "edit": "编辑项目",
+      "delete": "删除项目",
+      "tabs": {
+        "members": "成员",
+        "sprints": "迭代"
+      },
+      "members": {
+        "name": "姓名",
+        "role": "角色",
+        "actions": "操作",
+        "owner": "拥有者",
+        "admin": "管理员",
+        "member": "成员",
+        "setAdmin": "设为管理员",
+        "removeAdmin": "移除管理员",
+        "remove": "移除"
+      },
+      "sprints": {
+        "create": "创建迭代",
+        "empty": "未找到迭代",
+        "enter": "进入迭代",
+        "edit": "编辑",
+        "delete": "删除"
+      }
+    }
+  },
   "signIn": {
     "emailLabel": "",
     "emailRuleFormat": "2",

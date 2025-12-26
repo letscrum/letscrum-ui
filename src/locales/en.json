@@ -48,6 +48,44 @@
       "members": "Members"
     }
   },
+  "project": {
+    "list": {
+      "title": "Projects",
+      "subtitle": "Manage your projects",
+      "createBtn": "Create Project",
+      "emptyTitle": "No projects found",
+      "emptySubtitle": "Get started by creating a new project"
+    },
+    "card": {
+      "members": "Members"
+    },
+    "detail": {
+      "edit": "Edit Project",
+      "delete": "Delete Project",
+      "tabs": {
+        "members": "Members",
+        "sprints": "Sprints"
+      },
+      "members": {
+        "name": "Name",
+        "role": "Role",
+        "actions": "Actions",
+        "owner": "Owner",
+        "admin": "Admin",
+        "member": "Member",
+        "setAdmin": "Set Admin",
+        "removeAdmin": "Remove Admin",
+        "remove": "Remove"
+      },
+      "sprints": {
+        "create": "Create Sprint",
+        "empty": "No sprints found",
+        "enter": "Enter Sprint",
+        "edit": "Edit",
+        "delete": "Delete"
+      }
+    }
+  },
   "signIn": {
     "emailLabel": "",
     "emailRuleFormat": "2",
