@@ -7,10 +7,19 @@
     <v-divider></v-divider>
     <v-list v-if="route.name == 'Orgs' || route.name == 'Projects' || route.name == 'Org'">
       <v-list-item>
-        <v-list-item-title>
+        <v-list-item-title v-if="!rail">
           Orgs
         </v-list-item-title>
-        <template #append>
+        <template v-if="rail" #prepend>
+          <OrgCreate>
+            <v-btn
+              density="compact"
+              icon="mdi-plus"
+              variant="plain"
+              ></v-btn>
+          </OrgCreate>
+        </template>
+        <template v-else #append>
           <OrgCreate>
             <v-btn
               density="compact"
@@ -68,16 +77,22 @@
       </v-list-item>
     </v-list>
     <template #append>
-      <v-list>
+      <div v-if="rail" class="d-flex justify-center pa-2">
+        <v-btn
+          icon="mdi-chevron-right"
+          variant="text"
+          @click.stop="rail = !rail">
+        </v-btn>
+      </div>
+      <v-list v-else>
         <v-list-item>
           <v-btn v-if="(route.name == 'Projects' || route.name == 'Org') && store.org.id != null && store.org.id != ''" block :to="'/orgs/' + store.org.id" prepend-icon="mdi-cog">
             Manage
           </v-btn>
           <template v-if="!mobile" #append>
             <v-btn
-              :icon="rail ? 'mdi-chevron-right' : 'mdi-chevron-left'"
+              icon="mdi-chevron-left"
               variant="text"
-              :style="rail ? 'margin-left: -12px; margin-right: 12px;' : ''"
               @click.stop="rail = !rail">
             </v-btn>
           </template>

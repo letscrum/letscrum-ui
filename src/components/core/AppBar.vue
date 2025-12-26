@@ -30,7 +30,7 @@
     ></v-divider>
     <MenuAnonymous v-if="!store.isSignedIn"></MenuAnonymous>
     <MenuUser v-else></MenuUser>
-    <div v-if="!store.isSignedIn">
+    <div v-if="!store.isSignedIn" class="mr-1">
       <v-btn
         v-for="(account, i) in store.accounts"
         :key="i"
