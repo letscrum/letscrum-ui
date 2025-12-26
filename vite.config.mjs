@@ -11,6 +11,13 @@ import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
 
+// Silence legacy-js-api warnings
+const originalWarn = console.warn
+console.warn = (log, ...args) => {
+  if (typeof log === 'string' && log.includes('Deprecation [legacy-js-api]')) return
+  originalWarn(log, ...args)
+}
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -60,6 +67,15 @@ export default defineConfig({
       '.tsx',
       '.vue',
     ],
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: 'modern-compiler',
+        silenceDeprecations: ['legacy-js-api', 'if-function', 'mixed-decls', 'import', 'global-builtin', 'color-functions'],
+        quietDeps: true,
+      },
+    },
   },
   server: {
     port: 3000,

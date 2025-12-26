@@ -19,6 +19,8 @@ const app = createApp(App)
 
 registerPlugins(app)
 
+import '@/plugins/axios'
+
 import { useAppStore } from '@/stores/app'
 
 const store = useAppStore()
