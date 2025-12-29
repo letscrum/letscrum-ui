@@ -19,7 +19,7 @@
               <span class="cursor-pointer text-decoration-underline-hover">{{ localWorkItem.title }}</span>
             </ItemDetail>
           </div>
-          
+
           <!-- Add Task Button -->
           <v-btn
             icon="mdi-plus"
@@ -38,12 +38,12 @@
           <v-menu location="bottom start">
             <template #activator="{ props: menuProps }">
               <div class="d-flex align-center cursor-pointer" v-bind="menuProps">
-                <UserAvatar 
+                <UserAvatar
                   v-if="localWorkItem.assignUser"
-                  :user-id="localWorkItem.assignUser.id" 
-                  :user-name="localWorkItem.assignUser.name" 
-                  size="24" 
-                  class="mr-2" 
+                  :user-id="localWorkItem.assignUser.id"
+                  :user-name="localWorkItem.assignUser.name"
+                  size="24"
+                  class="mr-2"
                 />
                 <v-avatar v-else size="24" color="grey-lighten-2" class="mr-2">
                   <v-icon size="x-small">mdi-account</v-icon>
@@ -54,9 +54,9 @@
               </div>
             </template>
             <v-list density="compact" max-height="200">
-              <v-list-item 
-                v-for="member in localMembers" 
-                :key="member.userId" 
+              <v-list-item
+                v-for="member in localMembers"
+                :key="member.userId"
                 :value="member.userId"
                 @click="assignWorkItemValue(member.userId)"
               >

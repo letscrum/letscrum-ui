@@ -24,12 +24,12 @@
           <v-menu location="bottom start">
             <template #activator="{ props: menuProps }">
               <div class="d-flex align-center cursor-pointer" v-bind="menuProps">
-                <UserAvatar 
+                <UserAvatar
                   v-if="localTask.assignUser"
-                  :user-id="localTask.assignUser.id" 
-                  :user-name="localTask.assignUser.name" 
-                  size="24" 
-                  class="mr-2" 
+                  :user-id="localTask.assignUser.id"
+                  :user-name="localTask.assignUser.name"
+                  size="24"
+                  class="mr-2"
                 />
                 <v-avatar v-else size="24" color="grey-lighten-2" class="mr-2">
                   <v-icon size="x-small">mdi-account</v-icon>
@@ -40,9 +40,9 @@
               </div>
             </template>
             <v-list density="compact" max-height="200">
-              <v-list-item 
-                v-for="member in localMembers" 
-                :key="member.userId" 
+              <v-list-item
+                v-for="member in localMembers"
+                :key="member.userId"
                 :value="member.userId"
                 @click="assignTaskValue(member.userId)"
               >
