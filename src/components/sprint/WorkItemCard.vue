@@ -1,56 +1,162 @@
 <template>
-  <v-sheet :id="localWorkItem.id" border rounded class="pa-1 ma-1" :style="'border-left-color: ' + (props.workItem.type == 'Backlog' ? 'rgb(0, 156, 204)' : 'rgb(204, 41, 61)') + '; border-left-width: 3px;'">
-    <ItemDetail  item-type="WORKITEM" :item-id="localWorkItem.id">
-      <input readonly type="text" class="item-card-text" :value="localWorkItem.id + ' ' + localWorkItem.title"><br />
-    </ItemDetail>
-    <select name="example" class="item-card-text" :value="localWorkItem.assignUser.id" @change="assignWorkItem">
-      <option v-for="(member, i) in localMembers" :key="i" :value="member.userId">
-        {{ member.userName }}
-      </option>
-      <option value="00000000-0000-0000-0000-000000000000">Unassigned</option>
-    </select><br />
-    <select name="status" class="item-card-text" :value="localWorkItem.status" @change="updateStatus">
-      <option v-for="(s, i) in ['New', 'Approved', 'Done', 'Removed']" :key="i" :value="s">
-        {{ s }}
-      </option>
-    </select>
-  </v-sheet>
+  <v-hover v-slot="{ isHovering, props: hoverProps }">
+    <v-card
+      v-bind="hoverProps"
+      :elevation="isHovering ? 3 : 1"
+      class="ma-2"
+      :style="`border-left: 4px solid ${borderColor};`"
+      rounded="lg"
+    >
+      <div class="pa-3">
+        <!-- Header -->
+        <div class="d-flex align-start mb-3">
+          <v-icon :color="borderColor" size="small" class="mt-1 mr-2">
+            {{ props.workItem.type == 'Backlog' ? 'mdi-book-open-variant' : 'mdi-bug' }}
+          </v-icon>
+          <div class="text-body-2 font-weight-bold mr-1">{{ localWorkItem.id }}</div>
+          <div class="text-body-2 text-truncate flex-grow-1" :title="localWorkItem.title">
+            <ItemDetail item-type="WORKITEM" :item-id="localWorkItem.id">
+              <span class="cursor-pointer text-decoration-underline-hover">{{ localWorkItem.title }}</span>
+            </ItemDetail>
+          </div>
+          
+          <!-- Add Task Button -->
+          <v-btn
+            icon="mdi-plus"
+            variant="text"
+            density="compact"
+            size="small"
+            class="ml-1"
+            color="grey-darken-1"
+            @click.stop="$emit('addTask')"
+            title="Add Task"
+          ></v-btn>
+        </div>
+
+        <!-- Assignee -->
+        <div class="d-flex align-center mb-3">
+          <v-menu location="bottom start">
+            <template #activator="{ props: menuProps }">
+              <div class="d-flex align-center cursor-pointer" v-bind="menuProps">
+                <UserAvatar 
+                  v-if="localWorkItem.assignUser"
+                  :user-id="localWorkItem.assignUser.id" 
+                  :user-name="localWorkItem.assignUser.name" 
+                  size="24" 
+                  class="mr-2" 
+                />
+                <v-avatar v-else size="24" color="grey-lighten-2" class="mr-2">
+                  <v-icon size="x-small">mdi-account</v-icon>
+                </v-avatar>
+                <span class="text-caption text-medium-emphasis text-truncate" style="max-width: 100px;">
+                  {{ localWorkItem.assignUser ? localWorkItem.assignUser.name : 'Unassigned' }}
+                </span>
+              </div>
+            </template>
+            <v-list density="compact" max-height="200">
+              <v-list-item 
+                v-for="member in localMembers" 
+                :key="member.userId" 
+                :value="member.userId"
+                @click="assignWorkItemValue(member.userId)"
+              >
+                <template #prepend>
+                  <UserAvatar :user-id="member.userId" :user-name="member.userName" size="24" class="mr-2" />
+                </template>
+                <v-list-item-title>{{ member.userName }}</v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="assignWorkItemValue('00000000-0000-0000-0000-000000000000')">
+                <v-list-item-title>Unassigned</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </div>
+
+        <!-- State -->
+        <div class="d-flex align-center justify-space-between">
+          <span class="text-caption text-disabled">State</span>
+          <v-menu location="bottom end">
+            <template #activator="{ props: menuProps }">
+              <div class="d-flex align-center cursor-pointer" v-bind="menuProps">
+                <v-icon :color="statusColor" size="x-small" class="mr-1">mdi-circle</v-icon>
+                <span class="text-caption">{{ localWorkItem.status }}</span>
+              </div>
+            </template>
+            <v-list density="compact">
+              <v-list-item v-for="s in ['New', 'Approved', 'Done', 'Removed']" :key="s" @click="updateStatusValue(s)">
+                <template #prepend>
+                  <v-icon :color="getStatusColor(s)" size="x-small" class="mr-2">mdi-circle</v-icon>
+                </template>
+                <v-list-item-title>{{ s }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </div>
+      </div>
+    </v-card>
+  </v-hover>
 </template>
 
 <script setup>
-const props = defineProps(['workItem', 'members'])
-import { ref } from 'vue';
-
+import { computed, ref } from 'vue';
 import { putAssignWorkItem, putUpdateWorkItemStatus } from '@/apis/workitem';
-const emit = defineEmits(['afterUpdate'])
-// console.log(props.workItem)
 import { useRoute } from 'vue-router';
+import UserAvatar from '@/components/user/UserAvatar.vue';
+import ItemDetail from '@/components/sprint/ItemDetail.vue';
+
+const props = defineProps({
+  workItem: {
+    type: Object,
+    required: true
+  },
+  members: {
+    type: Array,
+    required: true
+  }
+});
+const emit = defineEmits(['afterUpdate', 'addTask']);
 const route = useRoute();
 
 const localWorkItem = ref(props.workItem);
 const localMembers = ref(props.members);
 
-function assignWorkItem(select) {
-  console.log(select)
+const borderColor = computed(() => props.workItem.type == 'Backlog' ? '#009CCC' : '#CC293D');
+const statusColor = computed(() => getStatusColor(localWorkItem.value.status));
+
+function getStatusColor(status) {
+  switch (status) {
+    case 'Done': return 'success';
+    case 'Approved': return 'primary';
+    case 'New': return 'grey';
+    default: return 'grey';
+  }
+}
+
+function assignWorkItemValue(userId) {
   putAssignWorkItem(route.params.orgId, route.params.projectId, localWorkItem.value.id, {
-    assignUserId: select.target.value,
+    assignUserId: userId,
   }).then((res) => {
-    console.log(res)
-    localWorkItem.value.assignUser.id = select.target.value
-    emit('afterUpdate', 'assign', localWorkItem.value)
-  })
+    const user = localMembers.value.find(m => m.userId === userId);
+    localWorkItem.value.assignUser = user ? { id: user.userId, name: user.userName } : { id: null, name: null };
+    emit('afterUpdate', 'assign', localWorkItem.value);
+  });
 }
 
-
-function updateStatus(select) {
-  console.log(select)
+function updateStatusValue(status) {
   putUpdateWorkItemStatus(route.params.orgId, route.params.projectId, localWorkItem.value.id, {
-    status: select.target.value,
+    status: status,
   }).then((res) => {
-    console.log(res)
-    localWorkItem.value.status = select.target.value
-    emit('afterUpdate', 'status', localWorkItem.value)
-  })
+    localWorkItem.value.status = status;
+    emit('afterUpdate', 'status', localWorkItem.value);
+  });
 }
-
 </script>
+
+<style scoped>
+.cursor-pointer {
+  cursor: pointer;
+}
+.text-decoration-underline-hover:hover {
+  text-decoration: underline;
+}
+</style>

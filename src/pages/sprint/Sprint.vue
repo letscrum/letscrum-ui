@@ -10,7 +10,7 @@
     </v-row>
 
     <v-tabs>
-      <v-tab :to="'/orgs/' + store.org.id + '/projects/' + store.project.id + '/sprints/' + store.sprint.id">Taskboard</v-tab>
+      <v-tab :to="'/orgs/' + store.org.id + '/projects/' + store.project.id + '/sprints/' + store.sprint.id" exact>Taskboard</v-tab>
       <v-tab :to="'/orgs/' + store.org.id + '/projects/' + store.project.id + '/sprints/' + store.sprint.id + '/backlog'">Backlog</v-tab>
       <v-tab :to="'/orgs/' + store.org.id + '/projects/' + store.project.id + '/sprints/' + store.sprint.id + '/capacity'">Capacity</v-tab>
       <v-divider

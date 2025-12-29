@@ -1,105 +1,174 @@
 <template>
-  <v-sheet border rounded class="pa-1 ma-1" style="border-left-color: rgb(242, 203, 29); border-left-width: 3px; max-width: 180px;">
-    <ItemDetail item-type="TASK" :item-id="localTask.id">
-      <input :readonly="!isEditing" type="text" class="item-card-text" :value="localTask.id + ' ' + localTask.title">
-    </ItemDetail>
-    <v-menu>
-      <template #activator="{ props: activatorProps }">
-        <v-btn variant="plain" density="compact" size="small" icon="mdi-plus" v-bind="activatorProps"></v-btn>
-      </template>
-      <v-list>
-        <v-list-item>
-          <v-list-item-title @click="isEditing = true">Edit</v-list-item-title>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-title @click="onDelete(localTask.id)">Delete</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-menu>
-    <br />
-    <select name="assign" class="item-card-text" :value="localTask.assignUser.id" @change="assignTask">
-      <option v-for="(member, i) in localMembers" :key="i" :value="member.userId">
-        {{ member.userName }}
-      </option>
-      <option value="00000000-0000-0000-0000-000000000000">Unassigned</option>
-    </select>
-    <input
-      v-model="localTask.remaining"
-      type="text"
-      class="item-card-text"
-      @focusout="onUpdateWorkHours(localTask.workItemId, localTask.id)"
-      @keyup.enter="onUpdateWorkHours(localTask.workItemId, localTask.id)" />
-    <br />
-    <select name="status" class="item-card-text" :value="localTask.status" @change="updateStatus">
-      <option v-for="(s, i) in ['ToDo', 'InProgress', 'Done', 'Removed']" :key="i" :value="s">
-        {{ s }}
-      </option>
-    </select>
-  </v-sheet>
+  <v-hover v-slot="{ isHovering, props: hoverProps }">
+    <v-card
+      v-bind="hoverProps"
+      :elevation="isHovering ? 3 : 1"
+      class="ma-2"
+      style="border-left: 4px solid #F2CB1D;"
+      rounded="lg"
+    >
+      <div class="pa-3">
+        <!-- Header -->
+        <div class="d-flex align-start mb-3">
+          <v-icon color="#F2CB1D" size="small" class="mt-1 mr-2">mdi-checkbox-marked-circle-outline</v-icon>
+          <div class="text-body-2 font-weight-bold mr-1">{{ localTask.id }}</div>
+          <div class="text-body-2 text-truncate flex-grow-1" :title="localTask.title">
+            <ItemDetail item-type="TASK" :item-id="localTask.id">
+              <span class="cursor-pointer text-decoration-underline-hover">{{ localTask.title }}</span>
+            </ItemDetail>
+          </div>
+        </div>
+
+        <!-- Assignee -->
+        <div class="d-flex align-center mb-3">
+          <v-menu location="bottom start">
+            <template #activator="{ props: menuProps }">
+              <div class="d-flex align-center cursor-pointer" v-bind="menuProps">
+                <UserAvatar 
+                  v-if="localTask.assignUser"
+                  :user-id="localTask.assignUser.id" 
+                  :user-name="localTask.assignUser.name" 
+                  size="24" 
+                  class="mr-2" 
+                />
+                <v-avatar v-else size="24" color="grey-lighten-2" class="mr-2">
+                  <v-icon size="x-small">mdi-account</v-icon>
+                </v-avatar>
+                <span class="text-caption text-medium-emphasis text-truncate" style="max-width: 100px;">
+                  {{ localTask.assignUser ? localTask.assignUser.name : 'Unassigned' }}
+                </span>
+              </div>
+            </template>
+            <v-list density="compact" max-height="200">
+              <v-list-item 
+                v-for="member in localMembers" 
+                :key="member.userId" 
+                :value="member.userId"
+                @click="assignTaskValue(member.userId)"
+              >
+                <template #prepend>
+                  <UserAvatar :user-id="member.userId" :user-name="member.userName" size="24" class="mr-2" />
+                </template>
+                <v-list-item-title>{{ member.userName }}</v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="assignTaskValue('00000000-0000-0000-0000-000000000000')">
+                <v-list-item-title>Unassigned</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </div>
+
+        <!-- State -->
+        <div class="d-flex align-center justify-space-between">
+          <span class="text-caption text-disabled">State</span>
+          <v-menu location="bottom end">
+            <template #activator="{ props: menuProps }">
+              <div class="d-flex align-center cursor-pointer" v-bind="menuProps">
+                <v-icon :color="statusColor" size="x-small" class="mr-1">mdi-circle</v-icon>
+                <span class="text-caption">{{ localTask.status }}</span>
+              </div>
+            </template>
+            <v-list density="compact">
+              <v-list-item v-for="s in ['ToDo', 'InProgress', 'Done', 'Removed']" :key="s" @click="updateStatusValue(s)">
+                <template #prepend>
+                  <v-icon :color="getStatusColor(s)" size="x-small" class="mr-2">mdi-circle</v-icon>
+                </template>
+                <v-list-item-title>{{ s }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </div>
+      </div>
+
+      <!-- Actions (Hover only) -->
+      <div v-if="isHovering" class="position-absolute top-0 right-0 pa-1">
+        <v-menu>
+          <template #activator="{ props: menuProps }">
+            <v-btn icon="mdi-dots-horizontal" variant="text" density="compact" size="small" v-bind="menuProps"></v-btn>
+          </template>
+          <v-list density="compact">
+            <v-list-item @click="onDelete(localTask.id)">
+              <template #prepend><v-icon size="small" color="error">mdi-delete</v-icon></template>
+              <v-list-item-title class="text-error">Delete</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </div>
+    </v-card>
+  </v-hover>
 </template>
 
 <script setup>
-const props = defineProps(['task', 'members']);
-
-import { putAssignTask, putMoveTask, putUpdateWorkHours, deleteDeleteTask } from '@/apis/task';
-import { onMounted, ref } from 'vue';
-const emit = defineEmits(['afterUpdate'])
-
-
+import { computed, ref } from 'vue';
+import { putAssignTask, putMoveTask, deleteDeleteTask } from '@/apis/task';
 import { useRoute } from 'vue-router';
+import UserAvatar from '@/components/user/UserAvatar.vue';
+import ItemDetail from '@/components/sprint/ItemDetail.vue';
 
+const props = defineProps({
+  task: {
+    type: Object,
+    required: true
+  },
+  members: {
+    type: Array,
+    required: true
+  }
+});
+const emit = defineEmits(['afterUpdate']);
 const route = useRoute();
 
 const localTask = ref(props.task);
 const localMembers = ref(props.members);
 
-const isEditing = ref(false)
-console.log(localTask.value)
+const statusColor = computed(() => getStatusColor(localTask.value.status));
 
-function assignTask(select) {
-  console.log(select)
-  putAssignTask(route.params.orgId, route.params.projectId, localTask.value.workItemId, localTask.value.id, {
-    assignUserId: select.target.value,
-  }).then((res) => {
-    console.log(res)
-    localTask.value.assignUser.id = select.target.value
-    emit('afterUpdate', 'assign', localTask.value)
-  })
+function getStatusColor(status) {
+  switch (status) {
+    case 'Done': return 'success';
+    case 'InProgress': return 'primary';
+    case 'ToDo': return 'grey';
+    default: return 'grey';
+  }
 }
 
-function updateStatus(select) {
-  console.log(select)
+function assignTaskValue(userId) {
+  putAssignTask(route.params.orgId, route.params.projectId, localTask.value.workItemId, localTask.value.id, {
+    assignUserId: userId,
+  }).then(() => {
+    const user = localMembers.value.find(m => m.userId === userId);
+    localTask.value.assignUser = user ? { id: user.userId, name: user.userName } : { id: null, name: null };
+    emit('afterUpdate', 'assign', localTask.value);
+  });
+}
+
+function updateStatusValue(status) {
+  let oldStatus = localTask.value.status;
   putMoveTask(route.params.orgId, route.params.projectId, localTask.value.workItemId, localTask.value.id, {
-    status: select.target.value,
+    status: status,
     toWorkItemId: localTask.value.workItemId,
   }).then((res) => {
     if (res.status === 200) {
-      console.log(res)
-      let oldStatus = localTask.value.status
-      localTask.value.status = select.target.value
-      emit('afterUpdate', oldStatus, localTask.value)
+      localTask.value.status = status;
+      emit('afterUpdate', oldStatus, localTask.value);
     }
-  })
-}
-
-function onUpdateWorkHours(workItemId, taskId) {
-  putUpdateWorkHours(route.params.orgId, route.params.projectId, workItemId, taskId, {
-    remaining: localTask.value.remaining,
-  }).then((res) => {
-    if (res.status === 200) {
-      console.log(res)
-      emit('afterUpdate', 'remaining', localTask.value)
-    }
-  })
+  });
 }
 
 function onDelete(taskId) {
   deleteDeleteTask(route.params.orgId, route.params.projectId, localTask.value.workItemId, taskId).then((res) => {
-    console.log(res)
-  })
-  emit('afterUpdate', 'delete', localTask.value)
+    if (res.status === 200) {
+      emit('afterUpdate', 'delete', localTask.value);
+    }
+  });
 }
-
-onMounted(() => {
-})
 </script>
+
+<style scoped>
+.cursor-pointer {
+  cursor: pointer;
+}
+.text-decoration-underline-hover:hover {
+  text-decoration: underline;
+}
+</style>

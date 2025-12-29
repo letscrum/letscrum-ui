@@ -1,186 +1,243 @@
 <template>
-  <div>
-    <v-row no-gutters>
-      <v-col>
-        <v-data-iterator
-          v-model:expanded="expanded"
-          :items="workItems"
-          hide-default-footer
-          items-per-page="-1"
-        >
-          <template #header>
+  <div class="h-100">
+    <v-data-iterator
+      v-model:expanded="expanded"
+      :items="workItems"
+      hide-default-footer
+      items-per-page="-1"
+      class="h-100"
+    >
+      <template #header>
+        <v-row no-gutters class="mb-2">
+          <v-col cols="2" class="px-2">
+            <div class="d-flex align-center justify-space-between mb-2">
+              <v-btn
+                v-if="expanded.length > 0"
+                variant="text"
+                prepend-icon="mdi-arrow-expand-vertical"
+                size="small"
+                @click="collapseAll()"
+                class="text-caption"
+              >
+                Expand all
+              </v-btn>
+              <v-btn
+                v-else
+                variant="text"
+                prepend-icon="mdi-arrow-collapse-vertical"
+                size="small"
+                @click="collapseAll()"
+                class="text-caption"
+              >
+                Collapse all
+              </v-btn>
+            </div>
+            
+            <!-- Create Work Item Input -->
+            <v-expand-transition>
+              <div v-if="creatingWorkItem" class="mb-2">
+                <v-card
+                  elevation="2"
+                  class="pa-2"
+                  :style="`border-left: 4px solid ${workItemType == 'Backlog' ? '#009CCC' : '#CC293D'};`"
+                >
+                  <v-textarea
+                    ref="createWorkItemTitle"
+                    rows="2"
+                    auto-grow
+                    variant="plain"
+                    hide-details
+                    placeholder="Enter title..."
+                    class="text-body-2"
+                    @focusout="onCreatWorkItem()"
+                    @keydown.enter.prevent="onCreatWorkItem()"
+                  ></v-textarea>
+                </v-card>
+              </div>
+            </v-expand-transition>
+          </v-col>
+          
+          <v-col cols="10">
             <v-row no-gutters>
-              <v-col cols="2">
-                <v-btn v-if="expanded.length > 0" variant="plain" prepend-icon="mdi-arrow-expand-vertical" size="x-small" @click="collapseAll()">
-                  Expand all
-                </v-btn>
-                <v-btn v-else variant="plain" prepend-icon="mdi-arrow-collapse-vertical" size="x-small" @click="collapseAll()">
-                  Collapse all
-                </v-btn>
-                <div v-if="creatingWorkItem">
-                  <v-row no-gutters>
-                    <v-col cols="2">
-                      <v-icon icon="mdi-menu-down" size="x-small" width="10%" class="float-left"></v-icon>
-                      <v-sheet
-tile outlined class="mb-2 mr-2 float-left"
-                        style="border-left-color: rgb(0, 156, 204); border-width: 1px; border-left-width: 3px;"
-                        width="85%" min-width="160" height="100">
-                          <input
-                            ref="createWorkItemTitle" width="160"
-                            class="item-card-text"
-                            type="textarea"
-                            @focusout="onCreatWorkItem()" @keyup.enter="onCreatWorkItem()" />
-                      </v-sheet>
-                    </v-col>
-                    <v-col cols="10">
-                    </v-col>
-                  </v-row>
+              <v-col v-for="header in ['To Do', 'In Progress', 'Done']" :key="header" cols="4" class="px-2">
+                <div class="text-subtitle-2 font-weight-bold text-medium-emphasis mb-2 pl-1">
+                  {{ header }}
                 </div>
               </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+      </template>
+
+      <template #default="{ items, isExpanded, toggleExpand }">
+        <div v-for="item in items" :key="item.raw.id" class="mb-1">
+          <v-expand-transition>
+            <!-- Expanded View -->
+            <v-row v-if="!isExpanded(item)" no-gutters class="py-1">
+              <!-- Work Item Column -->
+              <v-col cols="2" class="px-2 d-flex align-start">
+                <v-btn
+                  icon="mdi-chevron-down"
+                  variant="text"
+                  size="x-small"
+                  density="compact"
+                  class="mt-3 mr-1"
+                  @click="() => toggleExpand(item)"
+                ></v-btn>
+                
+                <div class="flex-grow-1">
+                  <VueDraggable
+                    :id="item.raw.id"
+                    v-model="workItems"
+                    group="workItem"
+                    :animation="150"
+                  >
+                    <WorkItemCard 
+                      :work-item="item.raw" 
+                      :members="sprint.members" 
+                      @after-update="updateWorkItem"
+                      @add-task="AddTask(item.raw.id)"
+                    />
+                  </VueDraggable>
+                </div>
+              </v-col>
+
+              <!-- Task Columns -->
               <v-col cols="10">
-                <v-row no-gutters>
-                  <v-col v-for="i in ['To Do', 'In Progress', 'Done']" :key="i" cols="4">
-                    {{ i }}
+                <v-row no-gutters class="h-100">
+                  <v-col v-for="status in ['To Do', 'In Progress', 'Done']" :key="status" cols="4" class="px-2 h-100">
+                    <v-sheet
+                      color="grey-lighten-4"
+                      class="fill-height rounded-lg pa-1"
+                      min-height="100"
+                    >
+                      <!-- Create Task Input (Only in To Do) -->
+                      <div v-if="status === 'To Do'" class="mb-2 px-1">
+                        <v-expand-transition>
+                          <div v-if="creatingTask && item.raw.id === createTaskWorkItemId">
+                            <v-card
+                              elevation="2"
+                              class="pa-2"
+                              style="border-left: 4px solid #F2CB1D;"
+                            >
+                              <v-textarea
+                                :id="item.raw.id + '-createTaskTitle'"
+                                ref="createTaskTitle"
+                                rows="2"
+                                auto-grow
+                                variant="plain"
+                                hide-details
+                                placeholder="Enter title..."
+                                class="text-body-2"
+                                @focusout="onCreateTask()"
+                                @keydown.enter.prevent="onCreateTask()"
+                              ></v-textarea>
+                            </v-card>
+                          </div>
+                        </v-expand-transition>
+                      </div>
+
+                      <VueDraggable
+                        :id="item.raw.id + '-' + status.replace(' ', '')"
+                        v-model="item.raw['tasks' + status.replace(' ', '')]"
+                        group="task"
+                        class="fill-height"
+                        :animation="150"
+                        @add="onAdd"
+                      >
+                        <div
+                          v-for="task in item.raw['tasks' + status.replace(' ', '')]"
+                          :key="task.id"
+                        >
+                          <TaskCard 
+                            :task="task" 
+                            :members="sprint.members" 
+                            @after-update="updateTask"
+                          />
+                        </div>
+                      </VueDraggable>
+                    </v-sheet>
                   </v-col>
                 </v-row>
               </v-col>
             </v-row>
-          </template>
-          <template #default="{ items, isExpanded, toggleExpand }">
 
-            <div v-for="item in items" :key="item.raw.id">
-              <v-expand-transition>
-                <v-row v-if="!isExpanded(item)" no-gutters>
-                  <v-col cols="2">
-                    <v-icon icon="mdi-menu-down" size="x-small" width="10%" class="float-left ma-1" @click="() => toggleExpand(item)"></v-icon>
-                    <VueDraggable
-                      :id="item.raw.id"
-                      v-model="workItems"
-                      group="workItem"
-                      style="width: 100%; height: 100%;"
-                      >
-                      <WorkItemCard :work-item="item.raw" :members="sprint.members" @after-update="updateWorkItem"></WorkItemCard>
-                    </VueDraggable>
+            <!-- Collapsed View -->
+            <v-row v-else no-gutters class="py-1 align-center bg-grey-lighten-4 rounded my-1 mx-2">
+              <v-col cols="12" class="d-flex align-center px-2 py-1">
+                <v-btn
+                  icon="mdi-chevron-right"
+                  variant="text"
+                  size="x-small"
+                  density="compact"
+                  class="mr-2"
+                  @click="() => toggleExpand(item)"
+                ></v-btn>
+                <span class="text-body-2 font-weight-medium text-truncate">{{ item.raw.title }}</span>
+                <v-spacer></v-spacer>
+                <v-chip size="x-small" class="mr-2">{{ item.raw.status }}</v-chip>
+              </v-col>
+            </v-row>
+          </v-expand-transition>
+        </div>
+      </template>
+    </v-data-iterator>
 
-                  </v-col>
-                  <v-col cols="10">
-                    <v-row no-gutters>
-                      <v-col v-for="i in ['To Do', 'In Progress', 'Done']" :key="i" cols="4">
-                        <v-row
-no-gutters
-                        style="width: 100%; height: 80%;"
-                        >
-                          <v-col
-                          style="width: 100%; height: 100%;"
-                          >
-                            <VueDraggable
-                              :id="item.raw.id + '-' + i.replace(' ', '')"
-                              v-model="item.raw['tasks' + i.replace(' ', '')]"
-                              group="task"
-                              style="width: 100%; height: 100%;"
-                              @add="onAdd"
-                              >
-                              <div
-                                v-for="task in item.raw['tasks' + i.replace(' ', '')]"
-                                :key="task.id"
-                              >
-                                <TaskCard :task="task" :members="sprint.members" @after-update="updateTask"></TaskCard>
-                              </div>
-                            </VueDraggable>
-                          </v-col>
-                        </v-row>
-                        <v-row v-if="i === 'To Do'" no-gutters>
-                          <v-col>
-                            <v-btn v-if="!creatingTask" variant="plain" prepend-icon="mdi-plus" size="small" class="mr-2" @click="AddTask(item.raw.id)">
-                              New task
-                            </v-btn>
-                            <div v-show="creatingTask && item.raw.id === createTaskWorkItemId">
-                              <v-sheet
-tile outlined class="mb-2 mr-2 float-left"
-                                style="border-left-color: rgb(242, 203, 29); border-width: 1px; border-left-width: 3px;"
-                                width="185" height="100">
-                                <input
-                                  :id="item.raw.id + '-createTaskTitle'"
-                                  ref="createTaskTitle" width="160"
-                                  class="item-card-text"
-                                  type="textarea"
-                                  @focusout="onCreateTask()"
-                                  @keyup.enter="onCreateTask()" />
-                              </v-sheet>
-                            </div>
-                          </v-col>
-                        </v-row>
-                      </v-col>
-                    </v-row>
-                  </v-col>
-                </v-row>
-                <v-row v-else no-gutters>
-                  <v-col>
-                    <VueDraggable
-                      :id="item.raw.id + '-ToDo'"
-                      v-model="item.raw['tasksToDo']"
-                      group="task"
-                      style="width: 100%; height: 100%;"
-                      @add="onAdd"
-                      >
-                      <v-icon icon="mdi-menu-right" size="x-small" class="float-left" @click="() => toggleExpand(item)"></v-icon>
-                      {{ item.raw.title }}
-                    </VueDraggable>
-                  </v-col>
-                </v-row>
-              </v-expand-transition>
-            </div>
+    <!-- Side Panels -->
+    <v-navigation-drawer
+      v-if="store.sprint.showDetails"
+      location="right"
+      width="400"
+      permanent
+    >
+      <v-card flat>
+        <v-card-title class="d-flex align-center">
+          <span class="text-h6">Work Details</span>
+          <v-spacer></v-spacer>
+          <v-btn icon="mdi-close" variant="text" @click="onCloseSide"></v-btn>
+        </v-card-title>
+        <v-card-text>
+          <!-- Details content placeholder -->
+          <div class="text-body-2">Details content here...</div>
+        </v-card-text>
+      </v-card>
+    </v-navigation-drawer>
 
-          </template>
-        </v-data-iterator>
-      </v-col>
-      <v-divider vertical />
-      <v-col v-if="store.sprint.showDetails" cols="3">
-        <v-card flat tile>
-          <v-card-title>
-            <span class="text-h5">Work Details</span>
-            <v-spacer></v-spacer>
-            <v-btn icon="mdi-close" @click="onCloseSide">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </v-card-title>
-          <v-card-text>
-            123<br/>
-            123<br/>
-            123<br/>
-            123
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col v-if="store.sprint.showSprints" cols="3">
-        <SprintsSider :sprints="props.sprints" @after-move="LoadWorkItemsWithBurndown" @close-side="onCloseSide"></SprintsSider>
-      </v-col>
-    </v-row>
+    <v-navigation-drawer
+      v-if="store.sprint.showSprints"
+      location="right"
+      width="300"
+      permanent
+    >
+      <SprintsSider 
+        :sprints="props.sprints" 
+        @after-move="LoadWorkItemsWithBurndown" 
+        @close-side="onCloseSide"
+      />
+    </v-navigation-drawer>
   </div>
 </template>
 
 <script setup>
-
-import { onMounted, ref } from 'vue'
-
+import { onMounted, ref, nextTick } from 'vue'
 import { getGetSprintWorkItems, postCreateWorkItem } from '@/apis/workitem';
-
 import { postCreateTask, putMoveTask } from '@/apis/task';
-
 import { getGetSprint } from '@/apis/sprint';
-
 import { useRoute } from 'vue-router'
-
-const emit = defineEmits(['task-changed'])
-
 import { useAppStore } from '@/stores/app'
-
 import { VueDraggable } from 'vue-draggable-plus'
+import WorkItemCard from '@/components/sprint/WorkItemCard.vue';
+import TaskCard from '@/components/sprint/TaskCard.vue';
+import SprintsSider from '@/components/sprint/SprintsSider.vue';
 
-const props = defineProps(['sprints'])
-
+const props = defineProps({
+  sprints: {
+    type: Array,
+    required: true
+  }
+});
+const emit = defineEmits(['task-changed'])
 const store = useAppStore()
-
 const route = useRoute()
 
 const sprint = ref({})
@@ -192,7 +249,6 @@ const createWorkItemTitle = ref(null)
 const createTaskTitle = ref(null)
 const rightTaskTitle = ref(null)
 const createTaskWorkItemId = ref(0)
-
 const expanded = ref([])
 
 function LoadWorkItems() {
@@ -202,17 +258,17 @@ function LoadWorkItems() {
     size: -1
   }).then(res => {
     workItems.value = res.data.items
-    console.log('workItems', workItems.value)
   })
 }
 
 function AddWorkItem(type) {
   creatingWorkItem.value = !creatingWorkItem.value
-  console.log('createWorkItemTitle', createWorkItemTitle.value, type)
   workItemType.value = type
-  setTimeout(() => {
-    createWorkItemTitle.value.focus()
-  }, 100);
+  if (creatingWorkItem.value) {
+    nextTick(() => {
+      createWorkItemTitle.value?.focus()
+    })
+  }
 }
 
 function onCloseSide() {
@@ -221,63 +277,57 @@ function onCloseSide() {
 
 function AddTask(workItemId) {
   creatingTask.value = !creatingTask.value
-  console.log('createTaskTitle', createTaskTitle.value)
   createTaskWorkItemId.value = workItemId
-  let id = workItemId + '-createTaskTitle'
-  createTaskTitle.value.forEach(item => {
-    if (item.id === id) {
-      rightTaskTitle.value = item
-      rightTaskTitle.value.value = ''
+  
+  if (creatingTask.value) {
+    nextTick(() => {
       setTimeout(() => {
-        rightTaskTitle.value.focus()
+         const el = document.getElementById(workItemId + '-createTaskTitle');
+         if (el) el.focus();
       }, 100);
-    }
-  })
-
+    })
+  }
 }
 
 function onCreateTask() {
-  if (creatingTask.value === true && rightTaskTitle.value.value && createTaskWorkItemId.value > 0) {
+  const element = document.getElementById(createTaskWorkItemId.value + '-createTaskTitle');
+  const title = element ? element.value : '';
+
+  if (creatingTask.value === true && title && createTaskWorkItemId.value > 0) {
     postCreateTask(store.org.id, route.params.projectId, createTaskWorkItemId.value, {
       sprintId: route.params.sprintId,
-      title: rightTaskTitle.value.value
+      title: title
     }).then(res => {
-      console.log('res', res)
-      // add res.data to workItems tasks which id is equal to workItemId
       for (let i = 0; i < workItems.value.length; i++) {
         if (workItems.value[i].id === createTaskWorkItemId.value) {
           workItems.value[i].tasksAll.push(res.data.item)
           workItems.value[i].tasksToDo.push(res.data.item)
         }
       }
-      // reload sprint burndown
       emit('task-changed')
     })
   }
   creatingTask.value = false
-
 }
 
 function onCreatWorkItem() {
-  if (creatingWorkItem.value === true && createWorkItemTitle.value.value) {
+  const title = createWorkItemTitle.value?.value || '';
+  
+  if (creatingWorkItem.value === true && title) {
     postCreateWorkItem(store.org.id, route.params.projectId, {
-      title: createWorkItemTitle.value.value,
+      title: title,
       sprintId: route.params.sprintId,
       type: workItemType.value,
     }).then(res => {
-      // insert res.data to allWorkItems at the beginning
       workItems.value.unshift(res.data.item)
-      console.log('workItems', workItems.value)
     })
   }
   creatingWorkItem.value = false
 }
 
 function filterTasks(userId) {
-  console.log('userId', userId, typeof userId)
   let myItems = []
   if (userId != "00000000-0000-0000-0000-000000000000") {
-    // if allWorkItems assignUser.id or any tasks assignUser.id is equal to userId, add to myItems
     myItems = workItems.value.filter(item => {
       if (item.assignUser.id === userId.toString()) {
         return item
@@ -293,7 +343,6 @@ function filterTasks(userId) {
     myItems = workItems.value
   }
   expanded.value = []
-  // if in allWorkItems, but not in myItems, add to expanded
   workItems.value.forEach(item => {
     if (!myItems.includes(item)) {
       expanded.value.push(item.id.toString())
@@ -313,7 +362,6 @@ function showSide(type) {
 }
 
 function collapseAll() {
-  console.log('workItems', workItems.value)
   if (expanded.value.length > 0) {
     expanded.value = []
   } else {
@@ -322,15 +370,10 @@ function collapseAll() {
       expanded.value.push(item.id.toString())
     })
   }
-  console.log('expanded', expanded.value)
 }
 
 function onAdd(item) {
-  console.log('add', item)
-  console.log('to', item.to)
-  console.log('id', item.to.id)
   let moveTo = item.to.id
-  // split moveTo by -
   let split = moveTo.split('-')
   let workItemId = split[0]
   let status = split[1]
@@ -339,8 +382,6 @@ function onAdd(item) {
     status: status,
     toWorkItemId: workItemId,
   }).then(res => {
-    console.log('move res', res)
-    console.log('workItems', workItems.value)
     workItems.value.find((item) => item.id == workItemId)['tasks' + status].find((task) => task.id == taskId).status = status
     workItems.value.find((item) => item.id == workItemId)['tasks' + status].find((task) => task.id == taskId).workItemId = workItemId
     emit('task-changed')
@@ -349,32 +390,49 @@ function onAdd(item) {
 
 function LoadSprint() {
   getGetSprint(store.org.id, route.params.projectId, route.params.sprintId).then(res => {
-    console.log('sprint', res)
     sprint.value = res.data.item
   })
 }
 
 function updateTask(action, task) {
-  console.log('updateTask', task)
-  if (action == 'assign') {
-    workItems.value.find((item) => item.id == task.workItemId)['tasks' + task.status].find((task) => task.id == task.id).assignUser.id = task.assignUser.id
-  } else if (action == 'delete') {
-    // remove task from taskboard
-    workItems.value.find((item) => item.id == task.workItemId)['tasks' + task.status].splice(workItems.value.find((item) => item.id == task.workItemId)['tasks' + task.status].indexOf(task), 1)
-  } else if (action != 'remaining') {
-    let targetTask = workItems.value.find((item) => item.id == task.workItemId)['tasks' + action].find((task) => task.id == task.id)
-    console.log('targetTask', targetTask)
-    // remove targetTask from taskboard
-    workItems.value.find((item) => item.id == task.workItemId)['tasks' + action].splice(workItems.value.find((item) => item.id == task.workItemId)['tasks' + action].indexOf(targetTask), 1)
-    // add targetTask to taskboard
-    workItems.value.find((item) => item.id == task.workItemId)['tasks' + task.status].push(targetTask)
+  const workItem = workItems.value.find(item => item.id == task.workItemId);
+  if (!workItem) return;
+
+  if (action === 'assign') {
+    const targetTask = workItem['tasks' + task.status].find(t => t.id == task.id);
+    if (targetTask) {
+      if (!targetTask.assignUser) {
+        targetTask.assignUser = { id: null, name: null };
+      }
+      targetTask.assignUser.id = task.assignUser.id;
+      targetTask.assignUser.name = task.assignUser.name;
+    }
+  } else if (action === 'delete') {
+    const taskList = workItem['tasks' + task.status];
+    if (taskList) {
+      const index = taskList.findIndex(t => t.id == task.id);
+      if (index !== -1) {
+        taskList.splice(index, 1);
+      }
+    }
+  } else if (action !== 'remaining') {
+    // Move task
+    const sourceList = workItem['tasks' + action];
+    const targetList = workItem['tasks' + task.status];
+    
+    if (sourceList && targetList) {
+      const taskIndex = sourceList.findIndex(t => t.id == task.id);
+      if (taskIndex !== -1) {
+        const [movedTask] = sourceList.splice(taskIndex, 1);
+        movedTask.status = task.status;
+        targetList.push(movedTask);
+      }
+    }
   }
-  // reload sprint burndown
-  emit('task-changed')
+  emit('task-changed');
 }
 
 function updateWorkItem(action, workItem) {
-  console.log('updateWorkItem', workItem)
   if (action == 'assign') {
     workItems.value.find((item) => item.id == workItem.id).assignUser.id = workItem.assignUser.id
   } else {
@@ -392,5 +450,4 @@ onMounted(() => {
   LoadWorkItems()
   emit('task-changed')
 })
-
 </script>
