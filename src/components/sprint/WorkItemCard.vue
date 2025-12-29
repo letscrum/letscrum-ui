@@ -10,11 +10,11 @@
       <div class="pa-3">
         <!-- Header -->
         <div class="d-flex align-start mb-3">
-          <v-icon :color="borderColor" size="14" class="mt-1 mr-2">
+          <v-icon :color="borderColor" size="12" class="mt-1 mr-2">
             {{ props.workItem.type == 'Backlog' ? 'mdi-book-open-variant' : 'mdi-bug' }}
           </v-icon>
-          <div class="text-body-2 font-weight-bold mr-1">{{ localWorkItem.id }}</div>
-          <div class="text-body-2 text-truncate flex-grow-1" :title="localWorkItem.title">
+          <div class="text-caption font-weight-bold mr-1">{{ localWorkItem.id }}</div>
+          <div class="text-caption flex-grow-1" style="min-width: 0;" :title="localWorkItem.title">
             <ItemDetail item-type="WORKITEM" :item-id="localWorkItem.id">
               <span class="cursor-pointer text-decoration-underline-hover">{{ localWorkItem.title }}</span>
             </ItemDetail>
@@ -42,13 +42,13 @@
                   v-if="localWorkItem.assignUser"
                   :user-id="localWorkItem.assignUser.id"
                   :user-name="localWorkItem.assignUser.name"
-                  size="24"
+                  size="20"
                   class="mr-2"
                 />
-                <v-avatar v-else size="24" color="grey-lighten-2" class="mr-2">
+                <v-avatar v-else size="20" color="grey-lighten-2" class="mr-2">
                   <v-icon size="x-small">mdi-account</v-icon>
                 </v-avatar>
-                <span class="text-caption text-medium-emphasis text-truncate" style="max-width: 100px;">
+                <span class="text-caption text-medium-emphasis text-truncate" style="max-width: 100px; font-size: 11px !important;">
                   {{ localWorkItem.assignUser ? localWorkItem.assignUser.name : 'Unassigned' }}
                 </span>
               </div>
@@ -74,12 +74,12 @@
 
         <!-- State -->
         <div class="d-flex align-center justify-space-between">
-          <span class="text-caption text-disabled">State</span>
+          <span class="text-caption text-disabled" style="font-size: 11px !important;">State</span>
           <v-menu location="bottom end">
             <template #activator="{ props: menuProps }">
               <div class="d-flex align-center cursor-pointer" v-bind="menuProps">
                 <v-icon :color="statusColor" size="x-small" class="mr-1">mdi-circle</v-icon>
-                <span class="text-caption">{{ localWorkItem.status }}</span>
+                <span class="text-caption" style="font-size: 11px !important;">{{ localWorkItem.status }}</span>
               </div>
             </template>
             <v-list density="compact">
@@ -118,7 +118,7 @@ const emit = defineEmits(['afterUpdate', 'addTask']);
 const route = useRoute();
 
 const localWorkItem = ref(props.workItem);
-const localMembers = ref(props.members);
+const localMembers = computed(() => props.members);
 
 const borderColor = computed(() => props.workItem.type == 'Backlog' ? '#009CCC' : '#CC293D');
 const statusColor = computed(() => getStatusColor(localWorkItem.value.status));

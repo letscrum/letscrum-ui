@@ -4,7 +4,7 @@
     persistent
   >
     <template #activator="{ props: activatorProps }">
-      <div v-bind="activatorProps" @click="onLoadItem">
+      <div v-bind="activatorProps" @click="onLoadItem" class="text-truncate">
         <slot></slot>
       </div>
     </template>

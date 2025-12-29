@@ -10,9 +10,9 @@
       <div class="pa-3">
         <!-- Header -->
         <div class="d-flex align-start mb-3">
-          <v-icon color="#F2CB1D" size="14" class="mt-1 mr-2">mdi-checkbox-marked-circle-outline</v-icon>
-          <div class="text-body-2 font-weight-bold mr-1">{{ localTask.id }}</div>
-          <div class="text-body-2 text-truncate flex-grow-1" :title="localTask.title">
+          <v-icon color="#F2CB1D" size="12" class="mt-1 mr-2">mdi-checkbox-marked-circle-outline</v-icon>
+          <div class="text-caption font-weight-bold mr-1">{{ localTask.id }}</div>
+          <div class="text-caption flex-grow-1" style="min-width: 0;" :title="localTask.title">
             <ItemDetail item-type="TASK" :item-id="localTask.id">
               <span class="cursor-pointer text-decoration-underline-hover">{{ localTask.title }}</span>
             </ItemDetail>
@@ -28,13 +28,13 @@
                   v-if="localTask.assignUser"
                   :user-id="localTask.assignUser.id"
                   :user-name="localTask.assignUser.name"
-                  size="24"
+                  size="20"
                   class="mr-2"
                 />
-                <v-avatar v-else size="24" color="grey-lighten-2" class="mr-2">
+                <v-avatar v-else size="20" color="grey-lighten-2" class="mr-2">
                   <v-icon size="x-small">mdi-account</v-icon>
                 </v-avatar>
-                <span class="text-caption text-medium-emphasis text-truncate" style="max-width: 100px;">
+                <span class="text-caption text-medium-emphasis text-truncate" style="max-width: 100px; font-size: 11px !important;">
                   {{ localTask.assignUser ? localTask.assignUser.name : 'Unassigned' }}
                 </span>
               </div>
@@ -60,12 +60,12 @@
 
         <!-- State -->
         <div class="d-flex align-center justify-space-between">
-          <span class="text-caption text-disabled">State</span>
+          <span class="text-caption text-disabled" style="font-size: 11px !important;">State</span>
           <v-menu location="bottom end">
             <template #activator="{ props: menuProps }">
               <div class="d-flex align-center cursor-pointer" v-bind="menuProps">
                 <v-icon :color="statusColor" size="x-small" class="mr-1">mdi-circle</v-icon>
-                <span class="text-caption">{{ localTask.status }}</span>
+                <span class="text-caption" style="font-size: 11px !important;">{{ localTask.status }}</span>
               </div>
             </template>
             <v-list density="compact">
@@ -119,7 +119,7 @@ const emit = defineEmits(['afterUpdate']);
 const route = useRoute();
 
 const localTask = ref(props.task);
-const localMembers = ref(props.members);
+const localMembers = computed(() => props.members);
 
 const statusColor = computed(() => getStatusColor(localTask.value.status));
 
