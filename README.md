@@ -2,6 +2,8 @@
 
 A modern, responsive user interface for the LetScrum project management platform, built with Vue 3 and Vuetify.
 
+**Demo**: https://letscrum.learnmark.com/
+
 ## 🚀 Overview
 
 LetScrum UI provides a comprehensive interface for agile project management. It features a clean, card-based design inspired by modern design systems (Microsoft Foundry style), offering a seamless experience for managing organizations, projects, sprints, and backlogs.
