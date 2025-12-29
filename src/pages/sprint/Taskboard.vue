@@ -8,8 +8,8 @@
       class="h-100"
     >
       <template #header>
-        <v-row no-gutters class="mb-2 flex-nowrap">
-          <v-col cols="auto" class="px-2" style="width: 280px; min-width: 280px;">
+        <v-row no-gutters class="mb-1 flex-nowrap">
+          <v-col cols="auto" class="px-1" style="width: 170px; min-width: 170px; max-width: 170px;">
             <div class="d-flex align-center justify-space-between mb-2">
               <v-btn
                 v-if="expanded.length > 0"
@@ -17,7 +17,6 @@
                 prepend-icon="mdi-arrow-expand-vertical"
                 size="small"
                 @click="collapseAll()"
-                class="text-caption"
               >
                 Expand all
               </v-btn>
@@ -27,7 +26,6 @@
                 prepend-icon="mdi-arrow-collapse-vertical"
                 size="small"
                 @click="collapseAll()"
-                class="text-caption"
               >
                 Collapse all
               </v-btn>
@@ -57,9 +55,9 @@
             </v-expand-transition>
           </v-col>
 
-          <v-col class="flex-grow-1" style="min-width: 780px;">
+          <v-col class="flex-grow-1" style="min-width: 600px;">
             <v-row no-gutters>
-              <v-col v-for="header in ['To Do', 'In Progress', 'Done']" :key="header" cols="4" class="px-2" style="min-width: 260px;">
+              <v-col v-for="header in ['To Do', 'In Progress', 'Done']" :key="header" cols="4" class="px-1" style="min-width: 200px;">
                 <div class="text-subtitle-2 font-weight-bold text-medium-emphasis mb-2 pl-1">
                   {{ header }}
                 </div>
@@ -73,9 +71,9 @@
         <div v-for="item in items" :key="item.raw.id" class="mb-1">
           <v-expand-transition>
             <!-- Expanded View -->
-            <v-row v-if="!isExpanded(item)" no-gutters class="py-1 flex-nowrap">
+            <v-row v-if="!isExpanded(item)" no-gutters class="py-0 flex-nowrap">
               <!-- Work Item Column -->
-              <v-col cols="auto" class="px-2 d-flex align-start" style="width: 280px; min-width: 280px;">
+              <v-col cols="auto" class="px-1 d-flex align-start" style="width: 200px; min-width: 200px; max-width: 200px;">
                 <v-btn
                   icon="mdi-chevron-down"
                   variant="text"
@@ -103,19 +101,19 @@
               </v-col>
 
               <!-- Task Columns -->
-              <v-col class="flex-grow-1" style="min-width: 780px;">
+              <v-col class="flex-grow-1" style="min-width: 600px;">
                 <v-row no-gutters class="h-100">
-                  <v-col v-for="status in ['To Do', 'In Progress', 'Done']" :key="status" cols="4" class="px-2 h-100" style="min-width: 260px;">
+                  <v-col v-for="status in ['To Do', 'In Progress', 'Done']" :key="status" cols="4" class="pl-1 h-100" style="min-width: 200px;">
                     <v-sheet
                       color="grey-lighten-4"
-                      class="d-flex flex-column fill-height rounded-lg pa-1"
+                      class="d-flex flex-column fill-height rounded-lg pa-0"
                       min-height="100"
                     >
                       <VueDraggable
                         :id="item.raw.id + '-' + status.replace(' ', '')"
                         v-model="item.raw['tasks' + status.replace(' ', '')]"
                         group="task"
-                        class="flex-grow-1"
+                        class="flex-grow-1 d-flex flex-wrap align-content-start"
                         :animation="150"
                         @add="onAdd"
                       >

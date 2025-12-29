@@ -3,8 +3,9 @@
     <v-card
       v-bind="hoverProps"
       :elevation="isHovering ? 3 : 1"
-      class="ma-2"
+      class="ma-1"
       :style="`border-left: 4px solid ${borderColor};`"
+      width="170"
       rounded="lg"
     >
       <div class="pa-3">
