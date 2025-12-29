@@ -15,18 +15,18 @@
 
     <v-card
       prepend-icon="mdi-map-marker"
-      text="Delete member?"
-      title="Delete member?"
+      :text="$t('org.member.delete.confirmText')"
+      :title="$t('org.member.delete.title')"
     >
       <template #actions>
         <v-spacer></v-spacer>
 
         <v-btn @click="dialog = false">
-          Disagree
+          {{ $t('org.member.delete.cancel') }}
         </v-btn>
 
         <v-btn @click="OnDeleteMember()">
-          Agree
+          {{ $t('org.member.delete.confirm') }}
         </v-btn>
       </template>
     </v-card>

@@ -1,241 +1,194 @@
 <template>
   <DefaultLayout>
-    {{ org }}
-    <v-card flat>
-      <v-card-title class="d-flex align-center pe-2">
-        <v-icon icon="mdi-video-input-component"></v-icon>
-        Members
-        <v-spacer></v-spacer>
-
-        <v-dialog
-          v-model="dialogAdd"
-          width="50%"
-          persistent
-        >
-          <template #activator="{ props: activatorProps }">
-            <v-btn outlined class="float-right" tile prepend-icon="mdi-pencil" v-bind="activatorProps">
-              Add
-            </v-btn>
-          </template>
-
-          <template #default="{ isActive }">
-            <v-card
-              prepend-icon="mdi-earth"
-              title="Select Country"
+    <v-container fluid class="pa-6">
+      <!-- Header Section -->
+      <v-row class="mb-6">
+        <v-col cols="12" md="8">
+          <div class="d-flex align-center mb-2">
+            <v-avatar
+              size="64"
+              rounded="lg"
+              color="primary"
+              class="mr-4 elevation-2"
             >
-              <v-divider class="my-1"></v-divider>
-
-              <v-card-text class="px-4">
-                <v-autocomplete
-                  v-model:search-input="search"
-                  v-model="addMembers"
-                  chips
-                  :items="users"
-                  label="Autocomplete"
-                  multiple
-                  item-props
-                  no-filter
-                  @update:search="searchUsers"
-                >
-                  <template #chip="{ props, item }">
-                    <v-chip
-:closable="!item.raw.owner"
-                      v-bind="props"
-                      :text="item.raw.name"
-                    ></v-chip>
-                  </template>
-                  <template #item="{ props, item }">
-                    <v-list-item
-                      v-bind="props"
-                      :title="item.raw.name"
-                    ></v-list-item>
-                  </template>
-                </v-autocomplete>
-              </v-card-text>
-
-              <v-divider></v-divider>
-
-              <v-card-actions>
-                <v-btn
-                  text="Close"
-                  @click="isActive.value = false"
-                ></v-btn>
-
-                <v-spacer></v-spacer>
-
-                <v-btn
-                  color="surface-variant"
-                  text="Save"
-                  variant="flat"
-                  @click="onAdd()"
-                ></v-btn>
-              </v-card-actions>
-            </v-card>
-          </template>
-        </v-dialog>
-
-      </v-card-title>
-      <v-spacer></v-spacer>
-
-      <v-divider></v-divider>
-      <v-table>
-        <thead>
-          <tr>
-            <th class="text-left">
-            </th>
-            <th class="text-left">
-              Name
-            </th>
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="item in members"
-            :key="item.member.id"
-          >
-            <td>
-              <user-avatar :user-id="item.member.id" :user-name="item.member.name"></user-avatar>
-            </td>
-            <td>{{ item.member.name }}</td>
-            <td>
-              <div v-if="item.member.name == org.createdBy">
-                Owner
+              <span class="text-h4 font-weight-bold text-white">
+                {{ (org.displayName || org.name || '').substring(0, 1).toUpperCase() }}
+              </span>
+            </v-avatar>
+            <div>
+              <h1 class="text-h4 font-weight-bold text-primary">{{ org.displayName || org.name }}</h1>
+              <div class="text-subtitle-1 text-medium-emphasis">
+                {{ org.name }}
               </div>
-              <SetOrgAdmin v-else :member="item" @after="fetchMembers">
-                <v-btn>
-                  {{ item.isAdmin ? 'Remove admin' : 'Set admin' }}
-                </v-btn>
-              </SetOrgAdmin>
-            </td>
-            <td>
-              <OrgMemberDelete :member="item" @after="fetchMembers">
-                <v-btn>
-                  X
-                </v-btn>
-              </OrgMemberDelete>
-            </td>
-          </tr>
-        </tbody>
-      </v-table>
-    </v-card>
-    <v-dialog v-model="dialogDelete" width="50%">
-      <template #activator="{ props: activatorProps }">
-        <v-btn block color="red" v-bind="activatorProps">Delete Org</v-btn>
-      </template>
-      <template #default="{ isActive }">
-        <v-card>
-          <v-card-title>Delete Org</v-card-title>
-          <v-card-text>
-            Are you sure you want to delete this org?
-          </v-card-text>
-          <v-card-actions>
-            <v-btn text @click="isActive.value = false">Cancel</v-btn>
-            <v-btn text @click="onDeleteOrg()">Delete</v-btn>
-          </v-card-actions>
-        </v-card>
-      </template>
-    </v-dialog>
+            </div>
+          </div>
+          <p class="text-body-1 mt-4">{{ org.description }}</p>
+        </v-col>
+        <v-col cols="12" md="4" class="text-md-right">
+          <OrgEdit :org-id="orgId" @after-update="getOrg">
+            <v-btn
+              variant="outlined"
+              color="primary"
+              prepend-icon="mdi-pencil"
+              class="mr-2"
+            >
+              {{ $t('org.detail.edit') }}
+            </v-btn>
+          </OrgEdit>
+
+          <OrgDelete :org-id="orgId" @after-delete="onAfterDelete">
+            <v-btn
+              variant="outlined"
+              color="error"
+              prepend-icon="mdi-delete"
+            >
+              {{ $t('org.detail.delete') }}
+            </v-btn>
+          </OrgDelete>
+        </v-col>
+      </v-row>
+
+      <v-divider class="mb-6"></v-divider>
+
+      <!-- Tabs Section -->
+      <v-tabs v-model="tab" color="primary" class="mb-6">
+        <v-tab value="members">{{ $t('org.detail.tabs.members') }}</v-tab>
+      </v-tabs>
+
+      <v-window v-model="tab" style="overflow: visible;">
+        <!-- Members Tab -->
+        <v-window-item value="members">
+          <v-card variant="outlined" class="border-0">
+            <v-row class="mb-4">
+              <v-spacer></v-spacer>
+              <v-col cols="auto">
+                <OrgMemberAdd :org-id="orgId" @after-add="fetchMembers">
+                  <v-btn color="primary" prepend-icon="mdi-plus">
+                    {{ $t('org.member.add.title') }}
+                  </v-btn>
+                </OrgMemberAdd>
+              </v-col>
+            </v-row>
+
+            <v-data-table
+              :headers="headers"
+              :items="members"
+              :loading="loading"
+              hover
+            >
+              <template #item.avatar="{ item }">
+                <UserAvatar :user-id="item.member.id" :user-name="item.member.name" size="32" />
+              </template>
+
+              <template #item.role="{ item }">
+                <v-chip
+                  :color="item.isAdmin ? 'primary' : 'default'"
+                  size="small"
+                  variant="flat"
+                >
+                  {{ item.isAdmin ? $t('org.detail.members.admin') : $t('org.detail.members.member') }}
+                </v-chip>
+              </template>
+
+              <template #item.actions="{ item }">
+                <div class="d-flex justify-end" v-if="item.member.name !== org.createdBy">
+                  <SetOrgAdmin :org-id="orgId" :member="item" @after="fetchMembers">
+                    <v-btn
+                      size="small"
+                      variant="text"
+                      :color="item.isAdmin ? 'warning' : 'primary'"
+                      class="mr-1"
+                      :title="item.isAdmin ? $t('org.detail.members.removeAdmin') : $t('org.detail.members.setAdmin')"
+                      :icon="item.isAdmin ? 'mdi-shield-off' : 'mdi-shield-account'"
+                    ></v-btn>
+                  </SetOrgAdmin>
+
+                  <OrgMemberDelete :org-id="orgId" :member="item" @after="fetchMembers">
+                    <v-btn
+                      size="small"
+                      variant="text"
+                      color="error"
+                      icon="mdi-delete"
+                      :title="$t('org.detail.members.remove')"
+                    ></v-btn>
+                  </OrgMemberDelete>
+                </div>
+                <div v-else>
+                  <v-chip size="small" color="warning" variant="outlined">
+                    {{ $t('org.detail.members.owner') }}
+                  </v-chip>
+                </div>
+              </template>
+            </v-data-table>
+          </v-card>
+        </v-window-item>
+      </v-window>
+    </v-container>
   </DefaultLayout>
 </template>
 
 <script setup>
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
-import { ref } from 'vue'
-import { onMounted } from 'vue'
-import { getGetOrgMembers, postAddOrgMembers, getGetOrg, getGetOrgs, deleteDeleteOrg } from '@/apis/org'
+import OrgEdit from '@/components/org/OrgEdit.vue'
+import OrgDelete from '@/components/org/OrgDelete.vue'
+import OrgMemberAdd from '@/components/org/OrgMemberAdd.vue'
+import OrgMemberDelete from '@/components/org/OrgMemberDelete.vue'
+import SetOrgAdmin from '@/components/org/SetOrgAdmin.vue'
+import UserAvatar from '@/components/user/UserAvatar.vue'
+import { ref, onMounted, computed } from 'vue'
+import { getGetOrgMembers, getGetOrg } from '@/apis/org'
 import { useAppStore } from '@/stores/app'
-import { getGetUsers } from '@/apis/user'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 const store = useAppStore()
+const route = useRoute()
 const router = useRouter()
+const { t } = useI18n()
 
-const dialogAdd = ref(false)
-const dialogDelete = ref(false)
-
-const search = ref('')
-const members = ref([])
-const addMembers = ref([])
-const users = ref([])
+const orgId = route.params.orgId
 const org = ref({})
+const members = ref([])
+const loading = ref(false)
+const tab = ref('members')
+
+const headers = computed(() => [
+  { title: '', key: 'avatar', sortable: false, width: '50px' },
+  { title: t('org.detail.members.name'), key: 'member.name' },
+  { title: t('org.detail.members.role'), key: 'role' },
+  { title: t('org.detail.members.actions'), key: 'actions', sortable: false, align: 'end' },
+])
 
 function fetchMembers() {
-  getGetOrgMembers(store.org.id).then((res) => {
-    console.log(res)
-    members.value = res.data.items
-  })
-}
-
-const searchUsers = val => {
-  if (!val) {
-    users.value = []
-    return false
-  }
-  getGetUsers({
-    keyword: val,
-    page: 1,
-    size: 999,
-  }).then(res => {
+  loading.value = true
+  getGetOrgMembers(orgId).then((res) => {
     if (res.status === 200) {
-      users.value = res.data.items
-      console.log(members.value)
+      members.value = res.data.items
     }
+    loading.value = false
+  }).catch(() => {
+    loading.value = false
   })
-}
-
-function onAdd() {
-  postAddOrgMembers(store.org.id, {
-    members: addMembers.value.map((member) => {
-      return {
-        userId: member.id,
-        isAdmin: false,
-      }
-    })
-  }).then((res) => {
-    console.log(res)
-    fetchMembers()
-    dialogAdd.value = false
-  })
-
 }
 
 function getOrg() {
-  getGetOrg(store.org.id).then((res) => {
-    console.log(res)
-    org.value = res.data.item
+  getGetOrg(orgId).then((res) => {
+    if (res.status === 200) {
+      org.value = res.data.item
+      // Update store if needed, but relying on local state is safer for this page
+      if (store.org.id === orgId) {
+        store.setOrg(res.data.item)
+      }
+    }
   })
 }
 
-function onDeleteOrg() {
-  deleteDeleteOrg(store.org.id).then((res) => {
-    if (res.status === 200) {
-      if (store.org.id == store.org.id) {
-        store.clearOrg()
-      }
-      getGetOrgs().then((res) => {
-        if (res.status === 200) {
-          store.setOrgs(res.data.items.map((item) => {
-            return {
-              id: item.id,
-              name: item.name,
-              displayName: item.displayName,
-              description: item.description,
-              myRole: item.myRole,
-            }
-          }))
-          router.push('/orgs')
-          dialogDelete.value = false
-        }
-      })
-    }
-  })
+function onAfterDelete() {
+  router.push({ name: 'Orgs' })
 }
 
 onMounted(() => {
   getOrg()
   fetchMembers()
 })
-
 </script>

@@ -54,6 +54,66 @@
       "description": "Description",
       "cancel": "Cancel",
       "confirm": "Create"
+    },
+    "edit": {
+      "title": "Edit Organization",
+      "displayName": "Display Name",
+      "description": "Description",
+      "cancel": "Cancel",
+      "confirm": "Save"
+    },
+    "delete": {
+      "title": "Delete Organization?",
+      "confirmText": "Are you sure you want to delete this organization? This action cannot be undone.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    },
+    "detail": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "tabs": {
+        "members": "Members",
+        "sprints": "Sprints"
+      },
+      "members": {
+        "name": "Name",
+        "role": "Role",
+        "actions": "Actions",
+        "owner": "Owner",
+        "admin": "Admin",
+        "member": "Member",
+        "setAdmin": "Set Admin",
+        "removeAdmin": "Remove Admin",
+        "remove": "Remove"
+      },
+      "sprints": {
+        "create": "Create Sprint",
+        "empty": "No sprints found",
+        "enter": "Enter Sprint",
+        "edit": "Edit",
+        "delete": "Delete"
+      }
+    },
+    "member": {
+      "add": {
+        "title": "Add Member",
+        "searchLabel": "Search Users",
+        "cancel": "Cancel",
+        "confirm": "Add"
+      },
+      "setAdmin": {
+        "title": "Set Admin",
+        "remove": "Remove admin?",
+        "set": "Set as admin?",
+        "confirm": "Agree",
+        "cancel": "Disagree"
+      },
+      "delete": {
+        "title": "Delete Member?",
+        "confirmText": "Are you sure you want to remove this member?",
+        "confirm": "Agree",
+        "cancel": "Disagree"
+      }
     }
   },
   "project": {

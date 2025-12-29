@@ -45,6 +45,66 @@
       "description": "描述",
       "cancel": "取消",
       "confirm": "创建"
+    },
+    "edit": {
+      "title": "编辑组织",
+      "displayName": "显示名称",
+      "description": "描述",
+      "cancel": "取消",
+      "confirm": "保存"
+    },
+    "delete": {
+      "title": "删除组织？",
+      "confirmText": "您确定要删除此组织吗？此操作无法撤销。",
+      "cancel": "取消",
+      "confirm": "删除"
+    },
+    "detail": {
+      "edit": "编辑",
+      "delete": "删除",
+      "tabs": {
+        "members": "成员",
+        "sprints": "迭代"
+      },
+      "members": {
+        "name": "姓名",
+        "role": "角色",
+        "actions": "操作",
+        "owner": "拥有者",
+        "admin": "管理员",
+        "member": "成员",
+        "setAdmin": "设为管理员",
+        "removeAdmin": "移除管理员",
+        "remove": "移除"
+      },
+      "sprints": {
+        "create": "创建迭代",
+        "empty": "未找到迭代",
+        "enter": "进入迭代",
+        "edit": "编辑",
+        "delete": "删除"
+      }
+    },
+    "member": {
+      "add": {
+        "title": "添加成员",
+        "searchLabel": "搜索用户",
+        "cancel": "取消",
+        "confirm": "添加"
+      },
+      "setAdmin": {
+        "title": "设置管理员",
+        "remove": "移除管理员？",
+        "set": "设为管理员？",
+        "confirm": "同意",
+        "cancel": "不同意"
+      },
+      "delete": {
+        "title": "删除成员？",
+        "confirmText": "您确定要移除此成员吗？",
+        "confirm": "同意",
+        "cancel": "不同意"
+      }
     }
   },
   "project": {

@@ -15,18 +15,18 @@
 
     <v-card
       prepend-icon="mdi-map-marker"
-      :text="props.member.isAdmin ? 'Remove admin?' : 'Set as admin?'"
-      :title="props.member.member.id"
+      :text="props.member.isAdmin ? $t('org.member.setAdmin.remove') : $t('org.member.setAdmin.set')"
+      :title="$t('org.member.setAdmin.title')"
     >
       <template #actions>
         <v-spacer></v-spacer>
 
         <v-btn @click="dialog = false">
-          Disagree
+          {{ $t('org.member.setAdmin.cancel') }}
         </v-btn>
 
         <v-btn @click="OnSetAdmin()">
-          Agree
+          {{ $t('org.member.setAdmin.confirm') }}
         </v-btn>
       </template>
     </v-card>

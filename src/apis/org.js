@@ -8,6 +8,8 @@ export const getGetOrg = (orgId) => axios.get(`${version}/orgs/${orgId}`)
 
 export const postCreateOrg = (params) => axios.post(`${version}/orgs`, params)
 
+export const putUpdateOrg = (orgId, params) => axios.put(`${version}/orgs/${orgId}`, params)
+
 export const deleteDeleteOrg = (orgId) => axios.delete(`${version}/orgs/${orgId}`)
 
 export const getGetOrgMembers = (orgId) => axios.get(`${version}/orgs/${orgId}/members`)
