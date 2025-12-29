@@ -108,11 +108,31 @@
                   <v-col v-for="status in ['To Do', 'In Progress', 'Done']" :key="status" cols="4" class="px-2 h-100">
                     <v-sheet
                       color="grey-lighten-4"
-                      class="fill-height rounded-lg pa-1"
+                      class="d-flex flex-column fill-height rounded-lg pa-1"
                       min-height="100"
                     >
+                      <VueDraggable
+                        :id="item.raw.id + '-' + status.replace(' ', '')"
+                        v-model="item.raw['tasks' + status.replace(' ', '')]"
+                        group="task"
+                        class="flex-grow-1"
+                        :animation="150"
+                        @add="onAdd"
+                      >
+                        <div
+                          v-for="task in item.raw['tasks' + status.replace(' ', '')]"
+                          :key="task.id"
+                        >
+                          <TaskCard 
+                            :task="task" 
+                            :members="sprint.members" 
+                            @after-update="updateTask"
+                          />
+                        </div>
+                      </VueDraggable>
+
                       <!-- Create Task Input (Only in To Do) -->
-                      <div v-if="status === 'To Do'" class="mb-2 px-1">
+                      <div v-if="status === 'To Do'" class="mt-2 px-1">
                         <v-expand-transition>
                           <div v-if="creatingTask && item.raw.id === createTaskWorkItemId">
                             <v-card
@@ -136,26 +156,6 @@
                           </div>
                         </v-expand-transition>
                       </div>
-
-                      <VueDraggable
-                        :id="item.raw.id + '-' + status.replace(' ', '')"
-                        v-model="item.raw['tasks' + status.replace(' ', '')]"
-                        group="task"
-                        class="fill-height"
-                        :animation="150"
-                        @add="onAdd"
-                      >
-                        <div
-                          v-for="task in item.raw['tasks' + status.replace(' ', '')]"
-                          :key="task.id"
-                        >
-                          <TaskCard 
-                            :task="task" 
-                            :members="sprint.members" 
-                            @after-update="updateTask"
-                          />
-                        </div>
-                      </VueDraggable>
                     </v-sheet>
                   </v-col>
                 </v-row>
