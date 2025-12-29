@@ -10,7 +10,7 @@
       <div class="pa-3">
         <!-- Header -->
         <div class="d-flex align-start mb-3">
-          <v-icon :color="borderColor" size="small" class="mt-1 mr-2">
+          <v-icon :color="borderColor" size="14" class="mt-1 mr-2">
             {{ props.workItem.type == 'Backlog' ? 'mdi-book-open-variant' : 'mdi-bug' }}
           </v-icon>
           <div class="text-body-2 font-weight-bold mr-1">{{ localWorkItem.id }}</div>

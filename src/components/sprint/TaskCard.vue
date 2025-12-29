@@ -10,7 +10,7 @@
       <div class="pa-3">
         <!-- Header -->
         <div class="d-flex align-start mb-3">
-          <v-icon color="#F2CB1D" size="small" class="mt-1 mr-2">mdi-checkbox-marked-circle-outline</v-icon>
+          <v-icon color="#F2CB1D" size="14" class="mt-1 mr-2">mdi-checkbox-marked-circle-outline</v-icon>
           <div class="text-body-2 font-weight-bold mr-1">{{ localTask.id }}</div>
           <div class="text-body-2 text-truncate flex-grow-1" :title="localTask.title">
             <ItemDetail item-type="TASK" :item-id="localTask.id">
