@@ -76,11 +76,11 @@
               :loading="loading"
               hover
             >
-              <template #item.avatar="{ item }">
+              <template #[`item.avatar`]="{ item }">
                 <UserAvatar :user-id="item.member.id" :user-name="item.member.name" size="32" />
               </template>
 
-              <template #item.role="{ item }">
+              <template #[`item.role`]="{ item }">
                 <v-chip
                   :color="item.isAdmin ? 'primary' : 'default'"
                   size="small"
@@ -90,8 +90,8 @@
                 </v-chip>
               </template>
 
-              <template #item.actions="{ item }">
-                <div class="d-flex justify-end" v-if="item.member.name !== org.createdBy">
+              <template #[`item.actions`]="{ item }">
+                <div v-if="item.member.name !== org.createdBy" class="d-flex justify-end">
                   <SetOrgAdmin :org-id="orgId" :member="item" @after="fetchMembers">
                     <v-btn
                       size="small"

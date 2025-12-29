@@ -4,8 +4,8 @@
       <input :readonly="!isEditing" type="text" class="item-card-text" :value="localTask.id + ' ' + localTask.title">
     </ItemDetail>
     <v-menu>
-      <template #activator="{ props }">
-        <v-btn variant="plain" density="compact" size="small" icon="mdi-plus" v-bind="props"></v-btn>
+      <template #activator="{ props: activatorProps }">
+        <v-btn variant="plain" density="compact" size="small" icon="mdi-plus" v-bind="activatorProps"></v-btn>
       </template>
       <v-list>
         <v-list-item>
@@ -24,9 +24,9 @@
       <option value="00000000-0000-0000-0000-000000000000">Unassigned</option>
     </select>
     <input
+      v-model="localTask.remaining"
       type="text"
       class="item-card-text"
-      v-model="localTask.remaining"
       @focusout="onUpdateWorkHours(localTask.workItemId, localTask.id)"
       @keyup.enter="onUpdateWorkHours(localTask.workItemId, localTask.id)" />
     <br />

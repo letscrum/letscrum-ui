@@ -39,17 +39,17 @@
             hide-selected
             @update:search="onSearch"
           >
-            <template #chip="{ props, item }">
+            <template #chip="{ props: chipProps, item }">
               <v-chip
-                v-bind="props"
+                v-bind="chipProps"
                 :prepend-avatar="item.raw.avatar"
                 :text="item.raw.name"
               ></v-chip>
             </template>
 
-            <template #item="{ props, item }">
+            <template #item="{ props: itemProps, item }">
               <v-list-item
-                v-bind="props"
+                v-bind="itemProps"
                 :prepend-avatar="item.raw.avatar"
                 :title="item.raw.name"
                 :subtitle="item.raw.email"
@@ -131,7 +131,6 @@ function addMembers() {
   if (selectedUsers.value.length === 0) return;
 
   submitting.value = true;
-  const userIds = selectedUsers.value.map(u => u.id);
 
   const oid = props.orgId || store.org.id;
 

@@ -21,7 +21,8 @@
                   <v-row no-gutters>
                     <v-col cols="2">
                       <v-icon icon="mdi-menu-down" size="x-small" width="10%" class="float-left"></v-icon>
-                      <v-sheet tile outlined class="mb-2 mr-2 float-left"
+                      <v-sheet
+tile outlined class="mb-2 mr-2 float-left"
                         style="border-left-color: rgb(0, 156, 204); border-width: 1px; border-left-width: 3px;"
                         width="85%" min-width="160" height="100">
                           <input
@@ -65,7 +66,8 @@
                   <v-col cols="10">
                     <v-row no-gutters>
                       <v-col v-for="i in ['To Do', 'In Progress', 'Done']" :key="i" cols="4">
-                        <v-row no-gutters
+                        <v-row
+no-gutters
                         style="width: 100%; height: 80%;"
                         >
                           <v-col

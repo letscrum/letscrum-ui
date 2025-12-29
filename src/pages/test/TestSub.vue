@@ -19,7 +19,7 @@
         </v-expansion-panel-title>
         <v-expansion-panel-text>
           <v-row
-            no-gutters v-for="task in item.tasksAll" :key="task.id"
+            v-for="task in item.tasksAll" :key="task.id" no-gutters
           >
             <v-col cols="3">
               {{ task.title }}

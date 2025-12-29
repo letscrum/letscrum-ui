@@ -1,7 +1,7 @@
 <template>
-  <v-hover v-slot="{ isHovering, props }">
+  <v-hover v-slot="{ isHovering, props: hoverProps }">
     <v-card
-      v-bind="props"
+      v-bind="hoverProps"
       :elevation="isHovering ? 2 : 0"
       border
       variant="flat"

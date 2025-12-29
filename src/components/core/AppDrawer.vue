@@ -41,7 +41,7 @@
         </template>
       </v-list-item>
       <v-divider></v-divider>
-      <v-list-item v-for="org in store.orgs" :key="org.id" @click="onLoadOrg(org)" :to="'/orgs/' + org.id + '/projects'">
+      <v-list-item v-for="org in store.orgs" :key="org.id" :to="'/orgs/' + org.id + '/projects'" @click="onLoadOrg(org)">
         <v-list-item-title>
           {{ org.name }}
         </v-list-item-title>

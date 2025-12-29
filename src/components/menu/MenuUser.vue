@@ -49,7 +49,7 @@
       <v-divider></v-divider>
 
       <div class="pa-2">
-        <v-btn block color="error" variant="tonal" @click="signOut" prepend-icon="mdi-logout" size="small">
+        <v-btn block color="error" variant="tonal" prepend-icon="mdi-logout" size="small" @click="signOut">
           {{ $t('user.userMenus.signOut.text') }}
         </v-btn>
       </div>

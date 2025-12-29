@@ -5,7 +5,7 @@
     persistent
   >
     <template #activator="{ props: activatorProps }">
-      <div class="d-inline-block" @click="onOpenEdit()">
+      <div class="d-inline-block" v-bind="activatorProps" @click="onOpenEdit()">
         <slot></slot>
       </div>
     </template>

@@ -20,7 +20,7 @@
             @update:model-value="fetchUsers"
           ></v-text-field>
 
-          <v-btn icon="mdi-refresh" variant="text" @click="fetchUsers" class="mr-2"></v-btn>
+          <v-btn icon="mdi-refresh" variant="text" class="mr-2" @click="fetchUsers"></v-btn>
 
           <UserCreate v-if="store.user.isSuperAdmin" @after-create="fetchUsers">
             <v-btn color="primary" prepend-icon="mdi-plus" variant="flat">
@@ -37,11 +37,11 @@
           :loading="loading"
           hover
         >
-          <template #item.avatar="{ item }">
+          <template #[`item.avatar`]="{ item }">
             <UserAvatar :user-id="item.id" :user-name="item.name" size="32" />
           </template>
 
-          <template #item.isSuperAdmin="{ item }">
+          <template #[`item.isSuperAdmin`]="{ item }">
             <v-chip
               :color="item.isSuperAdmin ? 'primary' : 'default'"
               size="small"
@@ -51,7 +51,7 @@
             </v-chip>
           </template>
 
-          <template #item.actions="{ item }">
+          <template #[`item.actions`]="{ item }">
             <SetSuperAdmin v-if="store.user.isSuperAdmin && item.id !== store.user.id" :user="item" @after="fetchUsers">
               <v-btn
                 size="small"
