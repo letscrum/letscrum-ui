@@ -195,17 +195,15 @@
             </v-row>
 
             <!-- Collapsed View -->
-            <v-row v-else no-gutters class="py-1 align-center bg-grey-lighten-4 my-1">
+            <v-row
+              v-else
+              no-gutters
+              class="py-1 align-center bg-grey-lighten-4 my-1 cursor-pointer"
+              @click="() => toggleExpand(item)"
+            >
               <v-col cols="12" class="d-flex align-center px-1 py-1">
-                <v-btn
-                  icon="mdi-chevron-right"
-                  variant="text"
-                  size="x-small"
-                  density="compact"
-                  class="mr-1"
-                  @click="() => toggleExpand(item)"
-                ></v-btn>
-                <div class="d-flex align-center cursor-pointer" @click="() => toggleExpand(item)">
+                <v-icon size="x-small" class="mr-1">mdi-chevron-right</v-icon>
+                <div class="d-flex align-center">
                   <v-icon :color="item.raw.type === 'Bug' ? 'red' : 'blue'" size="small" class="mr-2">
                     {{ item.raw.type === 'Bug' ? 'mdi-bug' : 'mdi-clipboard-text' }}
                   </v-icon>
