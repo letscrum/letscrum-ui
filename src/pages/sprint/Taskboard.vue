@@ -95,12 +95,14 @@
                     group="workItem"
                     :animation="150"
                   >
-                    <WorkItemCard
-                      :work-item="item.raw"
-                      :members="sprint.members"
-                      @after-update="updateWorkItem"
-                      @add-task="AddTask(item.raw.id)"
-                    />
+                    <div :id="item.raw.id">
+                      <WorkItemCard
+                        :work-item="item.raw"
+                        :members="sprint.members"
+                        @after-update="updateWorkItem"
+                        @add-task="AddTask(item.raw.id)"
+                      />
+                    </div>
                   </VueDraggable>
                 </div>
               </v-col>
