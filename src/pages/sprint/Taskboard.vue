@@ -8,15 +8,14 @@
       class="h-100"
     >
       <template #header>
-        <v-row no-gutters class="flex-nowrap mt-2">
-          <v-col cols="auto" class="px-1" style="width: 200px; min-width: 200px; max-width: 200px;">
-            <div class="d-flex align-center justify-space-between mb-2 pl-1" style="height: 28px;">
+        <v-row no-gutters class="flex-nowrap mt-1">
+          <v-col cols="auto" style="width: 200px; min-width: 200px; max-width: 200px;">
+            <div class="d-flex align-center justify-space-between mb-1" style="height: 28px;">
               <v-btn
                 v-if="expanded.length > 0"
                 variant="text"
                 prepend-icon="mdi-arrow-expand-vertical"
                 size="small"
-                class="px-2"
                 @click="collapseAll()"
               >
                 Expand all
@@ -26,7 +25,6 @@
                 variant="text"
                 prepend-icon="mdi-arrow-collapse-vertical"
                 size="small"
-                class="px-2"
                 @click="collapseAll()"
               >
                 Collapse all
@@ -60,7 +58,7 @@
           <v-col class="flex-grow-1" style="min-width: 600px;">
             <v-row no-gutters>
               <v-col v-for="header in ['To Do', 'In Progress', 'Done']" :key="header" cols="4" class="px-1" style="min-width: 200px;">
-                <div class="d-flex align-center pl-1" style="height: 28px;">
+                <div class="d-flex align-center pl-1 mb-1" style="height: 28px;">
                   <div class="text-subtitle-2 font-weight-bold text-medium-emphasis mr-2">
                     {{ header }}
                   </div>
