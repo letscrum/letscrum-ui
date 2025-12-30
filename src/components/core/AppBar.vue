@@ -68,9 +68,9 @@ function mergeParams(to) {
 }
 
 function changeTheme() {
-  const label = store.theme === 'light' ? 'dark' : 'light'
-  theme.change(label)
-  store.changeTheme(label)
+  const currentTheme = store.theme === 'light' ? 'dark' : 'light'
+  theme.change(currentTheme)
+  store.changeTheme(currentTheme)
 }
 
 function changeLanguage() {
