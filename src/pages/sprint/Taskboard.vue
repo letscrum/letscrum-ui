@@ -8,14 +8,15 @@
       class="h-100"
     >
       <template #header>
-        <v-row no-gutters class="mb-1 flex-nowrap">
-          <v-col cols="auto" class="px-1" style="width: 170px; min-width: 170px; max-width: 170px;">
-            <div class="d-flex align-center justify-space-between mb-2">
+        <v-row no-gutters class="flex-nowrap">
+          <v-col cols="auto" class="px-1" style="width: 200px; min-width: 200px; max-width: 200px;">
+            <div class="d-flex align-center justify-space-between mb-2 pl-1" style="height: 28px;">
               <v-btn
                 v-if="expanded.length > 0"
                 variant="text"
                 prepend-icon="mdi-arrow-expand-vertical"
                 size="small"
+                class="px-2"
                 @click="collapseAll()"
               >
                 Expand all
@@ -25,6 +26,7 @@
                 variant="text"
                 prepend-icon="mdi-arrow-collapse-vertical"
                 size="small"
+                class="px-2"
                 @click="collapseAll()"
               >
                 Collapse all
@@ -33,7 +35,7 @@
 
             <!-- Create Work Item Input -->
             <v-expand-transition>
-              <div v-if="creatingWorkItem" class="mb-2">
+              <div v-if="creatingWorkItem">
                 <v-card
                   elevation="2"
                   class="pa-2"
@@ -58,8 +60,13 @@
           <v-col class="flex-grow-1" style="min-width: 600px;">
             <v-row no-gutters>
               <v-col v-for="header in ['To Do', 'In Progress', 'Done']" :key="header" cols="4" class="px-1" style="min-width: 200px;">
-                <div class="text-subtitle-2 font-weight-bold text-medium-emphasis mb-2 pl-1">
-                  {{ header }}
+                <div class="d-flex align-center pl-1" style="height: 28px;">
+                  <div class="text-subtitle-2 font-weight-bold text-medium-emphasis mr-2">
+                    {{ header }}
+                  </div>
+                  <v-chip size="x-small" density="comfortable" variant="tonal" color="grey-darken-1" class="font-weight-bold">
+                    {{ getTaskCount(header) }}
+                  </v-chip>
                 </div>
               </v-col>
             </v-row>
@@ -152,14 +159,14 @@
                               ></v-textarea>
                             </v-card>
                           </div>
-                          <div v-else class="pa-1">
+                          <div v-else class="pa-1 mb-1">
                             <div
                               v-if="!item.raw['tasksToDo'] || item.raw['tasksToDo'].length === 0"
                               class="d-flex align-center cursor-pointer"
                               @click="AddTask(item.raw.id)"
                             >
                               <v-sheet
-                                color="success"
+                                color="green"
                                 width="20"
                                 height="20"
                                 class="d-flex align-center justify-center mr-2 rounded-sm"
@@ -277,6 +284,13 @@ const createTaskTitle = ref(null)
 const rightTaskTitle = ref(null)
 const createTaskWorkItemId = ref(0)
 const expanded = ref([])
+
+function getTaskCount(status) {
+  const key = 'tasks' + status.replace(' ', '');
+  return workItems.value.reduce((acc, item) => {
+    return acc + (item[key] ? item[key].length : 0);
+  }, 0);
+}
 
 function LoadWorkItems() {
   expanded.value = []
