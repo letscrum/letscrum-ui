@@ -9,18 +9,16 @@
           items-per-page="-1"
         >
           <template #header>
-            <v-row no-gutters>
-              <v-col cols="1" style="background-color: aqua;">
-                <v-btn v-if="expanded.length > 0" variant="plain" prepend-icon="mdi-arrow-expand-vertical" size="x-small" @click="collapseAll()">
-                  Expand all
-                </v-btn>
-                <v-btn v-else variant="plain" prepend-icon="mdi-arrow-collapse-vertical" size="x-small" @click="collapseAll()">
-                  Collapse all
-                </v-btn>
+            <v-row no-gutters class="text-caption font-weight-bold text-grey-darken-1 py-2 border-b bg-white">
+              <v-col cols="1" class="d-flex align-center justify-center">
+                <v-btn v-if="expanded.length > 0" variant="text" density="compact" icon="mdi-unfold-less-horizontal" size="small" title="Collapse All" @click="collapseAll()"></v-btn>
+                <v-btn v-else variant="text" density="compact" icon="mdi-unfold-more-horizontal" size="small" title="Expand All" @click="collapseAll()"></v-btn>
+                <span class="ml-1">Order</span>
               </v-col>
-              <v-col cols="11" style="background-color: aquamarine">
-                wi details
-              </v-col>
+              <v-col cols="6" class="pl-2">Title</v-col>
+              <v-col cols="2">State</v-col>
+              <v-col cols="2">Assigned To</v-col>
+              <v-col cols="1">Rem...</v-col>
             </v-row>
           </template>
           <template #default="{ items, isExpanded, toggleExpand }">
@@ -31,61 +29,95 @@
               handle=".handleWorkItem"
               @update="onReOrderWorkItems"
             >
-            <div v-for="item in items" :id="item.raw.id" :key="item.raw.id">
-              <v-row no-gutters class="handleWorkItem" style="background-color: bisque">
-                <v-col cols="1">
-                  <v-icon :icon="!isExpanded(item) ? 'mdi-menu-down' : 'mdi-menu-right'" size="x-small" width="10%" class="float-left ma-1" @click="() => toggleExpand(item)"></v-icon>
-                  <TaskCreate :work-item-id="item.raw.id" @after-create="onCreateTask">
-                    <v-icon icon="mdi-plus" size="x-small" width="10%" class="float-left ma-1"></v-icon>
-                  </TaskCreate>
-                </v-col>
-                <v-col cols="7">
-                  <ItemDetail item-type="WORKITEM" :item-id="item.raw.id">
-                    {{ item.raw.title }}
-                  </ItemDetail>
-                </v-col>
-                <v-col cols="4">
-                  {{ item.raw.status }}
-                </v-col>
-              </v-row>
-              <v-expand-transition>
-                <VueDraggable
-                  :id="item.raw.id"
-                  v-model="item.raw.tasksAll"
-                  group="tasks"
-                  @update="onReOrderTasks"
-                  @add="onAdd"
-                  @remove="remove"
-                  >
-                  <v-row v-if="!isExpanded(item)" no-gutters>
-                    <v-col cols="12">
-                      <VueDraggable
-                        :id="item.raw.id"
-                        v-model="item.raw.tasksAll"
-                        group="tasks"
-                        @update="onReOrderTasks"
-                        @add="onAdd"
-                        @remove="remove"
-                        >
-                        <div v-for="task in item.raw.tasksAll" :key="task.id">
-                          <v-row no-gutters style="background-color:brown">
-                            <v-col cols="1">
+            <div v-for="(item, index) in items" :id="item.raw.id" :key="item.raw.id">
+              <v-hover v-slot="{ isHovering, props: hoverProps }">
+                <v-row
+                  v-bind="hoverProps"
+                  no-gutters
+                  class="handleWorkItem py-1 border-b align-center"
+                  :class="{'bg-grey-lighten-4': isHovering}"
+                  style="cursor: pointer; transition: background-color 0.2s;"
+                >
+                  <v-col cols="1" class="d-flex align-center justify-center text-grey">
+                    <v-btn
+                      variant="text"
+                      density="compact"
+                      icon
+                      size="small"
+                      @click.stop="toggleExpand(item)"
+                    >
+                      <v-icon :icon="isExpanded(item) ? 'mdi-chevron-down' : 'mdi-chevron-right'"></v-icon>
+                    </v-btn>
+                    <span class="ml-1 text-caption">{{ index + 1 }}</span>
+                  </v-col>
+                  <v-col cols="6" class="d-flex align-center pl-2">
+                    <v-icon color="blue" size="small" class="mr-2">mdi-book-open-variant</v-icon>
+                    <div class="text-body-2 text-truncate" style="max-width: 90%;">
+                      <ItemDetail item-type="WORKITEM" :item-id="item.raw.id">
+                        {{ item.raw.title }}
+                      </ItemDetail>
+                    </div>
+                    <TaskCreate :work-item-id="item.raw.id" @after-create="onCreateTask">
+                      <v-btn v-show="isHovering" icon variant="text" density="compact" size="small" class="ml-2">
+                          <v-icon icon="mdi-plus" size="small"></v-icon>
+                      </v-btn>
+                    </TaskCreate>
+                  </v-col>
+                  <v-col cols="2" class="d-flex align-center">
+                    <v-icon size="x-small" :color="item.raw.status === 'Done' ? 'success' : (item.raw.status === 'In Progress' ? 'info' : 'grey')" class="mr-2">mdi-circle</v-icon>
+                    <span class="text-caption">{{ item.raw.status }}</span>
+                  </v-col>
+                  <v-col cols="2">
+                    <span class="text-caption">{{ item.raw.assignUser?.name }}</span>
+                  </v-col>
+                  <v-col cols="1">
+                  </v-col>
+                </v-row>
+              </v-hover>
 
-                            </v-col>
-                            <v-col cols="7">
+              <v-expand-transition>
+                <div v-if="isExpanded(item)">
+                  <VueDraggable
+                    :id="item.raw.id"
+                    v-model="item.raw.tasksAll"
+                    group="tasks"
+                    @update="onReOrderTasks"
+                    @add="onAdd"
+                    @remove="remove"
+                    >
+                    <div v-for="task in item.raw.tasksAll" :key="task.id">
+                      <v-hover v-slot="{ isHovering: isTaskHovering, props: taskProps }">
+                        <v-row
+                          v-bind="taskProps"
+                          no-gutters
+                          class="py-1 border-b align-center"
+                          :class="{'bg-grey-lighten-5': !isTaskHovering, 'bg-grey-lighten-4': isTaskHovering}"
+                        >
+                          <v-col cols="1">
+                          </v-col>
+                          <v-col cols="6" class="d-flex align-center pl-8">
+                            <v-icon color="#F2CB1D" size="small" class="mr-2">mdi-checkbox-marked-circle-outline</v-icon>
+                            <div class="text-body-2 text-truncate">
                               <ItemDetail item-type="TASK" :item-id="task.id">
                                 {{ task.title }}
                               </ItemDetail>
-                            </v-col>
-                            <v-col cols="4">
-                              {{ task.status }}
-                            </v-col>
-                          </v-row>
-                        </div>
-                      </VueDraggable>
-                    </v-col>
-                  </v-row>
-                </VueDraggable>
+                            </div>
+                          </v-col>
+                          <v-col cols="2" class="d-flex align-center">
+                            <v-icon size="x-small" :color="task.status === 'Done' ? 'success' : (task.status === 'In Progress' ? 'info' : 'grey')" class="mr-2">mdi-circle</v-icon>
+                            <span class="text-caption">{{ task.status }}</span>
+                          </v-col>
+                          <v-col cols="2">
+                            <span class="text-caption">{{ task.assignUser?.name }}</span>
+                          </v-col>
+                          <v-col cols="1">
+                            <span class="text-caption">{{ task.remainingWork }}</span>
+                          </v-col>
+                        </v-row>
+                      </v-hover>
+                    </div>
+                  </VueDraggable>
+                </div>
               </v-expand-transition>
             </div>
           </VueDraggable>
