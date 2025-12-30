@@ -6,7 +6,7 @@
       class="ma-1"
       :style="`border-left: 4px solid ${borderColor};`"
       width="170"
-      rounded="lg"
+      rounded="0"
     >
       <div class="pa-3">
         <!-- Header -->
