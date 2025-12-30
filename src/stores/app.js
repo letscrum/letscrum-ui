@@ -114,6 +114,17 @@ export const useAppStore = defineStore('app', {
         refreshToken
       };
     },
+    updateUser(payload) {
+      const { name, email } = payload;
+      if (name) {
+        localStorage.userName = name;
+        this.user.name = name;
+      }
+      if (email) {
+        localStorage.userEmail = email;
+        this.user.email = email;
+      }
+    },
     signOut() {
       localStorage.removeItem('userId');
       localStorage.removeItem('userName');

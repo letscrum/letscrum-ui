@@ -191,6 +191,19 @@
     "signUpBtn": "创建账号"
   },
   "user": {
+    "profile": {
+      "title": "用户资料",
+      "name": "姓名",
+      "email": "邮箱",
+      "updateBtn": "更新资料"
+    },
+    "password": {
+      "title": "修改密码",
+      "oldPassword": "旧密码",
+      "newPassword": "新密码",
+      "confirmPassword": "确认新密码",
+      "changeBtn": "修改密码"
+    },
     "list": {
       "title": "用户列表",
       "search": "搜索用户",
@@ -227,9 +240,6 @@
     "userMenus": {
       "users": {
         "text": "用户管理"
-      },
-      "setting": {
-        "text": "账号设置"
       },
       "profile": {
         "text": "个人信息"

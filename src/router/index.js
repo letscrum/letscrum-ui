@@ -254,11 +254,11 @@ const routes = [
     path: '/user',
     redirect: '/user/profile',
     name: 'User',
-    component: () => import('@/pages/EmptyPage.vue'),
+    component: () => import('@/pages/user/UserRoot.vue'),
     children: [
       {
         path: 'profile',
-        component: () => import('@/pages/EmptyPage.vue')
+        component: () => import('@/pages/user/UserProfile.vue')
       },
       {
         path: 'orgs',
@@ -266,10 +266,6 @@ const routes = [
       },
       {
         path: 'changepassword',
-        component: () => import('@/pages/EmptyPage.vue')
-      },
-      {
-        path: 'setting',
         component: () => import('@/pages/EmptyPage.vue')
       }
     ],

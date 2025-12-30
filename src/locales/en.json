@@ -200,6 +200,19 @@
     "signUpBtn": "Sign Up"
   },
   "user": {
+    "profile": {
+      "title": "User Profile",
+      "name": "Name",
+      "email": "Email",
+      "updateBtn": "Update Profile"
+    },
+    "password": {
+      "title": "Change Password",
+      "oldPassword": "Old Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password",
+      "changeBtn": "Change Password"
+    },
     "list": {
       "title": "Users",
       "search": "Search Users",
@@ -236,9 +249,6 @@
     "userMenus": {
       "users": {
         "text": "User Management"
-      },
-      "setting": {
-        "text": "Account Settings"
       },
       "profile": {
         "text": "User Profile"
