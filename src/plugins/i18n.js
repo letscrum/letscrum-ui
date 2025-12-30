@@ -12,6 +12,8 @@ function loadLocaleMessages() {
 }
 
 export default createI18n({
+  legacy: false,
+  globalInjection: true,
   locale: localStorage.language || window.navigator.language.toLowerCase() || 'en',
   fallbackLocale: 'en',
   messages: loadLocaleMessages()
