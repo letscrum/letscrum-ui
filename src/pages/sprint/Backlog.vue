@@ -38,7 +38,24 @@
                   :class="{'bg-grey-lighten-4': isHovering}"
                   style="cursor: pointer; transition: background-color 0.2s;"
                 >
-                  <v-col cols="1" class="d-flex align-center justify-center text-grey">
+                  <v-col cols="1" class="d-flex align-center justify-center text-grey position-relative">
+                    <div class="position-absolute" style="left: 10px; top: 40%; transform: translateY(-50%);">
+                      <TaskCreate :work-item-id="item.raw.id" @after-create="onCreateTask">
+                        <v-hover v-slot="{ isHovering: isBtnHovering, props: btnProps }">
+                          <v-btn
+                            v-bind="btnProps"
+                            :style="{ visibility: isHovering ? 'visible' : 'hidden' }"
+                            variant="text"
+                            density="compact"
+                            icon
+                            size="small"
+                            :color="isBtnHovering ? 'success' : undefined"
+                          >
+                              <v-icon icon="mdi-plus"></v-icon>
+                          </v-btn>
+                        </v-hover>
+                      </TaskCreate>
+                    </div>
                     <v-btn
                       variant="text"
                       density="compact"
@@ -51,17 +68,14 @@
                     <span class="ml-1 text-caption">{{ index + 1 }}</span>
                   </v-col>
                   <v-col cols="6" class="d-flex align-center pl-2">
-                    <v-icon color="blue" size="small" class="mr-2">mdi-book-open-variant</v-icon>
+                    <v-icon :color="item.raw.type === 'Bug' ? 'red' : 'blue'" size="small" class="mr-2">
+                      {{ item.raw.type === 'Bug' ? 'mdi-bug' : 'mdi-book-open-variant' }}
+                    </v-icon>
                     <div class="text-body-2 text-truncate" style="max-width: 90%;">
                       <ItemDetail item-type="WORKITEM" :item-id="item.raw.id">
                         {{ item.raw.title }}
                       </ItemDetail>
                     </div>
-                    <TaskCreate :work-item-id="item.raw.id" @after-create="onCreateTask">
-                      <v-btn v-show="isHovering" icon variant="text" density="compact" size="small" class="ml-2">
-                          <v-icon icon="mdi-plus" size="small"></v-icon>
-                      </v-btn>
-                    </TaskCreate>
                   </v-col>
                   <v-col cols="2" class="d-flex align-center">
                     <v-icon size="x-small" :color="item.raw.status === 'Done' ? 'success' : (item.raw.status === 'In Progress' ? 'info' : 'grey')" class="mr-2">mdi-circle</v-icon>
