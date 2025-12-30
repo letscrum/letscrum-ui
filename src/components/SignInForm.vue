@@ -66,7 +66,7 @@ function SingIn() {
       });
       getGetOrgs().then((res) => {
         if (res.status === 200) {
-          if (res.data.items.length > 0) {
+          if (res.data.items && res.data.items.length > 0) {
             store.setOrgs(res.data.items.map((item) => {
               return {
                 id: item.id,
@@ -84,6 +84,8 @@ function SingIn() {
                 router.push('/orgs')
               }
             })
+          } else {
+            router.push('/orgs')
           }
         } else {
           router.push('/orgs')
