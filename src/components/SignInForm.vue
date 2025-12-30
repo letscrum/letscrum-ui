@@ -79,7 +79,11 @@ function SingIn() {
             getGetOrg(res.data.items[0].id).then((res) => {
               if (res.status === 200) {
                 store.setOrg(res.data.item)
-                router.push('/orgs/' + res.data.item.id + '/projects')
+                if (res.data.item.id) {
+                  router.push('/orgs/' + res.data.item.id + '/projects')
+                } else {
+                  router.push('/orgs')
+                }
               } else {
                 router.push('/orgs')
               }

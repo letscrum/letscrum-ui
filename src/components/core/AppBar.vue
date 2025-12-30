@@ -7,7 +7,7 @@
       class="ml-3 mr-1"
       width="150"
       max-width="150"
-      @click="router.push('/orgs/' + store.org.id + '/projects')"
+      @click="store.org.id ? router.push('/orgs/' + store.org.id + '/projects') : router.push('/orgs')"
     />
     <v-toolbar-items v-if="!mobile">
       <v-breadcrumbs :items="route.meta.breadcrumbs">
