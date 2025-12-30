@@ -8,10 +8,10 @@
       width="155"
       rounded="0"
     >
-      <div class="pa-3">
+      <div class="pa-2">
         <!-- Header -->
         <div class="d-flex align-start mb-6">
-          <v-icon color="#F2CB1D" size="12" class="mt-1 mr-2">mdi-checkbox-marked-circle-outline</v-icon>
+          <v-icon color="#F2CB1D" size="x-small" class="mr-1" style="margin-top: 2px;">mdi-checkbox-marked-circle-outline</v-icon>
           <div class="text-caption font-weight-bold mr-1">{{ localTask.id }}</div>
           <div class="text-caption flex-grow-1" style="min-width: 0;" :title="localTask.title">
             <ItemDetail item-type="TASK" :item-id="localTask.id">
