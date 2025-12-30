@@ -206,6 +206,9 @@ function updateStatusValue(status) {
   }).then((res) => {
     if (res.status === 200) {
       localTask.value.status = status;
+      if (status === 'Done') {
+        localTask.value.remainingWork = 0;
+      }
       emit('afterUpdate', oldStatus, localTask.value);
     }
   });

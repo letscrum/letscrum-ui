@@ -219,7 +219,7 @@
 <script setup>
 import { onMounted, ref, nextTick } from 'vue'
 import { getGetSprintWorkItems, postCreateWorkItem } from '@/apis/workitem';
-import { postCreateTask, putMoveTask } from '@/apis/task';
+import { postCreateTask, putMoveTask, putUpdateWorkHours } from '@/apis/task';
 import { getGetSprint } from '@/apis/sprint';
 import { useRoute } from 'vue-router'
 import { useAppStore } from '@/stores/app'
@@ -382,8 +382,15 @@ function onAdd(item) {
     status: status,
     toWorkItemId: workItemId,
   }).then(res => {
-    workItems.value.find((item) => item.id == workItemId)['tasks' + status].find((task) => task.id == taskId).status = status
-    workItems.value.find((item) => item.id == workItemId)['tasks' + status].find((task) => task.id == taskId).workItemId = workItemId
+    const task = workItems.value.find((item) => item.id == workItemId)['tasks' + status].find((task) => task.id == taskId)
+    task.status = status
+    task.workItemId = workItemId
+    if (status === 'Done') {
+      task.remainingWork = 0
+      putUpdateWorkHours(route.params.orgId, route.params.projectId, workItemId, taskId, {
+        remaining: 0
+      })
+    }
     emit('task-changed')
   })
 }
@@ -407,6 +414,11 @@ function updateTask(action, task) {
       targetTask.assignUser.id = task.assignUser.id;
       targetTask.assignUser.name = task.assignUser.name;
     }
+  } else if (action === 'remaining') {
+    const targetTask = workItem['tasks' + task.status].find(t => t.id == task.id);
+    if (targetTask) {
+      targetTask.remainingWork = task.remainingWork;
+    }
   } else if (action === 'delete') {
     const taskList = workItem['tasks' + task.status];
     if (taskList) {
@@ -415,7 +427,7 @@ function updateTask(action, task) {
         taskList.splice(index, 1);
       }
     }
-  } else if (action !== 'remaining') {
+  } else {
     // Move task
     const sourceList = workItem['tasks' + action];
     const targetList = workItem['tasks' + task.status];
@@ -425,6 +437,7 @@ function updateTask(action, task) {
       if (taskIndex !== -1) {
         const [movedTask] = sourceList.splice(taskIndex, 1);
         movedTask.status = task.status;
+        movedTask.remainingWork = task.remainingWork;
         targetList.push(movedTask);
       }
     }
