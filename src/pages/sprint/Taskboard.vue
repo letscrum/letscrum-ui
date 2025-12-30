@@ -113,7 +113,7 @@
                   <v-col v-for="status in ['To Do', 'In Progress', 'Done']" :key="status" cols="4" class="pl-1 h-100" style="min-width: 200px;">
                     <v-sheet
                       color="grey-lighten-4"
-                      class="d-flex flex-column fill-height rounded-lg pa-0"
+                      class="d-flex flex-column fill-height rounded-0 pa-0"
                       min-height="100"
                     >
                       <VueDraggable
