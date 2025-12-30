@@ -10,7 +10,7 @@
     >
       <div class="pa-3">
         <!-- Header -->
-        <div class="d-flex align-start mb-3">
+        <div class="d-flex align-start mb-6">
           <v-icon color="#F2CB1D" size="12" class="mt-1 mr-2">mdi-checkbox-marked-circle-outline</v-icon>
           <div class="text-caption font-weight-bold mr-1">{{ localTask.id }}</div>
           <div class="text-caption flex-grow-1" style="min-width: 0;" :title="localTask.title">
@@ -21,7 +21,7 @@
         </div>
 
         <!-- Assignee & Remaining -->
-        <div class="d-flex align-center justify-space-between mb-3">
+        <div class="d-flex align-center justify-space-between mb-2">
           <!-- Assignee -->
           <v-menu location="bottom start">
             <template #activator="{ props: menuProps }">
@@ -63,8 +63,8 @@
           <div class="d-flex align-center" style="width: 40px;">
             <div
               v-if="!isEditingRemaining"
-              class="text-caption cursor-pointer text-right w-100 remaining-hover px-1"
-              style="font-size: 11px !important; min-height: 18px;"
+              class="text-caption cursor-pointer w-100 remaining-hover px-1 d-flex align-center justify-end"
+              style="font-size: 11px !important; min-height: 20px;"
               @click="startEditingRemaining"
             >
               {{ localTask.remainingWork > 0 ? localTask.remainingWork + ' h' : '' }}
@@ -75,7 +75,7 @@
               v-model.number="localTask.remainingWork"
               type="number"
               class="text-caption text-right w-100 px-1"
-              style="font-size: 11px !important; border-bottom: 1px solid #ccc; outline: none;"
+              style="font-size: 11px !important; border-bottom: 1px solid #ccc; outline: none; height: 20px;"
               @blur="finishEditingRemaining"
               @keydown.enter="finishEditingRemaining"
             />

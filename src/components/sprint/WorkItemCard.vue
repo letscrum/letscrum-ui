@@ -10,7 +10,7 @@
     >
       <div class="pa-3">
         <!-- Header -->
-        <div class="d-flex align-start mb-3">
+        <div class="d-flex align-start mb-6">
           <v-icon :color="borderColor" size="12" class="mt-1 mr-2">
             {{ props.workItem.type == 'Backlog' ? 'mdi-book-open-variant' : 'mdi-bug' }}
           </v-icon>
@@ -35,7 +35,7 @@
         </div>
 
         <!-- Assignee -->
-        <div class="d-flex align-center mb-3">
+        <div class="d-flex align-center mb-2">
           <v-menu location="bottom start">
             <template #activator="{ props: menuProps }">
               <div class="d-flex align-center cursor-pointer" v-bind="menuProps">
