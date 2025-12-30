@@ -68,8 +68,9 @@ function mergeParams(to) {
 }
 
 function changeTheme() {
-  theme.global.name.value = store.theme === 'light' ? 'dark' : 'light'
-  store.changeTheme(theme.global.name.value)
+  const label = store.theme === 'light' ? 'dark' : 'light'
+  theme.change(label)
+  store.changeTheme(label)
 }
 
 function changeLanguage() {
