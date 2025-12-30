@@ -254,7 +254,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, nextTick } from 'vue'
+import { onMounted, ref, nextTick, watch } from 'vue'
 import { getGetSprintWorkItems, postCreateWorkItem } from '@/apis/workitem';
 import { postCreateTask, putMoveTask, putUpdateWorkHours } from '@/apis/task';
 import { getGetSprint } from '@/apis/sprint';
@@ -295,9 +295,10 @@ function getTaskCount(status) {
   }, 0);
 }
 
-function LoadWorkItems() {
+function LoadWorkItems(sprintId) {
+  const id = sprintId || route.params.sprintId
   expanded.value = []
-  getGetSprintWorkItems(route.params.orgId, route.params.projectId, route.params.sprintId, {
+  getGetSprintWorkItems(route.params.orgId, route.params.projectId, id, {
     page: 1,
     size: -1
   }).then(res => {
@@ -444,8 +445,9 @@ function onAdd(item) {
   })
 }
 
-function LoadSprint() {
-  getGetSprint(route.params.orgId, route.params.projectId, route.params.sprintId).then(res => {
+function LoadSprint(sprintId) {
+  const id = sprintId || route.params.sprintId
+  getGetSprint(route.params.orgId, route.params.projectId, id).then(res => {
     sprint.value = res.data.item
   })
 }
@@ -511,5 +513,13 @@ onMounted(() => {
   LoadSprint()
   LoadWorkItems()
   emit('task-changed')
+})
+
+watch(() => route.params.sprintId, (newId, oldId) => {
+  if (newId && newId !== oldId) {
+    LoadSprint(newId)
+    LoadWorkItems(newId)
+    emit('task-changed')
+  }
 })
 </script>
