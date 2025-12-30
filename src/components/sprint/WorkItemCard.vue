@@ -20,18 +20,6 @@
               <span class="cursor-pointer text-decoration-underline-hover">{{ localWorkItem.title }}</span>
             </ItemDetail>
           </div>
-
-          <!-- Add Task Button -->
-          <v-btn
-            icon="mdi-plus"
-            variant="text"
-            density="compact"
-            size="small"
-            class="ml-1"
-            color="grey-darken-1"
-            @click.stop="$emit('addTask')"
-            title="Add Task"
-          ></v-btn>
         </div>
 
         <!-- Assignee -->

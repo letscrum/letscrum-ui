@@ -152,6 +152,33 @@
                               ></v-textarea>
                             </v-card>
                           </div>
+                          <div v-else class="pa-1">
+                            <div
+                              v-if="!item.raw['tasksToDo'] || item.raw['tasksToDo'].length === 0"
+                              class="d-flex align-center cursor-pointer"
+                              @click="AddTask(item.raw.id)"
+                            >
+                              <v-sheet
+                                color="success"
+                                width="20"
+                                height="20"
+                                class="d-flex align-center justify-center mr-2 rounded-sm"
+                              >
+                                <v-icon color="white" size="16">mdi-plus</v-icon>
+                              </v-sheet>
+                              <span class="text-caption font-weight-bold text-medium-emphasis">New item</span>
+                            </div>
+                            <v-sheet
+                              v-else
+                              color="success"
+                              width="20"
+                              height="20"
+                              class="d-flex align-center justify-center rounded-sm cursor-pointer"
+                              @click="AddTask(item.raw.id)"
+                            >
+                              <v-icon color="white" size="16">mdi-plus</v-icon>
+                            </v-sheet>
+                          </div>
                         </v-expand-transition>
                       </div>
                     </v-sheet>
