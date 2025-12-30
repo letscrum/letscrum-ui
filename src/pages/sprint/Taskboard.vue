@@ -205,7 +205,12 @@
                   class="mr-1"
                   @click="() => toggleExpand(item)"
                 ></v-btn>
-                <span class="text-body-2 font-weight-medium text-truncate">{{ item.raw.title }}</span>
+                <div class="d-flex align-center cursor-pointer" @click="() => toggleExpand(item)">
+                  <v-icon :color="item.raw.type === 'Bug' ? 'red' : 'blue'" size="small" class="mr-2">
+                    {{ item.raw.type === 'Bug' ? 'mdi-bug' : 'mdi-clipboard-text' }}
+                  </v-icon>
+                  <span class="text-body-2 font-weight-medium text-truncate">{{ item.raw.title }}</span>
+                </div>
                 <v-spacer></v-spacer>
                 <v-chip size="x-small" class="mr-2">{{ item.raw.status }}</v-chip>
               </v-col>
