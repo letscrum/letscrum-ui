@@ -12,7 +12,7 @@
         <!-- Header -->
         <div class="d-flex align-start mb-6">
           <v-icon :color="borderColor" size="12" class="mt-1 mr-2">
-            {{ props.workItem.type == 'Backlog' ? 'mdi-book-open-variant' : 'mdi-bug' }}
+            {{ props.workItem.type == 'Backlog' ? 'mdi-clipboard-text' : 'mdi-bug' }}
           </v-icon>
           <div class="text-caption font-weight-bold mr-1">{{ localWorkItem.id }}</div>
           <div class="text-caption flex-grow-1" style="min-width: 0;" :title="localWorkItem.title">

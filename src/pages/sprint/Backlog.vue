@@ -69,7 +69,7 @@
                   </v-col>
                   <v-col cols="6" class="d-flex align-center pl-2">
                     <v-icon :color="item.raw.type === 'Bug' ? 'red' : 'blue'" size="small" class="mr-2">
-                      {{ item.raw.type === 'Bug' ? 'mdi-bug' : 'mdi-book-open-variant' }}
+                      {{ item.raw.type === 'Bug' ? 'mdi-bug' : 'mdi-clipboard-text' }}
                     </v-icon>
                     <div class="text-body-2 text-truncate" style="max-width: 90%;">
                       <ItemDetail item-type="WORKITEM" :item-id="item.raw.id">
