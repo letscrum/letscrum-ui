@@ -302,6 +302,11 @@ function LoadWorkItems() {
     size: -1
   }).then(res => {
     workItems.value = res.data.items
+    workItems.value.forEach(item => {
+      if (item.status === 'Done') {
+        expanded.value.push(item.id.toString())
+      }
+    })
   })
 }
 
