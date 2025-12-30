@@ -12,7 +12,7 @@
     <v-toolbar-items v-if="!mobile">
       <v-breadcrumbs :items="route.meta.breadcrumbs">
         <template #item="{ item }">
-          <v-btn variant="plain" :to="item.to" :ripple="false" :readonly="item.to.name == route.name">
+          <v-btn variant="plain" :to="mergeParams(item.to)" :ripple="false" :readonly="item.to.name == route.name">
             {{ item.title }}
           </v-btn>
         </template>
@@ -56,6 +56,16 @@ const router = useRouter()
 
 const theme = useTheme()
 const { mobile } = useDisplay()
+
+function mergeParams(to) {
+  if (typeof to === 'object' && to.name) {
+    return {
+      ...to,
+      params: { ...route.params, ...to.params }
+    }
+  }
+  return to
+}
 
 function changeTheme() {
   theme.global.name.value = store.theme === 'light' ? 'dark' : 'light'

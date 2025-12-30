@@ -66,7 +66,7 @@ export const useAppStore = defineStore('app', {
         this.user.id = localStorage.userId;
         this.user.name = localStorage.userName;
         this.user.email = localStorage.userEmail;
-        this.user.isSuperAdmin = localStorage.userIsSuperAdmin;
+        this.user.isSuperAdmin = localStorage.userIsSuperAdmin === 'true';
         this.token.accessToken = localStorage.tokenAccessToken;
         this.token.refreshToken = localStorage.tokenRefreshToken;
         this.org.id = localStorage.orgId;
