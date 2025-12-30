@@ -16,7 +16,38 @@
       </v-list-item>
     </v-list>
     <v-divider></v-divider>
-    <v-list v-if="route.name == 'Orgs' || route.name == 'Projects' || route.name == 'Org'">
+    <v-list v-if="route.name == 'Users' || route.path.startsWith('/user/')">
+      <v-list-item>
+        <v-list-item-title v-if="!rail">
+          {{ $t('user.userMenus.text') }}
+        </v-list-item-title>
+      </v-list-item>
+      <v-divider></v-divider>
+
+      <v-list-item
+        v-if="store.user.isSuperAdmin"
+        to="/users"
+      >
+        <template #prepend>
+          <v-avatar size="x-small" rounded="0">
+            <v-icon>mdi-account-group</v-icon>
+          </v-avatar>
+        </template>
+        <v-list-item-title>{{ $t('user.userMenus.users.text') }}</v-list-item-title>
+      </v-list-item>
+
+      <v-list-item
+        to="/user/profile"
+      >
+        <template #prepend>
+          <v-avatar size="x-small" rounded="0">
+            <v-icon>mdi-face-profile</v-icon>
+          </v-avatar>
+        </template>
+        <v-list-item-title>{{ $t('user.userMenus.profile.text') }}</v-list-item-title>
+      </v-list-item>
+    </v-list>
+    <v-list v-else-if="route.name == 'Orgs' || route.name == 'Projects' || route.name == 'Org'">
       <v-list-item>
         <v-list-item-title v-if="!rail">
           Orgs

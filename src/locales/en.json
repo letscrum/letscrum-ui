@@ -246,6 +246,17 @@
         "match": "Passwords do not match"
       }
     },
+    "edit": {
+      "title": "Edit User",
+      "name": "Name",
+      "email": "Email",
+      "cancel": "Cancel",
+      "confirm": "Save",
+      "rules": {
+        "required": "Required",
+        "email": "Invalid email"
+      }
+    },
     "userMenus": {
       "users": {
         "text": "User Management"

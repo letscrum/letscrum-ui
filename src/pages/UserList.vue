@@ -52,16 +52,27 @@
           </template>
 
           <template #[`item.actions`]="{ item }">
-            <SetSuperAdmin v-if="store.user.isSuperAdmin && item.id !== store.user.id" :user="item" @after="fetchUsers">
-              <v-btn
-                size="small"
-                :variant="item.isSuperAdmin ? 'outlined' : 'tonal'"
-                :color="item.isSuperAdmin ? 'warning' : 'primary'"
-                :prepend-icon="item.isSuperAdmin ? 'mdi-shield-off' : 'mdi-shield-account'"
-              >
-                {{ item.isSuperAdmin ? $t('user.list.actions.removeSuperAdmin') : $t('user.list.actions.setSuperAdmin') }}
-              </v-btn>
-            </SetSuperAdmin>
+            <div class="d-flex align-center justify-end">
+              <UserEdit v-if="store.user.isSuperAdmin" :user="item" @after-update="fetchUsers">
+                <v-btn
+                  size="small"
+                  variant="text"
+                  color="primary"
+                  icon="mdi-pencil"
+                  class="mr-2"
+                ></v-btn>
+              </UserEdit>
+              <SetSuperAdmin v-if="store.user.isSuperAdmin && item.id !== store.user.id" :user="item" @after="fetchUsers">
+                <v-btn
+                  size="small"
+                  :variant="item.isSuperAdmin ? 'outlined' : 'tonal'"
+                  :color="item.isSuperAdmin ? 'warning' : 'primary'"
+                  :prepend-icon="item.isSuperAdmin ? 'mdi-shield-off' : 'mdi-shield-account'"
+                >
+                  {{ item.isSuperAdmin ? $t('user.list.actions.removeSuperAdmin') : $t('user.list.actions.setSuperAdmin') }}
+                </v-btn>
+              </SetSuperAdmin>
+            </div>
           </template>
         </v-data-table>
       </v-card>
@@ -72,6 +83,7 @@
 <script setup>
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import UserCreate from '@/components/user/UserCreate.vue'
+import UserEdit from '@/components/user/UserEdit.vue'
 import SetSuperAdmin from '@/components/SetSuperAdmin.vue'
 import UserAvatar from '@/components/user/UserAvatar.vue'
 import { ref, onMounted, computed } from 'vue'
