@@ -8,7 +8,7 @@
       class="h-100"
     >
       <template #header>
-        <v-row no-gutters class="flex-nowrap">
+        <v-row no-gutters class="flex-nowrap mt-2">
           <v-col cols="auto" class="px-1" style="width: 200px; min-width: 200px; max-width: 200px;">
             <div class="d-flex align-center justify-space-between mb-2 pl-1" style="height: 28px;">
               <v-btn
@@ -86,7 +86,7 @@
                   variant="text"
                   size="x-small"
                   density="compact"
-                  class="mt-3 mr-1"
+                  class="mt-1 mr-1"
                   @click="() => toggleExpand(item)"
                 ></v-btn>
 
@@ -195,14 +195,14 @@
             </v-row>
 
             <!-- Collapsed View -->
-            <v-row v-else no-gutters class="py-1 align-center bg-grey-lighten-4 rounded my-1 mx-2">
-              <v-col cols="12" class="d-flex align-center px-2 py-1">
+            <v-row v-else no-gutters class="py-1 align-center bg-grey-lighten-4 my-1">
+              <v-col cols="12" class="d-flex align-center px-1 py-1">
                 <v-btn
                   icon="mdi-chevron-right"
                   variant="text"
                   size="x-small"
                   density="compact"
-                  class="mr-2"
+                  class="mr-1"
                   @click="() => toggleExpand(item)"
                 ></v-btn>
                 <span class="text-body-2 font-weight-medium text-truncate">{{ item.raw.title }}</span>
