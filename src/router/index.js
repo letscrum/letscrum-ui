@@ -13,12 +13,14 @@ const routes = [
     path: '/users',
     name: 'Users',
     component: () => import('@/pages/UserList.vue'),
+    meta: { title: 'User List' }
   },
   {
     path: '/orgs',
     name: 'Orgs',
     component: () => import('@/pages/org/OrgList.vue'),
     meta: {
+      title: 'Organizations',
       breadcrumbs: [
         {
           title: 'Orgs',
@@ -32,6 +34,7 @@ const routes = [
     name: 'Org',
     component: () => import('@/pages/org/Org.vue'),
     meta: {
+      title: 'Organization Details',
       breadcrumbs: [
         {
           title: 'Orgs',
@@ -49,6 +52,7 @@ const routes = [
     name: 'Projects',
     component: () => import('@/pages/project/ProjectList.vue'),
     meta: {
+      title: 'Projects',
       breadcrumbs: [
         {
           title: 'Orgs',
@@ -66,6 +70,7 @@ const routes = [
     name: 'Project',
     component: () => import('@/pages/project/Project.vue'),
     meta: {
+      title: 'Project Details',
       breadcrumbs: [
         {
           title: 'Orgs',
@@ -96,6 +101,7 @@ const routes = [
           menu: () => import('@/components/menu/MenuBacklog.vue')
         },
         meta: {
+          title: 'Backlog',
           breadcrumbs: [
             {
               title: 'Orgs',
@@ -132,6 +138,7 @@ const routes = [
           menu: () => import('@/components/menu/MenuTaskboard.vue')
         },
         meta: {
+          title: 'Sprint Taskboard',
           breadcrumbs: [
             {
               title: 'Orgs',
@@ -161,6 +168,7 @@ const routes = [
           menu: () => import('@/components/menu/MenuBacklog.vue')
         },
         meta: {
+          title: 'Sprint Backlog',
           breadcrumbs: [
             {
               title: 'Orgs',
@@ -190,6 +198,7 @@ const routes = [
           menu: () => import('@/components/menu/MenuCapacity.vue')
         },
         meta: {
+          title: 'Sprint Capacity',
           breadcrumbs: [
             {
               title: 'Orgs',
@@ -255,6 +264,7 @@ const routes = [
     redirect: '/user/profile',
     name: 'User',
     component: () => import('@/pages/user/UserRoot.vue'),
+    meta: { title: 'User Profile' },
     children: [
       {
         path: 'profile',
@@ -274,6 +284,7 @@ const routes = [
     path: '/',
     name: 'SignIn',
     component: () => import('@/pages/SignIn.vue'),
+    meta: { title: 'Sign In' }
   }
 ]
 
@@ -283,6 +294,9 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  const title = to.meta.title ? `${to.meta.title} - Letscrum` : 'Letscrum - Lightweight Scrum & Agile Project Management System'
+  document.title = title
+
   const store = useAppStore()
   if (to.name !== 'SignIn') {
     if (!store.isSignedIn) {
