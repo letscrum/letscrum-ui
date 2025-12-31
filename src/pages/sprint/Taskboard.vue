@@ -302,12 +302,14 @@ function LoadWorkItems(sprintId) {
     page: 1,
     size: -1
   }).then(res => {
-    workItems.value = res.data.items
-    workItems.value.forEach(item => {
-      if (item.status === 'Done') {
-        expanded.value.push(item.id.toString())
-      }
-    })
+    if (id == route.params.sprintId) {
+      workItems.value = res.data.items
+      workItems.value.forEach(item => {
+        if (item.status === 'Done') {
+          expanded.value.push(item.id.toString())
+        }
+      })
+    }
   })
 }
 
@@ -448,7 +450,9 @@ function onAdd(item) {
 function LoadSprint(sprintId) {
   const id = sprintId || route.params.sprintId
   getGetSprint(route.params.orgId, route.params.projectId, id).then(res => {
-    sprint.value = res.data.item
+    if (id == route.params.sprintId) {
+      sprint.value = res.data.item
+    }
   })
 }
 
