@@ -15,8 +15,8 @@
             {{ props.workItem.type == 'Backlog' ? 'mdi-clipboard-text' : 'mdi-bug' }}
           </v-icon>
           <div class="text-caption font-weight-bold mr-1">{{ localWorkItem.id }}</div>
-          <div class="text-caption flex-grow-1 pr-3" style="min-width: 0;" :title="localWorkItem.title">
-            <div v-if="!isEditingTitle" class="text-truncate">
+          <div class="text-caption flex-grow-1" :class="{ 'pr-3': isHovering || isMenuOpen }" style="min-width: 0;" :title="localWorkItem.title">
+            <div v-if="!isEditingTitle">
               <ItemDetail item-type="WORKITEM" :item-id="localWorkItem.id">
                 <span class="cursor-pointer text-decoration-underline-hover">{{ localWorkItem.title }}</span>
               </ItemDetail>

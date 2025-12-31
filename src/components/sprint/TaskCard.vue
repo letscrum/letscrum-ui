@@ -13,8 +13,8 @@
         <div class="d-flex align-start mb-6">
           <v-icon color="#F2CB1D" size="x-small" class="mr-1" style="margin-top: 2px;">mdi-checkbox-marked-circle-outline</v-icon>
           <div class="text-caption font-weight-bold mr-1">{{ localTask.id }}</div>
-          <div class="text-caption flex-grow-1 pr-3" style="min-width: 0;" :title="localTask.title">
-            <div v-if="!isEditingTitle" class="text-truncate">
+          <div class="text-caption flex-grow-1" :class="{ 'pr-3': isHovering || isMenuOpen }" style="min-width: 0;" :title="localTask.title">
+            <div v-if="!isEditingTitle">
               <ItemDetail item-type="TASK" :item-id="localTask.id">
                 <span class="cursor-pointer text-decoration-underline-hover">{{ localTask.title }}</span>
               </ItemDetail>
