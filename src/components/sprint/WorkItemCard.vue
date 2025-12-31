@@ -15,10 +15,22 @@
             {{ props.workItem.type == 'Backlog' ? 'mdi-clipboard-text' : 'mdi-bug' }}
           </v-icon>
           <div class="text-caption font-weight-bold mr-1">{{ localWorkItem.id }}</div>
-          <div class="text-caption flex-grow-1" style="min-width: 0;" :title="localWorkItem.title">
-            <ItemDetail item-type="WORKITEM" :item-id="localWorkItem.id">
-              <span class="cursor-pointer text-decoration-underline-hover">{{ localWorkItem.title }}</span>
-            </ItemDetail>
+          <div class="text-caption flex-grow-1 pr-3" style="min-width: 0;" :title="localWorkItem.title">
+            <div v-if="!isEditingTitle" class="text-truncate">
+              <ItemDetail item-type="WORKITEM" :item-id="localWorkItem.id">
+                <span class="cursor-pointer text-decoration-underline-hover">{{ localWorkItem.title }}</span>
+              </ItemDetail>
+            </div>
+            <input
+              v-else
+              ref="titleInput"
+              v-model="localWorkItem.title"
+              type="text"
+              class="text-caption w-100"
+              style="font-size: 12px !important; border-bottom: 1px solid #ccc; outline: none;"
+              @blur="finishEditingTitle"
+              @keydown.enter="finishEditingTitle"
+            />
           </div>
         </div>
 
@@ -48,14 +60,15 @@
                 :key="member.userId"
                 :value="member.userId"
                 @click="assignWorkItemValue(member.userId)"
+                style="min-height: 30px;"
               >
                 <template #prepend>
-                  <UserAvatar :user-id="member.userId" :user-name="member.userName" size="24" class="mr-2" />
+                  <UserAvatar :user-id="member.userId" :user-name="member.userName" size="20" class="mr-2" />
                 </template>
-                <v-list-item-title>{{ member.userName }}</v-list-item-title>
+                <v-list-item-title style="font-size: 12px;">{{ member.userName }}</v-list-item-title>
               </v-list-item>
-              <v-list-item @click="assignWorkItemValue('00000000-0000-0000-0000-000000000000')">
-                <v-list-item-title>Unassigned</v-list-item-title>
+              <v-list-item @click="assignWorkItemValue('00000000-0000-0000-0000-000000000000')" style="min-height: 30px;">
+                <v-list-item-title style="font-size: 12px;">Unassigned</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -72,15 +85,34 @@
               </div>
             </template>
             <v-list density="compact">
-              <v-list-item v-for="s in ['New', 'Approved', 'Done', 'Removed']" :key="s" @click="updateStatusValue(s)">
+              <v-list-item v-for="s in ['New', 'Approved', 'Done', 'Removed']" :key="s" @click="updateStatusValue(s)" style="min-height: 30px;">
                 <template #prepend>
                   <v-icon :color="getStatusColor(s)" size="x-small" class="mr-2">mdi-circle</v-icon>
                 </template>
-                <v-list-item-title>{{ s }}</v-list-item-title>
+                <v-list-item-title style="font-size: 12px;">{{ s }}</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
         </div>
+      </div>
+
+      <!-- Actions (Hover only) -->
+      <div v-if="isHovering || isMenuOpen" class="position-absolute top-0 right-0 pa-1">
+        <v-menu v-model="isMenuOpen">
+          <template #activator="{ props: menuProps }">
+            <v-btn icon="mdi-dots-horizontal" variant="text" density="compact" size="small" v-bind="menuProps"></v-btn>
+          </template>
+          <v-list density="compact">
+            <v-list-item @click="startEditingTitle" style="min-height: 30px;">
+              <template #prepend><v-icon size="small">mdi-pencil</v-icon></template>
+              <v-list-item-title style="font-size: 12px;">Edit Title</v-list-item-title>
+            </v-list-item>
+            <v-list-item @click="onDelete(localWorkItem.id)" style="min-height: 30px;">
+              <template #prepend><v-icon size="small" color="error">mdi-delete</v-icon></template>
+              <v-list-item-title class="text-error" style="font-size: 12px;">Delete</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </div>
     </v-card>
   </v-hover>
@@ -88,7 +120,7 @@
 
 <script setup>
 import { computed, ref } from 'vue';
-import { putAssignWorkItem, putUpdateWorkItemStatus } from '@/apis/workitem';
+import { putAssignWorkItem, putUpdateWorkItemStatus, putUpdateWorkItem, deleteDeleteWorkItem } from '@/apis/workitem';
 import { useRoute } from 'vue-router';
 import UserAvatar from '@/components/user/UserAvatar.vue';
 import ItemDetail from '@/components/sprint/ItemDetail.vue';
@@ -108,6 +140,9 @@ const route = useRoute();
 
 const localWorkItem = ref(props.workItem);
 const localMembers = computed(() => props.members);
+const isMenuOpen = ref(false);
+const isEditingTitle = ref(false);
+const titleInput = ref(null);
 
 const borderColor = computed(() => props.workItem.type == 'Backlog' ? '#009CCC' : '#CC293D');
 const statusColor = computed(() => getStatusColor(localWorkItem.value.status));
@@ -128,6 +163,40 @@ function assignWorkItemValue(userId) {
     const user = localMembers.value.find(m => m.userId === userId);
     localWorkItem.value.assignUser = user ? { id: user.userId, name: user.userName } : { id: null, name: null };
     emit('afterUpdate', 'assign', localWorkItem.value);
+  });
+}
+
+function startEditingTitle() {
+  isEditingTitle.value = true;
+  isMenuOpen.value = false;
+  setTimeout(() => {
+    if (titleInput.value) {
+      titleInput.value.focus();
+    }
+  }, 100);
+}
+
+function finishEditingTitle() {
+  if (!isEditingTitle.value) return;
+  isEditingTitle.value = false;
+  updateTitle();
+}
+
+function updateTitle() {
+  putUpdateWorkItem(route.params.orgId, route.params.projectId, localWorkItem.value.id, {
+    title: localWorkItem.value.title
+  }).then((res) => {
+    if (res.status === 200) {
+      emit('afterUpdate', 'update', localWorkItem.value);
+    }
+  });
+}
+
+function onDelete(workItemId) {
+  deleteDeleteWorkItem(route.params.orgId, route.params.projectId, workItemId).then((res) => {
+    if (res.status === 200) {
+      emit('afterUpdate', 'delete', localWorkItem.value);
+    }
   });
 }
 

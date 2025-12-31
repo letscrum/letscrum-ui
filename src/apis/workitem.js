@@ -10,7 +10,7 @@ export const getGetWorkItem = (orgId, projectId, workItemId) => axios.get(`${ver
 
 export const postCreateWorkItem = (orgId, projectId, params) => axios.post(`${version}/orgs/${orgId}/projects/${projectId}/workitems`, params)
 
-export const putUpdateWorkItem = (orgId, projectId, params) => axios.put(`${version}/orgs/${orgId}/projects/${projectId}/workitems`, params)
+export const putUpdateWorkItem = (orgId, projectId, workItemId, params) => axios.put(`${version}/orgs/${orgId}/projects/${projectId}/workitems/${workItemId}`, params)
 
 export const deleteDeleteWorkItem = (orgId, projectId, workItemId) => axios.delete(`${version}/orgs/${orgId}/projects/${projectId}/workitems/${workItemId}`)
 
