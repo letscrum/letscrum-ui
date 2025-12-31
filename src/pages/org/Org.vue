@@ -58,22 +58,40 @@
       <v-window v-model="tab" style="overflow: visible;">
         <!-- Members Tab -->
         <v-window-item value="members">
-          <v-card variant="outlined" class="border-0">
-            <v-row class="mb-4">
+          <v-card rounded="lg" elevation="2">
+            <v-card-title class="d-flex align-center pa-4">
+              <v-icon icon="mdi-account-group" class="mr-2" color="primary"></v-icon>
+              {{ $t('org.detail.tabs.members') }}
               <v-spacer></v-spacer>
-              <v-col cols="auto">
-                <OrgMemberAdd :org-id="orgId" @after-add="fetchMembers">
-                  <v-btn color="primary" prepend-icon="mdi-plus">
-                    {{ $t('org.member.add.title') }}
-                  </v-btn>
-                </OrgMemberAdd>
-              </v-col>
-            </v-row>
+
+              <v-text-field
+                v-model="search"
+                density="compact"
+                :label="$t('user.list.search')"
+                prepend-inner-icon="mdi-magnify"
+                variant="outlined"
+                hide-details
+                single-line
+                class="mr-4"
+                style="max-width: 300px;"
+              ></v-text-field>
+
+              <v-btn icon="mdi-refresh" variant="text" class="mr-2" @click="fetchMembers"></v-btn>
+
+              <OrgMemberAdd :org-id="orgId" @after-add="fetchMembers">
+                <v-btn color="primary" prepend-icon="mdi-plus" variant="flat">
+                  {{ $t('org.member.add.title') }}
+                </v-btn>
+              </OrgMemberAdd>
+            </v-card-title>
+
+            <v-divider></v-divider>
 
             <v-data-table
               :headers="headers"
               :items="members"
               :loading="loading"
+              :search="search"
               hover
             >
               <template #[`item.avatar`]="{ item }">
@@ -91,16 +109,17 @@
               </template>
 
               <template #[`item.actions`]="{ item }">
-                <div v-if="item.member.name !== org.createdBy" class="d-flex justify-end">
+                <div v-if="item.member.name !== org.createdBy" class="d-flex align-center justify-end">
                   <SetOrgAdmin :org-id="orgId" :member="item" @after="fetchMembers">
                     <v-btn
                       size="small"
-                      variant="text"
+                      :variant="item.isAdmin ? 'outlined' : 'tonal'"
                       :color="item.isAdmin ? 'warning' : 'primary'"
-                      class="mr-1"
-                      :title="item.isAdmin ? $t('org.detail.members.removeAdmin') : $t('org.detail.members.setAdmin')"
-                      :icon="item.isAdmin ? 'mdi-shield-off' : 'mdi-shield-account'"
-                    ></v-btn>
+                      class="mr-2"
+                      :prepend-icon="item.isAdmin ? 'mdi-shield-off' : 'mdi-shield-account'"
+                    >
+                      {{ item.isAdmin ? $t('org.detail.members.removeAdmin') : $t('org.detail.members.setAdmin') }}
+                    </v-btn>
                   </SetOrgAdmin>
 
                   <OrgMemberDelete :org-id="orgId" :member="item" @after="fetchMembers">
@@ -151,6 +170,7 @@ const org = ref({})
 const members = ref([])
 const loading = ref(false)
 const tab = ref('members')
+const search = ref('')
 
 const headers = computed(() => [
   { title: '', key: 'avatar', sortable: false, width: '50px' },
