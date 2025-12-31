@@ -5,7 +5,7 @@
     persistent
   >
     <template #activator="{ props: activatorProps }">
-      <div v-bind="activatorProps" @click="onOpen()">
+      <div v-bind="activatorProps" @click.stop="onOpen()">
         <slot></slot>
       </div>
       <!-- <v-btn outlined class="float-right" tile prepend-icon="mdi-pencil" v-bind="activatorProps" @click="onOpenCreate()">
@@ -15,39 +15,49 @@
 
     <template #default="{ isActive }">
       <v-card
-        prepend-icon="mdi-earth"
-        title="Select Country"
+        prepend-icon="mdi-run-fast"
+        title="Edit Sprint"
       >
         <v-divider class="my-1"></v-divider>
 
         <v-card-text class="px-4">
-          <v-text-field v-model="sprint.name" label="Label"></v-text-field>
+          <v-text-field v-model="sprint.name" label="Sprint Name" variant="outlined" density="compact"></v-text-field>
 
           <v-select
             v-model="sprint.burndownType"
             :items="burndownTypes"
             label="Burndown Type"
+            variant="outlined"
+            density="compact"
           ></v-select>
 
-          <v-date-picker v-model="dates" show-adjacent-months multiple="range"></v-date-picker>
-
+          <div class="d-flex justify-center">
+            <v-date-picker
+              v-model="dates"
+              show-adjacent-months
+              multiple="range"
+              title="Select Sprint Duration"
+              header="Sprint Dates"
+            ></v-date-picker>
+          </div>
         </v-card-text>
 
         <v-divider></v-divider>
 
         <v-card-actions>
           <v-btn
-            text="Close"
+            text="Cancel"
             @click="isActive.value = false"
           ></v-btn>
 
           <v-spacer></v-spacer>
 
           <v-btn
-            color="surface-variant"
-            text="Create"
+            color="primary"
+            text="Save"
             variant="flat"
             @click="onSaveSprint()"
+            :disabled="!isValid"
           ></v-btn>
         </v-card-actions>
       </v-card>
@@ -60,7 +70,7 @@ import { putUpdateSprint, getGetSprint } from '@/apis/sprint'
 const emit = defineEmits(['afterEdit'])
 const props = defineProps(['sprintId'])
 
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 import { useRoute } from 'vue-router'
 import { useAppStore } from '@/stores/app'
@@ -74,6 +84,10 @@ const burndownTypes = ref([
   'ByTask',
   'ByHour'
 ])
+
+const isValid = computed(() => {
+  return sprint.value.name && sprint.value.burndownType && dates.value.length > 0
+})
 
 function onOpen() {
   getGetSprint(route.params.orgId, route.params.projectId, props.sprintId).then((res) => {
@@ -97,11 +111,13 @@ function onOpen() {
 }
 
 function onSaveSprint() {
-  console.log(dates.value)
+  // Sort dates to ensure start and end are correct
+  const sortedDates = [...dates.value].sort((a, b) => new Date(a) - new Date(b))
+
   putUpdateSprint(route.params.orgId, route.params.projectId, sprint.value.id, {
     name: sprint.value.name,
-    startDate: Math.floor(new Date(dates.value[0] + 1000).getTime() / 1000),
-    endDate: Math.floor(new Date(dates.value[dates.value.length - 1]).getTime() / 1000),
+    startDate: Math.floor(new Date(sortedDates[0]).getTime() / 1000),
+    endDate: Math.floor(new Date(sortedDates[sortedDates.length - 1]).getTime() / 1000),
     burndownType: sprint.value.burndownType,
   }).then((res) => {
     console.log(res)
@@ -112,8 +128,8 @@ function onSaveSprint() {
         store.setSprint({
           id: sprint.value.id,
           name: sprint.value.name,
-          startDate: Math.floor(new Date(dates.value[0] + 1000).getTime() / 1000),
-          endDate: Math.floor(new Date(dates.value[dates.value.length - 1]).getTime() / 1000),
+          startDate: Math.floor(new Date(sortedDates[0]).getTime() / 1000),
+          endDate: Math.floor(new Date(sortedDates[sortedDates.length - 1]).getTime() / 1000),
           burndownType: sprint.value.burndownType,
         })
       }

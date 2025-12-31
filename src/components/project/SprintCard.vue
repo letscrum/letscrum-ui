@@ -51,7 +51,7 @@
         <v-spacer></v-spacer>
 
         <SprintEdit :sprint-id="sprint.id" @after-edit="$emit('refresh')">
-          <v-btn icon="mdi-pencil" size="small" variant="text" color="grey" @click.stop></v-btn>
+          <v-btn icon="mdi-pencil" size="small" variant="text" color="grey"></v-btn>
         </SprintEdit>
 
         <v-btn
