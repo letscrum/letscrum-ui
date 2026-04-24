@@ -56,7 +56,7 @@
         <tr v-if="currentMembers.length === 0">
           <td colspan="5" class="text-center py-10 text-medium-emphasis">
             <div class="d-flex flex-column align-center justify-center" style="gap: 8px;">
-              <v-icon size="48" color="grey-lighten-1">mdi-account-multiple-outline</v-icon>
+              <v-icon size="48" class="text-medium-emphasis">mdi-account-multiple-outline</v-icon>
               <div class="text-subtitle-2 font-weight-medium">No members in this sprint</div>
               <div class="text-caption">
                 Use <strong>Add Member</strong> or <strong>Add all project members</strong> from the toolbar above.

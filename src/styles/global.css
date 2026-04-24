@@ -219,6 +219,12 @@ html, body, .v-application {
   vertical-align: middle;
 }
 
+/* Theme-aware "unassigned" avatar fallback (used in WorkItem / Task cards) */
+.ado-unassigned-avatar {
+  background-color: var(--ado-row-hover) !important;
+  color: var(--ado-text-secondary) !important;
+}
+
 /* ---------- Navigation-drawer rail-mode fixes ----------
    The `.v-navigation-drawer--rail` class lives on the SAME element as
    `.ado-drawer`, so scoped `:deep()` (which expects a descendant) cannot

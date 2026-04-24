@@ -12,12 +12,12 @@
 
     <template #default="{ isActive }">
       <v-card class="ado-border" rounded="md">
-        <v-card-title class="d-flex align-center pa-4">
+        <div class="d-flex align-center px-4 py-3 ado-header-bg ado-border-b">
           <v-icon icon="mdi-account-plus" class="mr-2" color="primary"></v-icon>
-          {{ $t('org.member.add.title') }}
-        </v-card-title>
-
-        <v-divider></v-divider>
+          <span class="text-subtitle-1 font-weight-bold">{{ $t('org.member.add.title') }}</span>
+          <v-spacer />
+          <v-btn icon="mdi-close" variant="text" density="compact" size="small" @click="isActive.value = false" />
+        </div>
 
         <v-card-text class="pa-4">
           <v-autocomplete
@@ -31,12 +31,15 @@
             placeholder="Start typing to search"
             prepend-inner-icon="mdi-magnify"
             variant="outlined"
+            density="compact"
             multiple
             chips
             closable-chips
             return-object
             hide-no-data
             hide-selected
+            hint="Type at least 2 characters to search."
+            persistent-hint
             @update:search="onSearch"
           >
             <template #chip="{ props: chipProps, item }">
@@ -44,6 +47,7 @@
                 v-bind="chipProps"
                 :prepend-avatar="item.raw.avatar"
                 :text="item.raw.name"
+                size="small"
               ></v-chip>
             </template>
 
@@ -60,10 +64,11 @@
 
         <v-divider></v-divider>
 
-        <v-card-actions class="pa-4">
+        <v-card-actions class="pa-3">
           <v-spacer></v-spacer>
           <v-btn
             variant="text"
+            size="small"
             @click="isActive.value = false"
           >
             {{ $t('org.member.add.cancel') }}
@@ -72,11 +77,21 @@
           <v-btn
             color="primary"
             variant="flat"
+            size="small"
             :loading="submitting"
             :disabled="selectedUsers.length === 0"
             @click="addMembers()"
           >
             {{ $t('org.member.add.confirm') }}
+            <v-chip
+              v-if="selectedUsers.length > 0"
+              size="x-small"
+              variant="flat"
+              color="white"
+              class="ml-2 text-primary"
+            >
+              {{ selectedUsers.length }}
+            </v-chip>
           </v-btn>
         </v-card-actions>
       </v-card>

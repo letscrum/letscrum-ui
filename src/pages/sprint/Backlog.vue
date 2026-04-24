@@ -34,7 +34,7 @@
                   v-bind="hoverProps"
                   no-gutters
                   class="handleWorkItem py-1 border-b align-center"
-                  :class="{'bg-grey-lighten-4': isHovering}"
+                  :class="{'ado-row-hover-bg': isHovering}"
                   style="cursor: pointer; transition: background-color 0.2s;"
                 >
                   <v-col cols="1" class="d-flex align-center justify-center text-grey position-relative">

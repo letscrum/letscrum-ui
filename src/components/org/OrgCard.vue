@@ -23,7 +23,7 @@
           </div>
           <div class="text-caption text-medium-emphasis text-truncate">{{ org.name }}</div>
         </div>
-        <v-icon size="small" :color="isHovering ? 'primary' : 'grey-lighten-1'">mdi-arrow-right</v-icon>
+        <v-icon size="small" :color="isHovering ? 'primary' : undefined" :class="isHovering ? '' : 'text-medium-emphasis'">mdi-arrow-right</v-icon>
       </div>
 
       <div class="px-3 pb-2 flex-grow-1">

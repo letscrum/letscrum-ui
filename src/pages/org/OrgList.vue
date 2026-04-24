@@ -94,7 +94,7 @@
       </template>
 
       <div v-else class="d-flex flex-column align-center justify-center py-12">
-        <v-icon size="56" color="grey-lighten-1">mdi-domain-off</v-icon>
+        <v-icon size="56" class="text-medium-emphasis">mdi-domain-off</v-icon>
         <h3 class="text-subtitle-1 font-weight-medium mt-4">{{ $t('org.list.emptyTitle') }}</h3>
         <p class="text-body-2 text-medium-emphasis mt-1">{{ $t('org.list.emptySubtitle') }}</p>
         <OrgCreate>

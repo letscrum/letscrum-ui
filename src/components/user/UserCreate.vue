@@ -11,12 +11,12 @@
     </template>
 
     <v-card class="ado-border" rounded="md">
-      <v-card-title class="d-flex align-center pa-4">
+      <div class="d-flex align-center px-4 py-3 ado-header-bg ado-border-b">
         <v-icon icon="mdi-account-plus" class="mr-2" color="primary"></v-icon>
-        {{ $t('user.create.title') }}
-      </v-card-title>
-
-      <v-divider></v-divider>
+        <span class="text-subtitle-1 font-weight-bold">{{ $t('user.create.title') }}</span>
+        <v-spacer />
+        <v-btn icon="mdi-close" variant="text" density="compact" size="small" @click="dialog = false" />
+      </div>
 
       <v-card-text class="pa-4">
         <v-form ref="form" @submit.prevent="createUser">
@@ -26,6 +26,7 @@
             variant="outlined"
             density="compact"
             class="mb-2"
+            autofocus
             :rules="[v => !!v || $t('user.create.rules.required')]"
             required
           ></v-text-field>
@@ -35,6 +36,8 @@
             :label="$t('user.create.email')"
             variant="outlined"
             density="compact"
+            type="email"
+            prepend-inner-icon="mdi-email-outline"
             class="mb-2"
             :rules="[
               v => !!v || $t('user.create.rules.required'),
@@ -48,10 +51,13 @@
             :label="$t('user.create.password')"
             variant="outlined"
             density="compact"
-            type="password"
+            :type="showPassword ? 'text' : 'password'"
+            prepend-inner-icon="mdi-lock-outline"
+            :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
             class="mb-2"
             :rules="[v => !!v || $t('user.create.rules.required')]"
             required
+            @click:append-inner="showPassword = !showPassword"
           ></v-text-field>
 
           <v-text-field
@@ -59,7 +65,8 @@
             :label="$t('user.create.confirmPassword')"
             variant="outlined"
             density="compact"
-            type="password"
+            :type="showPassword ? 'text' : 'password'"
+            prepend-inner-icon="mdi-lock-check-outline"
             :rules="[
               v => !!v || $t('user.create.rules.required'),
               v => v === user.password || $t('user.create.rules.match')
@@ -71,10 +78,11 @@
 
       <v-divider></v-divider>
 
-      <v-card-actions class="pa-4">
+      <v-card-actions class="pa-3">
         <v-spacer></v-spacer>
         <v-btn
           variant="text"
+          size="small"
           @click="dialog = false"
         >
           {{ $t('user.create.cancel') }}
@@ -83,6 +91,7 @@
         <v-btn
           color="primary"
           variant="flat"
+          size="small"
           :loading="loading"
           @click="createUser()"
         >
@@ -102,6 +111,7 @@ const emit = defineEmits(['after-create']);
 const dialog = ref(false);
 const loading = ref(false);
 const form = ref(null);
+const showPassword = ref(false);
 const user = ref({
   name: '',
   email: '',

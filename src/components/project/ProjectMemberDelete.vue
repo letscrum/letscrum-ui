@@ -8,23 +8,35 @@
 
     <template #default="{ isActive }">
       <v-card class="ado-border" rounded="md">
-        <v-card-title class="d-flex align-center pa-4 text-error">
+        <div class="d-flex align-center px-4 py-3 ado-header-bg ado-border-b">
           <v-icon icon="mdi-account-remove" class="mr-2" color="error" />
-          Remove Member
-        </v-card-title>
+          <span class="text-subtitle-1 font-weight-bold text-error">Remove Member</span>
+          <v-spacer />
+          <v-btn icon="mdi-close" variant="text" density="compact" size="small" @click="isActive.value = false" />
+        </div>
 
-        <v-divider />
-
-        <v-card-text class="pa-4 text-body-2">
-          Are you sure you want to remove this member from the project?
+        <v-card-text class="pa-4">
+          <v-alert
+            type="error"
+            variant="tonal"
+            density="compact"
+            border="start"
+            class="text-body-2 mb-3"
+          >
+            Are you sure you want to remove this member from the project?
+          </v-alert>
+          <div v-if="props.member.userName" class="d-flex align-center pa-2 ado-subtle rounded">
+            <v-icon size="small" class="mr-2 text-medium-emphasis">mdi-account-circle-outline</v-icon>
+            <span class="font-weight-medium">{{ props.member.userName }}</span>
+          </div>
         </v-card-text>
 
         <v-divider />
 
-        <v-card-actions class="pa-4">
+        <v-card-actions class="pa-3">
           <v-spacer />
-          <v-btn variant="text" @click="isActive.value = false">Cancel</v-btn>
-          <v-btn color="error" variant="flat" @click="OnDeleteMember()">Remove</v-btn>
+          <v-btn variant="text" size="small" @click="isActive.value = false">Cancel</v-btn>
+          <v-btn color="error" variant="flat" size="small" prepend-icon="mdi-account-remove-outline" @click="OnDeleteMember()">Remove</v-btn>
         </v-card-actions>
       </v-card>
     </template>

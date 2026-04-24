@@ -46,7 +46,7 @@
                   size="20"
                   class="mr-2"
                 />
-                <v-avatar v-else size="20" color="grey-lighten-2" class="mr-2">
+                <v-avatar v-else size="20" class="mr-2 ado-unassigned-avatar">
                   <v-icon size="x-small">mdi-account</v-icon>
                 </v-avatar>
                 <span class="text-caption text-medium-emphasis text-truncate" style="max-width: 100px; font-size: 11px !important;">
@@ -210,17 +210,3 @@ function updateStatusValue(status) {
 }
 </script>
 
-<style scoped>
-.cursor-pointer {
-  cursor: pointer;
-}
-.text-decoration-underline-hover:hover {
-  text-decoration: underline;
-}
-.ado-work-item-card {
-  transition: box-shadow 120ms ease-in-out, border-color 120ms ease-in-out;
-}
-.ado-hover-ring {
-  border-color: rgb(var(--v-theme-primary)) !important;
-}
-</style>

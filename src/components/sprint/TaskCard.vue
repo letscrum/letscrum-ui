@@ -45,7 +45,7 @@
                   size="20"
                   class="mr-2"
                 />
-                <v-avatar v-else size="20" color="grey-lighten-2" class="mr-2">
+                <v-avatar v-else size="20" class="mr-2 ado-unassigned-avatar">
                   <v-icon size="x-small">mdi-account</v-icon>
                 </v-avatar>
                 <span class="text-caption text-medium-emphasis text-truncate" style="max-width: 80px; font-size: 11px !important;">
@@ -270,23 +270,12 @@ function onDelete(taskId) {
 </script>
 
 <style scoped>
-.cursor-pointer {
-  cursor: pointer;
-}
-.text-decoration-underline-hover:hover {
-  text-decoration: underline;
-}
+/* Subtle bordered hover affordance on the remaining-work editor */
 .remaining-hover {
   border: 1px solid transparent;
   border-radius: 2px;
 }
 .remaining-hover:hover {
   border: 1px solid var(--ado-border-strong);
-}
-.ado-task-card {
-  transition: box-shadow 120ms ease-in-out, border-color 120ms ease-in-out;
-}
-.ado-hover-ring {
-  border-color: rgb(var(--v-theme-primary)) !important;
 }
 </style>

@@ -12,12 +12,12 @@
 
     <template #default="{ isActive }">
       <v-card class="ado-border" rounded="md">
-        <v-card-title class="d-flex align-center pa-4">
+        <div class="d-flex align-center px-4 py-3 ado-header-bg ado-border-b">
           <v-icon icon="mdi-pencil-outline" class="mr-2" color="primary" />
-          Edit Sprint
-        </v-card-title>
-
-        <v-divider />
+          <span class="text-subtitle-1 font-weight-bold">Edit Sprint</span>
+          <v-spacer />
+          <v-btn icon="mdi-close" variant="text" density="compact" size="small" @click="isActive.value = false" />
+        </div>
 
         <v-card-text class="pa-4">
           <v-text-field
@@ -25,6 +25,7 @@
             label="Sprint Name"
             variant="outlined"
             density="compact"
+            autofocus
             class="mb-3"
           />
 
@@ -34,28 +35,48 @@
             label="Burndown Type"
             variant="outlined"
             density="compact"
+            hint="ByTask counts done tasks; ByHour tracks remaining hours."
+            persistent-hint
             class="mb-3"
           />
 
-          <div class="d-flex justify-center">
+          <div class="d-flex align-center mb-2" style="gap: 8px;">
+            <v-icon size="small" color="primary">mdi-calendar-range</v-icon>
+            <span class="text-subtitle-2 font-weight-medium">Sprint dates</span>
+            <v-spacer />
+            <v-chip
+              v-if="rangeSummary"
+              size="x-small"
+              variant="tonal"
+              color="primary"
+              prepend-icon="mdi-calendar-check"
+            >
+              {{ rangeSummary }}
+            </v-chip>
+            <v-chip v-else size="x-small" variant="tonal" color="grey">
+              No dates selected
+            </v-chip>
+          </div>
+
+          <div class="d-flex justify-center ado-border rounded pa-2">
             <v-date-picker
               v-model="dates"
               show-adjacent-months
               multiple="range"
-              title="Select Sprint Duration"
-              header="Sprint Dates"
+              hide-header
             />
           </div>
         </v-card-text>
 
         <v-divider />
 
-        <v-card-actions class="pa-4">
+        <v-card-actions class="pa-3">
           <v-spacer />
-          <v-btn variant="text" @click="isActive.value = false">Cancel</v-btn>
+          <v-btn variant="text" size="small" @click="isActive.value = false">Cancel</v-btn>
           <v-btn
             color="primary"
             variant="flat"
+            size="small"
             :disabled="!isValid"
             @click="onSaveSprint()"
           >
@@ -85,6 +106,16 @@ const burndownTypes = ref(['ByTask', 'ByHour'])
 
 const isValid = computed(() => {
   return sprint.value.name && sprint.value.burndownType && dates.value.length > 0
+})
+
+const rangeSummary = computed(() => {
+  if (!dates.value || dates.value.length === 0) return ''
+  const sorted = [...dates.value].sort((a, b) => new Date(a) - new Date(b))
+  const start = new Date(sorted[0])
+  const end = new Date(sorted[sorted.length - 1])
+  const fmt = (d) => `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`
+  const days = Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1
+  return `${fmt(start)} → ${fmt(end)} · ${days} day${days === 1 ? '' : 's'}`
 })
 
 function onOpen() {

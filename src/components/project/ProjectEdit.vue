@@ -12,12 +12,12 @@
 
     <template #default="{ isActive }">
       <v-card class="ado-border" rounded="md">
-        <v-card-title class="d-flex align-center pa-4">
+        <div class="d-flex align-center px-4 py-3 ado-header-bg ado-border-b">
           <v-icon icon="mdi-pencil" class="mr-2" color="primary"></v-icon>
-          {{ $t('project.edit.title') }}
-        </v-card-title>
-
-        <v-divider></v-divider>
+          <span class="text-subtitle-1 font-weight-bold">{{ $t('project.edit.title') }}</span>
+          <v-spacer />
+          <v-btn icon="mdi-close" variant="text" density="compact" size="small" @click="isActive.value = false" />
+        </div>
 
         <v-card-text class="pa-4">
           <v-form ref="form" @submit.prevent="updateProject">
@@ -26,7 +26,10 @@
               :label="$t('project.edit.displayName')"
               variant="outlined"
               density="compact"
-              class="mb-2"
+              hint="Human-friendly name shown in the UI."
+              persistent-hint
+              autofocus
+              class="mb-3"
             ></v-text-field>
 
             <v-textarea
@@ -36,7 +39,7 @@
               density="compact"
               rows="3"
               auto-grow
-              class="mb-2"
+              class="mb-3"
             ></v-textarea>
 
             <v-autocomplete
@@ -102,10 +105,11 @@
 
         <v-divider></v-divider>
 
-        <v-card-actions class="pa-4">
+        <v-card-actions class="pa-3">
           <v-spacer></v-spacer>
           <v-btn
             variant="text"
+            size="small"
             @click="isActive.value = false"
           >
             {{ $t('project.edit.cancel') }}
@@ -114,6 +118,7 @@
           <v-btn
             color="primary"
             variant="flat"
+            size="small"
             :loading="loading"
             @click="updateProject()"
           >

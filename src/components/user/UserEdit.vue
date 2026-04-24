@@ -11,19 +11,25 @@
     </template>
 
     <v-card class="ado-border" rounded="md">
-      <v-card-title class="d-flex align-center pa-4">
+      <div class="d-flex align-center px-4 py-3 ado-header-bg ado-border-b">
         <v-icon icon="mdi-account-edit" class="mr-2" color="primary"></v-icon>
-        {{ $t('user.edit.title') }}
+        <span class="text-subtitle-1 font-weight-bold">{{ $t('user.edit.title') }}</span>
+        <span v-if="user.name" class="text-body-2 text-medium-emphasis ml-2">· {{ user.name }}</span>
         <v-spacer></v-spacer>
-        <v-btn icon="mdi-close" variant="text" density="comfortable" @click="dialog = false"></v-btn>
-      </v-card-title>
+        <v-btn icon="mdi-close" variant="text" density="compact" size="small" @click="dialog = false"></v-btn>
+      </div>
 
-      <v-divider></v-divider>
-
-      <v-tabs v-model="tab" color="primary">
-        <v-tab value="profile">{{ $t('user.profile.title') }}</v-tab>
-        <v-tab value="password">{{ $t('user.password.title') }}</v-tab>
+      <v-tabs v-model="tab" color="primary" density="compact" height="40">
+        <v-tab value="profile">
+          <template #prepend><v-icon size="small">mdi-account-circle-outline</v-icon></template>
+          {{ $t('user.profile.title') }}
+        </v-tab>
+        <v-tab value="password">
+          <template #prepend><v-icon size="small">mdi-lock-outline</v-icon></template>
+          {{ $t('user.password.title') }}
+        </v-tab>
       </v-tabs>
+      <v-divider></v-divider>
 
       <v-card-text class="pa-4">
         <v-window v-model="tab">
@@ -56,7 +62,7 @@ import { ref } from 'vue';
 import UserProfileForm from '@/components/user/UserProfileForm.vue'
 import UserPasswordForm from '@/components/user/UserPasswordForm.vue'
 
-const props = defineProps({
+defineProps({
   user: {
     type: Object,
     required: true

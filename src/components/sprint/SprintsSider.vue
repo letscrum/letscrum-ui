@@ -34,7 +34,7 @@
       <v-divider class="my-1" />
 
       <div v-if="props.sprints && props.sprints.length === 0" class="d-flex flex-column align-center justify-center text-medium-emphasis py-8 px-3 text-center">
-        <v-icon size="40" color="grey-lighten-1" class="mb-2">mdi-run-fast</v-icon>
+        <v-icon size="40" class="text-medium-emphasis mb-2">mdi-run-fast</v-icon>
         <div class="text-body-2 font-weight-medium">No sprints yet</div>
         <div class="text-caption">Create a sprint to start moving work items into iterations.</div>
       </div>

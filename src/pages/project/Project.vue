@@ -79,7 +79,7 @@
           </v-row>
 
           <div v-else class="d-flex flex-column align-center justify-center py-12">
-            <v-icon size="48" color="grey-lighten-1">mdi-run-fast</v-icon>
+            <v-icon size="48" class="text-medium-emphasis">mdi-run-fast</v-icon>
             <h3 class="text-subtitle-1 font-weight-medium mt-3">{{ $t('project.detail.sprints.empty') }}</h3>
             <SprintCreate @after-create="LoadSprints()">
               <v-btn color="primary" prepend-icon="mdi-plus" variant="flat" size="small" class="mt-3">
