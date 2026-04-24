@@ -12,12 +12,12 @@
 
     <template #default="{ isActive }">
       <v-card class="ado-border" rounded="md">
-        <v-card-title class="d-flex align-center pa-4">
+        <div class="d-flex align-center px-4 py-3 ado-header-bg ado-border-b">
           <v-icon icon="mdi-domain-plus" class="mr-2" color="primary" />
-          {{ $t('org.create.title') }}
-        </v-card-title>
-
-        <v-divider></v-divider>
+          <span class="text-subtitle-1 font-weight-bold">{{ $t('org.create.title') }}</span>
+          <v-spacer />
+          <v-btn icon="mdi-close" variant="text" density="compact" size="small" @click="isActive.value = false" />
+        </div>
 
         <v-card-text class="pa-4">
           <v-form ref="form" @submit.prevent="createOrg">
@@ -26,7 +26,10 @@
               :label="$t('org.create.name')"
               variant="outlined"
               density="compact"
-              class="mb-2"
+              hint="Lowercase, no spaces — used in URLs."
+              persistent-hint
+              class="mb-3"
+              autofocus
               required
             ></v-text-field>
 
@@ -35,7 +38,9 @@
               :label="$t('org.create.displayName')"
               variant="outlined"
               density="compact"
-              class="mb-2"
+              hint="Human-friendly name shown in the UI."
+              persistent-hint
+              class="mb-3"
             ></v-text-field>
 
             <v-textarea
@@ -51,10 +56,11 @@
 
         <v-divider></v-divider>
 
-        <v-card-actions class="pa-4">
+        <v-card-actions class="pa-3">
           <v-spacer></v-spacer>
           <v-btn
             variant="text"
+            size="small"
             @click="isActive.value = false"
           >
             {{ $t('org.create.cancel') }}
@@ -63,7 +69,9 @@
           <v-btn
             color="primary"
             variant="flat"
+            size="small"
             :loading="loading"
+            :disabled="!org.name"
             @click="createOrg()"
           >
             {{ $t('org.create.confirm') }}

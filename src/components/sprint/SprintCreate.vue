@@ -12,12 +12,12 @@
 
     <template #default="{ isActive }">
       <v-card class="ado-border" rounded="md">
-        <v-card-title class="d-flex align-center pa-4">
+        <div class="d-flex align-center px-4 py-3 ado-header-bg ado-border-b">
           <v-icon icon="mdi-run-fast" class="mr-2" color="primary" />
-          Create Sprint
-        </v-card-title>
-
-        <v-divider />
+          <span class="text-subtitle-1 font-weight-bold">Create Sprint</span>
+          <v-spacer />
+          <v-btn icon="mdi-close" variant="text" density="compact" size="small" @click="isActive.value = false" />
+        </div>
 
         <v-card-text class="pa-4">
           <v-text-field
@@ -70,12 +70,13 @@
 
         <v-divider />
 
-        <v-card-actions class="pa-4">
+        <v-card-actions class="pa-3">
           <v-spacer />
-          <v-btn variant="text" @click="isActive.value = false">Cancel</v-btn>
+          <v-btn variant="text" size="small" @click="isActive.value = false">Cancel</v-btn>
           <v-btn
             color="primary"
             variant="flat"
+            size="small"
             :disabled="!isValid"
             @click="onCreateSprint()"
           >
@@ -102,6 +103,16 @@ const burndownTypes = ref(['ByTask', 'ByHour'])
 
 const isValid = computed(() => {
   return sprint.value.name && sprint.value.burndownType && dates.value.length > 0
+})
+
+const rangeSummary = computed(() => {
+  if (!dates.value || dates.value.length === 0) return ''
+  const sorted = [...dates.value].sort((a, b) => new Date(a) - new Date(b))
+  const start = new Date(sorted[0])
+  const end = new Date(sorted[sorted.length - 1])
+  const fmt = (d) => `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`
+  const days = Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1
+  return `${fmt(start)} → ${fmt(end)} · ${days} day${days === 1 ? '' : 's'}`
 })
 
 function onOpenCreate() {

@@ -28,17 +28,21 @@
       <v-divider />
       <div class="d-flex align-center px-2 py-1">
         <v-btn
-          variant="text"
+          variant="tonal"
           color="primary"
           size="small"
           density="comfortable"
-          prepend-icon="mdi-arrow-right"
+          append-icon="mdi-arrow-right"
+          @click.stop="onEnter"
         >
           {{ $t('project.detail.sprints.enter') }}
         </v-btn>
         <v-spacer />
         <SprintEdit :sprint-id="sprint.id" @after-edit="$emit('refresh')">
-          <v-btn icon="mdi-pencil-outline" size="small" variant="text" density="comfortable" />
+          <v-btn icon="mdi-pencil-outline" size="small" variant="text" density="comfortable">
+            <v-icon>mdi-pencil-outline</v-icon>
+            <v-tooltip activator="parent" location="bottom">Edit sprint</v-tooltip>
+          </v-btn>
         </SprintEdit>
         <v-btn
           icon="mdi-delete-outline"
@@ -47,7 +51,10 @@
           color="error"
           density="comfortable"
           @click.stop="$emit('delete', sprint.id)"
-        />
+        >
+          <v-icon>mdi-delete-outline</v-icon>
+          <v-tooltip activator="parent" location="bottom">Delete sprint</v-tooltip>
+        </v-btn>
       </div>
     </v-card>
   </v-hover>
