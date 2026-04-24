@@ -35,16 +35,35 @@
             label="Burndown Type"
             variant="outlined"
             density="compact"
+            hint="ByTask counts done tasks; ByHour tracks remaining hours."
+            persistent-hint
             class="mb-3"
           />
 
-          <div class="d-flex justify-center">
+          <div class="d-flex align-center mb-2" style="gap: 8px;">
+            <v-icon size="small" color="primary">mdi-calendar-range</v-icon>
+            <span class="text-subtitle-2 font-weight-medium">Sprint dates</span>
+            <v-spacer />
+            <v-chip
+              v-if="rangeSummary"
+              size="x-small"
+              variant="tonal"
+              color="primary"
+              prepend-icon="mdi-calendar-check"
+            >
+              {{ rangeSummary }}
+            </v-chip>
+            <v-chip v-else size="x-small" variant="tonal" color="grey">
+              No dates selected
+            </v-chip>
+          </div>
+
+          <div class="d-flex justify-center ado-border rounded pa-2">
             <v-date-picker
               v-model="dates"
               show-adjacent-months
               multiple="range"
-              title="Select Sprint Duration"
-              header="Sprint Dates"
+              hide-header
             />
           </div>
         </v-card-text>
