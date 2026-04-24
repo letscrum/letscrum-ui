@@ -10,7 +10,7 @@
       </div>
     </template>
 
-    <v-card rounded="lg" elevation="2">
+    <v-card class="ado-border" rounded="md">
       <v-card-title class="d-flex align-center pa-4">
         <v-icon icon="mdi-account-edit" class="mr-2" color="primary"></v-icon>
         {{ $t('user.edit.title') }}

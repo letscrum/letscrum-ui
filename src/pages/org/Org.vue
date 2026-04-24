@@ -1,91 +1,90 @@
 <template>
   <DefaultLayout>
-    <v-container fluid class="pa-6">
-      <!-- Header Section -->
-      <v-row class="mb-6">
-        <v-col cols="12" md="8">
-          <div class="d-flex align-center mb-2">
-            <v-avatar
-              size="64"
-              rounded="lg"
-              color="primary"
-              class="mr-4 elevation-2"
-            >
-              <span class="text-h4 font-weight-bold text-white">
-                {{ (org.displayName || org.name || '').substring(0, 1).toUpperCase() }}
-              </span>
-            </v-avatar>
-            <div>
-              <h1 class="text-h4 font-weight-bold text-primary">{{ org.displayName || org.name }}</h1>
-              <div class="text-subtitle-1 text-medium-emphasis">
-                {{ org.name }}
-              </div>
-            </div>
-          </div>
-          <p class="text-body-1 mt-4">{{ org.description }}</p>
-        </v-col>
-        <v-col cols="12" md="4" class="text-md-right">
+    <template #subheader>
+      <div class="ado-subheader">
+        <v-avatar
+          size="32"
+          rounded="md"
+          :color="uuidToColor(orgId)"
+          class="mr-3"
+        >
+          <span class="text-caption font-weight-bold text-white">
+            {{ (org.displayName || org.name || '?').substring(0, 1).toUpperCase() }}
+          </span>
+        </v-avatar>
+        <div class="d-flex flex-column" style="line-height: 1.2; min-width: 0;">
+          <span class="ado-subheader__title text-truncate">
+            {{ org.displayName || org.name || 'Organization' }}
+          </span>
+          <span class="text-caption text-medium-emphasis text-truncate">
+            {{ org.name }}
+          </span>
+        </div>
+        <v-spacer />
+        <div class="d-flex align-center" style="gap: 4px;">
+          <v-btn
+            prepend-icon="mdi-folder-multiple-outline"
+            variant="text"
+            size="small"
+            :to="`/orgs/${orgId}/projects`"
+          >
+            Projects
+          </v-btn>
           <OrgEdit :org-id="orgId" @after-update="getOrg">
-            <v-btn
-              variant="outlined"
-              color="primary"
-              prepend-icon="mdi-pencil"
-              class="mr-2"
-            >
+            <v-btn variant="text" size="small" prepend-icon="mdi-pencil-outline">
               {{ $t('org.detail.edit') }}
             </v-btn>
           </OrgEdit>
-
           <OrgDelete :org-id="orgId" @after-delete="onAfterDelete">
-            <v-btn
-              variant="outlined"
-              color="error"
-              prepend-icon="mdi-delete"
-            >
+            <v-btn variant="text" size="small" color="error" prepend-icon="mdi-delete-outline">
               {{ $t('org.detail.delete') }}
             </v-btn>
           </OrgDelete>
-        </v-col>
-      </v-row>
+        </div>
+      </div>
 
-      <v-divider class="mb-6"></v-divider>
+      <div class="ado-subheader" style="padding: 0 8px;">
+        <v-tabs v-model="tab" height="40" color="primary" density="compact">
+          <v-tab value="members">
+            <template #prepend><v-icon size="small">mdi-account-group-outline</v-icon></template>
+            {{ $t('org.detail.tabs.members') }}
+          </v-tab>
+        </v-tabs>
+      </div>
+    </template>
 
-      <!-- Tabs Section -->
-      <v-tabs v-model="tab" color="primary" class="mb-6">
-        <v-tab value="members">{{ $t('org.detail.tabs.members') }}</v-tab>
-      </v-tabs>
+    <div class="pa-4">
+      <p v-if="org.description" class="text-body-2 text-medium-emphasis mb-3">
+        {{ org.description }}
+      </p>
 
       <v-window v-model="tab" style="overflow: visible;">
         <!-- Members Tab -->
         <v-window-item value="members">
-          <v-card rounded="lg" elevation="2">
-            <v-card-title class="d-flex align-center pa-4">
-              <v-icon icon="mdi-account-group" class="mr-2" color="primary"></v-icon>
-              {{ $t('org.detail.tabs.members') }}
-              <v-spacer></v-spacer>
-
+          <v-card flat class="ado-border" rounded="md">
+            <div class="d-flex align-center px-3 py-2 ado-header-bg ado-border-b" style="gap: 8px;">
+              <v-icon size="small" color="primary">mdi-account-group-outline</v-icon>
+              <span class="text-subtitle-2 font-weight-bold">{{ $t('org.detail.tabs.members') }}</span>
+              <v-chip size="x-small" variant="tonal">{{ members.length }}</v-chip>
+              <v-spacer />
               <v-text-field
                 v-model="search"
                 density="compact"
-                :label="$t('user.list.search')"
+                :placeholder="$t('user.list.search')"
                 prepend-inner-icon="mdi-magnify"
                 variant="outlined"
                 hide-details
                 single-line
-                class="mr-4"
-                style="max-width: 300px;"
-              ></v-text-field>
-
-              <v-btn icon="mdi-refresh" variant="text" class="mr-2" @click="fetchMembers"></v-btn>
-
+                clearable
+                style="max-width: 240px;"
+              />
+              <v-btn icon="mdi-refresh" variant="text" size="small" density="comfortable" @click="fetchMembers" />
               <OrgMemberAdd :org-id="orgId" @after-add="fetchMembers">
-                <v-btn color="primary" prepend-icon="mdi-plus" variant="flat">
+                <v-btn color="primary" prepend-icon="mdi-plus" variant="tonal" size="small">
                   {{ $t('org.member.add.title') }}
                 </v-btn>
               </OrgMemberAdd>
-            </v-card-title>
-
-            <v-divider></v-divider>
+            </div>
 
             <v-data-table
               :headers="headers"
@@ -93,47 +92,47 @@
               :loading="loading"
               :search="search"
               hover
+              density="compact"
             >
               <template #[`item.avatar`]="{ item }">
-                <UserAvatar :user-id="item.member.id" :user-name="item.member.name" size="32" />
+                <UserAvatar :user-id="item.member.id" :user-name="item.member.name" size="28" />
               </template>
 
               <template #[`item.role`]="{ item }">
                 <v-chip
-                  :color="item.isAdmin ? 'primary' : 'default'"
-                  size="small"
-                  variant="flat"
+                  :color="item.isAdmin ? 'primary' : undefined"
+                  size="x-small"
+                  variant="tonal"
                 >
                   {{ item.isAdmin ? $t('org.detail.members.admin') : $t('org.detail.members.member') }}
                 </v-chip>
               </template>
 
               <template #[`item.actions`]="{ item }">
-                <div v-if="item.member.name !== org.createdBy" class="d-flex align-center justify-end">
+                <div v-if="item.member.name !== org.createdBy" class="d-flex align-center justify-end" style="gap: 4px;">
                   <SetOrgAdmin :org-id="orgId" :member="item" @after="fetchMembers">
                     <v-btn
                       size="small"
-                      :variant="item.isAdmin ? 'outlined' : 'tonal'"
+                      variant="text"
                       :color="item.isAdmin ? 'warning' : 'primary'"
-                      class="mr-2"
-                      :prepend-icon="item.isAdmin ? 'mdi-shield-off' : 'mdi-shield-account'"
+                      :prepend-icon="item.isAdmin ? 'mdi-shield-off-outline' : 'mdi-shield-account-outline'"
                     >
                       {{ item.isAdmin ? $t('org.detail.members.removeAdmin') : $t('org.detail.members.setAdmin') }}
                     </v-btn>
                   </SetOrgAdmin>
-
                   <OrgMemberDelete :org-id="orgId" :member="item" @after="fetchMembers">
                     <v-btn
                       size="small"
                       variant="text"
                       color="error"
-                      icon="mdi-delete"
+                      icon="mdi-delete-outline"
+                      density="comfortable"
                       :title="$t('org.detail.members.remove')"
-                    ></v-btn>
+                    />
                   </OrgMemberDelete>
                 </div>
                 <div v-else>
-                  <v-chip size="small" color="warning" variant="outlined">
+                  <v-chip size="x-small" color="warning" variant="tonal">
                     {{ $t('org.detail.members.owner') }}
                   </v-chip>
                 </div>
@@ -142,7 +141,7 @@
           </v-card>
         </v-window-item>
       </v-window>
-    </v-container>
+    </div>
   </DefaultLayout>
 </template>
 
@@ -159,6 +158,7 @@ import { getGetOrgMembers, getGetOrg } from '@/apis/org'
 import { useAppStore } from '@/stores/app'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { uuidToColor } from '@/utils/utils'
 
 const store = useAppStore()
 const route = useRoute()
@@ -195,7 +195,6 @@ function getOrg() {
   getGetOrg(orgId).then((res) => {
     if (res.status === 200) {
       org.value = res.data.item
-      // Update store if needed, but relying on local state is safer for this page
       if (store.org.id === orgId) {
         store.setOrg(res.data.item)
       }

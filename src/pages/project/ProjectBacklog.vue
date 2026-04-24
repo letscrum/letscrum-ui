@@ -1,61 +1,52 @@
 <template>
   <DefaultLayout>
-    <v-row no-gutters>
-      <v-col>
-        <h2>Backlog</h2>
-      </v-col>
-    </v-row>
+    <template #subheader>
+      <div class="ado-subheader">
+        <v-icon class="mr-2" color="primary">mdi-format-list-bulleted</v-icon>
+        <span class="ado-subheader__title">Product Backlog</span>
+        <span class="ado-subheader__sub d-none d-sm-inline">All work items across sprints</span>
+        <v-spacer />
+        <div class="d-flex align-center" style="gap: 4px;">
+          <router-view
+            name="menu"
+            @after-create="onCreateWorkItemFromBacklog"
+          />
+        </div>
+      </div>
+    </template>
 
-    <v-tabs>
-      <router-view
-        name="menu"
-        @after-create="onCreateWorkItemFromBacklog"
-      >
+    <div class="pa-3">
+      <router-view v-slot="{ Component }">
+        <component :is="Component" ref="mainContent" :sprints="sprints" />
       </router-view>
-      <router-view
-        name="sprintMenu"
-        @after-set-sprint="onSetSprint"
-        @after-set-member="onSetMember"
-        @after-load-sprints="onLoadSprints"
-        @after-show-side="onShowSide"
-      >
-      </router-view>
-    </v-tabs>
-    <router-view v-slot="{ Component }">
-      <component :is="Component" ref="mainContent" :sprints="sprints" />
-    </router-view>
+    </div>
   </DefaultLayout>
 </template>
 
 <script setup>
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
-import { onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import { getGetSprints } from '@/apis/sprint';
 
+const route = useRoute()
 const sprints = ref([])
-
 const mainContent = ref()
 
 function onCreateWorkItemFromBacklog() {
-  mainContent.value.LoadWorkItems()
+  mainContent.value?.LoadWorkItems()
 }
 
-function onShowSide(type) {
-  mainContent.value.showSide(type)
-}
-
-function onSetSprint() {
-  mainContent.value.LoadWorkItems()
-}
-
-function onSetMember(memberId) {
-  mainContent.value.filterTasks(memberId)
-}
-
-function onLoadSprints(getSprints) {
-  sprints.value = getSprints
+function loadSprints() {
+  getGetSprints(route.params.orgId, route.params.projectId, {
+    page: 1,
+    size: -1
+  }).then(res => {
+    sprints.value = res.data.items || []
+  })
 }
 
 onMounted(() => {
+  loadSprints()
 })
-
 </script>

@@ -21,7 +21,8 @@
         "text": "第一"
       }
     },
-    "toLanguage": "English"
+    "toLanguage": "English",
+    "searchPlaceholder": "搜索工作项、项目、成员..."
   },
   "meta": {
     "description": "基于Vuetify的Vue站点模板！",

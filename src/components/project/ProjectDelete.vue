@@ -11,7 +11,7 @@
     </template>
 
     <template #default="{ isActive }">
-      <v-card rounded="lg" elevation="2">
+      <v-card class="ado-border" rounded="md">
         <v-card-title class="d-flex align-center pa-4 text-error">
           <v-icon icon="mdi-alert" class="mr-2" color="error"></v-icon>
           {{ $t('project.delete.title') }}

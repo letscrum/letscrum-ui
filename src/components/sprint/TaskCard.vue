@@ -281,6 +281,12 @@ function onDelete(taskId) {
   border-radius: 2px;
 }
 .remaining-hover:hover {
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--ado-border-strong);
+}
+.ado-task-card {
+  transition: box-shadow 120ms ease-in-out, border-color 120ms ease-in-out;
+}
+.ado-hover-ring {
+  border-color: rgb(var(--v-theme-primary)) !important;
 }
 </style>

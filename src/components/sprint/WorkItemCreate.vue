@@ -1,45 +1,48 @@
 <template>
   <v-dialog
     v-model="dialog"
-    width="50%"
+    max-width="480"
     persistent
   >
     <template #activator="{ props: activatorProps }">
       <div v-bind="activatorProps" @click="onOpenCreate()">
         <slot></slot>
       </div>
-      <!-- <v-btn outlined class="float-right" tile prepend-icon="mdi-pencil" v-bind="activatorProps" @click="onOpenCreate()">
-        Create
-      </v-btn> -->
     </template>
 
     <template #default="{ isActive }">
-      <v-card
-        prepend-icon="mdi-earth"
-        title="Select Country"
-      >
-        <v-divider class="my-1"></v-divider>
+      <v-card class="ado-border" rounded="md">
+        <v-card-title class="d-flex align-center pa-4">
+          <v-icon color="#009CCC" class="mr-2">mdi-clipboard-text-outline</v-icon>
+          Create Work Item
+        </v-card-title>
 
-        <v-card-text class="px-4">
-          <v-text-field v-model="workItem.title" label="Label"></v-text-field>
+        <v-divider />
+
+        <v-card-text class="pa-4">
+          <v-text-field
+            v-model="workItem.title"
+            label="Title"
+            variant="outlined"
+            density="compact"
+            autofocus
+            @keydown.enter="onCreateWorkItem()"
+          />
         </v-card-text>
 
-        <v-divider></v-divider>
+        <v-divider />
 
-        <v-card-actions>
+        <v-card-actions class="pa-4">
+          <v-spacer />
+          <v-btn variant="text" @click="isActive.value = false">Cancel</v-btn>
           <v-btn
-            text="Close"
-            @click="isActive.value = false"
-          ></v-btn>
-
-          <v-spacer></v-spacer>
-
-          <v-btn
-            color="surface-variant"
-            text="Create"
+            color="primary"
             variant="flat"
+            :disabled="!workItem.title"
             @click="onCreateWorkItem()"
-          ></v-btn>
+          >
+            Create
+          </v-btn>
         </v-card-actions>
       </v-card>
     </template>
@@ -51,7 +54,6 @@ import { postCreateWorkItem } from '@/apis/workitem'
 const emit = defineEmits(['afterCreate'])
 
 import { ref } from 'vue';
-
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -64,9 +66,11 @@ function onOpenCreate() {
 }
 
 function onCreateWorkItem() {
+  if (!workItem.value.title) return
   postCreateWorkItem({
     projectId: route.params.id,
     sprintId: route.params.sprintId,
+    title: workItem.value.title,
   }).then(() => {
     dialog.value = false
     emit('afterCreate')

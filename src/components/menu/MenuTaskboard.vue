@@ -1,19 +1,30 @@
 <template>
-  <v-menu bottom left offset-y>
+  <v-menu location="bottom end" offset="4">
     <template #activator="{ props }">
-      <v-btn v-bind="props" icon="mdi-plus" variant="text" density="comfortable" style="margin-top: 6px;">
+      <v-btn
+        v-bind="props"
+        prepend-icon="mdi-plus"
+        append-icon="mdi-chevron-down"
+        variant="tonal"
+        color="primary"
+        size="small"
+      >
+        New
       </v-btn>
     </template>
-    <v-list density="compact">
-      <v-list-item @click="onCreateWorkItem('Bug')">
-        <v-list-item-title>Bug</v-list-item-title>
-      </v-list-item>
-      <v-list-item @click="onCreateWorkItem('Backlog')">
-        <v-list-item-title>Backlog</v-list-item-title>
-      </v-list-item>
-    </v-list>
+    <v-card class="ado-border" rounded="md">
+      <v-list density="compact" min-width="180">
+        <v-list-item @click="onCreateWorkItem('Backlog')">
+          <template #prepend><v-icon color="#009CCC" size="small">mdi-clipboard-text-outline</v-icon></template>
+          <v-list-item-title>Backlog item</v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="onCreateWorkItem('Bug')">
+          <template #prepend><v-icon color="#CC293D" size="small">mdi-bug</v-icon></template>
+          <v-list-item-title>Bug</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-card>
   </v-menu>
-  <v-spacer></v-spacer>
 </template>
 
 <script setup>

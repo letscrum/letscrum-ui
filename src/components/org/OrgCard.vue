@@ -3,58 +3,42 @@
     <v-card
       v-bind="hoverProps"
       :elevation="isHovering ? 2 : 0"
-      border
-      variant="flat"
-      class="mx-auto transition-swing cursor-pointer h-100"
-      rounded="lg"
+      class="ado-border cursor-pointer h-100 d-flex flex-column"
+      rounded="md"
       @click="onLoadOrg"
     >
-      <v-card-item>
-        <template #prepend>
-          <v-avatar
-            size="48"
-            rounded="lg"
-            :color="uuidToColor(org.id)"
-            variant="tonal"
-          >
-            <span class="text-h6 font-weight-bold">
-              {{ (org.displayName || org.name).substring(0, 1).toUpperCase() }}
-            </span>
-          </v-avatar>
-        </template>
-        <v-card-title class="text-h6 font-weight-bold pt-0">
-          {{ org.displayName || org.name }}
-        </v-card-title>
-        <v-card-subtitle>
-          {{ org.name }}
-        </v-card-subtitle>
-      </v-card-item>
-
-      <v-card-text class="pt-2">
-        <div class="text-body-2 text-medium-emphasis text-truncate-2">
-          {{ org.description || 'No description available' }}
-        </div>
-      </v-card-text>
-
-      <v-divider></v-divider>
-
-      <v-card-actions>
-        <v-chip
-          size="small"
-          color="primary"
-          variant="tonal"
-          prepend-icon="mdi-account-group"
+      <div class="d-flex align-start pa-3" style="gap: 12px;">
+        <v-avatar
+          size="36"
+          rounded="md"
+          :color="uuidToColor(org.id)"
         >
+          <span class="text-subtitle-2 font-weight-bold text-white">
+            {{ (org.displayName || org.name).substring(0, 1).toUpperCase() }}
+          </span>
+        </v-avatar>
+        <div style="min-width: 0;" class="flex-grow-1">
+          <div class="text-body-1 font-weight-bold text-truncate">
+            {{ org.displayName || org.name }}
+          </div>
+          <div class="text-caption text-medium-emphasis text-truncate">{{ org.name }}</div>
+        </div>
+        <v-icon size="small" :color="isHovering ? 'primary' : 'grey-lighten-1'">mdi-arrow-right</v-icon>
+      </div>
+
+      <div class="px-3 pb-2 flex-grow-1">
+        <div class="text-body-2 text-medium-emphasis text-truncate-2" style="min-height: 36px;">
+          {{ org.description || 'No description' }}
+        </div>
+      </div>
+
+      <v-divider />
+      <div class="d-flex align-center px-3 py-2">
+        <v-icon size="x-small" class="mr-1 text-medium-emphasis">mdi-account-group-outline</v-icon>
+        <span class="text-caption text-medium-emphasis">
           {{ org.members ? org.members.length : 0 }} {{ $t('org.card.members') }}
-        </v-chip>
-        <v-spacer></v-spacer>
-        <v-btn
-          variant="text"
-          color="primary"
-          icon="mdi-arrow-right"
-          size="small"
-        ></v-btn>
-      </v-card-actions>
+        </span>
+      </div>
     </v-card>
   </v-hover>
 </template>

@@ -1,19 +1,21 @@
 <template>
-  <v-card class="mx-auto" max-width="450" elevation="4">
-    <v-toolbar density="compact">
-      <v-toolbar-title class="text-h6 font-weight-bold">{{ $t('signIn.formTitle') }}</v-toolbar-title>
-    </v-toolbar>
-    <v-card-text class="pa-6">
+  <v-card class="ado-border" elevation="2" rounded="md">
+    <div class="px-5 pt-5 pb-2">
+      <div class="text-h6 font-weight-bold mb-1">{{ $t('signIn.formTitle') || 'Sign in' }}</div>
+      <div class="text-caption text-medium-emphasis">Use your Letscrum account to continue.</div>
+    </div>
+    <v-card-text class="px-5 pt-2">
       <v-form ref="form" v-model="valid" @submit.prevent="signIn">
         <v-text-field
           v-model="name"
           :rules="nameRules"
-          :label="$t('signIn.emailLabel')"
+          :label="$t('signIn.emailLabel') || 'Username'"
           name="name"
-          prepend-inner-icon="mdi-email"
+          prepend-inner-icon="mdi-account-outline"
           variant="outlined"
           density="comfortable"
-          class="mb-2"
+          class="mb-3"
+          autocomplete="username"
           required
           @keyup.enter="signIn"
         />
@@ -21,24 +23,26 @@
           id="password"
           v-model="password"
           :rules="passwordRules"
-          :label="$t('signIn.passwordLabel')"
+          :label="$t('signIn.passwordLabel') || 'Password'"
           name="password"
-          prepend-inner-icon="mdi-lock"
-          :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+          prepend-inner-icon="mdi-lock-outline"
+          :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
           :type="showPassword ? 'text' : 'password'"
-          @click:append-inner="showPassword = !showPassword"
           variant="outlined"
           density="comfortable"
+          autocomplete="current-password"
           required
+          @click:append-inner="showPassword = !showPassword"
           @keyup.enter="signIn"
         />
       </v-form>
     </v-card-text>
-    <v-card-actions class="pa-6 pt-0">
+    <v-card-actions class="px-5 pb-5 pt-0">
       <v-btn
         block
         size="large"
-        variant="elevated"
+        color="primary"
+        variant="flat"
         :loading="loading"
         :disabled="!valid"
         @click="signIn"

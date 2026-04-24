@@ -1,6 +1,7 @@
 <template>
   <v-dialog
     v-model="dialog"
+    max-width="480"
     persistent
   >
     <template #activator="{ props: activatorProps }">
@@ -10,30 +11,38 @@
     </template>
 
     <template #default="{ isActive }">
-      <v-card>
-        <v-card-text class="px-4">
-          <v-text-field v-model="item.title" label="Label"></v-text-field>
+      <v-card class="ado-border" rounded="md">
+        <v-card-title class="d-flex align-center pa-4">
+          <v-icon color="#F2CB1D" class="mr-2">mdi-checkbox-marked-circle-outline</v-icon>
+          Create Task
+        </v-card-title>
+
+        <v-divider />
+
+        <v-card-text class="pa-4">
+          <v-text-field
+            v-model="item.title"
+            label="Task Title"
+            variant="outlined"
+            density="compact"
+            autofocus
+            @keydown.enter="onSave()"
+          />
         </v-card-text>
 
-        <v-divider></v-divider>
+        <v-divider />
 
-        {{ item }}
-        {{ props.workItemId }}
-
-        <v-card-actions>
+        <v-card-actions class="pa-4">
+          <v-spacer />
+          <v-btn variant="text" @click="isActive.value = false">Cancel</v-btn>
           <v-btn
-            text="Close"
-            @click="isActive.value = false"
-          ></v-btn>
-
-          <v-spacer></v-spacer>
-
-          <v-btn
-            color="surface-variant"
-            text="Save"
+            color="primary"
             variant="flat"
+            :disabled="!item.title"
             @click="onSave()"
-          ></v-btn>
+          >
+            Create
+          </v-btn>
         </v-card-actions>
       </v-card>
     </template>
@@ -41,9 +50,8 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import { postCreateTask } from '@/apis/task';
-
 import { useRoute } from 'vue-router';
 
 const route = useRoute()
@@ -59,8 +67,9 @@ function onOpen() {
 }
 
 function onSave() {
+  if (!item.value.title) return
   let sprintId = "00000000-0000-0000-0000-000000000000"
-  if (route.name == 'ProductBacklog') {
+  if (route.name === 'ProductBacklog') {
     sprintId = "00000000-0000-0000-0000-000000000000"
   } else {
     sprintId = route.params.sprintId
@@ -78,9 +87,4 @@ function onSave() {
     }
   })
 }
-
-onMounted(() => {
-})
-
-
 </script>

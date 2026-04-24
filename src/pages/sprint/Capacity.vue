@@ -1,68 +1,72 @@
 <template>
-  <v-container fluid class="pa-4">
-    <v-card class="elevation-1">
-      <v-card-title class="text-h6 font-weight-bold pa-4">
-        Sprint Capacity Planning
-      </v-card-title>
-      <v-divider></v-divider>
-      <v-card-text class="pa-0">
-        <v-table hover>
-          <thead>
-            <tr class="bg-grey-lighten-4">
-              <th class="text-center" style="width: 80px">Avatar</th>
-              <th class="text-left">Name</th>
-              <th class="text-left" style="width: 250px">Role</th>
-              <th class="text-left" style="width: 150px">Capacity (Hrs)</th>
-              <th class="text-center" style="width: 80px">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="item in currentMembers" :key="item.userId">
-              <td class="text-center py-2">
-                <user-avatar :user-id="item.userId" :user-name="item.userName"></user-avatar>
-              </td>
-              <td class="font-weight-medium">{{ item.userName }}</td>
-              <td class="py-2">
-                <v-select
-                  v-model="item.role"
-                  :items="['Unassigned', 'Development', 'Designer', 'Testing']"
-                  variant="outlined"
-                  density="compact"
-                  hide-details
-                  bg-color="white"
-                ></v-select>
-              </td>
-              <td class="py-2">
-                <v-text-field
-                  v-model.number="item.capacity"
-                  type="number"
-                  variant="outlined"
-                  density="compact"
-                  hide-details
-                  bg-color="white"
-                  min="0"
-                ></v-text-field>
-              </td>
-              <td class="text-center">
-                <SprintMemberDelete :member="item" @after="LoadSprint">
-                  <v-btn icon="mdi-delete" color="error" variant="text" size="small"></v-btn>
-                </SprintMemberDelete>
-              </td>
-            </tr>
-            <tr v-if="currentMembers.length === 0">
-              <td colspan="5" class="text-center py-4 text-grey">
-                No members in this sprint. Add members from the menu.
-              </td>
-            </tr>
-          </tbody>
-        </v-table>
-      </v-card-text>
-    </v-card>
-  </v-container>
+  <v-card flat class="ado-border" rounded="md">
+    <div class="d-flex align-center px-4 py-2 ado-header-bg ado-border-b">
+      <v-icon class="mr-2" color="primary" size="small">mdi-chart-timeline-variant</v-icon>
+      <span class="text-subtitle-2 font-weight-bold">Sprint Capacity Planning</span>
+      <v-spacer />
+      <v-chip v-if="totalCapacity > 0" size="x-small" variant="tonal" color="primary" class="mr-2">
+        Total: {{ totalCapacity }}h
+      </v-chip>
+      <v-chip size="x-small" variant="tonal">
+        {{ currentMembers.length }} member{{ currentMembers.length !== 1 ? 's' : '' }}
+      </v-chip>
+    </div>
+    <v-table density="compact" hover>
+      <thead>
+        <tr>
+          <th style="width: 56px;"></th>
+          <th class="text-left">Name</th>
+          <th class="text-left" style="width: 220px;">Role / Activity</th>
+          <th class="text-left" style="width: 160px;">Capacity (Hrs)</th>
+          <th class="text-center" style="width: 64px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="item in currentMembers" :key="item.userId">
+          <td class="text-center">
+            <user-avatar :user-id="item.userId" :user-name="item.userName" size="28"></user-avatar>
+          </td>
+          <td class="font-weight-medium">{{ item.userName }}</td>
+          <td>
+            <v-select
+              v-model="item.role"
+              :items="['Unassigned', 'Development', 'Designer', 'Testing']"
+              variant="outlined"
+              density="compact"
+              hide-details
+            ></v-select>
+          </td>
+          <td>
+            <v-text-field
+              v-model.number="item.capacity"
+              type="number"
+              variant="outlined"
+              density="compact"
+              hide-details
+              min="0"
+              suffix="h"
+            ></v-text-field>
+          </td>
+          <td class="text-center">
+            <SprintMemberDelete :member="item" @after="LoadSprint">
+              <v-btn icon="mdi-delete-outline" color="error" variant="text" size="small" density="comfortable"></v-btn>
+            </SprintMemberDelete>
+          </td>
+        </tr>
+        <tr v-if="currentMembers.length === 0">
+          <td colspan="5" class="text-center py-8 text-medium-emphasis">
+            <v-icon size="40" class="mb-2">mdi-account-multiple-outline</v-icon>
+            <div class="text-body-2">No members in this sprint.</div>
+            <div class="text-caption">Use "Add Member" or "Add all project members" from the toolbar.</div>
+          </td>
+        </tr>
+      </tbody>
+    </v-table>
+  </v-card>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { getGetSprint, putUpdateSprintMembers } from '@/apis/sprint'
 import { getGetProject } from '@/apis/project';
@@ -75,6 +79,10 @@ const sprint = ref({})
 const members = ref([])
 const currentMembers = ref([])
 const store = useAppStore()
+
+const totalCapacity = computed(() =>
+  currentMembers.value.reduce((sum, m) => sum + (Number(m.capacity) || 0), 0)
+)
 
 function LoadSprint() {
   getGetSprint(route.params.orgId, route.params.projectId, route.params.sprintId).then((res) => {
@@ -103,7 +111,6 @@ function addAllMembersFromProject() {
         }
         members.value.push(sprintMember)
       }
-      console.log(members.value)
 
       putUpdateSprintMembers(route.params.orgId, route.params.projectId, route.params.sprintId, {
         members: members.value
@@ -115,7 +122,6 @@ function addAllMembersFromProject() {
     }
   })
 }
-
 
 defineExpose({
   reloadSprint,
@@ -144,9 +150,6 @@ function saveMembers() {
 }
 
 function undoMembers() {
-  console.log('undo', currentMembers.value)
-  console.log('undo', members.value)
-
   currentMembers.value = members.value
 }
 

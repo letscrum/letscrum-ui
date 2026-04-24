@@ -217,4 +217,10 @@ function updateStatusValue(status) {
 .text-decoration-underline-hover:hover {
   text-decoration: underline;
 }
+.ado-work-item-card {
+  transition: box-shadow 120ms ease-in-out, border-color 120ms ease-in-out;
+}
+.ado-hover-ring {
+  border-color: rgb(var(--v-theme-primary)) !important;
+}
 </style>

@@ -11,9 +11,9 @@
     </template>
 
     <template #default="{ isActive }">
-      <v-card rounded="lg" elevation="2">
+      <v-card class="ado-border" rounded="md">
         <v-card-title class="d-flex align-center pa-4">
-          <v-icon icon="mdi-domain-plus" class="mr-2" color="primary"></v-icon>
+          <v-icon icon="mdi-domain-plus" class="mr-2" color="primary" />
           {{ $t('org.create.title') }}
         </v-card-title>
 

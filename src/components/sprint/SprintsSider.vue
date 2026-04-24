@@ -1,33 +1,40 @@
 <template>
-  <v-card flat tile>
-    <v-card-title>
-      <span class="text-h5">Sprints</span>
-      <v-spacer></v-spacer>
-      <v-btn icon="mdi-close" @click="onCloseSide">
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
-    </v-card-title>
-    <v-card-text>
+  <v-card flat class="ado-border h-100 d-flex flex-column" rounded="0">
+    <div class="d-flex align-center px-3 py-2 ado-header-bg ado-border-b">
+      <v-icon size="small" color="primary" class="mr-2">mdi-run-fast</v-icon>
+      <span class="text-subtitle-2 font-weight-bold">Sprints</span>
+      <v-spacer />
+      <v-btn icon="mdi-close" variant="text" density="compact" size="small" @click="onCloseSide" />
+    </div>
+    <div class="flex-grow-1 overflow-y-auto pa-1">
       <VueDraggable
-          id="00000000-0000-0000-0000-000000000000"
-          v-model="sprintWorkItems"
-          group="workItem"
-          style="width: 100%; height: 100%;"
-          draggable="false"
-          @add="onMoveToSprint"
+        id="00000000-0000-0000-0000-000000000000"
+        v-model="sprintWorkItems"
+        group="workItem"
+        style="width: 100%;"
+        draggable="false"
+        @add="onMoveToSprint"
+      >
+        <v-list-item
+          :to="'/orgs/' + store.org.id + '/projects/' + route.params.projectId + '/backlog'"
+          density="compact"
+          class="ado-sprint-row"
         >
-        <v-list-item :to="'/orgs/' + store.org.id + '/projects/' + route.params.projectId + '/backlog'" @click="console.log('backlog')">
-          <v-list-item-title>Product Backlog</v-list-item-title>
+          <template #prepend>
+            <v-icon size="small">mdi-format-list-bulleted</v-icon>
+          </template>
+          <v-list-item-title class="text-body-2">Product Backlog</v-list-item-title>
         </v-list-item>
       </VueDraggable>
-      <div
-v-for="item in props.sprints"
-          :key="item.id">
+
+      <v-divider class="my-1" />
+
+      <div v-for="item in props.sprints" :key="item.id">
         <VueDraggable
           :id="item.id"
           v-model="sprintWorkItems"
           group="workItem"
-          style="width: 100%; height: 100%;"
+          style="width: 100%;"
           draggable="false"
           :disabled="item.id === route.params.sprintId"
           @add="onMoveToSprint"
@@ -35,29 +42,36 @@ v-for="item in props.sprints"
           <v-list-item
             lines="two"
             :to="'/orgs/' + store.org.id + '/projects/' + item.projectId + '/sprints/' + item.id"
+            :active="item.id === route.params.sprintId"
+            density="compact"
+            class="ado-sprint-row"
             @click="onSetSprint(item.id, item.name, item.startDate, item.endDate, item.burndownType)"
           >
-
-            <v-list-item-title>{{ item.name }}</v-list-item-title>
-            <v-list-item-subtitle>{{ new Date(item.startDate * 1000).toISOString().substring(0, 10) + ' - ' + new Date(item.endDate * 1000).toISOString().substring(0, 10) }}</v-list-item-subtitle>
+            <template #prepend>
+              <v-icon size="small" :color="item.status === 'Current' ? 'primary' : 'grey'">mdi-run-fast</v-icon>
+            </template>
+            <v-list-item-title class="text-body-2 font-weight-medium">{{ item.name }}</v-list-item-title>
+            <v-list-item-subtitle class="text-caption">
+              {{ formatDate(item.startDate) }} – {{ formatDate(item.endDate) }}
+            </v-list-item-subtitle>
             <template #append>
               <v-chip
-                :color="item.status === 'Current' ? 'primary' : ''"
-                :variant="item.status === 'Current' ? 'flat' : 'tonal'"
+                size="x-small"
+                variant="tonal"
+                :color="item.status === 'Current' ? 'primary' : (item.status === 'Future' ? 'success' : undefined)"
               >
                 {{ item.status }}
               </v-chip>
             </template>
-
           </v-list-item>
-
         </VueDraggable>
       </div>
-    </v-card-text>
+    </div>
   </v-card>
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { VueDraggable } from 'vue-draggable-plus'
 
 import { putMoveWorkItem } from '@/apis/workitem';
@@ -70,30 +84,26 @@ const route = useRoute()
 const emit = defineEmits(['after-move', 'close-side'])
 const sprintWorkItems = ref([])
 
+function formatDate(ts) {
+  if (!ts) return '—'
+  const d = new Date(Number(ts) * 1000)
+  return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`
+}
 
 function onMoveToSprint(item) {
-  console.log('onMoveToSprint', item)
-  console.log('to', item.to)
-  console.log('tid', item.to.id)
-  console.log('from', item.from)
-  console.log('itemid', item.item.id)
-  console.log('sprints', props.sprints)
   if ((props.sprints.find((sprint) => sprint.id == item.to.id) && item.item.id != item.to.id && route.params.sprintId != item.to.id)
     || item.to.id == '00000000-0000-0000-0000-000000000000') {
     putMoveWorkItem(store.org.id, route.params.projectId, item.item.id, {
       sprintId: item.to.id,
-    }).then(res => {
-      console.log('move res', res)
+    }).then(() => {
       emit('after-move')
     })
   } else if (item.item.id == item.to.id) {
     return
-  } else{
+  } else {
     emit('after-move')
   }
-
 }
-
 
 function onSetSprint(id, name, startDate, endDate, burndownType) {
   store.setSprint({
@@ -109,5 +119,11 @@ function onSetSprint(id, name, startDate, endDate, burndownType) {
 function onCloseSide() {
   emit('close-side')
 }
-
 </script>
+
+<style scoped>
+.ado-sprint-row {
+  border-radius: 4px;
+  margin: 2px 0;
+}
+</style>

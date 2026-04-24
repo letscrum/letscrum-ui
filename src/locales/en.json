@@ -21,7 +21,8 @@
         "text": "First"
       }
     },
-    "toLanguage": "中文"
+    "toLanguage": "中文",
+    "searchPlaceholder": "Search work items, projects, people..."
   },
   "help": {
     "title": "Help",

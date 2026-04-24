@@ -1,42 +1,39 @@
 <template>
-  <v-menu v-if="route.name == 'SprintTaskboard'" offset-y bottom left>
+  <!-- Sprint switcher -->
+  <v-menu location="bottom end" offset="4" :close-on-content-click="false">
     <template #activator="{ props }">
-      <v-btn v-bind="props" append-icon="mdi-chevron-down" style="margin-top: 6px;" variant="text">
-        {{ member.userName }}
-      </v-btn>
-    </template>
-    <v-list>
-      <v-list-item title="All" @click="setMember('all', 'All')"></v-list-item>
-      <v-list-item title="@Me" @click="setMember(store.user.id, '@Me')"></v-list-item>
-
-      <v-list-item
-        v-for="(item, i) in sprint.members"
-        :key="i"
-        :title="item.userName"
-        @click="setMember(item.userId, item.userName)"
+      <v-btn
+        v-bind="props"
+        prepend-icon="mdi-run-fast"
+        append-icon="mdi-chevron-down"
+        variant="text"
+        size="small"
       >
-      </v-list-item>
-    </v-list>
-  </v-menu>
-  <v-menu offset-y bottom left width="400">
-    <template #activator="{ props }">
-      <v-btn v-bind="props" append-icon="mdi-chevron-down" style="margin-top: 6px;" variant="text">
-        {{ store.sprint.name }}
+        {{ store.sprint.name || 'Select sprint' }}
       </v-btn>
     </template>
-    <v-list>
-      <v-virtual-scroll height="320" item-height="64" :items="sprints">
+    <v-card class="ado-border" rounded="md" min-width="380" max-width="420">
+      <div class="d-flex align-center px-3 py-2 ado-header-bg ado-border-b">
+        <v-icon size="small" color="primary" class="mr-2">mdi-run-fast</v-icon>
+        <span class="text-subtitle-2 font-weight-bold">Sprints</span>
+        <v-spacer />
+        <SprintCreate @after-create="LoadSprints()">
+          <v-btn prepend-icon="mdi-plus" variant="text" size="x-small" color="primary">New</v-btn>
+        </SprintCreate>
+      </div>
+      <v-virtual-scroll height="320" item-height="56" :items="sprints">
         <template #default="{ item }">
           <v-list-item
             :to="'/orgs/' + store.org.id + '/projects/' + item.projectId + '/sprints/' + item.id"
             lines="two"
             :title="item.name"
-            :subtitle="new Date(item.startDate * 1000).toISOString().substring(0, 10) + ' - ' + new Date(item.endDate * 1000).toISOString().substring(0, 10)"
+            :subtitle="new Date(item.startDate * 1000).toISOString().substring(0, 10) + ' – ' + new Date(item.endDate * 1000).toISOString().substring(0, 10)"
             @click="onSetSprint(item.id, item.name, item.startDate, item.endDate, item.burndownType)"
           >
             <template #append>
               <v-chip
-                :color="item.status === 'Current' ? 'primary' : ''"
+                size="x-small"
+                :color="item.status === 'Current' ? 'primary' : (item.status === 'Future' ? 'info' : 'grey')"
                 :variant="item.status === 'Current' ? 'flat' : 'tonal'"
               >
                 {{ item.status }}
@@ -45,52 +42,26 @@
           </v-list-item>
         </template>
       </v-virtual-scroll>
-      <v-divider class="my-2"></v-divider>
-      <SprintCreate @after-create="LoadSprints()">
-        <v-list-item title="New Sprint" @click="console.log()">
-          <template #prepend>
-            <v-icon>mdi-plus</v-icon>
-          </template>
-        </v-list-item>
-      </SprintCreate>
-    </v-list>
+    </v-card>
   </v-menu>
-  <v-menu bottom left offset-y>
-    <template #activator="{ props }">
-      <v-btn v-bind="props" icon="mdi-order-bool-ascending" variant="text" density="comfortable" style="margin-top: 6px;">
-      </v-btn>
-    </template>
-    <v-list density="compact">
-      <v-list-subheader>用户中心</v-list-subheader>
 
-      <v-list-item @click="onShowSide('details')">
-        <v-list-item-title>Work details</v-list-item-title>
-      </v-list-item>
-      <v-list-item @click="onShowSide('sprints')">
-        <v-list-item-title>Sprints</v-list-item-title>
-      </v-list-item>
-    </v-list>
-  </v-menu>
+  <!-- View options (shared) -->
+  <MenuViewOptions @after-show-side="onShowSide" />
 </template>
 
 <script setup>
-const emit = defineEmits(['afterSetSprint', 'afterSetMember', 'afterLoadSprints', 'afterShowSide'])
+const emit = defineEmits(['afterSetSprint', 'afterLoadSprints', 'afterShowSide'])
 
 import { useAppStore } from '@/stores/app'
 import { useRoute } from 'vue-router';
 import { ref, onMounted } from 'vue'
 import { getGetSprints } from '@/apis/sprint';
+import MenuViewOptions from '@/components/menu/MenuViewOptions.vue';
 
 const store = useAppStore()
 const route = useRoute()
 
 const sprints = ref([])
-const sprint = ref({})
-
-const member = ref({
-  userId: 0,
-  userName: 'All'
-})
 
 function onSetSprint(id, name, startDate, endDate, burndownType) {
   store.setSprint({
@@ -103,12 +74,6 @@ function onSetSprint(id, name, startDate, endDate, burndownType) {
   emit('afterSetSprint')
 }
 
-function setMember(userId, userName) {
-  member.value.userId = userId
-  member.value.userName = userName
-  emit('afterSetMember', userId)
-}
-
 onMounted(() => {
   LoadSprints()
 })
@@ -118,12 +83,9 @@ function LoadSprints() {
     page: 1,
     size: 999
   }).then((res) => {
-    console.log(res);
     if (res.status === 200) {
       sprints.value = res.data.items;
       emit('afterLoadSprints', sprints.value)
-      console.log(sprints.value);
-      // get sprints status 'Current' item and set to store
       if (store.sprint.id === 0) {
         const currentSprint = sprints.value.find((item) => item.status === 'Current')
         if (currentSprint) {
@@ -134,13 +96,8 @@ function LoadSprints() {
             endDate: currentSprint.endDate,
             burndownType: currentSprint.burndownType,
           })
-          sprint.value = currentSprint
         }
-      } else {
-        const currentSprint = sprints.value.find((item) => item.id === route.params.sprintId)
-        sprint.value = currentSprint
       }
-      console.log(sprint.value)
     }
   })
 }
@@ -148,5 +105,4 @@ function LoadSprints() {
 function onShowSide(type) {
   emit('afterShowSide', type)
 }
-
 </script>

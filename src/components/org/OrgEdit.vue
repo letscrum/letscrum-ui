@@ -11,7 +11,7 @@
     </template>
 
     <template #default="{ isActive }">
-      <v-card rounded="lg" elevation="2">
+      <v-card class="ado-border" rounded="md">
         <v-progress-linear v-if="loading" indeterminate color="primary" absolute top></v-progress-linear>
         <v-card-title class="d-flex align-center pa-4">
           <v-icon icon="mdi-pencil" class="mr-2" color="primary"></v-icon>

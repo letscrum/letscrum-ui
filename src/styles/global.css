@@ -1,11 +1,269 @@
+/* ===========================================================
+   Letscrum global styles — Azure DevOps inspired
+   =========================================================== */
+
+:root {
+  --ado-font-family: "Segoe UI Variable", "Segoe UI", -apple-system,
+    BlinkMacSystemFont, "Helvetica Neue", "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", Arial, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol";
+  --ado-font-size-base: 13px;
+  --ado-font-size-sm: 12px;
+  --ado-font-size-xs: 11px;
+  --ado-radius: 4px;
+  --ado-radius-lg: 6px;
+  --ado-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --ado-shadow-md: 0 2px 6px rgba(0, 0, 0, 0.1);
+  --ado-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.14);
+  --ado-transition: 120ms ease-in-out;
+}
+
+.v-theme--light {
+  --ado-border: #E1DFDD;
+  --ado-border-strong: #C8C6C4;
+  --ado-row-hover: #F3F2F1;
+  --ado-row-selected: #DEECF9;
+  --ado-row-selected-hover: #C7E0F4;
+  --ado-subtle-bg: #FAFAFA;
+  --ado-header-bg: #F8F8F8;
+  --ado-text-secondary: #605E5C;
+  --ado-text-tertiary: #8A8886;
+}
+
+.v-theme--dark {
+  --ado-border: #3B3A39;
+  --ado-border-strong: #605E5C;
+  --ado-row-hover: #2D2C2B;
+  --ado-row-selected: #1F3B57;
+  --ado-row-selected-hover: #2A4F73;
+  --ado-subtle-bg: #1F1E1D;
+  --ado-header-bg: #1B1A19;
+  --ado-text-secondary: #C8C6C4;
+  --ado-text-tertiary: #A19F9D;
+}
+
+html, body, .v-application {
+  font-family: var(--ado-font-family) !important;
+  font-size: var(--ado-font-size-base);
+  letter-spacing: 0.005em;
+}
+
+.v-application {
+  background-color: rgb(var(--v-theme-background)) !important;
+}
+
+/* ---------- Typography refinements ---------- */
+.v-application .text-h1,
+.v-application .text-h2,
+.v-application .text-h3,
+.v-application .text-h4,
+.v-application .text-h5,
+.v-application .text-h6 {
+  font-family: var(--ado-font-family) !important;
+  letter-spacing: -0.005em;
+  font-weight: 600;
+}
+
+.v-application .text-h4 { font-size: 22px !important; line-height: 28px; }
+.v-application .text-h5 { font-size: 18px !important; line-height: 24px; }
+.v-application .text-h6 { font-size: 15px !important; line-height: 22px; }
+.v-application .text-subtitle-1 { font-size: 14px !important; }
+.v-application .text-subtitle-2 { font-size: 13px !important; }
+.v-application .text-body-1 { font-size: 14px !important; }
+.v-application .text-body-2 { font-size: 13px !important; }
+.v-application .text-caption { font-size: 12px !important; line-height: 16px; }
+
+/* ---------- Buttons ---------- */
+.v-application .v-btn {
+  font-weight: 500;
+  border-radius: var(--ado-radius);
+}
+
+/* ---------- Cards ---------- */
+.v-application .v-card {
+  transition: box-shadow var(--ado-transition);
+}
+
+/* ---------- Tables ---------- */
+.v-application .v-table {
+  font-size: var(--ado-font-size-base);
+}
+.v-application .v-table > .v-table__wrapper > table > thead > tr > th {
+  background-color: var(--ado-header-bg);
+  color: var(--ado-text-secondary);
+  font-weight: 600;
+  font-size: var(--ado-font-size-sm);
+  letter-spacing: 0.02em;
+  text-transform: none;
+  border-bottom: 1px solid var(--ado-border) !important;
+  height: 36px;
+}
+.v-application .v-table > .v-table__wrapper > table > tbody > tr > td {
+  border-bottom: 1px solid var(--ado-border) !important;
+  height: 36px;
+}
+.v-application .v-table > .v-table__wrapper > table > tbody > tr:hover > td {
+  background-color: var(--ado-row-hover) !important;
+}
+
+/* ---------- Lists / Nav ---------- */
+.v-application .v-list-item--active.v-list-item--variant-text {
+  background-color: var(--ado-row-selected);
+  color: rgb(var(--v-theme-primary));
+}
+
+/* ---------- Tabs (ADO style underline) ---------- */
+.v-application .v-tabs--density-default {
+  --v-tabs-height: 40px;
+}
+.v-application .v-tab {
+  min-width: 0;
+  padding: 0 14px;
+  font-weight: 500;
+  font-size: 13px;
+}
+.v-application .v-tab--selected {
+  color: rgb(var(--v-theme-primary));
+}
+.v-application .v-tab__slider {
+  background-color: rgb(var(--v-theme-primary));
+}
+
+/* ---------- Inputs (compact) ---------- */
+.v-application .v-field--variant-outlined .v-field__outline__start,
+.v-application .v-field--variant-outlined .v-field__outline__end,
+.v-application .v-field--variant-outlined .v-field__outline__notch::before,
+.v-application .v-field--variant-outlined .v-field__outline__notch::after {
+  border-color: var(--ado-border-strong);
+}
+
+/* ---------- Scrollbars (subtle) ---------- */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--ado-border-strong);
+  border-radius: 5px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--ado-text-tertiary);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+/* ---------- Helpers ---------- */
+.cursor-pointer { cursor: pointer; }
+.text-decoration-underline-hover:hover { text-decoration: underline; }
+
+.ado-border { border: 1px solid var(--ado-border) !important; }
+.ado-border-b { border-bottom: 1px solid var(--ado-border) !important; }
+.ado-border-t { border-top: 1px solid var(--ado-border) !important; }
+.ado-border-r { border-right: 1px solid var(--ado-border) !important; }
+.ado-border-l { border-left: 1px solid var(--ado-border) !important; }
+
+.ado-surface { background-color: rgb(var(--v-theme-surface)); }
+.ado-subtle  { background-color: var(--ado-subtle-bg); }
+.ado-header-bg { background-color: var(--ado-header-bg); }
+
+.ado-row-hover:hover { background-color: var(--ado-row-hover); }
+.ado-row-selected { background-color: var(--ado-row-selected); }
+
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Existing item-card-text utility kept for back-compat */
 .item-card-text {
   font-size: 12px;
 }
-
 .item-card-text:hover {
   border-color: silver;
 }
 
-body, .v-application {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
+/* SubHeader (page title bar under AppBar) */
+.ado-subheader {
+  display: flex;
+  align-items: center;
+  height: 48px;
+  padding: 0 16px;
+  background-color: rgb(var(--v-theme-surface));
+  border-bottom: 1px solid var(--ado-border);
 }
+.ado-subheader .ado-subheader__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: rgb(var(--v-theme-on-surface));
+}
+.ado-subheader .ado-subheader__sub {
+  font-size: 12px;
+  color: var(--ado-text-secondary);
+  margin-left: 12px;
+}
+
+/* Status dot indicator */
+.ado-status-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+/* ---------- Navigation-drawer rail-mode fixes ----------
+   The `.v-navigation-drawer--rail` class lives on the SAME element as
+   `.ado-drawer`, so scoped `:deep()` (which expects a descendant) cannot
+   match it. We therefore keep these rules in the global sheet.
+
+   Vuetify v3's `v-list-item` is a CSS grid with template
+   `"prepend content append"` and `grid-template-columns: max-content auto
+   max-content`. Hiding content/append still leaves the prepend pinned to
+   the first (left) grid column, so the icon/avatar appears off-center
+   inside the 48-px rail. We therefore override the layout to a centered
+   flexbox in rail mode.
+   -------------------------------------------------------- */
+.ado-drawer.v-navigation-drawer--rail .v-list {
+  padding-inline: 0 !important;
+}
+.ado-drawer.v-navigation-drawer--rail .v-list-item {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding-inline: 0 !important;
+  margin-inline: 2px !important;
+  min-height: 36px;
+  grid-template-columns: none !important;
+  grid-template-areas: none !important;
+}
+.ado-drawer.v-navigation-drawer--rail .v-list-item__prepend {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: auto !important;
+  min-width: 0 !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-area: auto !important;
+}
+.ado-drawer.v-navigation-drawer--rail .v-list-item__prepend > .v-icon,
+.ado-drawer.v-navigation-drawer--rail .v-list-item__prepend > .v-avatar,
+.ado-drawer.v-navigation-drawer--rail .ado-list-avatar {
+  margin: 0 !important;
+}
+/* Hide title / subtitle / append in rail — tooltips on the parent
+   provide the textual context. */
+.ado-drawer.v-navigation-drawer--rail .v-list-item__content,
+.ado-drawer.v-navigation-drawer--rail .v-list-item__append,
+.ado-drawer.v-navigation-drawer--rail .v-list-item__spacer {
+  display: none !important;
+}
+

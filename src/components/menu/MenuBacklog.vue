@@ -1,70 +1,69 @@
 <template>
-  <v-menu location="end" :close-on-content-click="false">
+  <v-menu location="bottom end" :close-on-content-click="false" offset="4">
     <template #activator="{ props }">
-      <v-btn style="margin-top: 6px;" v-bind="props" prepend-icon="mdi-plus" variant="text">
+      <v-btn
+        v-bind="props"
+        prepend-icon="mdi-plus"
+        append-icon="mdi-chevron-down"
+        variant="tonal"
+        color="primary"
+        size="small"
+      >
         New Work Item
       </v-btn>
     </template>
-    <v-card>
-      <select v-model="item.type">
-        <option value="Backlog">Product Backlog</option>
-        <option value="Bug">Bug</option>
-      </select>
-      <input v-model="item.title" type="text"  placeholder="Title" />
-      <v-btn-group
-        color="primary"
-        density="comfortable"
-        divided
-      >
+    <v-card class="ado-border pa-3" rounded="md" min-width="320">
+      <div class="text-overline text-medium-emphasis mb-2">Create work item</div>
+      <v-select
+        v-model="item.type"
+        :items="[
+          { title: 'Backlog item', value: 'Backlog' },
+          { title: 'Bug', value: 'Bug' }
+        ]"
+        item-title="title"
+        item-value="value"
+        density="compact"
+        variant="outlined"
+        hide-details
+        label="Type"
+        class="mb-2"
+      />
+      <v-text-field
+        v-model="item.title"
+        density="compact"
+        variant="outlined"
+        hide-details
+        label="Title"
+        class="mb-3"
+        autofocus
+      />
+      <div class="d-flex">
+        <v-spacer />
+        <v-btn variant="text" size="small" class="mr-2">Cancel</v-btn>
         <v-btn
-          class="pe-2"
-          prepend-icon="mdi-account-multiple-outline"
+          color="primary"
           variant="flat"
+          size="small"
+          :disabled="!item.title"
           @click="onCreateWorkItem()"
         >
-          <div class="text-none font-weight-regular">
-            Add to top
-          </div>
+          Add to top
         </v-btn>
-
-        <v-btn
-          size="small"
-          icon
-        >
-          <v-icon icon="mdi-menu-down"></v-icon>
-
-          <v-menu
-            activator="parent"
-            location="bottom end"
-            transition="fade-transition"
-          >
-            <v-list
-              density="compact"
-              min-width="250"
-              slim
-            >
-              <v-list-item
-                prepend-icon="mdi-link"
-                title="Add to top"
-                link
-              ></v-list-item>
-              <v-list-item
-                prepend-icon="mdi-link"
-                title="Add to bottom"
-                link
-              ></v-list-item>
-            </v-list>
-          </v-menu>
-        </v-btn>
-      </v-btn-group>
+      </div>
     </v-card>
   </v-menu>
+
+  <!-- View Options (only on Product Backlog; Sprint pages have it in their sub-header) -->
+  <MenuViewOptions v-if="route.name === 'ProductBacklog'" />
+
   <v-spacer></v-spacer>
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { postCreateWorkItem } from '@/apis/workitem';
 import { useRoute } from 'vue-router';
+import MenuViewOptions from '@/components/menu/MenuViewOptions.vue';
 
 const route = useRoute()
 const item = ref({
@@ -88,9 +87,9 @@ function onCreateWorkItem() {
       type: item.value.type,
     }).then(res => {
       if (res.status === 200) {
+        item.value.title = ''
         emit('afterCreate')
       }
     })
 }
-
 </script>

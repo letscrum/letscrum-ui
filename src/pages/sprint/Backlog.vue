@@ -1,24 +1,23 @@
 <template>
   <div>
-    <v-row no-gutters>
-      <v-col>
-        <v-data-iterator
-          v-model:expanded="expanded"
-          :items="workItems"
-          hide-default-footer
-          items-per-page="-1"
-        >
+    <v-card flat class="ado-border" rounded="md">
+      <v-data-iterator
+        v-model:expanded="expanded"
+        :items="workItems"
+        hide-default-footer
+        items-per-page="-1"
+      >
           <template #header>
-            <v-row no-gutters class="text-caption font-weight-bold text-grey-darken-1 py-2 border-b bg-white">
+            <v-row no-gutters class="text-caption font-weight-bold ado-header-bg ado-border-b" style="padding: 6px 0;">
               <v-col cols="1" class="d-flex align-center justify-center">
                 <v-btn v-if="expanded.length > 0" variant="text" density="compact" icon="mdi-unfold-less-horizontal" size="small" title="Collapse All" @click="collapseAll()"></v-btn>
                 <v-btn v-else variant="text" density="compact" icon="mdi-unfold-more-horizontal" size="small" title="Expand All" @click="collapseAll()"></v-btn>
-                <span class="ml-1">Order</span>
+                <span class="ml-1 text-medium-emphasis">Order</span>
               </v-col>
-              <v-col cols="6" class="pl-2">Title</v-col>
-              <v-col cols="2">State</v-col>
-              <v-col cols="2">Assigned To</v-col>
-              <v-col cols="1">Rem...</v-col>
+              <v-col cols="6" class="pl-2 d-flex align-center text-medium-emphasis">Title</v-col>
+              <v-col cols="2" class="d-flex align-center text-medium-emphasis">State</v-col>
+              <v-col cols="2" class="d-flex align-center text-medium-emphasis">Assigned To</v-col>
+              <v-col cols="1" class="d-flex align-center text-medium-emphasis">Rem.</v-col>
             </v-row>
           </template>
           <template #default="{ items, isExpanded, toggleExpand }">
@@ -104,8 +103,9 @@
                         <v-row
                           v-bind="taskProps"
                           no-gutters
-                          class="py-1 border-b align-center"
-                          :class="{'bg-grey-lighten-5': !isTaskHovering, 'bg-grey-lighten-4': isTaskHovering}"
+                          class="ado-border-b align-center"
+                          :class="{'ado-subtle-bg': !isTaskHovering, 'ado-row-hover-bg': isTaskHovering}"
+                          style="min-height: 32px;"
                         >
                           <v-col cols="1">
                           </v-col>
@@ -113,7 +113,7 @@
                             <v-icon color="#F2CB1D" size="small" class="mr-2">mdi-checkbox-marked-circle-outline</v-icon>
                             <div class="text-body-2 text-truncate">
                               <ItemDetail item-type="TASK" :item-id="task.id">
-                                {{ task.title }}
+                                <span class="text-decoration-underline-hover">{{ task.title }}</span>
                               </ItemDetail>
                             </div>
                           </v-col>
@@ -137,29 +137,37 @@
           </VueDraggable>
           </template>
         </v-data-iterator>
-      </v-col>
-      <v-divider vertical />
-      <v-col v-if="store.sprint.showDetails" cols="3">
-        <v-card flat tile>
-          <v-card-title>
-            <span class="text-h5">Work Details</span>
-            <v-spacer></v-spacer>
-            <v-btn icon="mdi-close" @click="onCloseSide">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </v-card-title>
-          <v-card-text>
-            123<br/>
-            123<br/>
-            123<br/>
-            123
-          </v-card-text>
         </v-card>
-      </v-col>
-      <v-col v-if="store.sprint.showSprints" cols="3">
-        <SprintsSider :sprints="props.sprints" @after-move="onCreateTask" @close-side="onCloseSide"></SprintsSider>
-      </v-col>
-    </v-row>
+
+    <!-- Right side panels (drawer style, matches Taskboard) -->
+    <v-navigation-drawer
+      v-if="store.sprint.showDetails"
+      location="right"
+      width="400"
+      permanent
+    >
+      <v-card flat class="ado-border h-100 d-flex flex-column" rounded="0">
+        <div class="d-flex align-center px-3 py-2 ado-header-bg ado-border-b">
+          <v-icon size="small" color="primary" class="mr-2">mdi-information-outline</v-icon>
+          <span class="text-subtitle-2 font-weight-bold">Work details</span>
+          <v-spacer />
+          <v-btn icon="mdi-close" variant="text" density="compact" size="small" @click="onCloseSide" />
+        </div>
+        <div class="flex-grow-1 d-flex flex-column align-center justify-center text-medium-emphasis pa-4">
+          <v-icon size="40" class="mb-2">mdi-cursor-default-click-outline</v-icon>
+          <div class="text-body-2 text-center">Select a work item from the list to see its details here.</div>
+        </div>
+      </v-card>
+    </v-navigation-drawer>
+
+    <v-navigation-drawer
+      v-if="store.sprint.showSprints"
+      location="right"
+      width="320"
+      permanent
+    >
+      <SprintsSider :sprints="props.sprints" @after-move="onCreateTask" @close-side="onCloseSide" />
+    </v-navigation-drawer>
   </div>
 </template>
 <script setup>
@@ -275,3 +283,13 @@ function onCloseSide() {
 }
 
 </script>
+
+<style scoped>
+.ado-row-hover-bg {
+  background-color: var(--ado-row-hover);
+}
+.ado-subtle-bg {
+  background-color: var(--ado-subtle-bg);
+}
+</style>
+

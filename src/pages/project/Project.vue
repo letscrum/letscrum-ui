@@ -1,77 +1,74 @@
 <template>
   <DefaultLayout>
-    <v-container fluid class="pa-6">
-      <!-- Header Section -->
-      <v-row class="mb-6">
-        <v-col cols="12" md="8">
-          <div class="d-flex align-center mb-2">
-            <v-avatar
-              size="64"
-              rounded="lg"
-              :color="uuidToColor(project.id || '')"
-              class="mr-4 elevation-2"
-            >
-              <span class="text-h4 font-weight-bold text-white">
-                {{ (project.displayName || project.name || '').substring(0, 1).toUpperCase() }}
-              </span>
-            </v-avatar>
-            <div>
-              <h1 class="text-h4 font-weight-bold text-primary">{{ project.displayName || project.name }}</h1>
-              <div class="text-subtitle-1 text-medium-emphasis">
-                {{ project.name }}
-              </div>
-            </div>
-          </div>
-          <p class="text-body-1 mt-4">{{ project.description }}</p>
-        </v-col>
-        <v-col cols="12" md="4" class="text-md-right">
+    <template #subheader>
+      <div class="ado-subheader">
+        <v-avatar
+          size="32"
+          rounded="md"
+          :color="uuidToColor(project.id || '')"
+          class="mr-3"
+        >
+          <span class="text-caption font-weight-bold text-white">
+            {{ (project.displayName || project.name || '?').substring(0, 1).toUpperCase() }}
+          </span>
+        </v-avatar>
+        <div class="d-flex flex-column" style="line-height: 1.2; min-width: 0;">
+          <span class="ado-subheader__title text-truncate">
+            {{ project.displayName || project.name || 'Project' }}
+          </span>
+          <span class="text-caption text-medium-emphasis text-truncate">
+            {{ project.name }}
+          </span>
+        </div>
+        <v-spacer />
+        <div class="d-flex align-center" style="gap: 4px;">
           <ProjectEdit @after-update="onGetProject">
-            <v-btn
-              variant="outlined"
-              color="primary"
-              prepend-icon="mdi-pencil"
-              class="mr-2"
-            >
+            <v-btn variant="text" size="small" prepend-icon="mdi-pencil-outline">
               {{ $t('project.detail.edit') }}
             </v-btn>
           </ProjectEdit>
-
           <ProjectDelete>
-            <v-btn
-              variant="outlined"
-              color="error"
-              prepend-icon="mdi-delete"
-            >
+            <v-btn variant="text" size="small" color="error" prepend-icon="mdi-delete-outline">
               {{ $t('project.detail.delete') }}
             </v-btn>
           </ProjectDelete>
-        </v-col>
-      </v-row>
+        </div>
+      </div>
 
-      <v-divider class="mb-6"></v-divider>
+      <div class="ado-subheader" style="padding: 0 8px;">
+        <v-tabs v-model="tab" height="40" color="primary" density="compact">
+          <v-tab value="sprints">
+            <template #prepend><v-icon size="small">mdi-run-fast</v-icon></template>
+            {{ $t('project.detail.tabs.sprints') }}
+          </v-tab>
+          <v-tab value="members">
+            <template #prepend><v-icon size="small">mdi-account-group-outline</v-icon></template>
+            {{ $t('project.detail.tabs.members') }}
+          </v-tab>
+        </v-tabs>
+      </div>
+    </template>
 
-      <!-- Tabs Section -->
-      <v-tabs v-model="tab" color="primary" class="mb-6">
-        <v-tab value="sprints">{{ $t('project.detail.tabs.sprints') }}</v-tab>
-        <v-tab value="members">{{ $t('project.detail.tabs.members') }}</v-tab>
-      </v-tabs>
+    <div class="pa-4">
+      <p v-if="project.description" class="text-body-2 text-medium-emphasis mb-3">
+        {{ project.description }}
+      </p>
 
       <v-window v-model="tab" style="overflow: visible;">
         <!-- Sprints Tab -->
         <v-window-item value="sprints" style="overflow: visible;">
-          <v-row class="mb-4">
-            <v-spacer></v-spacer>
-            <v-col cols="auto">
-              <SprintCreate @after-create="LoadSprints()">
-                <v-btn color="primary" prepend-icon="mdi-plus">
-                  {{ $t('project.detail.sprints.create') }}
-                </v-btn>
-              </SprintCreate>
-            </v-col>
-          </v-row>
+          <div class="d-flex align-center mb-3" style="gap: 8px;">
+            <span class="text-overline text-medium-emphasis">{{ sprints.length }} sprint{{ sprints.length === 1 ? '' : 's' }}</span>
+            <v-spacer />
+            <SprintCreate @after-create="LoadSprints()">
+              <v-btn color="primary" prepend-icon="mdi-plus" variant="tonal" size="small">
+                {{ $t('project.detail.sprints.create') }}
+              </v-btn>
+            </SprintCreate>
+          </div>
 
-          <v-row v-if="sprints.length > 0">
-            <v-col v-for="(sprint, i) in sprints" :key="i" cols="12" sm="6" md="4">
+          <v-row v-if="sprints.length > 0" dense>
+            <v-col v-for="(sprint, i) in sprints" :key="i" cols="12" sm="6" md="4" lg="3">
               <SprintCard
                 :sprint="sprint"
                 @enter="(s) => onSetSprint(s.id, s.name, s.startDate, s.endDate, s.burndownType)"
@@ -81,80 +78,80 @@
             </v-col>
           </v-row>
 
-          <v-row v-else justify="center" class="mt-8">
-            <v-col cols="12" class="text-center">
-              <v-icon size="64" color="grey-lighten-1">mdi-run</v-icon>
-              <h3 class="text-h6 text-grey-darken-1 mt-4">{{ $t('project.detail.sprints.empty') }}</h3>
-            </v-col>
-          </v-row>
+          <div v-else class="d-flex flex-column align-center justify-center py-12">
+            <v-icon size="48" color="grey-lighten-1">mdi-run-fast</v-icon>
+            <h3 class="text-subtitle-1 font-weight-medium mt-3">{{ $t('project.detail.sprints.empty') }}</h3>
+            <SprintCreate @after-create="LoadSprints()">
+              <v-btn color="primary" prepend-icon="mdi-plus" variant="flat" size="small" class="mt-3">
+                {{ $t('project.detail.sprints.create') }}
+              </v-btn>
+            </SprintCreate>
+          </div>
         </v-window-item>
 
         <!-- Members Tab -->
         <v-window-item value="members">
-          <v-card rounded="lg" elevation="2">
-            <v-card-title class="d-flex align-center pa-4">
-              <v-icon icon="mdi-account-group" class="mr-2" color="primary"></v-icon>
-              {{ $t('project.detail.tabs.members') }}
-              <v-spacer></v-spacer>
-
+          <v-card flat class="ado-border" rounded="md">
+            <div class="d-flex align-center px-3 py-2 ado-header-bg ado-border-b" style="gap: 8px;">
+              <v-icon size="small" color="primary">mdi-account-group-outline</v-icon>
+              <span class="text-subtitle-2 font-weight-bold">{{ $t('project.detail.tabs.members') }}</span>
+              <v-chip size="x-small" variant="tonal">{{ allMembers.length }}</v-chip>
+              <v-spacer />
               <v-text-field
                 v-model="search"
                 density="compact"
-                :label="$t('user.list.search')"
+                :placeholder="$t('user.list.search')"
                 prepend-inner-icon="mdi-magnify"
                 variant="outlined"
                 hide-details
                 single-line
-                class="mr-4"
-                style="max-width: 300px;"
-              ></v-text-field>
-
-              <v-btn icon="mdi-refresh" variant="text" @click="onGetProject"></v-btn>
-            </v-card-title>
-
-            <v-divider></v-divider>
+                clearable
+                style="max-width: 240px;"
+              />
+              <v-btn icon="mdi-refresh" variant="text" size="small" density="comfortable" @click="onGetProject" />
+            </div>
 
             <v-data-table
               :headers="headers"
               :items="allMembers"
               :search="search"
               hover
+              density="compact"
             >
               <template #[`item.avatar`]="{ item }">
-                <UserAvatar :user-id="item.userId" :user-name="item.userName" size="32" />
+                <UserAvatar :user-id="item.userId" :user-name="item.userName" size="28" />
               </template>
 
               <template #[`item.role`]="{ item }">
                 <v-chip
-                  :color="item.userName == project.createdUser?.name ? 'warning' : (item.isAdmin ? 'primary' : 'default')"
-                  size="small"
-                  variant="flat"
+                  :color="item.userName == project.createdUser?.name ? 'warning' : (item.isAdmin ? 'primary' : undefined)"
+                  size="x-small"
+                  variant="tonal"
                 >
                   {{ item.userName == project.createdUser?.name ? $t('project.detail.members.owner') : (item.isAdmin ? $t('project.detail.members.admin') : $t('project.detail.members.member')) }}
                 </v-chip>
               </template>
 
               <template #[`item.actions`]="{ item }">
-                <div v-if="item.userName != project.createdUser?.name" class="d-flex align-center justify-end">
+                <div v-if="item.userName != project.createdUser?.name" class="d-flex align-center justify-end" style="gap: 4px;">
                   <SetProjectAdmin :member="item" @after="onGetProject">
                     <v-btn
                       size="small"
-                      :variant="item.isAdmin ? 'outlined' : 'tonal'"
+                      variant="text"
                       :color="item.isAdmin ? 'warning' : 'primary'"
-                      class="mr-2"
-                      :prepend-icon="item.isAdmin ? 'mdi-shield-off' : 'mdi-shield-account'"
+                      :prepend-icon="item.isAdmin ? 'mdi-shield-off-outline' : 'mdi-shield-account-outline'"
                     >
                       {{ item.isAdmin ? $t('project.detail.members.removeAdmin') : $t('project.detail.members.setAdmin') }}
                     </v-btn>
                   </SetProjectAdmin>
-
                   <ProjectMemberDelete :member="item" @after="onGetProject">
                     <v-btn
                       size="small"
                       variant="text"
                       color="error"
-                      icon="mdi-delete"
-                    ></v-btn>
+                      icon="mdi-delete-outline"
+                      density="comfortable"
+                    />
                   </ProjectMemberDelete>
                 </div>
               </template>
@@ -162,7 +159,7 @@
           </v-card>
         </v-window-item>
       </v-window>
-    </v-container>
+    </div>
   </DefaultLayout>
 </template>
 
@@ -203,7 +200,6 @@ const headers = computed(() => [
 
 function onGetProject() {
   getGetProject(store.org.id, route.params.projectId).then((res) => {
-    console.log(res)
     if (res.status === 200) {
       store.setProject(res.data.item)
       project.value = res.data.item
@@ -216,8 +212,6 @@ onMounted(() => {
   onGetProject()
   LoadSprints()
 })
-
-
 
 const date = ref([null, null])
 const startDate = ref('')
@@ -241,10 +235,8 @@ function LoadSprints() {
     page: 1,
     size: 999
   }).then((res) => {
-    console.log(res);
     if (res.status === 200) {
       sprints.value = res.data.items;
-      // get sprints status 'Current' item and set to store
       if (store.sprint.id === 0) {
         const currentSprint = sprints.value.find((item) => item.status === 'Current')
         if (currentSprint) {
@@ -274,10 +266,8 @@ function onSetSprint(id, name, startDate, endDate, burndownType) {
 
 function onDeleteSprint(projectId, id) {
   deleteDeleteSprint(store.org.id, projectId, id).then((res) => {
-    console.log(res)
     if (res.status === 200) {
       if (res.data.success) {
-        // if the deleted sprint is the current sprint, clean the store
         if (store.sprint.id === id) {
           store.clearSprint()
         }

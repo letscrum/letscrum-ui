@@ -1,70 +1,73 @@
 <template>
-  <v-menu bottom left offset-y :close-on-content-click="false">
+  <v-menu location="bottom end" :close-on-content-click="false" offset="4">
     <template #activator="{ props }">
-      <v-btn style="margin-top: 6px;" v-bind="props" prepend-icon="mdi-plus" variant="text">
+      <v-btn
+        v-bind="props"
+        prepend-icon="mdi-account-plus-outline"
+        variant="tonal"
+        color="primary"
+        size="small"
+      >
         Add Member
       </v-btn>
     </template>
-    <v-list density="compact">
+    <v-card class="ado-border pa-3" rounded="md" min-width="320">
+      <div class="text-overline text-medium-emphasis mb-2">Add sprint member</div>
       <v-autocomplete
         v-model:search-input="search"
         v-model="addMembers"
-        chips
         :items="users"
-        label="Autocomplete"
-        item-props
+        item-title="userName"
+        item-value="userId"
+        density="compact"
+        variant="outlined"
+        hide-details
+        label="Search project member"
         no-filter
         @update:search="searchUsers"
       >
-        <template #chip="{ props, item }">
-          <v-chip
-          closable
-          v-bind="props"
-            :text="item.raw.userName"
-          ></v-chip>
-
-        </template>
-        <template #item="{ props, item }">
-          <v-list-item
-            v-bind="props"
-            :title="item.raw.userName"
-          ></v-list-item>
+        <template #item="{ props: itemProps, item }">
+          <v-list-item v-bind="itemProps" :title="item.raw.userName" />
         </template>
       </v-autocomplete>
-
-      <v-btn @click="onAddSprintMember">
-        Add
-      </v-btn>
-    </v-list>
+      <div class="d-flex mt-3">
+        <v-spacer />
+        <v-btn color="primary" variant="flat" size="small" @click="onAddSprintMember">
+          Add
+        </v-btn>
+      </div>
+    </v-card>
   </v-menu>
 
-  <v-btn style="margin-top: 6px;" prepend-icon="mdi-content-save" variant="text" @click="onSave">
+  <v-btn prepend-icon="mdi-content-save-outline" variant="text" size="small" @click="onSave">
     Save
   </v-btn>
-  <v-btn style="margin-top: 6px;" prepend-icon="mdi-undo-variant" variant="text" @click="onUndo">
+  <v-btn prepend-icon="mdi-undo-variant" variant="text" size="small" @click="onUndo">
     Undo
   </v-btn>
-  <v-menu bottom left offset-y>
+  <v-menu location="bottom end" offset="4">
     <template #activator="{ props }">
-      <v-btn style="margin-top: 6px;" v-bind="props" density="comfortable" icon="mdi-dots-horizontal" variant="text">
-      </v-btn>
+      <v-btn v-bind="props" icon="mdi-dots-horizontal" variant="text" size="small" density="comfortable" />
     </template>
-    <v-list density="compact">
-      <v-list-item @click="onAddFromProject">
-        <v-list-item-title>Add all project members</v-list-item-title>
-      </v-list-item>
-      <v-list-item>
-        <v-list-item-title>Copy from last sprint</v-list-item-title>
-      </v-list-item>
-    </v-list>
+    <v-card class="ado-border" rounded="md">
+      <v-list density="compact" min-width="220">
+        <v-list-item @click="onAddFromProject">
+          <template #prepend><v-icon size="small">mdi-account-multiple-plus-outline</v-icon></template>
+          <v-list-item-title>Add all project members</v-list-item-title>
+        </v-list-item>
+        <v-list-item disabled>
+          <template #prepend><v-icon size="small">mdi-content-copy</v-icon></template>
+          <v-list-item-title>Copy from last sprint</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-card>
   </v-menu>
-  <v-spacer></v-spacer>
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
 import { getGetProject } from '@/apis/project';
 import { postAddSprintMember } from '@/apis/sprint';
-import { onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 const emit = defineEmits(['afterAdd', 'afterAddFromProject', 'afterSave', 'afterUndo'])
 
@@ -72,37 +75,33 @@ const route = useRoute()
 
 const users = ref([])
 const search = ref('')
-const addMembers = ref([])
+const addMembers = ref(null)
+const allUsers = ref([])
 
-const searchUsers = val => {
-  if (!val) {
-    return false
-  }
-  // get users from users.value
-  console.log('users', users.value)
-  users.value = users.value.filter((item) => {
-    return item.userName.includes(val)
-  })
-  console.log('users after', users.value)
+function customFilter(itemTitle, queryText) {
+  if (!queryText) return true
+  return (itemTitle || '').toLowerCase().includes(queryText.toLowerCase())
 }
 
 function onAddSprintMember() {
-  console.log('add', addMembers.value)
+  if (!addMembers.value) return
+  const target = allUsers.value.find(u => u.userId === addMembers.value)
+  if (!target) return
   postAddSprintMember(
     route.params.orgId,
     route.params.projectId,
     route.params.sprintId,
     {
       member: {
-        userId: addMembers.value.userId,
-        userName: addMembers.value.userName,
+        userId: target.userId,
+        userName: target.userName,
         capacity: 0,
         role: 'Unassigned',
       }
     },
   ).then(res => {
     if (res.status === 200) {
-      console.log('added')
+      addMembers.value = null
       emit('afterAdd')
     }
   })
@@ -126,9 +125,7 @@ onMounted(() => {
     route.params.projectId,
   ).then(res => {
     if (res.status === 200) {
-      users.value = res.data.item.members
+      allUsers.value = res.data.item.members
     }
   })
-})
-
-</script>
+})</script>

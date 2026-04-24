@@ -198,19 +198,19 @@
             <v-row
               v-else
               no-gutters
-              class="py-1 align-center bg-grey-lighten-4 my-1 cursor-pointer"
+              class="py-1 align-center ado-subtle ado-border my-1 cursor-pointer rounded-sm"
               @click="() => toggleExpand(item)"
             >
-              <v-col cols="12" class="d-flex align-center px-1 py-1">
+              <v-col cols="12" class="d-flex align-center px-2 py-1">
                 <v-icon size="x-small" class="mr-1">mdi-chevron-right</v-icon>
                 <div class="d-flex align-center">
-                  <v-icon :color="item.raw.type === 'Bug' ? 'red' : 'blue'" size="small" class="mr-2">
-                    {{ item.raw.type === 'Bug' ? 'mdi-bug' : 'mdi-clipboard-text' }}
+                  <v-icon :color="item.raw.type === 'Bug' ? '#CC293D' : '#009CCC'" size="small" class="mr-2">
+                    {{ item.raw.type === 'Bug' ? 'mdi-bug' : 'mdi-clipboard-text-outline' }}
                   </v-icon>
                   <span class="text-body-2 font-weight-medium text-truncate">{{ item.raw.title }}</span>
                 </div>
                 <v-spacer></v-spacer>
-                <v-chip size="x-small" class="mr-2">{{ item.raw.status }}</v-chip>
+                <v-chip size="x-small" variant="tonal" class="mr-2">{{ item.raw.status }}</v-chip>
               </v-col>
             </v-row>
           </v-expand-transition>
@@ -225,23 +225,24 @@
       width="400"
       permanent
     >
-      <v-card flat>
-        <v-card-title class="d-flex align-center">
-          <span class="text-h6">Work Details</span>
-          <v-spacer></v-spacer>
-          <v-btn icon="mdi-close" variant="text" @click="onCloseSide"></v-btn>
-        </v-card-title>
-        <v-card-text>
-          <!-- Details content placeholder -->
-          <div class="text-body-2">Details content here...</div>
-        </v-card-text>
+      <v-card flat class="ado-border h-100 d-flex flex-column" rounded="0">
+        <div class="d-flex align-center px-3 py-2 ado-header-bg ado-border-b">
+          <v-icon size="small" color="primary" class="mr-2">mdi-information-outline</v-icon>
+          <span class="text-subtitle-2 font-weight-bold">Work details</span>
+          <v-spacer />
+          <v-btn icon="mdi-close" variant="text" density="compact" size="small" @click="onCloseSide" />
+        </div>
+        <div class="flex-grow-1 d-flex flex-column align-center justify-center text-medium-emphasis pa-4">
+          <v-icon size="40" class="mb-2">mdi-cursor-default-click-outline</v-icon>
+          <div class="text-body-2 text-center">Select a card to see its details here.</div>
+        </div>
       </v-card>
     </v-navigation-drawer>
 
     <v-navigation-drawer
       v-if="store.sprint.showSprints"
       location="right"
-      width="300"
+      width="320"
       permanent
     >
       <SprintsSider
@@ -527,3 +528,13 @@ watch(() => route.params.sprintId, (newId, oldId) => {
   }
 })
 </script>
+
+<style scoped>
+.ado-subtle {
+  background-color: var(--ado-subtle-bg);
+}
+.ado-column-header {
+  border-bottom: 2px solid var(--ado-border);
+}
+</style>
+
