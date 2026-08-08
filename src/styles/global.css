@@ -217,6 +217,71 @@ body,
   font-size: 13px;
 }
 
+/* ---------- Dropdowns / menus ---------- */
+.ado-dropdown-overlay {
+  overflow: hidden;
+  color: rgb(var(--v-theme-on-surface));
+  background-color: rgb(var(--v-theme-surface));
+  border: 1px solid var(--ado-border) !important;
+  border-radius: var(--ado-radius) !important;
+  box-shadow: var(--ado-shadow-lg) !important;
+}
+.ado-dropdown-overlay > .v-card,
+.ado-dropdown-overlay > .v-list {
+  overflow: hidden;
+  background-color: rgb(var(--v-theme-surface));
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.ado-dropdown-overlay .v-list {
+  padding: 4px !important;
+  background-color: rgb(var(--v-theme-surface));
+}
+.ado-dropdown-overlay .v-list-subheader {
+  min-height: 32px;
+  padding-inline: 8px;
+  color: var(--ado-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.ado-dropdown-overlay .v-list-item {
+  min-height: 36px;
+  margin: 0;
+  padding-inline: 8px !important;
+  border-left: 2px solid transparent;
+  border-radius: 2px !important;
+}
+.ado-dropdown-overlay .v-list-item:hover {
+  background-color: var(--ado-row-hover);
+}
+.ado-dropdown-overlay .v-list-item--active,
+.ado-dropdown-overlay .v-list-item--selected {
+  color: rgb(var(--v-theme-on-surface));
+  background-color: var(--ado-row-selected);
+  border-left-color: rgb(var(--v-theme-primary));
+}
+.ado-dropdown-overlay .v-list-item-title {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 18px;
+}
+.ado-dropdown-overlay .v-list-item-subtitle {
+  margin-top: 2px;
+  color: var(--ado-text-secondary);
+  font-size: 12px;
+  line-height: 16px;
+  opacity: 1;
+}
+.ado-dropdown-overlay .v-list-item__spacer {
+  width: 10px;
+}
+.ado-dropdown-overlay .v-divider {
+  margin-block: 4px !important;
+  opacity: 1;
+}
+
 /* ---------- Tabs (ADO style underline) ---------- */
 .v-application .v-tabs--density-default {
   --v-tabs-height: 40px;

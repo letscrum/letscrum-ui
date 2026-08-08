@@ -112,17 +112,24 @@ export default createVuetify({
       variant: 'outlined',
       density: 'compact',
       hideDetails: 'auto',
-      menuProps: { offset: 4 }
+      menuProps: { offset: 6, contentClass: 'ado-dropdown-overlay' }
     },
     VAutocomplete: {
       variant: 'outlined',
       density: 'compact',
-      hideDetails: 'auto'
+      hideDetails: 'auto',
+      menuProps: { offset: 6, contentClass: 'ado-dropdown-overlay' }
     },
     VCombobox: {
       variant: 'outlined',
       density: 'compact',
-      hideDetails: 'auto'
+      hideDetails: 'auto',
+      menuProps: { offset: 6, contentClass: 'ado-dropdown-overlay' }
+    },
+    VMenu: {
+      offset: 6,
+      contentClass: 'ado-dropdown-overlay',
+      transition: 'fade-transition'
     },
     VTable: {
       density: 'compact',
