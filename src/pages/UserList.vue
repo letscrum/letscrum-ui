@@ -46,7 +46,7 @@
           </template>
 
           <template #no-data>
-            <div class="ado-table-state">
+            <div v-if="ready" class="ado-table-state">
               <v-icon size="36" class="text-medium-emphasis">mdi-account-search-outline</v-icon>
               <span>{{ search ? 'No users match your search.' : 'No users available.' }}</span>
             </div>
@@ -105,13 +105,14 @@ import { ref, onMounted, computed } from 'vue'
 import { getGetUsers } from '@/apis/user'
 import { useAppStore } from '@/stores/app'
 import { useI18n } from 'vue-i18n'
+import { useDelayedLoading } from '@/composables/useDelayedLoading'
 
 const store = useAppStore()
 const { t } = useI18n()
 
 const search = ref('')
 const users = ref([])
-const loading = ref(false)
+const { loading, ready, run: runLoading } = useDelayedLoading()
 
 const headers = computed(() => [
   { title: '', key: 'avatar', sortable: false, width: '50px' },
@@ -122,19 +123,14 @@ const headers = computed(() => [
 ])
 
 function fetchUsers() {
-  loading.value = true
-  getGetUsers({
-    page: 1,
-    size: 999,
-    keyword: search.value,
-  }).then((res) => {
-    if (res.status === 200) {
-      users.value = res.data.items
-    }
-    loading.value = false
-  }).catch(() => {
-    loading.value = false
-  })
+  void runLoading(async () => {
+    const res = await getGetUsers({
+      page: 1,
+      size: 999,
+      keyword: search.value,
+    })
+    if (res.status === 200) users.value = res.data.items
+  }).catch(() => {})
 }
 
 onMounted(() => {

@@ -42,6 +42,8 @@
         </v-col>
       </v-row>
 
+      <div v-else-if="!ready" class="ado-loading-reserved" aria-hidden="true"></div>
+
       <template v-else-if="filteredOrgs.length > 0">
         <!-- Grid view -->
         <v-row v-if="viewMode === 'grid'" class="ado-entity-grid">
@@ -119,9 +121,10 @@ import { useRouter } from 'vue-router';
 import { useAppStore } from '@/stores/app'
 import { uuidToColor } from '@/utils/utils'
 import { getGetOrg, getGetOrgs } from '@/apis/org';
+import { useDelayedLoading } from '@/composables/useDelayedLoading'
 
 const orgs = ref([])
-const loading = ref(true)
+const { loading, ready, run: runLoading } = useDelayedLoading()
 const search = ref('')
 const viewMode = ref('grid')
 const router = useRouter()
@@ -142,18 +145,13 @@ onMounted(() => {
 })
 
 function LoadOrgs() {
-  loading.value = true
-  getGetOrgs({
-    page: 1,
-    size: 50
-  }).then((res) => {
-    if (res.status === 200) {
-      orgs.value = res.data.items;
-    }
-    loading.value = false
-  }).catch(() => {
-    loading.value = false
-  });
+  void runLoading(async () => {
+    const res = await getGetOrgs({
+      page: 1,
+      size: 50
+    })
+    if (res.status === 200) orgs.value = res.data.items
+  }).catch(() => {})
 }
 
 function onOpenOrg(org) {

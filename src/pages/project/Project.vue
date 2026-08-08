@@ -67,7 +67,13 @@
             </SprintCreate>
           </div>
 
-          <div v-if="sprints.length > 0" class="ado-sprint-grid">
+          <div v-if="sprintsLoading" class="ado-sprint-grid">
+            <v-skeleton-loader v-for="item in 3" :key="item" class="ado-panel" width="320" type="article" />
+          </div>
+
+          <div v-else-if="!sprintsReady" class="ado-loading-reserved" aria-hidden="true"></div>
+
+          <div v-else-if="sprints.length > 0" class="ado-sprint-grid">
             <div v-for="sprint in sprints" :key="sprint.id" class="ado-sprint-grid__item">
               <SprintCard
                 :sprint="sprint"
@@ -114,7 +120,7 @@
             <v-data-table
               :headers="headers"
               :items="allMembers"
-              :loading="loading"
+              :loading="membersLoading"
               :search="search"
               hover
               density="compact"
@@ -127,7 +133,7 @@
               </template>
 
               <template #no-data>
-                <div class="ado-table-state">
+                <div v-if="membersReady" class="ado-table-state">
                   <v-icon size="36" class="text-medium-emphasis">mdi-account-group-outline</v-icon>
                   <span>{{ search ? 'No members match your search.' : 'No project members yet.' }}</span>
                 </div>
@@ -194,6 +200,7 @@ import { useI18n } from 'vue-i18n'
 import SetProjectAdmin from '@/components/project/SetProjectAdmin.vue'
 import ProjectMemberDelete from '@/components/project/ProjectMemberDelete.vue'
 import UserAvatar from '@/components/user/UserAvatar.vue'
+import { useDelayedLoading } from '@/composables/useDelayedLoading'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -205,7 +212,16 @@ const tab = ref('sprints')
 const project = ref({})
 const allMembers = ref([])
 const search = ref('')
-const loading = ref(false)
+const {
+  loading: membersLoading,
+  ready: membersReady,
+  run: runMembersLoading
+} = useDelayedLoading()
+const {
+  loading: sprintsLoading,
+  ready: sprintsReady,
+  run: runSprintsLoading
+} = useDelayedLoading()
 
 const headers = computed(() => [
   { title: '', key: 'avatar', sortable: false, width: '50px' },
@@ -215,16 +231,14 @@ const headers = computed(() => [
 ])
 
 function onGetProject() {
-  loading.value = true
-  getGetProject(store.org.id, route.params.projectId).then((res) => {
+  void runMembersLoading(async () => {
+    const res = await getGetProject(store.org.id, route.params.projectId)
     if (res.status === 200) {
       store.setProject(res.data.item)
       project.value = res.data.item
       allMembers.value = res.data.item.members
     }
-  }).finally(() => {
-    loading.value = false
-  });
+  }).catch(() => {})
 }
 
 onMounted(() => {
@@ -250,10 +264,11 @@ watch(date, (date) => {
 
 
 function LoadSprints() {
-  getGetSprints(store.org.id, route.params.projectId, {
-    page: 1,
-    size: 999
-  }).then((res) => {
+  void runSprintsLoading(async () => {
+    const res = await getGetSprints(store.org.id, route.params.projectId, {
+      page: 1,
+      size: 999
+    })
     if (res.status === 200) {
       sprints.value = res.data.items;
       if (store.sprint.id === 0) {
@@ -269,7 +284,7 @@ function LoadSprints() {
         }
       }
     }
-  })
+  }).catch(() => {})
 }
 
 function onSetSprint(id, name, startDate, endDate, burndownType) {

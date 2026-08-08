@@ -21,7 +21,16 @@
           <v-btn prepend-icon="mdi-plus" variant="text" size="x-small" color="primary">New</v-btn>
         </SprintCreate>
       </div>
-      <v-virtual-scroll height="320" item-height="56" :items="sprints">
+      <div v-if="loading" class="ado-menu-loading">
+        <v-progress-circular indeterminate color="primary" size="22" width="2" />
+        <span>Loading sprints...</span>
+      </div>
+      <div v-else-if="!ready" class="ado-menu-pending" aria-hidden="true"></div>
+      <div v-else-if="sprints.length === 0" class="ado-menu-loading text-medium-emphasis">
+        <v-icon size="28">mdi-run-fast</v-icon>
+        <span>No sprints available</span>
+      </div>
+      <v-virtual-scroll v-else height="320" item-height="56" :items="sprints">
         <template #default="{ item }">
           <v-list-item
             :to="'/orgs/' + store.org.id + '/projects/' + item.projectId + '/sprints/' + item.id"
@@ -57,19 +66,24 @@
 </template>
 
 <script setup>
-const emit = defineEmits(['afterSetSprint', 'afterLoadSprints', 'afterShowSide'])
+const emit = defineEmits(['afterSetSprint', 'afterLoadSprints', 'afterShowSide', 'loading-change', 'ready-change'])
 
 import { useAppStore } from '@/stores/app'
 import { useRoute } from 'vue-router';
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { getGetSprints } from '@/apis/sprint';
 import MenuViewOptions from '@/components/menu/MenuViewOptions.vue';
+import { useDelayedLoading } from '@/composables/useDelayedLoading'
 
 const store = useAppStore()
 const route = useRoute()
 
 const sprints = ref([])
 const menuOpen = ref(false)
+const { loading, ready, run: runLoading } = useDelayedLoading()
+
+watch(loading, value => emit('loading-change', value), { immediate: true })
+watch(ready, value => emit('ready-change', value), { immediate: true })
 
 function onSetSprint(id, name, startDate, endDate, burndownType) {
   store.setSprint({
@@ -88,10 +102,11 @@ onMounted(() => {
 })
 
 function LoadSprints() {
-  getGetSprints(store.org.id, route.params.projectId, {
-    page: 1,
-    size: 999
-  }).then((res) => {
+  void runLoading(async () => {
+    const res = await getGetSprints(store.org.id, route.params.projectId, {
+      page: 1,
+      size: 999
+    })
     if (res.status === 200) {
       sprints.value = res.data.items;
       emit('afterLoadSprints', sprints.value)
@@ -108,7 +123,7 @@ function LoadSprints() {
         }
       }
     }
-  })
+  }).catch(() => {})
 }
 
 function onShowSide(type) {
@@ -120,5 +135,15 @@ function onShowSide(type) {
 .ado-sprint-menu {
   width: min(420px, calc(100vw - 24px));
   min-width: min(380px, calc(100vw - 24px));
+}
+.ado-menu-loading,
+.ado-menu-pending {
+  display: flex;
+  height: 112px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12px;
 }
 </style>

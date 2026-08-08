@@ -7,6 +7,8 @@
         variant="tonal"
         color="primary"
         size="small"
+        :loading="candidatesLoading"
+        :disabled="!candidatesReady"
       >
         Add Member
       </v-btn>
@@ -68,6 +70,7 @@ import { computed, ref, onMounted } from 'vue';
 import { getGetProject } from '@/apis/project';
 import { postAddSprintMember } from '@/apis/sprint';
 import { useRoute } from 'vue-router';
+import { useDelayedLoading } from '@/composables/useDelayedLoading'
 const emit = defineEmits(['afterAdd', 'afterAddFromProject', 'afterSave', 'afterUndo'])
 
 const route = useRoute()
@@ -76,6 +79,11 @@ const memberMenuOpen = ref(false)
 const search = ref('')
 const addMembers = ref(null)
 const allUsers = ref([])
+const {
+  loading: candidatesLoading,
+  ready: candidatesReady,
+  run: runCandidatesLoading
+} = useDelayedLoading()
 
 const filteredUsers = computed(() => {
   const query = search.value.trim().toLowerCase()
@@ -130,12 +138,10 @@ function onUndo() {
 }
 
 onMounted(() => {
-  getGetProject(
-    route.params.orgId,
-    route.params.projectId,
-  ).then(res => {
+  void runCandidatesLoading(async () => {
+    const res = await getGetProject(route.params.orgId, route.params.projectId)
     if (res.status === 200) {
       allUsers.value = res.data.item.members
     }
-  })
+  }).catch(() => {})
 })</script>

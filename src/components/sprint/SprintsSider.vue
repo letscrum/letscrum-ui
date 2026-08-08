@@ -33,13 +33,20 @@
 
       <v-divider class="my-1" />
 
-      <div v-if="props.sprints && props.sprints.length === 0" class="d-flex flex-column align-center justify-center text-medium-emphasis py-8 px-3 text-center">
+      <div v-if="loading" class="ado-sprints-side-state">
+        <v-progress-circular indeterminate color="primary" size="22" width="2" />
+        <span>Loading sprints...</span>
+      </div>
+
+      <div v-else-if="!ready" class="ado-sprints-side-pending" aria-hidden="true"></div>
+
+      <div v-else-if="props.sprints && props.sprints.length === 0" class="d-flex flex-column align-center justify-center text-medium-emphasis py-8 px-3 text-center">
         <v-icon size="40" class="text-medium-emphasis mb-2">mdi-run-fast</v-icon>
         <div class="text-body-2 font-weight-medium">No sprints yet</div>
         <div class="text-caption">Create a sprint to start moving work items into iterations.</div>
       </div>
 
-      <div v-for="item in props.sprints" :key="item.id">
+      <div v-for="item in ready ? props.sprints : []" :key="item.id">
         <VueDraggable
           :id="item.id"
           v-model="sprintWorkItems"
@@ -93,7 +100,20 @@ import { putMoveWorkItem } from '@/apis/workitem';
 import { useAppStore } from '@/stores/app';
 import { useRoute } from 'vue-router';
 
-const props = defineProps(['sprints'])
+const props = defineProps({
+  sprints: {
+    type: Array,
+    default: () => []
+  },
+  loading: {
+    type: Boolean,
+    default: false
+  },
+  ready: {
+    type: Boolean,
+    default: false
+  }
+})
 const store = useAppStore()
 const route = useRoute()
 const emit = defineEmits(['after-move', 'close-side'])
@@ -143,5 +163,16 @@ function onCloseSide() {
 }
 .ado-sprint-row--current {
   border-left: 3px solid rgb(var(--v-theme-primary));
+}
+.ado-sprints-side-state,
+.ado-sprints-side-pending {
+  display: flex;
+  min-height: 112px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--ado-text-secondary);
+  font-size: 12px;
 }
 </style>

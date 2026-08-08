@@ -35,7 +35,7 @@
           <!-- Burndown chart (moved here from tabs row) -->
           <div class="d-none d-lg-flex align-center" style="gap: 6px;">
             <span class="text-caption text-medium-emphasis">Burndown</span>
-            <SprintBurndown :burndown-data="burndown" />
+            <SprintBurndown :burndown-data="burndown" :loading="burndownLoading" :ready="burndownReady" />
           </div>
           <v-divider vertical class="d-none d-lg-flex" style="height: 24px; align-self: center;" />
           <router-view
@@ -43,6 +43,8 @@
             @after-set-sprint="onSetSprint"
             @after-load-sprints="onLoadSprints"
             @after-show-side="onShowSide"
+            @loading-change="sprintsLoading = $event"
+            @ready-change="sprintsReady = $event"
           />
         </div>
       </div>
@@ -104,7 +106,14 @@
 
     <div class="ado-workspace">
       <router-view v-slot="{ Component }">
-        <component :is="Component" ref="mainContent" :sprints="sprints" @task-changed="onLoadBurndown" />
+        <component
+          :is="Component"
+          ref="mainContent"
+          :sprints="sprints"
+          :sprints-loading="sprintsLoading"
+          :sprints-ready="sprintsReady"
+          @task-changed="onLoadBurndown"
+        />
       </router-view>
     </div>
   </DefaultLayout>
@@ -118,15 +127,23 @@ import { useRoute } from 'vue-router'
 import { useAppStore } from '@/stores/app'
 import { getSprintTaskBurndown, getSprintWorkBurnDown } from '@/apis/sprint';
 import { onMounted, ref, computed } from 'vue';
+import { useDelayedLoading } from '@/composables/useDelayedLoading'
 
 const store = useAppStore()
 
 const route = useRoute()
 const sprints = ref([])
+const sprintsLoading = ref(false)
+const sprintsReady = ref(false)
 const burndown = ref({
   labels: [],
   values: [],
 })
+const {
+  loading: burndownLoading,
+  ready: burndownReady,
+  run: runBurndownLoading
+} = useDelayedLoading()
 
 
 const mainContent = ref()
@@ -200,17 +217,14 @@ function onLoadSprints(getSprints) {
 
 function onLoadBurndown() {
   if (!store.sprint.id) return
-  if (store.sprint.burndownType == 'ByHour') {
-    getSprintWorkBurnDown(route.params.orgId, route.params.projectId, store.sprint.id).then((res) => {
-      burndown.value.labels = res.data.burndown.map((item) => new Date(item.date * 1000).toISOString().substring(5, 7) + '/' + new Date(item.date * 1000).toISOString().substring(8, 10))
-      burndown.value.values = res.data.burndown.map((item) => item.actual)
-    })
-  } else {
-    getSprintTaskBurndown(route.params.orgId, route.params.projectId, store.sprint.id).then((res) => {
-      burndown.value.labels = res.data.burndown.map((item) => new Date(item.date * 1000).toISOString().substring(5, 7) + '/' + new Date(item.date * 1000).toISOString().substring(8, 10))
-      burndown.value.values = res.data.burndown.map((item) => item.actual)
-    })
-  }
+  void runBurndownLoading(async () => {
+    const request = store.sprint.burndownType == 'ByHour'
+      ? getSprintWorkBurnDown(route.params.orgId, route.params.projectId, store.sprint.id)
+      : getSprintTaskBurndown(route.params.orgId, route.params.projectId, store.sprint.id)
+    const res = await request
+    burndown.value.labels = res.data.burndown.map((item) => new Date(item.date * 1000).toISOString().substring(5, 7) + '/' + new Date(item.date * 1000).toISOString().substring(8, 10))
+    burndown.value.values = res.data.burndown.map((item) => item.actual)
+  }).catch(() => {})
 }
 
 onMounted(() => {

@@ -73,6 +73,8 @@
       </div>
     </div>
 
+    <div v-else-if="!ready" class="ado-board-pending" aria-hidden="true"></div>
+
     <div v-else-if="workItems.length === 0 && !creatingWorkItem" class="ado-empty-state d-flex flex-column align-center justify-center">
       <v-icon size="48" class="text-medium-emphasis mb-3">mdi-view-column-outline</v-icon>
       <div class="text-subtitle-1 font-weight-medium">No work items in this sprint</div>
@@ -322,6 +324,8 @@
     >
       <SprintsSider
         :sprints="props.sprints"
+        :loading="props.sprintsLoading"
+        :ready="props.sprintsReady"
         @after-move="LoadWorkItemsWithBurndown"
         @close-side="onCloseSide"
       />
@@ -340,11 +344,20 @@ import { VueDraggable } from 'vue-draggable-plus'
 import WorkItemCard from '@/components/sprint/WorkItemCard.vue';
 import TaskCard from '@/components/sprint/TaskCard.vue';
 import SprintsSider from '@/components/sprint/SprintsSider.vue';
+import { useDelayedLoading } from '@/composables/useDelayedLoading'
 
 const props = defineProps({
   sprints: {
     type: Array,
     required: true
+  },
+  sprintsLoading: {
+    type: Boolean,
+    default: false
+  },
+  sprintsReady: {
+    type: Boolean,
+    default: false
   }
 });
 const emit = defineEmits(['task-changed'])
@@ -360,7 +373,12 @@ const creatingWorkItem = ref(false)
 const creatingTask = ref(false)
 const creatingWorkItemSaving = ref(false)
 const creatingTaskSaving = ref(false)
-const loading = ref(true)
+const {
+  loading,
+  ready,
+  reset: resetLoading,
+  run: runLoading
+} = useDelayedLoading()
 const newWorkItemTitle = ref('')
 const newTaskTitle = ref('')
 const workItemCreateError = ref('')
@@ -376,14 +394,18 @@ function getTaskCount(status) {
   }, 0);
 }
 
-function LoadWorkItems(sprintId) {
+function LoadWorkItems(sprintId, resetView = false) {
   const id = sprintId || route.params.sprintId
-  loading.value = true
+  if (resetView) {
+    resetLoading()
+    workItems.value = []
+  }
   expanded.value = []
-  getGetSprintWorkItems(route.params.orgId, route.params.projectId, id, {
-    page: 1,
-    size: -1
-  }).then(res => {
+  void runLoading(async () => {
+    const res = await getGetSprintWorkItems(route.params.orgId, route.params.projectId, id, {
+      page: 1,
+      size: -1
+    })
     if (id == route.params.sprintId) {
       workItems.value = res.data.items
       workItems.value.forEach(item => {
@@ -392,9 +414,7 @@ function LoadWorkItems(sprintId) {
         }
       })
     }
-  }).finally(() => {
-    loading.value = false
-  })
+  }).catch(() => {})
 }
 
 function AddWorkItem(type) {
@@ -638,14 +658,14 @@ function LoadWorkItemsWithBurndown() {
 
 onMounted(() => {
   LoadSprint()
-  LoadWorkItems()
+  LoadWorkItems(undefined, true)
   emit('task-changed')
 })
 
 watch(() => route.params.sprintId, (newId, oldId) => {
   if (newId && newId !== oldId) {
     LoadSprint(newId)
-    LoadWorkItems(newId)
+    LoadWorkItems(newId, true)
     emit('task-changed')
   }
 })
@@ -660,6 +680,10 @@ watch(() => route.params.sprintId, (newId, oldId) => {
 .ado-board-loading {
   min-width: 800px;
   padding: 12px;
+}
+.ado-board-pending {
+  min-width: 800px;
+  min-height: 320px;
 }
 .ado-create-composer {
   overflow: hidden;

@@ -89,7 +89,7 @@
             <v-data-table
               :headers="headers"
               :items="members"
-              :loading="loading"
+              :loading="membersLoading"
               :search="search"
               hover
               density="compact"
@@ -102,7 +102,7 @@
               </template>
 
               <template #no-data>
-                <div class="ado-table-state">
+                <div v-if="membersReady" class="ado-table-state">
                   <v-icon size="36" class="text-medium-emphasis">mdi-account-group-outline</v-icon>
                   <span>{{ search ? 'No members match your search.' : 'No organization members yet.' }}</span>
                 </div>
@@ -172,6 +172,7 @@ import { useAppStore } from '@/stores/app'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { uuidToColor } from '@/utils/utils'
+import { useDelayedLoading } from '@/composables/useDelayedLoading'
 
 const store = useAppStore()
 const route = useRoute()
@@ -181,7 +182,11 @@ const { t } = useI18n()
 const orgId = route.params.orgId
 const org = ref({})
 const members = ref([])
-const loading = ref(false)
+const {
+  loading: membersLoading,
+  ready: membersReady,
+  run: runMembersLoading
+} = useDelayedLoading()
 const tab = ref('members')
 const search = ref('')
 
@@ -193,15 +198,12 @@ const headers = computed(() => [
 ])
 
 function fetchMembers() {
-  loading.value = true
-  getGetOrgMembers(orgId).then((res) => {
+  void runMembersLoading(async () => {
+    const res = await getGetOrgMembers(orgId)
     if (res.status === 200) {
       members.value = res.data.items
     }
-    loading.value = false
-  }).catch(() => {
-    loading.value = false
-  })
+  }).catch(() => {})
 }
 
 function getOrg() {

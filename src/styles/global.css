@@ -207,6 +207,9 @@ body,
   font-size: 13px;
   text-align: center;
 }
+.ado-loading-reserved {
+  min-height: 176px;
+}
 
 /* ---------- Lists / Nav ---------- */
 .v-application .v-list-item--active.v-list-item--variant-text {

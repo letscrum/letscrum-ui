@@ -11,7 +11,12 @@
         {{ currentMembers.length }} member{{ currentMembers.length !== 1 ? 's' : '' }}
       </v-chip>
     </div>
-    <div class="ado-table-scroll">
+    <div v-if="loading" class="ado-table-state">
+      <v-progress-circular indeterminate color="primary" size="24" width="2" />
+      <span>Loading sprint capacity...</span>
+    </div>
+    <div v-else-if="!ready" class="ado-loading-reserved" aria-hidden="true"></div>
+    <div v-else class="ado-table-scroll">
     <v-table class="ado-capacity-table" density="compact" hover>
       <thead>
         <tr>
@@ -77,6 +82,7 @@ import { useRoute } from 'vue-router'
 import { getGetSprint, putUpdateSprintMembers } from '@/apis/sprint'
 import { getGetProject } from '@/apis/project';
 import { useAppStore } from '@/stores/app';
+import { useDelayedLoading } from '@/composables/useDelayedLoading'
 
 const emit = defineEmits(['task-changed'])
 
@@ -85,19 +91,21 @@ const sprint = ref({})
 const members = ref([])
 const currentMembers = ref([])
 const store = useAppStore()
+const { loading, ready, run: runLoading } = useDelayedLoading()
 
 const totalCapacity = computed(() =>
   currentMembers.value.reduce((sum, m) => sum + (Number(m.capacity) || 0), 0)
 )
 
 function LoadSprint() {
-  getGetSprint(route.params.orgId, route.params.projectId, route.params.sprintId).then((res) => {
+  void runLoading(async () => {
+    const res = await getGetSprint(route.params.orgId, route.params.projectId, route.params.sprintId)
     if (res.status === 200) {
       sprint.value = res.data.item
       members.value = res.data.item.members
       currentMembers.value = res.data.item.members
     }
-  })
+  }).catch(() => {})
 }
 
 function addAllMembersFromProject() {

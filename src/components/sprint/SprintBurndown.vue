@@ -1,5 +1,5 @@
 <template>
-  <v-menu :close-on-content-click="false" location="bottom end" offset="8">
+  <v-menu :disabled="!ready || loading" :close-on-content-click="false" location="bottom end" offset="8">
     <template #activator="{ props: activatorProps }">
       <v-sheet
         v-bind="activatorProps"
@@ -8,10 +8,11 @@
         height="32"
         class="cursor-pointer ado-border rounded-md px-2 d-flex align-center"
         rounded="md"
-        :class="{ 'ado-empty-burndown': !hasData }"
+        :class="{ 'ado-empty-burndown': ready && !loading && !hasData }"
       >
+        <v-progress-circular v-if="loading" indeterminate color="primary" size="18" width="2" class="mx-auto" />
         <v-sparkline
-          v-if="hasData"
+          v-else-if="hasData"
           fill
           :gradient="chartGradient"
           :gradient-direction="'top'"
@@ -23,7 +24,7 @@
           height="28"
           width="160"
         ></v-sparkline>
-        <span v-else class="text-caption text-medium-emphasis">No data</span>
+        <span v-else-if="ready" class="text-caption text-medium-emphasis">No data</span>
       </v-sheet>
     </template>
     <v-card width="420" class="ado-border" rounded="md">
@@ -32,8 +33,12 @@
         <span class="text-subtitle-2 font-weight-bold">Sprint Burndown</span>
       </div>
       <div class="pa-3">
+        <div v-if="loading" class="ado-table-state">
+          <v-progress-circular indeterminate color="primary" size="24" width="2" />
+          <span>Loading burndown...</span>
+        </div>
         <v-sparkline
-          v-if="hasData"
+          v-else-if="hasData"
           fill
           :gradient="chartGradient"
           :gradient-direction="'top'"
@@ -46,7 +51,7 @@
           :labels="props.burndownData.labels"
           label-size="3"
         ></v-sparkline>
-        <div v-else class="text-center py-6 text-medium-emphasis">
+        <div v-else-if="ready" class="text-center py-6 text-medium-emphasis">
           <v-icon size="32" class="mb-2">mdi-chart-line</v-icon>
           <div class="text-body-2">No burndown data available yet.</div>
         </div>
@@ -63,6 +68,14 @@ const props = defineProps({
   burndownData: {
     type: Object,
     required: true
+  },
+  loading: {
+    type: Boolean,
+    default: false
+  },
+  ready: {
+    type: Boolean,
+    default: false
   }
 })
 const theme = useTheme()

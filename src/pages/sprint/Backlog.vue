@@ -1,7 +1,18 @@
 <template>
   <div class="ado-table-scroll">
     <v-card class="ado-panel ado-backlog-panel">
+      <div v-if="loading" class="ado-table-state">
+        <v-progress-circular indeterminate color="primary" size="24" width="2" />
+        <span>Loading backlog...</span>
+      </div>
+      <div v-else-if="!ready" class="ado-loading-reserved" aria-hidden="true"></div>
+      <div v-else-if="workItems.length === 0" class="ado-empty-state d-flex flex-column align-center justify-center">
+        <v-icon size="44" class="text-medium-emphasis mb-3">mdi-clipboard-text-outline</v-icon>
+        <div class="text-subtitle-1 font-weight-medium">No work items found</div>
+        <div class="text-body-2 text-medium-emphasis mt-1">Create a work item to start building this backlog.</div>
+      </div>
       <v-data-iterator
+        v-else
         v-model:expanded="expanded"
         :items="workItems"
         hide-default-footer
@@ -166,7 +177,13 @@
       width="320"
       permanent
     >
-      <SprintsSider :sprints="props.sprints" @after-move="onCreateTask" @close-side="onCloseSide" />
+      <SprintsSider
+        :sprints="props.sprints"
+        :loading="props.sprintsLoading"
+        :ready="props.sprintsReady"
+        @after-move="onCreateTask"
+        @close-side="onCloseSide"
+      />
     </v-navigation-drawer>
   </div>
 </template>
@@ -178,6 +195,7 @@ import { getGetSprintWorkItems, getGetProjectWorkItems, putReOrderWorkItems } fr
 import { putReOrderTasks } from '@/apis/task'
 import { useAppStore } from '@/stores/app'
 import { VueDraggable } from 'vue-draggable-plus'
+import { useDelayedLoading } from '@/composables/useDelayedLoading'
 
 const emit = defineEmits(['task-changed'])
 
@@ -185,6 +203,14 @@ const props = defineProps({
   sprints: {
     type: Array,
     default: () => []
+  },
+  sprintsLoading: {
+    type: Boolean,
+    default: false
+  },
+  sprintsReady: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -194,6 +220,7 @@ const route = useRoute()
 
 const workItems = ref([])
 const expanded = ref([])
+const { loading, ready, run: runLoading } = useDelayedLoading()
 
 function formatStatus(status) {
   const labels = {
@@ -210,29 +237,23 @@ function getStatusColor(status) {
 }
 
 function LoadWorkItems() {
-  if (route.name == 'ProductBacklog') {
-    getGetProjectWorkItems(store.org.id, route.params.projectId, {
-      page: 1,
-      size: -1
-    }).then(res => {
-      workItems.value = res.data.items
-      console.log('workItems', workItems.value)
-      workItems.value.forEach(item => {
-        expanded.value.push(item.id.toString())
+  void runLoading(async () => {
+    const request = route.name == 'ProductBacklog'
+      ? getGetProjectWorkItems(store.org.id, route.params.projectId, {
+        page: 1,
+        size: -1
       })
-    })
-  } else {
-    getGetSprintWorkItems(store.org.id, route.params.projectId, store.sprint.id, {
-      page: 1,
-      size: -1
-    }).then(res => {
-      workItems.value = res.data.items
-      console.log('workItems', workItems.value)
-      workItems.value.forEach(item => {
-        expanded.value.push(item.id.toString())
+      : getGetSprintWorkItems(store.org.id, route.params.projectId, store.sprint.id, {
+        page: 1,
+        size: -1
       })
+    const res = await request
+    workItems.value = res.data.items
+    expanded.value = []
+    workItems.value.forEach(item => {
+      expanded.value.push(item.id.toString())
     })
-  }
+  }).catch(() => {})
 }
 
 function collapseAll() {

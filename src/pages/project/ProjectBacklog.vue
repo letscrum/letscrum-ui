@@ -17,7 +17,13 @@
 
     <div class="ado-workspace">
       <router-view v-slot="{ Component }">
-        <component :is="Component" ref="mainContent" :sprints="sprints" />
+        <component
+          :is="Component"
+          ref="mainContent"
+          :sprints="sprints"
+          :sprints-loading="sprintsLoading"
+          :sprints-ready="sprintsReady"
+        />
       </router-view>
     </div>
   </DefaultLayout>
@@ -28,22 +34,29 @@ import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { getGetSprints } from '@/apis/sprint';
+import { useDelayedLoading } from '@/composables/useDelayedLoading'
 
 const route = useRoute()
 const sprints = ref([])
 const mainContent = ref()
+const {
+  loading: sprintsLoading,
+  ready: sprintsReady,
+  run: runSprintsLoading
+} = useDelayedLoading()
 
 function onCreateWorkItemFromBacklog() {
   mainContent.value?.LoadWorkItems()
 }
 
 function loadSprints() {
-  getGetSprints(route.params.orgId, route.params.projectId, {
-    page: 1,
-    size: -1
-  }).then(res => {
+  void runSprintsLoading(async () => {
+    const res = await getGetSprints(route.params.orgId, route.params.projectId, {
+      page: 1,
+      size: -1
+    })
     sprints.value = res.data.items || []
-  })
+  }).catch(() => {})
 }
 
 onMounted(() => {

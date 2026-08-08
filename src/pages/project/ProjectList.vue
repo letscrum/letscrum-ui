@@ -42,6 +42,8 @@
         </v-col>
       </v-row>
 
+      <div v-else-if="!ready" class="ado-loading-reserved" aria-hidden="true"></div>
+
       <template v-else-if="filteredProjects.length > 0">
         <v-row v-if="viewMode === 'grid'" class="ado-entity-grid">
           <v-col v-for="(p, i) in filteredProjects" :key="i" cols="12" sm="6" md="4" lg="3">
@@ -119,6 +121,7 @@ import { useAppStore } from '@/stores/app'
 import { useRouter, onBeforeRouteUpdate } from 'vue-router';
 import { computed, onMounted, ref } from 'vue';
 import { uuidToColor } from '@/utils/utils'
+import { useDelayedLoading } from '@/composables/useDelayedLoading'
 
 const store = useAppStore()
 const router = useRouter()
@@ -126,7 +129,7 @@ const router = useRouter()
 import { getGetProjects, getGetProject } from '@/apis/project'
 
 const projects = ref([])
-const loading = ref(true)
+const { loading, ready, run: runLoading } = useDelayedLoading()
 const search = ref('')
 const viewMode = ref('grid')
 
@@ -149,18 +152,13 @@ onBeforeRouteUpdate(() => {
 })
 
 function LoadProjects() {
-  loading.value = true
-  getGetProjects(store.org.id, {
-    page: 1,
-    size: 50
-  }).then((res) => {
-    if (res.status === 200) {
-      projects.value = res.data.items;
-    }
-    loading.value = false
-  }).catch(() => {
-    loading.value = false
-  });
+  void runLoading(async () => {
+    const res = await getGetProjects(store.org.id, {
+      page: 1,
+      size: 50
+    })
+    if (res.status === 200) projects.value = res.data.items
+  }).catch(() => {})
 }
 
 function onOpenProject(p) {
