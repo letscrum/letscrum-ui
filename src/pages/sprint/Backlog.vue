@@ -77,8 +77,8 @@
                     </div>
                   </v-col>
                   <v-col cols="2" class="d-flex align-center">
-                    <v-icon size="x-small" :color="item.raw.status === 'Done' ? 'success' : (item.raw.status === 'In Progress' ? 'info' : 'grey')" class="mr-2">mdi-circle</v-icon>
-                    <span class="text-caption">{{ item.raw.status }}</span>
+                    <v-icon size="x-small" :color="getStatusColor(item.raw.status)" class="mr-2">mdi-circle</v-icon>
+                    <span class="text-caption">{{ formatStatus(item.raw.status) }}</span>
                   </v-col>
                   <v-col cols="2">
                     <span class="text-caption">{{ item.raw.assignUser?.name }}</span>
@@ -118,8 +118,8 @@
                             </div>
                           </v-col>
                           <v-col cols="2" class="d-flex align-center">
-                            <v-icon size="x-small" :color="task.status === 'Done' ? 'success' : (task.status === 'In Progress' ? 'info' : 'grey')" class="mr-2">mdi-circle</v-icon>
-                            <span class="text-caption">{{ task.status }}</span>
+                            <v-icon size="x-small" :color="getStatusColor(task.status)" class="mr-2">mdi-circle</v-icon>
+                            <span class="text-caption">{{ formatStatus(task.status) }}</span>
                           </v-col>
                           <v-col cols="2">
                             <span class="text-caption">{{ task.assignUser?.name }}</span>
@@ -194,6 +194,20 @@ const route = useRoute()
 
 const workItems = ref([])
 const expanded = ref([])
+
+function formatStatus(status) {
+  const labels = {
+    ToDo: 'To Do',
+    InProgress: 'In Progress'
+  }
+  return labels[status] || status
+}
+
+function getStatusColor(status) {
+  if (status === 'Done') return 'success'
+  if (status === 'InProgress' || status === 'In Progress' || status === 'Approved') return 'info'
+  return 'grey'
+}
 
 function LoadWorkItems() {
   if (route.name == 'ProductBacklog') {
