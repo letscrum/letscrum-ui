@@ -4,7 +4,7 @@
     density="default"
     height="48"
     class="ado-app-bar"
-    color="primary"
+    color="brand-bar"
     :border="false"
   >
     <v-app-bar-nav-icon
@@ -23,9 +23,9 @@
         src="/images/logo-text-dark.svg"
         alt="Letscrum"
         contain
-        width="112"
-        max-width="112"
-        height="26"
+        width="104"
+        max-width="104"
+        height="28"
       />
     </div>
 
@@ -220,7 +220,7 @@ function changeLanguage() {
 
 <style scoped>
 .ado-app-bar {
-  color: rgb(var(--v-theme-on-primary));
+  color: rgb(var(--v-theme-on-brand-bar));
   border-bottom: 1px solid rgba(0, 0, 0, 0.16) !important;
 }
 .ado-app-bar :deep(.v-toolbar__content) {
@@ -237,7 +237,7 @@ function changeLanguage() {
   opacity: 0.32;
 }
 .ado-app-bar__brand {
-  min-width: 112px;
+  min-width: 104px;
 }
 .ado-app-bar__context {
   max-width: 260px;
@@ -252,7 +252,7 @@ function changeLanguage() {
 }
 @media (max-width: 600px) {
   .ado-app-bar__brand {
-    min-width: 96px;
+    min-width: 92px;
     margin-inline: 4px !important;
   }
 }

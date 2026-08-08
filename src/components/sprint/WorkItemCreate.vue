@@ -13,7 +13,7 @@
     <template #default="{ isActive }">
       <v-card class="ado-border" rounded="md">
         <v-card-title class="d-flex align-center pa-4">
-          <v-icon color="#009CCC" class="mr-2">mdi-clipboard-text-outline</v-icon>
+          <v-icon color="type-backlog" class="mr-2">mdi-clipboard-text-outline</v-icon>
           Create Work Item
         </v-card-title>
 

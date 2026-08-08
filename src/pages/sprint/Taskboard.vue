@@ -299,7 +299,7 @@
               <v-col cols="12" class="d-flex align-center px-2 py-1">
                 <v-icon size="x-small" class="mr-1">mdi-chevron-right</v-icon>
                 <div class="d-flex align-center">
-                  <v-icon :color="item.raw.type === 'Bug' ? '#CC293D' : '#009CCC'" size="small" class="mr-2">
+                  <v-icon :color="item.raw.type === 'Bug' ? 'type-bug' : 'type-backlog'" size="small" class="mr-2">
                     {{ item.raw.type === 'Bug' ? 'mdi-bug' : 'mdi-clipboard-text-outline' }}
                   </v-icon>
                   <span class="text-body-2 font-weight-medium text-truncate">{{ item.raw.title }}</span>

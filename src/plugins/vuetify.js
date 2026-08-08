@@ -11,68 +11,72 @@ import 'vuetify/styles'
 // Composables
 import { createVuetify } from 'vuetify'
 
-// Azure DevOps inspired theme tokens
-const adoLight = {
+// Letscrum product palette
+const letscrumLight = {
   dark: false,
   colors: {
-    primary: '#0078D4',
+    primary: '#0B6B63',
     'on-primary': '#FFFFFF',
-    secondary: '#005A9E',
-    accent: '#106EBE',
-    info: '#0078D4',
-    success: '#107C10',
-    warning: '#F2CB1D',
-    error: '#D13438',
-    background: '#F5F5F5',
+    'brand-bar': '#0B5D57',
+    'on-brand-bar': '#FFFFFF',
+    secondary: '#52665A',
+    accent: '#C13D63',
+    info: '#3569A8',
+    success: '#2D7D46',
+    warning: '#B66A12',
+    error: '#B93845',
+    background: '#F4F6F3',
     surface: '#FFFFFF',
     'surface-bright': '#FFFFFF',
-    'surface-variant': '#F3F2F1',
-    'on-surface-variant': '#323130',
-    'on-surface': '#201F1E',
-    'on-background': '#201F1E',
-    border: '#E1DFDD',
-    'border-strong': '#C8C6C4',
-    'row-hover': '#F3F2F1',
-    'row-selected': '#DEECF9',
-    'subtle-bg': '#FAFAFA',
-    'header-bg': '#F8F8F8',
-    'type-backlog': '#009CCC',
-    'type-bug': '#CC293D',
-    'type-task': '#F2CB1D',
-    'type-feature': '#773B93',
-    'type-epic': '#FF7B00'
+    'surface-variant': '#E9EEEA',
+    'on-surface-variant': '#3E4943',
+    'on-surface': '#1C2520',
+    'on-background': '#1C2520',
+    border: '#D7DED9',
+    'border-strong': '#B7C2BA',
+    'row-hover': '#EEF3EF',
+    'row-selected': '#DCEDE8',
+    'subtle-bg': '#F8FAF8',
+    'header-bg': '#F1F5F2',
+    'type-backlog': '#2E7185',
+    'type-bug': '#B63B5D',
+    'type-task': '#9A6B09',
+    'type-feature': '#6B5C9A',
+    'type-epic': '#B75C31'
   }
 }
 
-const adoDark = {
+const letscrumDark = {
   dark: true,
   colors: {
-    primary: '#2899F5',
-    'on-primary': '#FFFFFF',
-    secondary: '#479EF5',
-    accent: '#479EF5',
-    info: '#479EF5',
-    success: '#13A10E',
-    warning: '#FFC83D',
-    error: '#F85149',
-    background: '#201F1E',
-    surface: '#252423',
-    'surface-bright': '#2D2C2B',
-    'surface-variant': '#323130',
-    'on-surface-variant': '#F3F2F1',
-    'on-surface': '#F3F2F1',
-    'on-background': '#F3F2F1',
-    border: '#3B3A39',
-    'border-strong': '#605E5C',
-    'row-hover': '#2D2C2B',
-    'row-selected': '#1F3B57',
-    'subtle-bg': '#1F1E1D',
-    'header-bg': '#1B1A19',
-    'type-backlog': '#3FB6E2',
-    'type-bug': '#E15D70',
-    'type-task': '#F2CB1D',
-    'type-feature': '#A878C5',
-    'type-epic': '#FF9933'
+    primary: '#55B8AA',
+    'on-primary': '#092A26',
+    'brand-bar': '#123B37',
+    'on-brand-bar': '#F3FFFC',
+    secondary: '#A7B5A9',
+    accent: '#F08AAA',
+    info: '#82AEE0',
+    success: '#70C58C',
+    warning: '#F2B55F',
+    error: '#FF8491',
+    background: '#171918',
+    surface: '#212422',
+    'surface-bright': '#292D2A',
+    'surface-variant': '#303431',
+    'on-surface-variant': '#D8DDDA',
+    'on-surface': '#F3F4F2',
+    'on-background': '#F3F4F2',
+    border: '#3B403D',
+    'border-strong': '#5B625E',
+    'row-hover': '#2A2E2B',
+    'row-selected': '#193F39',
+    'subtle-bg': '#1C1F1D',
+    'header-bg': '#1E211F',
+    'type-backlog': '#66B8C8',
+    'type-bug': '#F07D9D',
+    'type-task': '#E4BA58',
+    'type-feature': '#B6A6E3',
+    'type-epic': '#E28B62'
   }
 }
 
@@ -81,8 +85,8 @@ export default createVuetify({
   theme: {
     defaultTheme: localStorage.theme || 'light',
     themes: {
-      light: adoLight,
-      dark: adoDark
+      light: letscrumLight,
+      dark: letscrumDark
     }
   },
   defaults: {

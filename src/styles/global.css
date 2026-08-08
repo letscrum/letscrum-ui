@@ -1,6 +1,6 @@
 /* ===========================================================
-   Letscrum global styles — Azure DevOps inspired
-   =========================================================== */
+  Letscrum product interface
+  =========================================================== */
 
 :root {
   --ado-font-family: "Segoe UI Variable", "Segoe UI", -apple-system,
@@ -23,31 +23,31 @@
 }
 
 .v-theme--light {
-  --ado-border: #E1DFDD;
-  --ado-border-strong: #C8C6C4;
-  --ado-row-hover: #F3F2F1;
-  --ado-row-selected: #DEECF9;
-  --ado-row-selected-hover: #C7E0F4;
-  --ado-subtle-bg: #FAFAFA;
-  --ado-header-bg: #F8F8F8;
-  --ado-text-secondary: #605E5C;
-  --ado-text-tertiary: #8A8886;
-  --ado-focus: #005A9E;
-  --ado-canvas: #F5F5F5;
+  --ado-border: #D7DED9;
+  --ado-border-strong: #B7C2BA;
+  --ado-row-hover: #EEF3EF;
+  --ado-row-selected: #DCEDE8;
+  --ado-row-selected-hover: #CBE2DB;
+  --ado-subtle-bg: #F8FAF8;
+  --ado-header-bg: #F1F5F2;
+  --ado-text-secondary: #58665E;
+  --ado-text-tertiary: #77857D;
+  --ado-focus: #0B6B63;
+  --ado-canvas: #F4F6F3;
 }
 
 .v-theme--dark {
-  --ado-border: #3B3A39;
-  --ado-border-strong: #605E5C;
-  --ado-row-hover: #2D2C2B;
-  --ado-row-selected: #1F3B57;
-  --ado-row-selected-hover: #2A4F73;
-  --ado-subtle-bg: #1F1E1D;
-  --ado-header-bg: #1B1A19;
-  --ado-text-secondary: #C8C6C4;
-  --ado-text-tertiary: #A19F9D;
-  --ado-focus: #6CB8F6;
-  --ado-canvas: #201F1E;
+  --ado-border: #3B403D;
+  --ado-border-strong: #5B625E;
+  --ado-row-hover: #2A2E2B;
+  --ado-row-selected: #193F39;
+  --ado-row-selected-hover: #235149;
+  --ado-subtle-bg: #1C1F1D;
+  --ado-header-bg: #1E211F;
+  --ado-text-secondary: #BCC3BE;
+  --ado-text-tertiary: #939B96;
+  --ado-focus: #72D2C3;
+  --ado-canvas: #171918;
 }
 
 html,

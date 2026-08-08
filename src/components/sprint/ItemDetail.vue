@@ -174,9 +174,9 @@ const typeIcon = computed(() => {
   return 'mdi-clipboard-text-outline'
 })
 const typeColor = computed(() => {
-  if (props.itemType === 'TASK') return '#F2CB1D'
-  if (item.value.type === 'Bug') return '#CC293D'
-  return '#009CCC'
+  if (props.itemType === 'TASK') return 'rgb(var(--v-theme-type-task))'
+  if (item.value.type === 'Bug') return 'rgb(var(--v-theme-type-bug))'
+  return 'rgb(var(--v-theme-type-backlog))'
 })
 const typeLabel = computed(() => {
   if (props.itemType === 'TASK') return 'Task'

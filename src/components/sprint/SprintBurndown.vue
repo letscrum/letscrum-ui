@@ -13,12 +13,12 @@
         <v-sparkline
           v-if="hasData"
           fill
-          :gradient="['rgba(0,120,212,0.15)', 'rgba(0,120,212,0.5)']"
+          :gradient="chartGradient"
           :gradient-direction="'top'"
           :model-value="props.burndownData.values"
           padding="2"
           line-width="1"
-          color="rgb(0,120,212)"
+          :color="chartColor"
           :smooth="true"
           height="28"
           width="160"
@@ -35,10 +35,10 @@
         <v-sparkline
           v-if="hasData"
           fill
-          :gradient="['rgba(0,120,212,0.15)', 'rgba(0,120,212,0.5)']"
+          :gradient="chartGradient"
           :gradient-direction="'top'"
           :model-value="props.burndownData.values"
-          color="rgb(0,120,212)"
+          :color="chartColor"
           padding="6"
           height="120"
           line-width="1.5"
@@ -57,13 +57,31 @@
 
 <script setup>
 import { computed } from 'vue'
-const props = defineProps(['burndownData'])
+import { useTheme } from 'vuetify'
+
+const props = defineProps({
+  burndownData: {
+    type: Object,
+    required: true
+  }
+})
+const theme = useTheme()
+
+const chartColor = computed(() => theme.current.value.colors.primary)
+const chartGradient = computed(() => [
+  withAlpha(chartColor.value, '20'),
+  withAlpha(chartColor.value, '80')
+])
 
 const hasData = computed(() =>
   props.burndownData &&
   Array.isArray(props.burndownData.values) &&
   props.burndownData.values.length > 0
 )
+
+function withAlpha(color, alpha) {
+  return /^#[0-9a-f]{6}$/i.test(color) ? `${color}${alpha}` : color
+}
 </script>
 
 <style scoped>

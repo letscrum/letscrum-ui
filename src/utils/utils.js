@@ -1,17 +1,20 @@
 
 export function uuidToColor(uuid) {
-  // Hash the UUID to get a consistent value
-  let hash = 0;
-  for (let i = 0; i < uuid.length; i++) {
-      hash = uuid.charCodeAt(i) + ((hash << 5) - hash);
+  const colors = [
+    '#0B6B63',
+    '#88415E',
+    '#65558F',
+    '#2E7185',
+    '#855B18',
+    '#426B4E',
+    '#7B4D3A',
+    '#4C6475'
+  ]
+  let hash = 0
+
+  for (let i = 0; i < (uuid || '').length; i++) {
+    hash = uuid.charCodeAt(i) + ((hash << 5) - hash)
   }
 
-  // Convert the hash to a hex color code
-  let color = '#';
-  for (let i = 0; i < 3; i++) {
-      const value = (hash >> (i * 8)) & 0xFF;
-      color += ('00' + value.toString(16)).slice(-2);
-  }
-
-  return color;
+  return colors[Math.abs(hash) % colors.length]
 }

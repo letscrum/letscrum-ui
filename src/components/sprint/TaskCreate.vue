@@ -13,7 +13,7 @@
     <template #default="{ isActive }">
       <v-card class="ado-border" rounded="md">
         <v-card-title class="d-flex align-center pa-4">
-          <v-icon color="#F2CB1D" class="mr-2">mdi-checkbox-marked-circle-outline</v-icon>
+          <v-icon color="type-task" class="mr-2">mdi-checkbox-marked-circle-outline</v-icon>
           Create Task
         </v-card-title>
 
@@ -56,7 +56,12 @@ import { useRoute } from 'vue-router';
 
 const route = useRoute()
 
-const props = defineProps(['workItemId']);
+const props = defineProps({
+  workItemId: {
+    type: [String, Number],
+    required: true
+  }
+});
 const emit = defineEmits(['afterCreate'])
 
 const item = ref({})
