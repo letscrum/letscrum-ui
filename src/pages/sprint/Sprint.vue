@@ -2,11 +2,11 @@
   <DefaultLayout>
     <template #subheader>
       <!-- Sprint sub-header: title + iteration meta + actions -->
-      <div class="ado-subheader d-flex align-center flex-wrap" style="height: auto; min-height: 56px; padding: 8px 16px; gap: 8px;">
-        <div class="d-flex align-center flex-grow-1" style="min-width: 0;">
+      <div class="ado-subheader ado-sprint-header">
+        <div class="ado-sprint-header__identity d-flex align-center flex-grow-1">
           <v-icon class="mr-2" color="primary">mdi-run-fast</v-icon>
           <div class="d-flex flex-column" style="min-width: 0;">
-            <div class="d-flex align-center" style="min-width: 0;">
+            <div class="ado-sprint-header__meta d-flex align-center">
               <span class="ado-subheader__title text-truncate">{{ store.sprint.name || 'Sprint' }}</span>
               <v-chip
                 v-if="sprintRangeText"
@@ -31,7 +31,7 @@
         </div>
 
         <!-- Sprint switcher + burndown + page-specific menu -->
-        <div class="d-flex align-center" style="gap: 8px;">
+        <div class="ado-toolbar-actions ado-sprint-header__actions">
           <!-- Burndown chart (moved here from tabs row) -->
           <div class="d-none d-lg-flex align-center" style="gap: 6px;">
             <span class="text-caption text-medium-emphasis">Burndown</span>
@@ -48,12 +48,14 @@
       </div>
 
       <!-- Tabs row -->
-      <div class="ado-subheader d-flex align-center" style="padding: 0 8px;">
+      <div class="ado-subheader ado-tabs-bar ado-tabs-bar--actions">
         <v-tabs
+          class="ado-sprint-tabs"
           height="40"
           color="primary"
           slider-color="primary"
           density="compact"
+          show-arrows
         >
           <v-tab :to="'/orgs/' + store.org.id + '/projects/' + store.project.id + '/sprints/' + store.sprint.id" exact>
             <template #prepend><v-icon size="small">mdi-view-column-outline</v-icon></template>
@@ -67,16 +69,12 @@
             <template #prepend><v-icon size="small">mdi-chart-timeline-variant</v-icon></template>
             Capacity
           </v-tab>
-          <v-tab disabled>
-            <template #prepend><v-icon size="small">mdi-chart-line</v-icon></template>
-            Analytics
-          </v-tab>
         </v-tabs>
 
         <v-spacer />
 
         <!-- Page-specific action area -->
-        <div class="d-flex align-center" style="gap: 8px;">
+        <div class="ado-toolbar-actions ado-tabs-bar__actions">
           <!-- Taskboard member filter (moved here from sprint switcher row) -->
           <MenuMemberFilter
             v-if="route.name === 'SprintTaskboard'"
@@ -104,7 +102,7 @@
       </div>
     </template>
 
-    <div class="pa-3">
+    <div class="ado-workspace">
       <router-view v-slot="{ Component }">
         <component :is="Component" ref="mainContent" :sprints="sprints" @task-changed="onLoadBurndown" />
       </router-view>
@@ -220,3 +218,35 @@ onMounted(() => {
 })
 
 </script>
+
+<style scoped>
+.ado-sprint-header {
+  min-height: 60px;
+  padding-block: 8px;
+  gap: 12px;
+}
+.ado-sprint-header__identity,
+.ado-sprint-header__meta {
+  min-width: 0;
+}
+.ado-sprint-header__actions {
+  margin-left: auto;
+}
+.ado-sprint-tabs {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.ado-tabs-bar__actions {
+  flex: 0 0 auto;
+}
+@media (max-width: 700px) {
+  .ado-sprint-header__actions,
+  .ado-tabs-bar__actions {
+    width: 100%;
+    margin-left: 0;
+  }
+  .ado-sprint-tabs {
+    width: 100%;
+  }
+}
+</style>

@@ -6,7 +6,7 @@
         <span class="ado-subheader__title">{{ $t('user.list.title') }}</span>
         <v-chip size="x-small" variant="tonal" class="ml-2">{{ users.length }}</v-chip>
         <v-spacer />
-        <div class="d-flex align-center" style="gap: 8px;">
+        <div class="ado-toolbar-actions">
           <v-text-field
             v-model="search"
             density="compact"
@@ -16,10 +16,10 @@
             hide-details
             single-line
             clearable
-            style="width: 240px;"
+            class="ado-toolbar-search"
             @update:model-value="fetchUsers"
           />
-          <v-btn icon="mdi-refresh" variant="text" size="small" density="comfortable" @click="fetchUsers" />
+          <v-btn aria-label="Refresh users" icon="mdi-refresh" variant="text" size="small" @click="fetchUsers" />
           <UserCreate v-if="store.user.isSuperAdmin" @after-create="fetchUsers">
             <v-btn color="primary" prepend-icon="mdi-plus" variant="flat" size="small">
               {{ $t('user.list.create') }}
@@ -29,8 +29,8 @@
       </div>
     </template>
 
-    <div class="pa-4">
-      <v-card flat class="ado-border" rounded="md">
+    <div class="ado-page ado-page--wide">
+      <v-card class="ado-panel">
         <v-data-table
           :headers="headers"
           :items="users"
@@ -38,6 +38,20 @@
           hover
           density="compact"
         >
+          <template #loading>
+            <div class="ado-table-state">
+              <v-progress-circular indeterminate color="primary" size="24" width="2" />
+              <span>Loading users...</span>
+            </div>
+          </template>
+
+          <template #no-data>
+            <div class="ado-table-state">
+              <v-icon size="36" class="text-medium-emphasis">mdi-account-search-outline</v-icon>
+              <span>{{ search ? 'No users match your search.' : 'No users available.' }}</span>
+            </div>
+          </template>
+
           <template #[`item.avatar`]="{ item }">
             <UserAvatar :user-id="item.id" :user-name="item.name" size="28" />
           </template>

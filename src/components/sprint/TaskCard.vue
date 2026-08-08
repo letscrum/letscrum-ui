@@ -2,21 +2,19 @@
   <v-hover v-slot="{ isHovering, props: hoverProps }">
     <v-card
       v-bind="hoverProps"
-      :elevation="isHovering ? 3 : 1"
-      class="ma-1"
-      style="border-left: 4px solid #F2CB1D;"
-      width="155"
-      rounded="0"
+      class="ado-board-card ado-board-card--task"
+      style="--ado-card-accent: rgb(var(--v-theme-type-task));"
+      rounded="sm"
     >
       <div class="pa-2">
         <!-- Header -->
-        <div class="d-flex align-start mb-6">
-          <v-icon color="#F2CB1D" size="x-small" class="mr-1" style="margin-top: 2px;">mdi-checkbox-marked-circle-outline</v-icon>
-          <div class="text-caption font-weight-bold mr-1">{{ localTask.id }}</div>
-          <div class="text-caption flex-grow-1" :class="{ 'pr-3': isHovering || isMenuOpen }" style="min-width: 0;" :title="localTask.title">
+        <div class="ado-board-card__header d-flex align-start">
+          <v-icon color="type-task" size="small" class="mr-1">mdi-checkbox-marked-circle-outline</v-icon>
+          <div class="ado-board-card__id mr-1">{{ localTask.id }}</div>
+          <div class="ado-board-card__title flex-grow-1" :class="{ 'pr-4': isHovering || isMenuOpen }" :title="localTask.title">
             <div v-if="!isEditingTitle">
-              <ItemDetail item-type="TASK" :item-id="localTask.id">
-                <span class="cursor-pointer text-decoration-underline-hover">{{ localTask.title }}</span>
+              <ItemDetail item-type="TASK" :item-id="localTask.id" @after-update="onDetailUpdate">
+                <span>{{ localTask.title }}</span>
               </ItemDetail>
             </div>
             <input
@@ -24,8 +22,7 @@
               ref="titleInput"
               v-model="localTask.title"
               type="text"
-              class="text-caption w-100"
-              style="font-size: 12px !important; border-bottom: 1px solid #ccc; outline: none;"
+              class="ado-inline-input w-100"
               @blur="finishEditingTitle"
               @keydown.enter="finishEditingTitle"
             />
@@ -33,11 +30,11 @@
         </div>
 
         <!-- Assignee & Remaining -->
-        <div class="d-flex align-center justify-space-between mb-2">
+        <div class="ado-board-card__meta d-flex align-center justify-space-between mb-2">
           <!-- Assignee -->
           <v-menu location="bottom start">
             <template #activator="{ props: menuProps }">
-              <div class="d-flex align-center cursor-pointer" v-bind="menuProps">
+              <button type="button" class="ado-board-card__assignee" v-bind="menuProps">
                 <UserAvatar
                   v-if="localTask.assignUser"
                   :user-id="localTask.assignUser.id"
@@ -48,47 +45,47 @@
                 <v-avatar v-else size="20" class="mr-2 ado-unassigned-avatar">
                   <v-icon size="x-small">mdi-account</v-icon>
                 </v-avatar>
-                <span class="text-caption text-medium-emphasis text-truncate" style="max-width: 80px; font-size: 11px !important;">
+                <span class="text-caption text-medium-emphasis text-truncate">
                   {{ localTask.assignUser ? localTask.assignUser.name : 'Unassigned' }}
                 </span>
-              </div>
+              </button>
             </template>
             <v-list density="compact" max-height="200">
               <v-list-item
                 v-for="member in localMembers"
                 :key="member.userId"
                 :value="member.userId"
-                @click="assignTaskValue(member.userId)"
                 style="min-height: 30px;"
+                @click="assignTaskValue(member.userId)"
               >
                 <template #prepend>
                   <UserAvatar :user-id="member.userId" :user-name="member.userName" size="20" class="mr-2" />
                 </template>
                 <v-list-item-title style="font-size: 12px;">{{ member.userName }}</v-list-item-title>
               </v-list-item>
-              <v-list-item @click="assignTaskValue('00000000-0000-0000-0000-000000000000')" style="min-height: 30px;">
+              <v-list-item style="min-height: 30px;" @click="assignTaskValue('00000000-0000-0000-0000-000000000000')">
                 <v-list-item-title style="font-size: 12px;">Unassigned</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
 
           <!-- Remaining -->
-          <div class="d-flex align-center" style="width: 40px;">
-            <div
+          <div class="ado-task-card__remaining d-flex align-center">
+            <button
               v-if="!isEditingRemaining"
-              class="text-caption cursor-pointer w-100 remaining-hover px-1 d-flex align-center justify-end"
-              style="font-size: 11px !important; min-height: 20px;"
+              type="button"
+              class="ado-remaining-button text-caption w-100 px-1 d-flex align-center justify-end"
+              aria-label="Edit remaining work"
               @click="startEditingRemaining"
             >
-              {{ localTask.remainingWork > 0 ? localTask.remainingWork + ' h' : '' }}
-            </div>
+              {{ localTask.remainingWork > 0 ? localTask.remainingWork + ' h' : '0 h' }}
+            </button>
             <input
               v-else
               ref="remainingInput"
               v-model.number="localTask.remainingWork"
               type="number"
-              class="text-caption text-right w-100 px-1"
-              style="font-size: 11px !important; border-bottom: 1px solid #ccc; outline: none; height: 20px;"
+              class="ado-inline-input text-caption text-right w-100 px-1"
               @blur="finishEditingRemaining"
               @keydown.enter="finishEditingRemaining"
             />
@@ -96,21 +93,21 @@
         </div>
 
         <!-- State -->
-        <div class="d-flex align-center justify-space-between">
-          <span class="text-caption text-disabled" style="font-size: 11px !important;">State</span>
+        <div class="ado-board-card__state d-flex align-center justify-space-between">
+          <span class="text-caption text-medium-emphasis">State</span>
           <v-menu location="bottom end">
             <template #activator="{ props: menuProps }">
-              <div class="d-flex align-center cursor-pointer" v-bind="menuProps">
+              <button type="button" class="ado-board-card__state-button" v-bind="menuProps">
                 <v-icon :color="statusColor" size="x-small" class="mr-1">mdi-circle</v-icon>
-                <span class="text-caption" style="font-size: 11px !important;">{{ localTask.status }}</span>
-              </div>
+                <span class="text-caption">{{ statusLabel(localTask.status) }}</span>
+              </button>
             </template>
             <v-list density="compact">
-              <v-list-item v-for="s in ['ToDo', 'InProgress', 'Done', 'Removed']" :key="s" @click="updateStatusValue(s)" style="min-height: 30px;">
+              <v-list-item v-for="s in ['ToDo', 'InProgress', 'Done', 'Removed']" :key="s" style="min-height: 30px;" @click="updateStatusValue(s)">
                 <template #prepend>
                   <v-icon :color="getStatusColor(s)" size="x-small" class="mr-2">mdi-circle</v-icon>
                 </template>
-                <v-list-item-title style="font-size: 12px;">{{ s }}</v-list-item-title>
+                <v-list-item-title>{{ statusLabel(s) }}</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -118,17 +115,17 @@
       </div>
 
       <!-- Actions (Hover only) -->
-      <div v-if="isHovering || isMenuOpen" class="position-absolute top-0 right-0 pa-1">
+      <div class="ado-board-card__actions position-absolute top-0 right-0 pa-1" :class="{ 'ado-board-card__actions--visible': isHovering || isMenuOpen }">
         <v-menu v-model="isMenuOpen">
           <template #activator="{ props: menuProps }">
-            <v-btn icon="mdi-dots-horizontal" variant="text" density="compact" size="small" v-bind="menuProps"></v-btn>
+            <v-btn aria-label="Task actions" icon="mdi-dots-horizontal" variant="text" density="compact" size="small" v-bind="menuProps"></v-btn>
           </template>
           <v-list density="compact">
-            <v-list-item @click="startEditingTitle" style="min-height: 30px;">
+            <v-list-item style="min-height: 30px;" @click="startEditingTitle">
               <template #prepend><v-icon size="small">mdi-pencil</v-icon></template>
               <v-list-item-title style="font-size: 12px;">Edit Title</v-list-item-title>
             </v-list-item>
-            <v-list-item @click="onDelete(localTask.id)" style="min-height: 30px;">
+            <v-list-item style="min-height: 30px;" @click="onDelete(localTask.id)">
               <template #prepend><v-icon size="small" color="error">mdi-delete</v-icon></template>
               <v-list-item-title class="text-error" style="font-size: 12px;">Delete</v-list-item-title>
             </v-list-item>
@@ -179,6 +176,14 @@ function getStatusColor(status) {
     case 'ToDo': return 'grey';
     default: return 'grey';
   }
+}
+
+function statusLabel(status) {
+  const labels = {
+    ToDo: 'To Do',
+    InProgress: 'In Progress'
+  }
+  return labels[status] || status
 }
 
 function assignTaskValue(userId) {
@@ -244,6 +249,11 @@ function updateTitle() {
   });
 }
 
+function onDetailUpdate(updatedItem) {
+  Object.assign(localTask.value, updatedItem)
+  emit('afterUpdate', 'update', localTask.value)
+}
+
 function updateStatusValue(status) {
   let oldStatus = localTask.value.status;
   putMoveTask(route.params.orgId, route.params.projectId, localTask.value.workItemId, localTask.value.id, {
@@ -268,14 +278,10 @@ function onDelete(taskId) {
   });
 }
 </script>
-
 <style scoped>
-/* Subtle bordered hover affordance on the remaining-work editor */
-.remaining-hover {
-  border: 1px solid transparent;
-  border-radius: 2px;
-}
-.remaining-hover:hover {
-  border: 1px solid var(--ado-border-strong);
+.ado-task-card__remaining {
+  width: 40px;
+  flex: 0 0 40px;
 }
 </style>
+

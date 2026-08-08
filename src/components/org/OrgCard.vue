@@ -2,15 +2,19 @@
   <v-hover v-slot="{ isHovering, props: hoverProps }">
     <v-card
       v-bind="hoverProps"
-      :elevation="isHovering ? 2 : 0"
-      class="ado-border cursor-pointer h-100 d-flex flex-column"
-      rounded="md"
+      class="ado-panel ado-entity-card cursor-pointer h-100 d-flex flex-column"
+      rounded="sm"
+      role="link"
+      tabindex="0"
+      :aria-label="`Open organization ${org.displayName || org.name}`"
       @click="onLoadOrg"
+      @keydown.enter.prevent="onLoadOrg"
+      @keydown.space.prevent="onLoadOrg"
     >
       <div class="d-flex align-start pa-3" style="gap: 12px;">
         <v-avatar
-          size="36"
-          rounded="md"
+          size="32"
+          rounded="sm"
           :color="uuidToColor(org.id)"
         >
           <span class="text-subtitle-2 font-weight-bold text-white">
@@ -18,7 +22,7 @@
           </span>
         </v-avatar>
         <div style="min-width: 0;" class="flex-grow-1">
-          <div class="text-body-1 font-weight-bold text-truncate">
+          <div class="text-subtitle-2 font-weight-bold text-truncate">
             {{ org.displayName || org.name }}
           </div>
           <div class="text-caption text-medium-emphasis text-truncate">{{ org.name }}</div>
@@ -53,7 +57,12 @@ import { uuidToColor } from '@/utils/utils'
 const store = useAppStore()
 const router = useRouter()
 
-const props = defineProps(['org'])
+const props = defineProps({
+  org: {
+    type: Object,
+    required: true
+  }
+})
 
 const org = ref(props.org)
 

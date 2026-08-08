@@ -1,29 +1,31 @@
 <template>
   <v-app-bar
     flat
-    density="compact"
+    density="default"
     height="48"
     class="ado-app-bar"
-    color="surface"
-    :border="true"
+    color="primary"
+    :border="false"
   >
     <v-app-bar-nav-icon
       v-if="mobile && store.isSignedIn"
+      aria-label="Open navigation"
       @click="store.setDrawer(!store.drawer)"
     ></v-app-bar-nav-icon>
 
     <!-- Logo -->
     <div
-      class="d-flex align-center cursor-pointer mx-2"
+      class="ado-app-bar__brand d-flex align-center cursor-pointer mx-2"
       style="height: 100%;"
       @click="onLogoClick"
     >
       <v-img
-        :src="store.logoUrl"
+        src="/images/logo-text-dark.svg"
+        alt="Letscrum"
         contain
-        width="120"
-        max-width="120"
-        height="28"
+        width="112"
+        max-width="112"
+        height="26"
       />
     </div>
 
@@ -38,7 +40,7 @@
             v-bind="actProps"
             variant="text"
             density="comfortable"
-            class="px-2 text-none"
+            class="ado-app-bar__context px-2 text-none"
             :ripple="false"
           >
             <v-avatar
@@ -94,7 +96,7 @@
         <v-btn
           variant="text"
           density="comfortable"
-          class="px-2 text-none"
+          class="ado-app-bar__context px-2 text-none"
           :to="`/orgs/${store.org.id}/projects/${store.project.id}`"
           :ripple="false"
         >
@@ -107,7 +109,7 @@
         <v-btn
           variant="text"
           density="comfortable"
-          class="px-2 text-none text-medium-emphasis"
+          class="ado-app-bar__context px-2 text-none"
           :to="`/orgs/${store.org.id}/projects`"
           :ripple="false"
         >
@@ -122,7 +124,7 @@
     <template v-if="store.isSignedIn">
       <v-tooltip text="Help" location="bottom">
         <template #activator="{ props: tProps }">
-          <v-btn v-bind="tProps" icon variant="text" density="comfortable" href="https://github.com/letscrum" target="_blank">
+          <v-btn v-bind="tProps" aria-label="Help" icon variant="text" density="comfortable" href="https://github.com/letscrum" target="_blank">
             <v-icon size="20">mdi-help-circle-outline</v-icon>
           </v-btn>
         </template>
@@ -131,7 +133,7 @@
 
     <v-tooltip :text="$t('core.toLanguage')" location="bottom">
       <template #activator="{ props: tProps }">
-        <v-btn v-bind="tProps" icon variant="text" density="comfortable" @click="changeLanguage">
+        <v-btn v-bind="tProps" :aria-label="$t('core.toLanguage')" icon variant="text" density="comfortable" @click="changeLanguage">
           <v-icon size="20">mdi-translate</v-icon>
         </v-btn>
       </template>
@@ -139,7 +141,7 @@
 
     <v-tooltip :text="store.theme === 'dark' ? 'Light mode' : 'Dark mode'" location="bottom">
       <template #activator="{ props: tProps }">
-        <v-btn v-bind="tProps" icon variant="text" density="comfortable" @click="changeTheme">
+        <v-btn v-bind="tProps" :aria-label="store.theme === 'dark' ? 'Use light theme' : 'Use dark theme'" icon variant="text" density="comfortable" @click="changeTheme">
           <v-icon size="20">{{ store.theme === 'dark' ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
         </v-btn>
       </template>
@@ -217,7 +219,41 @@ function changeLanguage() {
 </script>
 
 <style scoped>
+.ado-app-bar {
+  color: rgb(var(--v-theme-on-primary));
+  border-bottom: 1px solid rgba(0, 0, 0, 0.16) !important;
+}
 .ado-app-bar :deep(.v-toolbar__content) {
-  padding-inline: 4px;
+  padding-inline: 6px;
+}
+.ado-app-bar :deep(.v-btn) {
+  color: inherit;
+}
+.ado-app-bar :deep(.v-btn:hover),
+.ado-app-bar :deep(.v-btn[aria-expanded="true"]) {
+  background-color: rgba(255, 255, 255, 0.14);
+}
+.ado-app-bar :deep(.v-divider) {
+  opacity: 0.32;
+}
+.ado-app-bar__brand {
+  min-width: 112px;
+}
+.ado-app-bar__context {
+  max-width: 260px;
+}
+.ado-app-bar__context :deep(.v-btn__content) {
+  min-width: 0;
+}
+.ado-app-bar__context span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 600px) {
+  .ado-app-bar__brand {
+    min-width: 96px;
+    margin-inline: 4px !important;
+  }
 }
 </style>

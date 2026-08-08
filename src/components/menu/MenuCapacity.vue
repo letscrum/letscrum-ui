@@ -1,5 +1,5 @@
 <template>
-  <v-menu location="bottom end" :close-on-content-click="false" offset="4">
+  <v-menu v-model="memberMenuOpen" location="bottom end" :close-on-content-click="false" offset="4">
     <template #activator="{ props }">
       <v-btn
         v-bind="props"
@@ -14,17 +14,15 @@
     <v-card class="ado-border pa-3" rounded="md" min-width="320">
       <div class="text-overline text-medium-emphasis mb-2">Add sprint member</div>
       <v-autocomplete
-        v-model:search-input="search"
+        v-model:search="search"
         v-model="addMembers"
-        :items="users"
+        :items="filteredUsers"
         item-title="userName"
         item-value="userId"
         density="compact"
         variant="outlined"
         hide-details
         label="Search project member"
-        no-filter
-        @update:search="searchUsers"
       >
         <template #item="{ props: itemProps, item }">
           <v-list-item v-bind="itemProps" :title="item.raw.userName" />
@@ -32,7 +30,8 @@
       </v-autocomplete>
       <div class="d-flex mt-3">
         <v-spacer />
-        <v-btn color="primary" variant="flat" size="small" @click="onAddSprintMember">
+        <v-btn variant="text" size="small" class="mr-2" @click="closeMemberMenu">Cancel</v-btn>
+        <v-btn color="primary" variant="flat" size="small" :disabled="!addMembers" @click="onAddSprintMember">
           Add
         </v-btn>
       </div>
@@ -65,7 +64,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { getGetProject } from '@/apis/project';
 import { postAddSprintMember } from '@/apis/sprint';
 import { useRoute } from 'vue-router';
@@ -73,15 +72,18 @@ const emit = defineEmits(['afterAdd', 'afterAddFromProject', 'afterSave', 'after
 
 const route = useRoute()
 
-const users = ref([])
+const memberMenuOpen = ref(false)
 const search = ref('')
 const addMembers = ref(null)
 const allUsers = ref([])
 
-function customFilter(itemTitle, queryText) {
-  if (!queryText) return true
-  return (itemTitle || '').toLowerCase().includes(queryText.toLowerCase())
-}
+const filteredUsers = computed(() => {
+  const query = search.value.trim().toLowerCase()
+  if (!query) return allUsers.value
+  return allUsers.value.filter(user =>
+    (user.userName || '').toLowerCase().includes(query)
+  )
+})
 
 function onAddSprintMember() {
   if (!addMembers.value) return
@@ -102,9 +104,17 @@ function onAddSprintMember() {
   ).then(res => {
     if (res.status === 200) {
       addMembers.value = null
+      search.value = ''
+      memberMenuOpen.value = false
       emit('afterAdd')
     }
   })
+}
+
+function closeMemberMenu() {
+  addMembers.value = null
+  search.value = ''
+  memberMenuOpen.value = false
 }
 
 function onAddFromProject() {

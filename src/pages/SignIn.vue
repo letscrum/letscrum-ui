@@ -25,9 +25,10 @@ import SignInForm from '@/components/SignInForm.vue'
 <style scoped>
 .ado-signin-bg {
   background:
-    radial-gradient(circle at 20% 20%, rgba(0, 120, 212, 0.08), transparent 60%),
-    radial-gradient(circle at 80% 80%, rgba(16, 110, 190, 0.08), transparent 60%),
+    linear-gradient(rgba(0, 120, 212, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 120, 212, 0.035) 1px, transparent 1px),
     rgb(var(--v-theme-background));
+  background-size: 24px 24px;
   padding: 24px;
 }
 .ado-signin-card-wrapper {

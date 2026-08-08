@@ -21,7 +21,7 @@
           </span>
         </div>
         <v-spacer />
-        <div class="d-flex align-center" style="gap: 4px;">
+        <div class="ado-toolbar-actions ado-entity-actions">
           <ProjectEdit @after-update="onGetProject">
             <v-btn variant="text" size="small" prepend-icon="mdi-pencil-outline">
               {{ $t('project.detail.edit') }}
@@ -35,7 +35,7 @@
         </div>
       </div>
 
-      <div class="ado-subheader" style="padding: 0 8px;">
+      <div class="ado-subheader ado-tabs-bar">
         <v-tabs v-model="tab" height="40" color="primary" density="compact">
           <v-tab value="sprints">
             <template #prepend><v-icon size="small">mdi-run-fast</v-icon></template>
@@ -49,7 +49,7 @@
       </div>
     </template>
 
-    <div class="pa-4">
+    <div class="ado-page">
       <p v-if="project.description" class="text-body-2 text-medium-emphasis mb-3">
         {{ project.description }}
       </p>
@@ -57,7 +57,7 @@
       <v-window v-model="tab" style="overflow: visible;">
         <!-- Sprints Tab -->
         <v-window-item value="sprints" style="overflow: visible;">
-          <div class="d-flex align-center mb-3" style="gap: 8px;">
+          <div class="ado-section-toolbar">
             <span class="text-overline text-medium-emphasis">{{ sprints.length }} sprint{{ sprints.length === 1 ? '' : 's' }}</span>
             <v-spacer />
             <SprintCreate @after-create="LoadSprints()">
@@ -67,18 +67,18 @@
             </SprintCreate>
           </div>
 
-          <v-row v-if="sprints.length > 0" dense>
-            <v-col v-for="(sprint, i) in sprints" :key="i" cols="12" sm="6" md="4" lg="3">
+          <div v-if="sprints.length > 0" class="ado-sprint-grid">
+            <div v-for="sprint in sprints" :key="sprint.id" class="ado-sprint-grid__item">
               <SprintCard
                 :sprint="sprint"
                 @enter="(s) => onSetSprint(s.id, s.name, s.startDate, s.endDate, s.burndownType)"
                 @refresh="LoadSprints"
                 @delete="(id) => onDeleteSprint(sprint.projectId, id)"
               />
-            </v-col>
-          </v-row>
+            </div>
+          </div>
 
-          <div v-else class="d-flex flex-column align-center justify-center py-12">
+          <div v-else class="ado-empty-state d-flex flex-column align-center justify-center">
             <v-icon size="48" class="text-medium-emphasis">mdi-run-fast</v-icon>
             <h3 class="text-subtitle-1 font-weight-medium mt-3">{{ $t('project.detail.sprints.empty') }}</h3>
             <SprintCreate @after-create="LoadSprints()">
@@ -91,8 +91,8 @@
 
         <!-- Members Tab -->
         <v-window-item value="members">
-          <v-card flat class="ado-border" rounded="md">
-            <div class="d-flex align-center px-3 py-2 ado-header-bg ado-border-b" style="gap: 8px;">
+          <v-card class="ado-panel">
+            <div class="ado-panel-toolbar ado-header-bg ado-border-b">
               <v-icon size="small" color="primary">mdi-account-group-outline</v-icon>
               <span class="text-subtitle-2 font-weight-bold">{{ $t('project.detail.tabs.members') }}</span>
               <v-chip size="x-small" variant="tonal">{{ allMembers.length }}</v-chip>
@@ -106,18 +106,33 @@
                 hide-details
                 single-line
                 clearable
-                style="max-width: 240px;"
+                class="ado-toolbar-search"
               />
-              <v-btn icon="mdi-refresh" variant="text" size="small" density="comfortable" @click="onGetProject" />
+              <v-btn aria-label="Refresh members" icon="mdi-refresh" variant="text" size="small" @click="onGetProject" />
             </div>
 
             <v-data-table
               :headers="headers"
               :items="allMembers"
+              :loading="loading"
               :search="search"
               hover
               density="compact"
             >
+              <template #loading>
+                <div class="ado-table-state">
+                  <v-progress-circular indeterminate color="primary" size="24" width="2" />
+                  <span>Loading project members...</span>
+                </div>
+              </template>
+
+              <template #no-data>
+                <div class="ado-table-state">
+                  <v-icon size="36" class="text-medium-emphasis">mdi-account-group-outline</v-icon>
+                  <span>{{ search ? 'No members match your search.' : 'No project members yet.' }}</span>
+                </div>
+              </template>
+
               <template #[`item.avatar`]="{ item }">
                 <UserAvatar :user-id="item.userId" :user-name="item.userName" size="28" />
               </template>
@@ -150,7 +165,7 @@
                       variant="text"
                       color="error"
                       icon="mdi-delete-outline"
-                      density="comfortable"
+                      aria-label="Remove project member"
                     />
                   </ProjectMemberDelete>
                 </div>
@@ -190,6 +205,7 @@ const tab = ref('sprints')
 const project = ref({})
 const allMembers = ref([])
 const search = ref('')
+const loading = ref(false)
 
 const headers = computed(() => [
   { title: '', key: 'avatar', sortable: false, width: '50px' },
@@ -199,12 +215,15 @@ const headers = computed(() => [
 ])
 
 function onGetProject() {
+  loading.value = true
   getGetProject(store.org.id, route.params.projectId).then((res) => {
     if (res.status === 200) {
       store.setProject(res.data.item)
       project.value = res.data.item
       allMembers.value = res.data.item.members
     }
+  }).finally(() => {
+    loading.value = false
   });
 }
 

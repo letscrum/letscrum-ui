@@ -14,7 +14,7 @@
           <span class="text-caption text-medium-emphasis text-truncate">{{ store.user?.email }}</span>
         </div>
       </div>
-      <div class="ado-subheader" style="padding: 0 8px;">
+      <div class="ado-subheader ado-tabs-bar">
         <v-tabs v-model="tab" height="40" color="primary" density="compact">
           <v-tab value="profile">
             <template #prepend><v-icon size="small">mdi-account-circle-outline</v-icon></template>
@@ -28,8 +28,8 @@
       </div>
     </template>
 
-    <div class="pa-4">
-      <v-card flat rounded="md" max-width="720" class="ado-border mx-auto">
+    <div class="ado-page">
+      <v-card max-width="640" class="ado-panel mx-auto">
         <v-card-text class="pa-5">
           <v-window v-model="tab">
             <v-window-item value="profile">

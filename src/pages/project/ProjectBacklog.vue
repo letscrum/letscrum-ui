@@ -6,7 +6,7 @@
         <span class="ado-subheader__title">Product Backlog</span>
         <span class="ado-subheader__sub d-none d-sm-inline">All work items across sprints</span>
         <v-spacer />
-        <div class="d-flex align-center" style="gap: 4px;">
+        <div class="ado-toolbar-actions">
           <router-view
             name="menu"
             @after-create="onCreateWorkItemFromBacklog"
@@ -15,7 +15,7 @@
       </div>
     </template>
 
-    <div class="pa-3">
+    <div class="ado-workspace">
       <router-view v-slot="{ Component }">
         <component :is="Component" ref="mainContent" :sprints="sprints" />
       </router-view>

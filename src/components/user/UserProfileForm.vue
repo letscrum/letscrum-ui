@@ -73,8 +73,7 @@ async function submit() {
       email: formData.email
     })
     if (res.status === 200) {
-      store.showGlobalErr(true)
-      store.setGlobalErrMessage('Profile updated successfully')
+      store.showGlobalSuccess('Profile updated successfully')
       emit('success', { name: formData.name, email: formData.email })
     }
   } catch (error) {

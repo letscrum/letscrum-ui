@@ -1,6 +1,94 @@
 <template>
-  <div class="h-100" style="overflow-x: auto;">
+  <div class="ado-taskboard h-100">
+    <v-card
+      v-if="creatingWorkItem"
+      class="ado-create-composer ado-create-composer--work-item"
+        :style="{
+          '--ado-create-accent': workItemType === 'Bug'
+            ? 'rgb(var(--v-theme-type-bug))'
+            : 'rgb(var(--v-theme-type-backlog))'
+        }"
+    >
+        <div class="ado-create-composer__header">
+          <div class="ado-create-composer__type">
+            <v-icon :color="workItemType === 'Bug' ? 'type-bug' : 'type-backlog'" size="20">
+              {{ workItemType === 'Bug' ? 'mdi-bug-outline' : 'mdi-clipboard-text-outline' }}
+            </v-icon>
+            <div>
+              <div class="ado-create-composer__title">
+                New {{ workItemType === 'Bug' ? 'bug' : 'backlog item' }}
+              </div>
+              <div class="ado-create-composer__subtitle">Add work to {{ sprint.name || 'this sprint' }}</div>
+            </div>
+          </div>
+          <v-btn
+            aria-label="Cancel new work item"
+            icon="mdi-close"
+            variant="text"
+            size="small"
+            :disabled="creatingWorkItemSaving"
+            @click="cancelWorkItem"
+          />
+        </div>
+        <div class="ado-create-composer__content">
+          <v-textarea
+            ref="createWorkItemTitle"
+            v-model="newWorkItemTitle"
+            label="Title"
+            placeholder="Enter a clear title"
+            rows="2"
+            max-rows="4"
+            auto-grow
+            no-resize
+            variant="outlined"
+            density="compact"
+            hide-details="auto"
+            autofocus
+            @keydown.ctrl.enter.prevent="onCreateWorkItem"
+            @keydown.esc.prevent="cancelWorkItem"
+          />
+          <v-alert v-if="workItemCreateError" type="error" variant="tonal" density="compact" class="mt-2">
+            {{ workItemCreateError }}
+          </v-alert>
+        </div>
+        <div class="ado-create-composer__actions">
+          <v-btn variant="text" size="small" :disabled="creatingWorkItemSaving" @click="cancelWorkItem">Cancel</v-btn>
+          <v-btn
+            color="primary"
+            variant="flat"
+            size="small"
+            :loading="creatingWorkItemSaving"
+            :disabled="!newWorkItemTitle.trim()"
+            @click="onCreateWorkItem"
+          >
+            Create
+          </v-btn>
+        </div>
+    </v-card>
+
+    <div v-if="loading" class="ado-board-loading">
+      <v-skeleton-loader type="heading" width="220" class="mb-3" />
+      <div class="d-flex" style="gap: 8px; min-width: 800px;">
+        <v-skeleton-loader v-for="column in 4" :key="column" type="card, card" class="flex-grow-1" />
+      </div>
+    </div>
+
+    <div v-else-if="workItems.length === 0 && !creatingWorkItem" class="ado-empty-state d-flex flex-column align-center justify-center">
+      <v-icon size="48" class="text-medium-emphasis mb-3">mdi-view-column-outline</v-icon>
+      <div class="text-subtitle-1 font-weight-medium">No work items in this sprint</div>
+      <div class="text-body-2 text-medium-emphasis mt-1">Create a backlog item or bug to start planning work.</div>
+      <div class="d-flex align-center mt-4" style="gap: 8px;">
+        <v-btn color="primary" variant="flat" size="small" prepend-icon="mdi-plus" @click="AddWorkItem('Backlog')">
+          New backlog item
+        </v-btn>
+        <v-btn color="error" variant="outlined" size="small" prepend-icon="mdi-bug-outline" @click="AddWorkItem('Bug')">
+          Report bug
+        </v-btn>
+      </div>
+    </div>
+
     <v-data-iterator
+      v-else-if="workItems.length > 0"
       v-model:expanded="expanded"
       :items="workItems"
       hide-default-footer
@@ -9,19 +97,10 @@
     >
       <template #header>
         <v-row no-gutters class="flex-nowrap mt-1">
-          <v-col cols="auto" style="width: 200px; min-width: 200px; max-width: 200px;">
+          <v-col cols="auto" class="ado-work-item-column">
             <div class="d-flex align-center justify-space-between mb-1" style="height: 28px;">
               <v-btn
                 v-if="expanded.length > 0"
-                variant="text"
-                prepend-icon="mdi-arrow-expand-vertical"
-                size="small"
-                @click="collapseAll()"
-              >
-                Expand all
-              </v-btn>
-              <v-btn
-                v-else
                 variant="text"
                 prepend-icon="mdi-arrow-collapse-vertical"
                 size="small"
@@ -29,35 +108,22 @@
               >
                 Collapse all
               </v-btn>
+              <v-btn
+                v-else
+                variant="text"
+                prepend-icon="mdi-arrow-expand-vertical"
+                size="small"
+                @click="collapseAll()"
+              >
+                Expand all
+              </v-btn>
             </div>
 
-            <!-- Create Work Item Input -->
-            <v-expand-transition>
-              <div v-if="creatingWorkItem">
-                <v-card
-                  elevation="2"
-                  class="pa-2"
-                  :style="`border-left: 4px solid ${workItemType == 'Backlog' ? '#009CCC' : '#CC293D'};`"
-                >
-                  <v-textarea
-                    ref="createWorkItemTitle"
-                    rows="2"
-                    auto-grow
-                    variant="plain"
-                    hide-details
-                    placeholder="Enter title..."
-                    class="text-body-2"
-                    @focusout="onCreatWorkItem()"
-                    @keydown.enter.prevent="onCreatWorkItem()"
-                  ></v-textarea>
-                </v-card>
-              </div>
-            </v-expand-transition>
           </v-col>
 
-          <v-col class="flex-grow-1" style="min-width: 600px;">
+          <v-col class="ado-task-area flex-grow-1">
             <v-row no-gutters>
-              <v-col v-for="header in ['To Do', 'In Progress', 'Done']" :key="header" cols="4" class="px-1" style="min-width: 200px;">
+              <v-col v-for="header in ['To Do', 'In Progress', 'Done']" :key="header" cols="4" class="ado-task-column px-1">
                 <div class="d-flex align-center pl-1 mb-1" style="height: 28px;">
                   <div class="text-subtitle-2 font-weight-bold text-medium-emphasis mr-2">
                     {{ header }}
@@ -78,7 +144,7 @@
             <!-- Expanded View -->
             <v-row v-if="!isExpanded(item)" no-gutters class="py-0 flex-nowrap">
               <!-- Work Item Column -->
-              <v-col cols="auto" class="px-1 d-flex align-start" style="width: 200px; min-width: 200px; max-width: 200px;">
+              <v-col cols="auto" class="ado-work-item-column px-1 d-flex align-start">
                 <v-btn
                   icon="mdi-chevron-down"
                   variant="text"
@@ -94,6 +160,9 @@
                     v-model="workItems"
                     group="workItem"
                     :animation="150"
+                    ghost-class="ado-drag-ghost"
+                    chosen-class="ado-drag-chosen"
+                    drag-class="ado-drag-active"
                   >
                     <div :id="item.raw.id">
                       <WorkItemCard
@@ -108,9 +177,9 @@
               </v-col>
 
               <!-- Task Columns -->
-              <v-col class="flex-grow-1" style="min-width: 600px;">
+              <v-col class="ado-task-area flex-grow-1">
                 <v-row no-gutters class="h-100">
-                  <v-col v-for="status in ['To Do', 'In Progress', 'Done']" :key="status" cols="4" class="pl-1 h-100" style="min-width: 200px;">
+                  <v-col v-for="status in ['To Do', 'In Progress', 'Done']" :key="status" cols="4" class="ado-task-column pl-1 h-100">
                     <v-sheet
                       class="ado-subtle d-flex flex-column fill-height rounded-0 pa-0"
                       min-height="100"
@@ -119,13 +188,17 @@
                         :id="item.raw.id + '-' + status.replace(' ', '')"
                         v-model="item.raw['tasks' + status.replace(' ', '')]"
                         group="task"
-                        class="flex-grow-1 d-flex flex-wrap align-content-start"
+                        class="ado-task-drop-zone flex-grow-1 d-flex flex-wrap align-content-start"
                         :animation="150"
+                        ghost-class="ado-drag-ghost"
+                        chosen-class="ado-drag-chosen"
+                        drag-class="ado-drag-active"
                         @add="onAdd"
                       >
                         <div
                           v-for="task in item.raw['tasks' + status.replace(' ', '')]"
                           :key="task.id"
+                          class="ado-task-card-wrap"
                         >
                           <TaskCard
                             :task="task"
@@ -140,50 +213,68 @@
                         <v-expand-transition>
                           <div v-if="creatingTask && item.raw.id === createTaskWorkItemId">
                             <v-card
-                              elevation="2"
-                              class="pa-2"
-                              style="border-left: 4px solid #F2CB1D;"
+                              class="ado-create-composer ado-create-composer--task"
+                              style="--ado-create-accent: rgb(var(--v-theme-type-task));"
                             >
-                              <v-textarea
-                                :id="item.raw.id + '-createTaskTitle'"
-                                ref="createTaskTitle"
-                                rows="2"
-                                auto-grow
-                                variant="plain"
-                                hide-details
-                                placeholder="Enter title..."
-                                class="text-body-2"
-                                @focusout="onCreateTask()"
-                                @keydown.enter.prevent="onCreateTask()"
-                              ></v-textarea>
+                              <div class="ado-create-composer__header">
+                                <div class="ado-create-composer__type">
+                                  <v-icon color="type-task" size="18">mdi-checkbox-marked-circle-outline</v-icon>
+                                  <div class="ado-create-composer__title">New task</div>
+                                </div>
+                                <v-btn
+                                  aria-label="Cancel new task"
+                                  icon="mdi-close"
+                                  variant="text"
+                                  size="small"
+                                  :disabled="creatingTaskSaving"
+                                  @click="cancelTask"
+                                />
+                              </div>
+                              <div class="ado-create-composer__content">
+                                <v-textarea
+                                  :id="item.raw.id + '-createTaskTitle'"
+                                  v-model="newTaskTitle"
+                                  label="Title"
+                                  placeholder="Enter task title"
+                                  rows="2"
+                                  max-rows="4"
+                                  auto-grow
+                                  no-resize
+                                  variant="outlined"
+                                  density="compact"
+                                  hide-details="auto"
+                                  @keydown.ctrl.enter.prevent="onCreateTask"
+                                  @keydown.esc.prevent="cancelTask"
+                                />
+                                <v-alert v-if="taskCreateError" type="error" variant="tonal" density="compact" class="mt-2">
+                                  {{ taskCreateError }}
+                                </v-alert>
+                              </div>
+                              <div class="ado-create-composer__actions">
+                                <v-btn variant="text" size="small" :disabled="creatingTaskSaving" @click="cancelTask">Cancel</v-btn>
+                                <v-btn
+                                  color="primary"
+                                  variant="flat"
+                                  size="small"
+                                  :loading="creatingTaskSaving"
+                                  :disabled="!newTaskTitle.trim()"
+                                  @click="onCreateTask"
+                                >
+                                  Create
+                                </v-btn>
+                              </div>
                             </v-card>
                           </div>
                           <div v-else class="pa-1 mb-1">
-                            <div
-                              v-if="!item.raw['tasksToDo'] || item.raw['tasksToDo'].length === 0"
-                              class="d-flex align-center cursor-pointer"
+                            <v-btn
+                              prepend-icon="mdi-plus"
+                              variant="text"
+                              color="primary"
+                              size="small"
                               @click="AddTask(item.raw.id)"
                             >
-                              <v-sheet
-                                color="green"
-                                width="20"
-                                height="20"
-                                class="d-flex align-center justify-center mr-2 rounded-sm"
-                              >
-                                <v-icon color="white" size="16">mdi-plus</v-icon>
-                              </v-sheet>
-                              <span class="text-caption font-weight-bold text-medium-emphasis">New item</span>
-                            </div>
-                            <v-sheet
-                              v-else
-                              color="success"
-                              width="20"
-                              height="20"
-                              class="d-flex align-center justify-center rounded-sm cursor-pointer"
-                              @click="AddTask(item.raw.id)"
-                            >
-                              <v-icon color="white" size="16">mdi-plus</v-icon>
-                            </v-sheet>
+                              New task
+                            </v-btn>
                           </div>
                         </v-expand-transition>
                       </div>
@@ -198,7 +289,12 @@
               v-else
               no-gutters
               class="py-1 align-center ado-subtle ado-border my-1 cursor-pointer rounded-sm"
+              role="button"
+              tabindex="0"
+              aria-expanded="false"
               @click="() => toggleExpand(item)"
+              @keydown.enter.prevent="() => toggleExpand(item)"
+              @keydown.space.prevent="() => toggleExpand(item)"
             >
               <v-col cols="12" class="d-flex align-center px-2 py-1">
                 <v-icon size="x-small" class="mr-1">mdi-chevron-right</v-icon>
@@ -218,26 +314,6 @@
     </v-data-iterator>
 
     <!-- Side Panels -->
-    <v-navigation-drawer
-      v-if="store.sprint.showDetails"
-      location="right"
-      width="400"
-      permanent
-    >
-      <v-card flat class="ado-border h-100 d-flex flex-column" rounded="0">
-        <div class="d-flex align-center px-3 py-2 ado-header-bg ado-border-b">
-          <v-icon size="small" color="primary" class="mr-2">mdi-information-outline</v-icon>
-          <span class="text-subtitle-2 font-weight-bold">Work details</span>
-          <v-spacer />
-          <v-btn icon="mdi-close" variant="text" density="compact" size="small" @click="onCloseSide" />
-        </div>
-        <div class="flex-grow-1 d-flex flex-column align-center justify-center text-medium-emphasis pa-4">
-          <v-icon size="40" class="mb-2">mdi-cursor-default-click-outline</v-icon>
-          <div class="text-body-2 text-center">Select a card to see its details here.</div>
-        </div>
-      </v-card>
-    </v-navigation-drawer>
-
     <v-navigation-drawer
       v-if="store.sprint.showSprints"
       location="right"
@@ -282,9 +358,14 @@ const workItemType = ref('')
 const workItems = ref([])
 const creatingWorkItem = ref(false)
 const creatingTask = ref(false)
+const creatingWorkItemSaving = ref(false)
+const creatingTaskSaving = ref(false)
+const loading = ref(true)
+const newWorkItemTitle = ref('')
+const newTaskTitle = ref('')
+const workItemCreateError = ref('')
+const taskCreateError = ref('')
 const createWorkItemTitle = ref(null)
-const createTaskTitle = ref(null)
-const rightTaskTitle = ref(null)
 const createTaskWorkItemId = ref(0)
 const expanded = ref([])
 
@@ -297,6 +378,7 @@ function getTaskCount(status) {
 
 function LoadWorkItems(sprintId) {
   const id = sprintId || route.params.sprintId
+  loading.value = true
   expanded.value = []
   getGetSprintWorkItems(route.params.orgId, route.params.projectId, id, {
     page: 1,
@@ -310,17 +392,25 @@ function LoadWorkItems(sprintId) {
         }
       })
     }
+  }).finally(() => {
+    loading.value = false
   })
 }
 
 function AddWorkItem(type) {
-  creatingWorkItem.value = !creatingWorkItem.value
+  creatingWorkItem.value = true
   workItemType.value = type
-  if (creatingWorkItem.value) {
-    nextTick(() => {
-      createWorkItemTitle.value?.focus()
-    })
-  }
+  workItemCreateError.value = ''
+  nextTick(() => {
+    createWorkItemTitle.value?.focus()
+  })
+}
+
+function cancelWorkItem() {
+  if (creatingWorkItemSaving.value) return
+  creatingWorkItem.value = false
+  newWorkItemTitle.value = ''
+  workItemCreateError.value = ''
 }
 
 function onCloseSide() {
@@ -328,8 +418,10 @@ function onCloseSide() {
 }
 
 function AddTask(workItemId) {
-  creatingTask.value = !creatingTask.value
+  creatingTask.value = true
   createTaskWorkItemId.value = workItemId
+  newTaskTitle.value = ''
+  taskCreateError.value = ''
 
   if (creatingTask.value) {
     nextTick(() => {
@@ -341,40 +433,65 @@ function AddTask(workItemId) {
   }
 }
 
-function onCreateTask() {
-  const element = document.getElementById(createTaskWorkItemId.value + '-createTaskTitle');
-  const title = element ? element.value : '';
-
-  if (creatingTask.value === true && title && createTaskWorkItemId.value > 0) {
-    postCreateTask(route.params.orgId, route.params.projectId, createTaskWorkItemId.value, {
-      sprintId: route.params.sprintId,
-      title: title
-    }).then(res => {
-      for (let i = 0; i < workItems.value.length; i++) {
-        if (workItems.value[i].id === createTaskWorkItemId.value) {
-          workItems.value[i].tasksAll.push(res.data.item)
-          workItems.value[i].tasksToDo.push(res.data.item)
-        }
-      }
-      emit('task-changed')
-    })
-  }
+function cancelTask() {
+  if (creatingTaskSaving.value) return
   creatingTask.value = false
+  createTaskWorkItemId.value = 0
+  newTaskTitle.value = ''
+  taskCreateError.value = ''
 }
 
-function onCreatWorkItem() {
-  const title = createWorkItemTitle.value?.value || '';
+async function onCreateTask() {
+  const title = newTaskTitle.value.trim();
 
-  if (creatingWorkItem.value === true && title) {
-    postCreateWorkItem(route.params.orgId, route.params.projectId, {
+  if (!creatingTask.value || !title || createTaskWorkItemId.value <= 0) return
+
+  creatingTaskSaving.value = true
+  taskCreateError.value = ''
+  try {
+    const res = await postCreateTask(route.params.orgId, route.params.projectId, createTaskWorkItemId.value, {
+      sprintId: route.params.sprintId,
+      title: title
+    })
+    for (let i = 0; i < workItems.value.length; i++) {
+      if (workItems.value[i].id === createTaskWorkItemId.value) {
+        workItems.value[i].tasksAll.push(res.data.item)
+        workItems.value[i].tasksToDo.push(res.data.item)
+      }
+    }
+    creatingTask.value = false
+    createTaskWorkItemId.value = 0
+    newTaskTitle.value = ''
+    emit('task-changed')
+  } catch (error) {
+    taskCreateError.value = error.response?.data?.message || 'Unable to create this task. Try again.'
+  } finally {
+    creatingTaskSaving.value = false
+  }
+}
+
+async function onCreateWorkItem() {
+  const title = newWorkItemTitle.value.trim();
+
+  if (!creatingWorkItem.value || !title) return
+
+  creatingWorkItemSaving.value = true
+  workItemCreateError.value = ''
+  try {
+    const res = await postCreateWorkItem(route.params.orgId, route.params.projectId, {
       title: title,
       sprintId: route.params.sprintId,
       type: workItemType.value,
-    }).then(res => {
-      workItems.value.unshift(res.data.item)
     })
+    workItems.value.unshift(res.data.item)
+    creatingWorkItem.value = false
+    newWorkItemTitle.value = ''
+    emit('task-changed')
+  } catch (error) {
+    workItemCreateError.value = error.response?.data?.message || 'Unable to create this work item. Try again.'
+  } finally {
+    creatingWorkItemSaving.value = false
   }
-  creatingWorkItem.value = false
 }
 
 function filterTasks(userId) {
@@ -433,7 +550,7 @@ function onAdd(item) {
   putMoveTask(route.params.orgId, route.params.projectId, workItemId, taskId, {
     status: status,
     toWorkItemId: workItemId,
-  }).then(res => {
+  }).then(() => {
     const task = workItems.value.find((item) => item.id == workItemId)['tasks' + status].find((task) => task.id == taskId)
     task.status = status
     task.workItemId = workItemId
@@ -501,10 +618,16 @@ function updateTask(action, task) {
 }
 
 function updateWorkItem(action, workItem) {
-  if (action == 'assign') {
-    workItems.value.find((item) => item.id == workItem.id).assignUser.id = workItem.assignUser.id
-  } else {
-    workItems.value.find((item) => item.id == workItem.id).status = workItem.status
+  const targetIndex = workItems.value.findIndex((item) => item.id == workItem.id)
+  if (targetIndex === -1) return
+  if (action === 'delete') {
+    workItems.value.splice(targetIndex, 1)
+  } else if (action === 'assign') {
+    workItems.value[targetIndex].assignUser = workItem.assignUser
+  } else if (action === 'status') {
+    workItems.value[targetIndex].status = workItem.status
+  } else if (action === 'update') {
+    Object.assign(workItems.value[targetIndex], workItem)
   }
 }
 
@@ -529,6 +652,120 @@ watch(() => route.params.sprintId, (newId, oldId) => {
 </script>
 
 <style scoped>
+.ado-taskboard {
+  --ado-work-item-column: 226px;
+  --ado-task-column: clamp(220px, 24vw, 320px);
+  overflow-x: auto;
+}
+.ado-board-loading {
+  min-width: 800px;
+  padding: 12px;
+}
+.ado-create-composer {
+  overflow: hidden;
+  border: 1px solid var(--ado-border) !important;
+  border-left: 3px solid var(--ado-create-accent) !important;
+  background-color: rgb(var(--v-theme-surface));
+  box-shadow: var(--ado-shadow-md) !important;
+}
+.ado-create-composer--work-item {
+  width: min(440px, calc(100vw - 40px));
+  margin: 4px 0 12px 4px;
+  animation: ado-composer-enter 160ms ease-out;
+}
+.ado-create-composer--task {
+  width: 190px;
+  margin: 4px;
+}
+.ado-create-composer__header {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 8px 6px 12px;
+  border-bottom: 1px solid var(--ado-border);
+  background-color: var(--ado-subtle-bg);
+}
+.ado-create-composer__type {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+}
+.ado-create-composer__title {
+  color: rgb(var(--v-theme-on-surface));
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+}
+.ado-create-composer__subtitle {
+  overflow: hidden;
+  color: var(--ado-text-secondary);
+  font-size: 12px;
+  line-height: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ado-create-composer__content {
+  padding: 10px 12px 8px;
+}
+.ado-create-composer__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 0 12px 10px;
+}
+.ado-create-composer--task .ado-create-composer__header {
+  min-height: 40px;
+  padding-left: 8px;
+}
+.ado-create-composer--task .ado-create-composer__content {
+  padding: 8px;
+}
+.ado-create-composer--task .ado-create-composer__actions {
+  padding: 0 8px 8px;
+}
+@keyframes ado-composer-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.ado-work-item-column {
+  width: var(--ado-work-item-column);
+  min-width: var(--ado-work-item-column);
+  max-width: var(--ado-work-item-column);
+}
+.ado-task-area {
+  min-width: calc(var(--ado-task-column) * 3);
+}
+.ado-task-column {
+  min-width: var(--ado-task-column);
+}
+.ado-task-drop-zone {
+  min-height: 72px;
+  padding-bottom: 4px;
+}
+.ado-task-card-wrap {
+  width: 198px;
+  flex: 0 0 198px;
+}
+.ado-drag-ghost {
+  opacity: 0.35;
+}
+.ado-drag-chosen {
+  outline: 2px solid rgb(var(--v-theme-primary));
+  outline-offset: 1px;
+}
+.ado-drag-active {
+  transform: rotate(0.4deg);
+}
 .ado-subtle {
   background-color: var(--ado-subtle-bg);
 }

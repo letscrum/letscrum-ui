@@ -6,7 +6,7 @@
         <span class="ado-subheader__title">{{ $t('org.list.title') }}</span>
         <span class="ado-subheader__sub d-none d-sm-inline">{{ $t('org.list.subtitle') }}</span>
         <v-spacer />
-        <div class="d-flex align-center" style="gap: 8px;">
+        <div class="ado-toolbar-actions">
           <v-text-field
             v-model="search"
             prepend-inner-icon="mdi-magnify"
@@ -15,11 +15,11 @@
             variant="outlined"
             hide-details
             clearable
-            style="width: 220px;"
+            class="ado-toolbar-search"
           />
-          <v-btn-toggle v-model="viewMode" mandatory density="comfortable" variant="outlined" divided>
-            <v-btn value="grid" icon="mdi-view-grid-outline" size="small" />
-            <v-btn value="list" icon="mdi-view-list-outline" size="small" />
+          <v-btn-toggle v-model="viewMode" mandatory variant="outlined" divided>
+            <v-btn value="grid" icon="mdi-view-grid-outline" size="small" aria-label="Grid view" />
+            <v-btn value="list" icon="mdi-view-list-outline" size="small" aria-label="List view" />
           </v-btn-toggle>
           <OrgCreate>
             <v-btn
@@ -35,8 +35,8 @@
       </div>
     </template>
 
-    <v-container fluid class="pa-4">
-      <v-row v-if="loading" dense>
+    <v-container fluid class="ado-page ado-page--wide">
+      <v-row v-if="loading" class="ado-entity-grid">
         <v-col v-for="n in 8" :key="n" cols="12" sm="6" md="4" lg="3">
           <v-skeleton-loader class="ado-border" type="article" />
         </v-col>
@@ -44,14 +44,14 @@
 
       <template v-else-if="filteredOrgs.length > 0">
         <!-- Grid view -->
-        <v-row v-if="viewMode === 'grid'" dense>
+        <v-row v-if="viewMode === 'grid'" class="ado-entity-grid">
           <v-col v-for="(org, i) in filteredOrgs" :key="i" cols="12" sm="6" md="4" lg="3">
             <OrgCard :org="org" />
           </v-col>
         </v-row>
 
         <!-- List view -->
-        <v-card v-else flat class="ado-border">
+        <v-card v-else class="ado-panel">
           <v-table>
             <thead>
               <tr>
@@ -66,7 +66,12 @@
                 v-for="org in filteredOrgs"
                 :key="org.id"
                 class="cursor-pointer"
+                role="link"
+                tabindex="0"
+                :aria-label="`Open organization ${org.displayName || org.name}`"
                 @click="onOpenOrg(org)"
+                @keydown.enter.prevent="onOpenOrg(org)"
+                @keydown.space.prevent="onOpenOrg(org)"
               >
                 <td>
                   <v-avatar size="24" rounded="sm" :color="uuidToColor(org.id)">
@@ -93,7 +98,7 @@
         </v-card>
       </template>
 
-      <div v-else class="d-flex flex-column align-center justify-center py-12">
+      <div v-else class="ado-empty-state d-flex flex-column align-center justify-center">
         <v-icon size="56" class="text-medium-emphasis">mdi-domain-off</v-icon>
         <h3 class="text-subtitle-1 font-weight-medium mt-4">{{ $t('org.list.emptyTitle') }}</h3>
         <p class="text-body-2 text-medium-emphasis mt-1">{{ $t('org.list.emptySubtitle') }}</p>

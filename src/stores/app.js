@@ -19,6 +19,8 @@ export const useAppStore = defineStore('app', {
     globalErr: {
       show: false,
       message: null,
+      type: 'error',
+      title: 'Something went wrong',
     },
     user: {
       id: null,
@@ -326,9 +328,17 @@ export const useAppStore = defineStore('app', {
     },
     setGlobalErrMessage(payload) {
       this.globalErr.message = payload;
+      this.globalErr.type = 'error';
+      this.globalErr.title = 'Something went wrong';
     },
     showGlobalErr(payload) {
       this.globalErr.show = payload;
+    },
+    showGlobalSuccess(payload) {
+      this.globalErr.message = payload;
+      this.globalErr.type = 'success';
+      this.globalErr.title = 'Changes saved';
+      this.globalErr.show = true;
     }
   },
 })

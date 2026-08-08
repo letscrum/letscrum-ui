@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <v-card flat class="ado-border" rounded="md">
+  <div class="ado-table-scroll">
+    <v-card class="ado-panel ado-backlog-panel">
       <v-data-iterator
         v-model:expanded="expanded"
         :items="workItems"
@@ -67,7 +67,7 @@
                     <span class="ml-1 text-caption">{{ index + 1 }}</span>
                   </v-col>
                   <v-col cols="6" class="d-flex align-center pl-2">
-                    <v-icon :color="item.raw.type === 'Bug' ? 'red' : 'blue'" size="small" class="mr-2">
+                    <v-icon :color="item.raw.type === 'Bug' ? 'type-bug' : 'type-backlog'" size="small" class="mr-2">
                       {{ item.raw.type === 'Bug' ? 'mdi-bug' : 'mdi-clipboard-text' }}
                     </v-icon>
                     <div class="text-body-2 text-truncate" style="max-width: 90%;">
@@ -110,7 +110,7 @@
                           <v-col cols="1">
                           </v-col>
                           <v-col cols="6" class="d-flex align-center pl-8">
-                            <v-icon color="#F2CB1D" size="small" class="mr-2">mdi-checkbox-marked-circle-outline</v-icon>
+                            <v-icon color="type-task" size="small" class="mr-2">mdi-checkbox-marked-circle-outline</v-icon>
                             <div class="text-body-2 text-truncate">
                               <ItemDetail item-type="TASK" :item-id="task.id">
                                 <span class="text-decoration-underline-hover">{{ task.title }}</span>
@@ -181,7 +181,12 @@ import { VueDraggable } from 'vue-draggable-plus'
 
 const emit = defineEmits(['task-changed'])
 
-const props = defineProps(['sprints'])
+const props = defineProps({
+  sprints: {
+    type: Array,
+    default: () => []
+  }
+})
 
 const store = useAppStore()
 

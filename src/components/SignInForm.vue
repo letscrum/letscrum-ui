@@ -1,5 +1,5 @@
 <template>
-  <v-card class="ado-border" elevation="2" rounded="md">
+  <v-card class="ado-panel ado-auth-panel" rounded="sm">
     <div class="px-5 pt-5 pb-2">
       <div class="text-h6 font-weight-bold mb-1">{{ $t('signIn.formTitle') || 'Sign in' }}</div>
       <div class="text-caption text-medium-emphasis">Use your Letscrum account to continue.</div>
@@ -40,7 +40,7 @@
     <v-card-actions class="px-5 pb-5 pt-0">
       <v-btn
         block
-        size="large"
+        size="default"
         color="primary"
         variant="flat"
         :loading="loading"

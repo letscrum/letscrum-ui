@@ -1,11 +1,12 @@
 <template>
   <AppBar />
   <AppDrawer v-if="store.isSignedIn" />
-  <!-- Optional sub-header (page title bar) -->
-  <slot name="subheader"></slot>
-  <div class="ado-page-content">
+  <header v-if="$slots.subheader" class="ado-page-chrome">
+    <slot name="subheader"></slot>
+  </header>
+  <main class="ado-page-content">
     <slot></slot>
-  </div>
+  </main>
   <global-err-toast></global-err-toast>
 </template>
 
@@ -14,9 +15,3 @@ import { useAppStore } from '@/stores/app'
 
 const store = useAppStore()
 </script>
-
-<style scoped>
-.ado-page-content {
-  padding: 0;
-}
-</style>

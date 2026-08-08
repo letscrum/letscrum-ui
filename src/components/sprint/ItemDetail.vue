@@ -5,12 +5,20 @@
     scrollable
   >
     <template #activator="{ props: activatorProps }">
-      <div v-bind="activatorProps" class="text-truncate" @click="onLoadItem">
+      <div
+        v-bind="activatorProps"
+        class="ado-item-detail-trigger text-truncate"
+        role="button"
+        tabindex="0"
+        @click="onLoadItem"
+        @keydown.enter.prevent="onLoadItem"
+        @keydown.space.prevent="onLoadItem"
+      >
         <slot></slot>
       </div>
     </template>
 
-    <v-card class="ado-border" rounded="md">
+    <v-card class="ado-panel" rounded="sm">
       <!-- Header with type color bar -->
       <div :style="`height: 4px; background: ${typeColor};`"></div>
 
@@ -21,15 +29,16 @@
           <v-icon start size="x-small">mdi-circle</v-icon>{{ item.status }}
         </v-chip>
         <v-spacer />
-        <v-btn icon="mdi-close" variant="text" density="compact" @click="dialog = false" />
+        <v-btn aria-label="Close item details" icon="mdi-close" variant="text" density="compact" @click="dialog = false" />
       </v-toolbar>
 
       <v-divider />
 
       <v-card-text class="pa-0" style="max-height: 70vh;">
+        <v-skeleton-loader v-if="loading" type="article, sentences, article" class="pa-4" />
         <v-row no-gutters>
           <!-- Main column -->
-          <v-col cols="12" md="8" class="pa-4">
+          <v-col v-if="!loading" cols="12" md="8" class="pa-4">
             <v-text-field
               v-model="item.title"
               label="Title"
@@ -61,45 +70,21 @@
               class="mb-4"
             />
 
-            <v-tabs v-model="activeTab" density="compact" color="primary">
-              <v-tab value="discussion"><v-icon size="small" class="mr-1">mdi-comment-text-outline</v-icon>Discussion</v-tab>
-              <v-tab value="history"><v-icon size="small" class="mr-1">mdi-history</v-icon>History</v-tab>
-              <v-tab value="links"><v-icon size="small" class="mr-1">mdi-link-variant</v-icon>Links</v-tab>
-              <v-tab value="attachments"><v-icon size="small" class="mr-1">mdi-paperclip</v-icon>Attachments</v-tab>
-            </v-tabs>
-            <v-divider />
-            <v-window v-model="activeTab" class="mt-3">
-              <v-window-item value="discussion">
-                <div class="text-body-2 text-medium-emphasis text-center py-6">
-                  <v-icon size="32" class="mb-2">mdi-comment-outline</v-icon>
-                  <div>No comments yet.</div>
-                </div>
-              </v-window-item>
-              <v-window-item value="history">
-                <div class="text-body-2 text-medium-emphasis text-center py-6">
-                  <v-icon size="32" class="mb-2">mdi-history</v-icon>
-                  <div>No history available.</div>
-                </div>
-              </v-window-item>
-              <v-window-item value="links">
-                <div class="text-body-2 text-medium-emphasis text-center py-6">
-                  <v-icon size="32" class="mb-2">mdi-link-variant-off</v-icon>
-                  <div>No linked items.</div>
-                </div>
-              </v-window-item>
-              <v-window-item value="attachments">
-                <div class="text-body-2 text-medium-emphasis text-center py-6">
-                  <v-icon size="32" class="mb-2">mdi-paperclip</v-icon>
-                  <div>No attachments.</div>
-                </div>
-              </v-window-item>
-            </v-window>
+            <v-alert
+              v-if="saveError"
+              type="error"
+              variant="tonal"
+              density="compact"
+              class="mt-2"
+            >
+              {{ saveError }}
+            </v-alert>
           </v-col>
 
           <v-divider vertical class="d-none d-md-flex" />
 
           <!-- Side column: Details -->
-          <v-col cols="12" md="4" class="pa-4 ado-subtle">
+          <v-col v-if="!loading" cols="12" md="4" class="pa-4 ado-subtle">
             <div class="text-overline text-medium-emphasis mb-2">Details</div>
 
             <div class="ado-detail-row">
@@ -139,30 +124,49 @@
 
       <v-divider />
       <v-card-actions class="px-3 py-2">
-        <v-btn variant="text" @click="dialog = false">Close</v-btn>
+        <v-btn variant="text" :disabled="saving" @click="dialog = false">Cancel</v-btn>
         <v-spacer />
-        <v-btn variant="flat" color="primary" @click="onSave">Save</v-btn>
+        <v-btn
+          variant="flat"
+          color="primary"
+          :loading="saving"
+          :disabled="loading || !item.title?.trim()"
+          @click="onSave"
+        >
+          Save
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { getGetTask } from '@/apis/task';
-import { getGetWorkItem } from '@/apis/workitem';
+import { ref, computed } from 'vue';
+import { getGetTask, putUpdateTask } from '@/apis/task';
+import { getGetWorkItem, putUpdateWorkItem } from '@/apis/workitem';
 import { useRoute } from 'vue-router';
 import { useAppStore } from '@/stores/app'
 
 const route = useRoute()
 const store = useAppStore()
 
-const props = defineProps(['itemType', 'itemId']);
+const props = defineProps({
+  itemType: {
+    type: String,
+    required: true
+  },
+  itemId: {
+    type: [String, Number],
+    required: true
+  }
+});
 const emit = defineEmits(['afterUpdate'])
 
 const item = ref({})
 const dialog = ref(false)
-const activeTab = ref('discussion')
+const loading = ref(false)
+const saving = ref(false)
+const saveError = ref('')
 
 const typeIcon = computed(() => {
   if (props.itemType === 'TASK') return 'mdi-checkbox-marked-circle-outline'
@@ -188,33 +192,76 @@ const statusColor = computed(() => {
   }
 })
 
-function onSave() {
-  emit('afterUpdate')
-  dialog.value = false
+async function onSave() {
+  saving.value = true
+  saveError.value = ''
+  const payload = {
+    title: item.value.title,
+    description: item.value.description || '',
+    acceptanceCriteria: item.value.acceptanceCriteria || ''
+  }
+
+  try {
+    if (props.itemType === 'TASK') {
+      await putUpdateTask(
+        route.params.orgId,
+        route.params.projectId,
+        item.value.workItemId,
+        props.itemId,
+        payload
+      )
+    } else {
+      await putUpdateWorkItem(
+        route.params.orgId,
+        route.params.projectId,
+        props.itemId,
+        payload
+      )
+    }
+    emit('afterUpdate', item.value)
+    dialog.value = false
+  } catch (error) {
+    saveError.value = error.response?.data?.message || 'Unable to save this item. Try again.'
+  } finally {
+    saving.value = false
+  }
 }
 
-function onLoadItem() {
+async function onLoadItem() {
+  loading.value = true
+  saveError.value = ''
   if (props.itemType === 'TASK') {
-    getGetTask(
-      route.params.orgId,
-      route.params.projectId,
-      '0',
-      props.itemId).then((res) => {
+    try {
+      const res = await getGetTask(
+        route.params.orgId,
+        route.params.projectId,
+        '0',
+        props.itemId)
       item.value = res.data.item
-    })
+    } finally {
+      loading.value = false
+    }
   } else if (props.itemType === 'WORKITEM') {
-    getGetWorkItem(
-      route.params.orgId,
-      route.params.projectId,
-      props.itemId).then((res) => {
+    try {
+      const res = await getGetWorkItem(
+        route.params.orgId,
+        route.params.projectId,
+        props.itemId)
       item.value = res.data.item
-    })
+    } finally {
+      loading.value = false
+    }
   }
 }
 
 </script>
 
 <style scoped>
+.ado-item-detail-trigger:focus-visible {
+  border-radius: 2px;
+  outline: 2px solid var(--ado-focus);
+  outline-offset: 2px;
+}
 .ado-detail-row {
   display: flex;
   justify-content: space-between;

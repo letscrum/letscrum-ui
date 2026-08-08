@@ -90,8 +90,7 @@ async function submit() {
     }
 
     if (res.status === 200) {
-      store.showGlobalErr(true)
-      store.setGlobalErrMessage('Password changed successfully')
+      store.showGlobalSuccess('Password changed successfully')
       form.value.reset()
       emit('success')
     }

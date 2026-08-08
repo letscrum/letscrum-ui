@@ -1,6 +1,6 @@
 <template>
-  <v-card flat class="ado-border" rounded="md">
-    <div class="d-flex align-center px-4 py-2 ado-header-bg ado-border-b">
+  <v-card class="ado-panel">
+    <div class="ado-panel-toolbar ado-header-bg ado-border-b">
       <v-icon class="mr-2" color="primary" size="small">mdi-chart-timeline-variant</v-icon>
       <span class="text-subtitle-2 font-weight-bold">Sprint Capacity Planning</span>
       <v-spacer />
@@ -11,7 +11,8 @@
         {{ currentMembers.length }} member{{ currentMembers.length !== 1 ? 's' : '' }}
       </v-chip>
     </div>
-    <v-table density="compact" hover>
+    <div class="ado-table-scroll">
+    <v-table class="ado-capacity-table" density="compact" hover>
       <thead>
         <tr>
           <th style="width: 56px;"></th>
@@ -49,7 +50,7 @@
           </td>
           <td class="text-center">
             <SprintMemberDelete :member="item" @after="LoadSprint">
-              <v-btn icon="mdi-delete-outline" color="error" variant="text" size="small" density="comfortable"></v-btn>
+              <v-btn aria-label="Remove sprint member" icon="mdi-delete-outline" color="error" variant="text" size="small"></v-btn>
             </SprintMemberDelete>
           </td>
         </tr>
@@ -66,6 +67,7 @@
         </tr>
       </tbody>
     </v-table>
+    </div>
   </v-card>
 </template>
 

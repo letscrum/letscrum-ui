@@ -21,7 +21,7 @@
           </span>
         </div>
         <v-spacer />
-        <div class="d-flex align-center" style="gap: 4px;">
+        <div class="ado-toolbar-actions ado-entity-actions">
           <v-btn
             prepend-icon="mdi-folder-multiple-outline"
             variant="text"
@@ -43,7 +43,7 @@
         </div>
       </div>
 
-      <div class="ado-subheader" style="padding: 0 8px;">
+      <div class="ado-subheader ado-tabs-bar">
         <v-tabs v-model="tab" height="40" color="primary" density="compact">
           <v-tab value="members">
             <template #prepend><v-icon size="small">mdi-account-group-outline</v-icon></template>
@@ -53,7 +53,7 @@
       </div>
     </template>
 
-    <div class="pa-4">
+    <div class="ado-page">
       <p v-if="org.description" class="text-body-2 text-medium-emphasis mb-3">
         {{ org.description }}
       </p>
@@ -61,8 +61,8 @@
       <v-window v-model="tab" style="overflow: visible;">
         <!-- Members Tab -->
         <v-window-item value="members">
-          <v-card flat class="ado-border" rounded="md">
-            <div class="d-flex align-center px-3 py-2 ado-header-bg ado-border-b" style="gap: 8px;">
+          <v-card class="ado-panel">
+            <div class="ado-panel-toolbar ado-header-bg ado-border-b">
               <v-icon size="small" color="primary">mdi-account-group-outline</v-icon>
               <span class="text-subtitle-2 font-weight-bold">{{ $t('org.detail.tabs.members') }}</span>
               <v-chip size="x-small" variant="tonal">{{ members.length }}</v-chip>
@@ -76,9 +76,9 @@
                 hide-details
                 single-line
                 clearable
-                style="max-width: 240px;"
+                class="ado-toolbar-search"
               />
-              <v-btn icon="mdi-refresh" variant="text" size="small" density="comfortable" @click="fetchMembers" />
+              <v-btn aria-label="Refresh members" icon="mdi-refresh" variant="text" size="small" @click="fetchMembers" />
               <OrgMemberAdd :org-id="orgId" @after-add="fetchMembers">
                 <v-btn color="primary" prepend-icon="mdi-plus" variant="tonal" size="small">
                   {{ $t('org.member.add.title') }}
@@ -94,6 +94,20 @@
               hover
               density="compact"
             >
+              <template #loading>
+                <div class="ado-table-state">
+                  <v-progress-circular indeterminate color="primary" size="24" width="2" />
+                  <span>Loading organization members...</span>
+                </div>
+              </template>
+
+              <template #no-data>
+                <div class="ado-table-state">
+                  <v-icon size="36" class="text-medium-emphasis">mdi-account-group-outline</v-icon>
+                  <span>{{ search ? 'No members match your search.' : 'No organization members yet.' }}</span>
+                </div>
+              </template>
+
               <template #[`item.avatar`]="{ item }">
                 <UserAvatar :user-id="item.member.id" :user-name="item.member.name" size="28" />
               </template>
@@ -126,7 +140,6 @@
                       variant="text"
                       color="error"
                       icon="mdi-delete-outline"
-                      density="comfortable"
                       :title="$t('org.detail.members.remove')"
                     />
                   </OrgMemberDelete>

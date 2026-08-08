@@ -4,7 +4,8 @@
     :rail="rail"
     :width="240"
     rail-width="48"
-    permanent
+    :permanent="!mobile"
+    :temporary="mobile"
     color="surface"
     class="ado-drawer"
     :border="true"
@@ -95,7 +96,7 @@
     <!-- ============== PROJECT context ============== -->
     <template v-else-if="context === 'project'">
       <!-- Project header (expanded) / icon (rail) -->
-      <v-list v-if="!rail" density="compact" nav class="pa-2">
+      <v-list v-if="!rail" density="compact" nav class="ado-drawer__project pa-2">
         <v-list-item class="px-2">
           <template #prepend>
             <v-avatar size="28" rounded="sm" :color="uuidToColor(store.project.id)" class="ado-list-avatar">
@@ -143,7 +144,7 @@
     </template>
 
     <!-- Footer rail toggle -->
-    <template #append>
+    <template v-if="!mobile" #append>
       <v-divider />
       <div class="d-flex" :class="rail ? 'justify-center' : 'justify-end'" style="padding: 6px;">
         <v-btn
@@ -151,6 +152,7 @@
           variant="text"
           density="compact"
           size="small"
+          :aria-label="rail ? 'Expand navigation' : 'Collapse navigation'"
           @click.stop="rail = !rail"
         />
       </div>
@@ -159,7 +161,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { useAppStore } from '@/stores/app'
 import { useRoute, useRouter } from 'vue-router'
 import { useDisplay } from 'vuetify'
@@ -217,16 +219,31 @@ function onLoadOrg(org) {
   store.setOrg(org)
   router.push(`/orgs/${org.id}/projects`)
 }
+
+watch(() => route.path, () => {
+  if (mobile.value) store.setDrawer(false)
+})
 </script>
 
 <style scoped>
 .ado-drawer :deep(.v-list-item) {
-  border-radius: 4px;
-  margin: 1px 4px;
+  border-left: 3px solid transparent;
+  border-radius: 0;
+  margin: 0;
   min-height: 36px;
+}
+.ado-drawer :deep(.v-list-item:hover) {
+  background-color: var(--ado-row-hover);
+}
+.ado-drawer :deep(.v-list-item--active) {
+  border-left-color: rgb(var(--v-theme-primary));
+  background-color: var(--ado-row-selected);
 }
 .ado-drawer :deep(.v-list-item--active .v-icon) {
   color: rgb(var(--v-theme-primary));
+}
+.ado-drawer__project {
+  background-color: var(--ado-subtle-bg);
 }
 /* Center items in rail mode */
 .ado-rail-center {

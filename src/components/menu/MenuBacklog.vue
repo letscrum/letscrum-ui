@@ -1,5 +1,5 @@
 <template>
-  <v-menu location="bottom end" :close-on-content-click="false" offset="4">
+  <v-menu v-model="menuOpen" location="bottom end" :close-on-content-click="false" offset="4">
     <template #activator="{ props }">
       <v-btn
         v-bind="props"
@@ -39,12 +39,12 @@
       />
       <div class="d-flex">
         <v-spacer />
-        <v-btn variant="text" size="small" class="mr-2">Cancel</v-btn>
+        <v-btn variant="text" size="small" class="mr-2" @click="onCancel">Cancel</v-btn>
         <v-btn
           color="primary"
           variant="flat"
           size="small"
-          :disabled="!item.title"
+          :disabled="!item.title.trim()"
           @click="onCreateWorkItem()"
         >
           Add to top
@@ -66,6 +66,7 @@ import { useRoute } from 'vue-router';
 import MenuViewOptions from '@/components/menu/MenuViewOptions.vue';
 
 const route = useRoute()
+const menuOpen = ref(false)
 const item = ref({
   title: '',
   type: 'Backlog',
@@ -88,8 +89,15 @@ function onCreateWorkItem() {
     }).then(res => {
       if (res.status === 200) {
         item.value.title = ''
+        menuOpen.value = false
         emit('afterCreate')
       }
     })
+}
+
+function onCancel() {
+  item.value.title = ''
+  item.value.type = 'Backlog'
+  menuOpen.value = false
 }
 </script>
