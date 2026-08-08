@@ -274,11 +274,18 @@ body,
   line-height: 16px;
   opacity: 1;
 }
-.ado-dropdown-overlay .v-list-item__spacer {
+.ado-dropdown-overlay .v-list-item__prepend > .v-icon ~ .v-list-item__spacer {
+  width: 8px;
+  min-width: 8px;
+}
+.ado-dropdown-overlay .v-list-item__prepend > .v-avatar ~ .v-list-item__spacer {
   width: 10px;
+  min-width: 10px;
 }
 .ado-dropdown-overlay .v-divider {
   margin-block: 4px !important;
+  color: var(--ado-border) !important;
+  border-color: var(--ado-border) !important;
   opacity: 1;
 }
 

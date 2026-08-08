@@ -105,7 +105,7 @@
             <v-list density="compact">
               <v-list-item v-for="s in ['ToDo', 'InProgress', 'Done', 'Removed']" :key="s" style="min-height: 30px;" @click="updateStatusValue(s)">
                 <template #prepend>
-                  <v-icon :color="getStatusColor(s)" size="x-small" class="mr-2">mdi-circle</v-icon>
+                  <v-icon :color="getStatusColor(s)" size="x-small">mdi-circle</v-icon>
                 </template>
                 <v-list-item-title>{{ statusLabel(s) }}</v-list-item-title>
               </v-list-item>
