@@ -136,7 +136,10 @@ const sprints = ref([])
 const sprintsLoading = ref(false)
 const sprintsReady = ref(false)
 const burndown = ref({
+  ideal: [],
   labels: [],
+  total: 0,
+  unit: 'tasks',
   values: [],
 })
 const {
@@ -222,8 +225,15 @@ function onLoadBurndown() {
       ? getSprintWorkBurnDown(route.params.orgId, route.params.projectId, store.sprint.id)
       : getSprintTaskBurndown(route.params.orgId, route.params.projectId, store.sprint.id)
     const res = await request
-    burndown.value.labels = res.data.burndown.map((item) => new Date(item.date * 1000).toISOString().substring(5, 7) + '/' + new Date(item.date * 1000).toISOString().substring(8, 10))
-    burndown.value.values = res.data.burndown.map((item) => item.actual)
+    const points = res.data.burndown || []
+    const total = Number(res.data.total) || 0
+    burndown.value = {
+      ideal: points.map((item, index) => points.length <= 1 ? total : total * (1 - index / (points.length - 1))),
+      labels: points.map((item) => new Date(Number(item.date) * 1000).toISOString().substring(5, 10).replace('-', '/')),
+      total,
+      unit: store.sprint.burndownType == 'ByHour' ? 'hours' : 'tasks',
+      values: points.map((item) => Math.max(0, total - (Number(item.actual) || 0)))
+    }
   }).catch(() => {})
 }
 
