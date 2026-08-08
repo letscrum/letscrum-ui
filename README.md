@@ -2,11 +2,31 @@
 
 A modern, responsive user interface for the LetScrum project management platform, built with Vue 3 and Vuetify.
 
-**Demo**: https://letscrum.learnmark.com/
+## Live Demo
+
+| | |
+| --- | --- |
+| **URL** | [https://letscrum.learnmark.com/](https://letscrum.learnmark.com/) |
+| **Username** | `admin` |
+| **Password** | `admin` |
 
 ## 🚀 Overview
 
-LetScrum UI provides a comprehensive interface for agile project management. It features a clean, card-based design inspired by modern design systems (Microsoft Foundry style), offering a seamless experience for managing organizations, projects, sprints, and backlogs.
+LetScrum UI provides a comprehensive interface for agile project management. It features a focused enterprise workspace with a distinctive LetScrum visual system for managing organizations, projects, sprints, and backlogs.
+
+## Screenshots
+
+| Organizations | Projects |
+| --- | --- |
+| ![Organizations workspace](public/images/screenshots/01-organizations.png) | ![Projects workspace](public/images/screenshots/02-projects.png) |
+
+| Project Overview | Sprint Taskboard |
+| --- | --- |
+| ![Project overview and sprint cards](public/images/screenshots/03-project-overview.png) | ![Sprint taskboard](public/images/screenshots/04-taskboard.png) |
+
+| Sprint Backlog | Sprint Burndown |
+| --- | --- |
+| ![Sprint backlog](public/images/screenshots/05-sprint-backlog.png) | ![Sprint burndown chart](public/images/screenshots/06-burndown.png) |
 
 ## ✨ Features
 
